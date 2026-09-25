@@ -1,0 +1,134 @@
+<svg id="bg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+<div id="app">
+  <header id="topbar">
+    <button id="btnHome" class="iconbtn" aria-label="返主頁" data-icon="home"></button>
+    <div class="brand">超人乘數表</div>
+    <button id="btnMute" class="iconbtn" aria-label="聲音開關" data-icon="sound"></button>
+  </header>
+  <main>
+    <!-- HOME -->
+    <section id="home" class="screen active">
+      <div class="wrap">
+        <h1 class="title">超人乘數表</h1>
+        <div class="tagline">光之巨人打怪獸・一齊學乘數表！</div>
+        <div class="homescene">
+          <div class="hs-hero" id="homeHero" title="撳我！"></div>
+          <div class="vs">VS</div>
+          <div class="hs-mon" id="homeMon"></div>
+        </div>
+        <div class="menu">
+          <button class="btn blue" data-go="learnPick"><span data-icon="book"></span>學習模式<small>讀九因歌</small></button>
+          <button class="btn" data-go="setup-battle"><span data-icon="bolt"></span>打怪獸<small>答啱就出招！</small></button>
+          <button class="btn orange" data-go="setup-timed"><span data-icon="clock"></span>計時挑戰<small>60秒快答</small></button>
+          <button class="btn green" data-go="progress"><span data-icon="medal"></span>我的進度<small>睇勳章</small></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARN PICK -->
+    <section id="learnPick" class="screen">
+      <div class="wrap">
+        <h2 class="h">揀乘數表</h2>
+        <p class="sub">你想學邊個乘數表呀？</p>
+        <div class="tiles" id="learnTiles"></div>
+      </div>
+    </section>
+
+    <!-- LEARN -->
+    <section id="learn" class="screen">
+      <div class="learn-top">
+        <button class="btn small gray" id="lBack"><span data-icon="back"></span>揀過</button>
+        <h2><span id="lTitle">2</span> 乘數表</h2>
+        <button class="btn small purple" id="lAuto"><span data-icon="play"></span><span class="lbl">自動</span></button>
+      </div>
+      <div class="learn-main">
+        <div class="card lcard">
+          <button class="iconbtn speakbtn" id="lSpeak" aria-label="讀出嚟" data-icon="speaker"></button>
+          <div class="leq" id="lEq"><span id="lA">2</span><span class="x">×</span><span id="lB">1</span> = <span class="ans" id="lP">2</span></div>
+          <div class="lchant" id="lChant">一二得二</div>
+          <div class="ldots" id="lDots"></div>
+          <div class="dcap" id="lCap"></div>
+          <div class="lnav">
+            <button class="btn small blue" id="lPrev"><span data-icon="back"></span>上一個</button>
+            <div class="lprog" id="lProg"></div>
+            <button class="btn small blue" id="lNext">下一個<span data-icon="next"></span></button>
+          </div>
+          <div class="voicenote" id="voiceNote"></div>
+        </div>
+        <div class="lside">
+          <div class="card llist" id="lList"></div>
+          <button class="btn" id="lGo"><span data-icon="bolt"></span>學識喇！去打怪獸</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETUP (battle / timed) -->
+    <section id="setup" class="screen setup">
+      <div class="wrap">
+        <h2 class="h" id="setupTitle">打怪獸</h2>
+        <p class="sub" id="setupSub">揀你想練習嘅乘數表（可以揀幾個）</p>
+        <div class="tiles" id="setupTiles"></div>
+        <div class="row">
+          <button class="btn small purple" id="selMix">2至9 混合</button>
+          <button class="btn small gray" id="selNone">全部清除</button>
+        </div>
+        <div class="row">
+          <div class="seg" id="modeSeg">
+            <button data-choice="0">自己打答案</button>
+            <button data-choice="1">揀答案（易啲）</button>
+          </div>
+        </div>
+        <div class="besttxt" id="bestTxt"></div>
+        <div class="warn" id="setupWarn"></div>
+        <button class="btn" id="startBtn"><span data-icon="bolt"></span><span class="lbl">開始打怪獸！</span></button>
+      </div>
+    </section>
+
+    <!-- BATTLE -->
+    <section id="battle" class="screen">
+      <div class="stage" id="stage">
+        <div class="ground"></div>
+        <div class="stagehud">
+          <div class="hudbox herohud" id="heroHud"><div id="roundLbl">第 1 關</div><div class="dots" id="roundDots"></div></div>
+          <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
+        </div>
+        <div class="combo" id="combo">2 連擊！</div>
+        <div class="hero-wrap" id="heroWrap"><div class="hero-bob" id="heroBob"></div></div>
+        <div class="mon-wrap" id="monWrap"><div class="mon-bob" id="monBob"></div></div>
+        <div id="fxLayer"></div>
+        <canvas id="fxCanvas"></canvas>
+      </div>
+      <div class="panel" id="panel">
+        <div class="qrow"><span id="qA">2</span><span class="x">×</span><span id="qB">3</span><span>=</span><span class="ansbox empty" id="qAns">?</span></div>
+        <div class="hint idle" id="hint"><div>答啱就可以出招打怪獸！</div></div>
+        <div class="keypad" id="keypad"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+      <div class="overlay" id="result"><div class="card rcard" id="resultCard"></div></div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section id="progress" class="screen">
+      <div class="wrap">
+        <h2 class="h">我的進度</h2>
+        <div class="stats" id="stats"></div>
+        <div class="pcols">
+        <div class="pcol">
+        <div class="section-t">乘數表地圖</div>
+        <table class="mgrid" id="mgrid"></table>
+        <div class="legend"><span><i style="background:#22c55e"></i>識晒</span><span><i style="background:#facc15"></i>練習緊</span><span><i style="background:#4b5578"></i>未試過</span></div>
+        </div>
+        <div class="pcol">
+        <div class="section-t" id="weakT">要多啲練習</div>
+        <div class="weak" id="weak"></div>
+        <div class="section-t">我嘅勳章</div>
+        <div class="badges" id="badges"></div>
+        </div>
+        </div>
+        <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal"><div class="card"><p id="mText"></p><div class="mb"><button class="btn small" id="mYes">係</button><button class="btn small green" id="mNo">唔係</button></div></div></div>

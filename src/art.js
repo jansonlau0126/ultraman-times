@@ -1,0 +1,168 @@
+/* ===== ART: icons, hero, monsters, skyline, medals (all original drawings) ===== */
+const ICONS = {
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+  sound:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.6 5.8a9 9 0 010 12.4"/>',
+  mute:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/>',
+  speaker:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.6 5.8a9 9 0 010 12.4"/>',
+  book:'<path d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5z"/><path d="M4 20.5V5.5"/><path d="M8 7.5h8M8 11h6"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="currentColor"/>',
+  clock:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9.5 2.5h5"/>',
+  medal:'<circle cx="12" cy="15" r="6"/><path d="M8 3l4 6 4-6"/><path d="M12 12.3l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3z" fill="currentColor" stroke-width="1"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  next:'<path d="M9 5l7 7-7 7"/>',
+  play:'<path d="M7 4l13 8-13 8z" fill="currentColor"/>',
+  pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',
+  del:'<path d="M9 5h11v14H9l-6-7z"/><path d="M12 9l5 6M17 9l-5 6"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'
+};
+function icon(name){ return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
+function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEach(el=>{ el.innerHTML = icon(el.dataset.icon); }); }
+
+/* Original silver-and-red giant hero. p = unique id prefix */
+function heroSVG(p){
+  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', ol='#4a5566';
+  const legL = '<g class="h-legL"><path d="M74 190 L95 190 L93 256 L76 256 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M75 198 L81 198 L80 252 L77 252Z" fill="'+rd+'"/><path d="M70 250 Q84 243 98 250 L99 279 Q84 285 67 279 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2.5"/></g>';
+  const legR = '<g class="h-legR"><path d="M105 190 L126 190 L124 256 L107 256 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M119 198 L125 198 L123 252 L120 252Z" fill="'+rd+'"/><path d="M102 250 Q116 243 130 250 L133 279 Q116 285 101 279 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2.5"/></g>';
+  const kick = '<g class="h-kick"><path d="M104 186 L126 184 L182 172 L186 192 L126 206 L104 204 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M130 190 L180 180 L181 186 L131 196Z" fill="'+rd+'"/><path d="M176 164 Q198 164 200 182 Q200 200 178 200 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2.5"/></g>';
+  const torso = '<path d="M60 122 Q100 108 140 122 L134 196 Q100 206 66 196 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M61 124 C72 140 82 162 85 196 L67 196 Z" fill="'+rd+'"/><path d="M139 124 C128 140 118 162 115 196 L133 196 Z" fill="'+rd+'"/>'+
+    '<path d="M76 118 Q100 128 124 118 L120 124 Q100 134 80 124Z" fill="'+rd+'"/>'+
+    '<path d="M86 172 Q100 180 114 172" stroke="#9aa7b8" stroke-width="2" fill="none"/>'+
+    '<rect x="68" y="186" width="64" height="9" rx="4" fill="#c6cfdb" stroke="'+ol+'" stroke-width="2"/>'+
+    '<circle cx="100" cy="148" r="15" fill="#5b6675" stroke="#2f3745" stroke-width="2"/>'+
+    '<circle class="h-tglow" cx="100" cy="148" r="16" filter="url(#'+p+'gl)" opacity=".85"/>'+
+    '<circle class="h-timer" cx="100" cy="148" r="10.5"/>'+
+    '<ellipse cx="96.5" cy="144.5" rx="4" ry="2.6" fill="#fff" opacity=".85"/>'+
+    '<circle class="mk-chest" cx="100" cy="148" r="1" fill="none"/>';
+  const armL = '<g class="h-armL"><path d="M61 123 Q49 126 47 142 L44 182 L59 184 L64 142 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M45.2 160 L60.5 161 L60 169 L44.6 168Z" fill="'+rd+'"/><circle cx="51" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/></g>';
+  const armR = '<g class="h-armR"><path d="M139 123 Q151 126 153 142 L156 182 L141 184 L136 142 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M139.5 161 L154.8 160 L155.4 168 L140 169Z" fill="'+rd+'"/><circle cx="149" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><circle class="mk-hand" cx="149" cy="191" r="1" fill="none"/></g>';
+  const cross = '<g class="h-cross">'+
+    '<path d="M62 124 Q50 132 54 150 Q60 164 80 166 L150 166 L150 180 L78 180 Q46 176 42 150 Q42 128 60 122Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M104 166 L112 166 L112 180 L104 180Z" fill="'+rd+'"/>'+
+    '<path d="M137 124 L152 122 L163 172 L147 176 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<rect x="147" y="92" width="17" height="84" rx="8" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<rect x="147" y="128" width="17" height="8" fill="'+rd+'"/>'+
+    '<circle cx="155.5" cy="90" r="10" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<circle cx="165" cy="130" r="9" fill="#bff3ff" filter="url(#'+p+'gl)"/></g>';
+  const head = '<g class="h-head">'+
+    '<rect x="90" y="106" width="20" height="16" fill="#aab4c3" stroke="'+ol+'" stroke-width="2"/>'+
+    '<path d="M66 72 L46 50 L74 58 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2"/><path d="M134 72 L154 50 L126 58 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2"/>'+
+    '<ellipse cx="100" cy="72" rx="38" ry="42" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M68 52 Q100 26 132 52 L126 60 Q100 40 74 60 Z" fill="'+rd+'"/>'+
+    '<path d="M100 38 L106 46 L100 54 L94 46Z" fill="#ffd84d" stroke="#b45309" stroke-width="1.5"/>'+
+    '<path d="M100 56 L100 66" stroke="#9aa7b8" stroke-width="2"/>'+
+    '<ellipse class="h-eyeglow" cx="84" cy="77" rx="17" ry="12" fill="#fff3a0" filter="url(#'+p+'gl)"/><ellipse class="h-eyeglow" cx="116" cy="77" rx="17" ry="12" fill="#fff3a0" filter="url(#'+p+'gl)"/>'+
+    '<ellipse cx="84" cy="77" rx="13" ry="8.5" transform="rotate(14 84 77)" fill="url(#'+p+'ey)" stroke="#c99a00" stroke-width="1.5"/>'+
+    '<ellipse cx="116" cy="77" rx="13" ry="8.5" transform="rotate(-14 116 77)" fill="url(#'+p+'ey)" stroke="#c99a00" stroke-width="1.5"/>'+
+    '<path d="M91 99 Q100 106 109 99" stroke="'+ol+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+
+    '<path d="M70 80 Q72 96 84 106" stroke="#c81e1e" stroke-width="3" fill="none" opacity=".7"/><path d="M130 80 Q128 96 116 106" stroke="#c81e1e" stroke-width="3" fill="none" opacity=".7"/>'+
+    '</g>';
+  return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#38bdf8">'+
+    '<defs>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e3e9f1"/><stop offset="1" stop-color="#9eabbd"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5454"/><stop offset="1" stop-color="#c81e1e"/></linearGradient>'+
+    '<radialGradient id="'+p+'ey" cx=".45" cy=".4" r=".65"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#fff8c4"/><stop offset="1" stop-color="#ffd84d"/></radialGradient>'+
+    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>'+
+    '</defs>'+
+    '<ellipse class="h-aura" cx="100" cy="165" rx="92" ry="138" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".7"/>'+
+    '<ellipse cx="100" cy="284" rx="52" ry="8" fill="#000" opacity=".28"/>'+
+    legL + legR + kick + armL + torso + head + armR + cross +
+    '<circle class="mk-beam" cx="168" cy="130" r="1" fill="none"/>'+
+    '</svg>';
+}
+
+const MONS = {
+  fire:{name:'火焰怪獸', nick:'炎炎', body:'#ff6b3d', light:'#ffb08a', dark:'#b93a0e', belly:'#ffe0b0', shot:'#ff9f1c'},
+  ice:{name:'冰凍怪獸', nick:'雪雪', body:'#6cc9f7', light:'#c8efff', dark:'#1d6fa5', belly:'#eefaff', shot:'#bae6fd'},
+  thunder:{name:'雷電怪獸', nick:'閃閃', body:'#f7c21b', light:'#ffe98a', dark:'#9a6206', belly:'#fff6cf', shot:'#fde047'},
+  rock:{name:'岩石怪獸', nick:'石頭哥', body:'#a67c5b', light:'#d9b594', dark:'#5f3f28', belly:'#ecd6bb', shot:'#c8a27c'},
+  poison:{name:'毒霧怪獸', nick:'紫紫', body:'#a35cf0', light:'#d2b0ff', dark:'#5b1d9a', belly:'#f0e3ff', shot:'#b6f25c'},
+  sea:{name:'海浪怪獸', nick:'浪浪', body:'#27c4b0', light:'#98f0e2', dark:'#0d6b61', belly:'#d8fff7', shot:'#5ee8ff'},
+  boss:{name:'魔王怪獸', nick:'黑暗大魔王', body:'#5b2aa8', light:'#9f7ae0', dark:'#240b52', belly:'#c8b3f5', shot:'#ff4d6d', boss:true}
+};
+
+function monsterSVG(type, p){
+  const m = MONS[type]; const dk=m.dark;
+  let back='', front='', body2='';
+  if(type==='fire'){
+    back = '<g class="m-flame"><path d="M92 82 C78 56 96 40 100 16 C108 38 118 30 116 10 C134 30 142 48 134 62 C144 58 150 50 150 38 C164 60 158 82 146 90 Z" fill="#ffb703" stroke="#e85d04" stroke-width="3"/><path d="M106 82 C100 64 110 56 112 42 C118 56 126 52 126 40 C138 58 134 76 128 84 Z" fill="#fff3b0"/></g>';
+    front = '<g class="m-flame"><path d="M220 130 C210 112 224 100 228 84 C236 102 246 110 238 130Z" fill="#ffb703" stroke="#e85d04" stroke-width="2.5"/></g>';
+  } else if(type==='ice'){
+    back = '<g fill="#e8faff" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"><path d="M112 74 L122 18 L136 72Z"/><path d="M90 84 L86 48 L106 76Z"/><path d="M148 78 L162 44 L162 86Z"/><path d="M184 98 L220 86 L196 120Z"/><path d="M198 132 L232 124 L206 152Z"/></g>';
+    body2 = '<g stroke="#8fd8ff" stroke-width="3" stroke-linecap="round"><path d="M118 146 L118 178M104 154 L132 170M104 170 L132 154"/></g>';
+  } else if(type==='thunder'){
+    back = '<g fill="#fff06a" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"><path d="M96 82 L76 50 L91 52 L78 16 L110 58 L95 56 L108 80Z"/><path d="M150 78 L168 46 L153 50 L172 14 L140 56 L155 54 L140 78Z"/></g>';
+    body2 = '<g stroke="'+dk+'" stroke-width="7" stroke-linecap="round" fill="none" opacity=".45"><path d="M170 84 Q184 96 188 114"/><path d="M188 132 Q198 144 200 160"/><path d="M70 120 Q62 132 62 148"/></g>';
+  } else if(type==='rock'){
+    back = '<g fill="#8d929c" stroke="#484d56" stroke-width="3" stroke-linejoin="round"><path d="M98 74 L106 42 L128 36 L138 68Z"/><path d="M150 82 L170 58 L190 72 L180 98Z"/><path d="M186 114 L214 104 L218 130 L196 140Z"/></g>';
+    body2 = '<g fill="'+dk+'" opacity=".3"><circle cx="175" cy="120" r="7"/><circle cx="186" cy="170" r="5"/><circle cx="70" cy="170" r="6"/><circle cx="160" cy="88" r="4"/></g>';
+  } else if(type==='poison'){
+    back = '<g stroke="'+dk+'" stroke-width="5" stroke-linecap="round" fill="none"><path d="M108 72 Q98 46 86 30"/><path d="M140 70 Q152 44 168 30"/></g><circle cx="86" cy="28" r="11" fill="#b6f25c" stroke="#4d7c0f" stroke-width="3"/><circle cx="168" cy="28" r="11" fill="#b6f25c" stroke="#4d7c0f" stroke-width="3"/>';
+    body2 = '<g fill="#e3c8ff" opacity=".75"><circle cx="172" cy="112" r="9"/><circle cx="188" cy="150" r="6"/><circle cx="160" cy="84" r="5"/><circle cx="70" cy="176" r="6"/></g>';
+    front = '<g class="m-float" fill="#b6f25c" opacity=".75"><circle cx="30" cy="80" r="7"/><circle cx="18" cy="104" r="4"/><circle cx="40" cy="60" r="3"/></g>';
+  } else if(type==='sea'){
+    back = '<path d="M104 74 Q118 14 170 28 Q148 44 154 80Z" fill="#12a594" stroke="'+dk+'" stroke-width="3"/><path d="M188 100 Q224 88 228 116 Q208 114 198 130Z" fill="#12a594" stroke="'+dk+'" stroke-width="3"/>';
+    body2 = '<g stroke="'+dk+'" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"><path d="M176 118 q6 6 0 12"/><path d="M184 116 q6 6 0 12"/></g>';
+    front = '<g class="m-float"><path d="M34 70 Q40 58 46 70 A7 7 0 1 1 34 70Z" fill="#9ff3ff" stroke="#0d6b61" stroke-width="2"/></g>';
+  } else if(type==='boss'){
+    back = '<g fill="#2a0f5c" stroke="#150533" stroke-width="3" stroke-linejoin="round"><path d="M74 122 C34 84 14 94 4 62 C20 72 30 68 38 54 C44 74 56 72 64 62 C68 86 78 98 88 106Z"/><path d="M178 116 C206 72 228 80 238 48 C224 62 214 58 206 44 C200 64 190 64 182 54 C182 80 176 94 166 104Z"/></g>'+
+      '<g fill="#f5f0e6" stroke="#44403c" stroke-width="3"><path d="M90 84 C68 72 66 46 78 32 C82 54 96 64 106 72Z"/><path d="M152 78 C172 62 172 40 160 26 C158 48 146 58 138 68Z"/></g>'+
+      '<path d="M100 78 L102 46 L114 62 L124 36 L134 62 L146 46 L148 76Z" fill="#fbbf24" stroke="#b45309" stroke-width="3" stroke-linejoin="round"/><circle cx="124" cy="60" r="5" fill="#ef4444"/><circle cx="108" cy="66" r="3" fill="#38bdf8"/><circle cx="140" cy="66" r="3" fill="#38bdf8"/>';
+    body2 = '<path d="M84 150 L118 196 L152 150" stroke="#fbbf24" stroke-width="4" fill="none" opacity=".7"/>';
+  }
+  const pupil = m.boss ? '#e11d48' : '#1f2937';
+  return '<svg class="mon mon-'+type+'" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">'+
+    '<defs><radialGradient id="'+p+'bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="'+m.light+'"/><stop offset=".55" stop-color="'+m.body+'"/><stop offset="1" stop-color="'+dk+'"/></radialGradient></defs>'+
+    '<ellipse cx="125" cy="228" rx="84" ry="9" fill="#000" opacity=".28"/>'+
+    back+
+    '<path d="M184 186 Q236 182 228 128 Q224 116 214 126 Q218 164 180 164 Z" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
+    '<ellipse cx="90" cy="213" rx="27" ry="15" fill="'+dk+'"/><ellipse cx="162" cy="213" rx="27" ry="15" fill="'+dk+'"/>'+
+    '<g fill="#fff"><circle cx="70" cy="220" r="4"/><circle cx="80" cy="224" r="4"/><circle cx="142" cy="221" r="4"/><circle cx="152" cy="225" r="4"/></g>'+
+    '<path d="M58 206 C36 150 54 70 122 64 C192 58 214 140 197 206 Q127 224 58 206Z" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
+    '<ellipse cx="118" cy="162" rx="48" ry="42" fill="'+m.belly+'"/>'+
+    '<g stroke="'+dk+'" stroke-width="2.5" fill="none" opacity=".25"><path d="M84 150 Q118 158 152 150"/><path d="M80 170 Q118 178 156 170"/><path d="M86 190 Q118 197 150 190"/></g>'+
+    body2+
+    '<ellipse cx="60" cy="150" rx="12" ry="21" transform="rotate(35 60 150)" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
+    '<g fill="#fff"><circle cx="46" cy="136" r="3.5"/><circle cx="52" cy="131" r="3.5"/></g>'+
+    '<ellipse cx="194" cy="152" rx="11" ry="19" transform="rotate(-22 194 152)" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
+    '<g class="m-eyes"><circle cx="98" cy="112" r="19" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/><circle cx="145" cy="110" r="17" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/>'+
+    '<circle cx="91" cy="115" r="9" fill="'+pupil+'"/><circle cx="138" cy="113" r="8" fill="'+pupil+'"/><circle cx="88" cy="111" r="3.2" fill="#fff"/><circle cx="135" cy="109" r="3" fill="#fff"/></g>'+
+    '<g class="m-ouch" stroke="#1f2937" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M86 102 L108 113 L86 124"/><path d="M158 100 L135 111 L158 122"/></g>'+
+    '<path d="M76 88 L112 97" stroke="'+dk+'" stroke-width="'+(m.boss?8:6)+'" stroke-linecap="round"/><path d="M130 96 L164 86" stroke="'+dk+'" stroke-width="'+(m.boss?8:6)+'" stroke-linecap="round"/>'+
+    '<ellipse cx="76" cy="136" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/><ellipse cx="166" cy="132" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/>'+
+    '<path d="M96 138 Q119 164 144 136 Q119 147 96 138 Z" fill="#7f1d1d" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"/>'+
+    '<path d="M104 141 L108 151 L113 143Z" fill="#fff"/><path d="M127 142 L131 151 L135 140Z" fill="#fff"/>'+
+    front+
+    '<circle class="mk-core" cx="120" cy="140" r="1" fill="none"/><circle class="mk-mouth" cx="100" cy="144" r="1" fill="none"/>'+
+    '</svg>';
+}
+
+function medalSVG(label, tier){
+  const C = {0:['#4b5578','#2c3350','#7d87a8','#9aa3c0'],1:['#e39a5c','#7c3f12','#f8cda6','#7c3f12'],2:['#e8edf5','#56627c','#ffffff','#3d475e'],3:['#ffd84d','#a8640a','#fff6c4','#8a4b00']}[tier||0];
+  const fs = String(label).length>1 ? 20 : 26;
+  return '<svg viewBox="0 0 64 80" aria-hidden="true"><path d="M16 0 H30 L37 32 H23Z" fill="'+(tier?'#ef4444':'#5b6480')+'"/><path d="M34 0 H48 L41 32 H27Z" fill="'+(tier?'#3b82f6':'#465070')+'"/>'+
+    '<circle cx="32" cy="50" r="26" fill="'+C[0]+'" stroke="'+C[1]+'" stroke-width="4"/><circle cx="32" cy="50" r="19.5" fill="none" stroke="'+C[2]+'" stroke-width="2" stroke-dasharray="3 3"/>'+
+    '<text x="32" y="'+(50+fs*0.36)+'" text-anchor="middle" font-size="'+fs+'" font-weight="900" fill="'+C[3]+'">'+label+'</text></svg>';
+}
+function starSVG(on){ return '<svg viewBox="0 0 24 24" class="'+(on?'on':'')+'"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.6 7.1L12 17.8 5.6 21.4l1.6-7.1L1.8 9.4 9 8.6z"/></svg>'; }
+
+function buildSky(svg){
+  const W=1600, H=900; const R=(a,b)=>a+Math.random()*(b-a); const I=(a,b)=>Math.floor(R(a,b+1));
+  let s = '<defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#060a2a"/><stop offset=".5" stop-color="#1a1460"/><stop offset=".85" stop-color="#4a2380"/><stop offset="1" stop-color="#7a3a8c"/></linearGradient>'+
+    '<radialGradient id="moong"><stop offset="0" stop-color="#fffbe6" stop-opacity=".9"/><stop offset=".5" stop-color="#fff3b0" stop-opacity=".25"/><stop offset="1" stop-color="#fff3b0" stop-opacity="0"/></radialGradient>'+
+    '<linearGradient id="lightg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#cfefff" stop-opacity=".28"/><stop offset="1" stop-color="#cfefff" stop-opacity="0"/></linearGradient></defs>';
+  s += '<rect width="'+W+'" height="'+H+'" fill="url(#skyg)"/>';
+  for(let i=0;i<130;i++){ s += '<circle class="tw" cx="'+R(0,W).toFixed(0)+'" cy="'+R(0,H*0.62).toFixed(0)+'" r="'+R(.8,2.4).toFixed(1)+'" fill="#fff" style="animation-delay:-'+R(0,4).toFixed(1)+'s;animation-duration:'+R(1.6,4).toFixed(1)+'s"/>'; }
+  s += '<circle cx="980" cy="150" r="130" fill="url(#moong)"/><circle cx="980" cy="150" r="52" fill="#fff6d5"/><circle cx="962" cy="138" r="9" fill="#efe0ae"/><circle cx="996" cy="170" r="12" fill="#efe0ae"/><circle cx="1000" cy="130" r="5" fill="#efe0ae"/>';
+  s += '<g class="sl" style="transform-origin:560px 900px"><polygon points="548,900 572,900 680,0 440,0" fill="url(#lightg)"/></g>';
+  s += '<g class="sl sl2" style="transform-origin:1100px 900px"><polygon points="1088,900 1112,900 1220,0 980,0" fill="url(#lightg)"/></g>';
+  let x=-10; while(x<W){ const w=I(50,120), h=I(200,430); s+='<rect x="'+x+'" y="'+(H-h)+'" width="'+w+'" height="'+h+'" fill="#261c63"/>'; if(Math.random()<.25) s+='<rect x="'+(x+w/2-2)+'" y="'+(H-h-30)+'" width="4" height="30" fill="#261c63"/>'; x+=w+I(-8,6); }
+  x=-20; while(x<W){ const w=I(70,150), h=I(120,330); const y=H-h; s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#0e1336"/>';
+    const cols=Math.floor((w-14)/18), rows=Math.floor((h-24)/26);
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(Math.random()<.33) s+='<rect x="'+(x+10+c*18)+'" y="'+(y+14+r*26)+'" width="9" height="13" fill="'+(Math.random()<.8?'#ffe28a':'#9be7ff')+'" opacity="'+R(.5,1).toFixed(2)+'"/>'; }
+    if(Math.random()<.3){ s+='<rect x="'+(x+w/2-2)+'" y="'+(y-26)+'" width="4" height="26" fill="#0e1336"/><circle class="blinkred" cx="'+(x+w/2)+'" cy="'+(y-28)+'" r="4" fill="#ff4d4d"/>'; }
+    x+=w+I(2,14); }
+  s += '<rect y="'+(H-16)+'" width="'+W+'" height="16" fill="#070a1f"/>';
+  svg.innerHTML = s;
+}
