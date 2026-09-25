@@ -50,7 +50,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* HOME */
 .title{font-size:clamp(48px,13vw,96px);font-weight:900;line-height:1.05;margin:4px 0 0;letter-spacing:4px;background:linear-gradient(180deg,#fffbd1 0%,#ffe14d 45%,#ff9d00 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(3px 0 0 #c01616) drop-shadow(-3px 0 0 #c01616) drop-shadow(0 3px 0 #c01616) drop-shadow(0 -3px 0 #c01616) drop-shadow(0 7px 0 #6b0909) drop-shadow(0 0 22px rgba(255,210,80,.55));text-align:center}
 .tagline{font-size:clamp(17px,4.2vw,24px);font-weight:900;margin:8px 0 2px;color:#bfe9ff;text-shadow:0 2px 0 #1b2a7a;text-align:center}
-.homescene{position:relative;width:100%;max-width:620px;height:clamp(170px,30vh,300px);margin:4px auto 8px}
+.homescene{position:relative;width:100%;max-width:620px;height:clamp(170px,30vh,300px);margin:4px auto 22px}
 .homescene .hs-hero{position:absolute;left:8%;bottom:0;height:100%;aspect-ratio:2/3;cursor:pointer}
 .homescene .hs-mon{position:absolute;right:6%;bottom:0;height:78%;aspect-ratio:1/1}
 .homescene .vs{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) rotate(-8deg);font-size:clamp(34px,8vw,60px);font-weight:900;color:#ffe14d;text-shadow:3px 3px 0 #c01616,-3px -3px 0 #c01616,3px -3px 0 #c01616,-3px 3px 0 #c01616,0 6px 0 #6b0909;animation:vsPulse 1.2s ease-in-out infinite}
@@ -313,3 +313,32 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
   .key{height:40px;font-size:24px}.key.ok{font-size:18px}.panel{gap:5px;padding:6px}.hint{min-height:38px;font-size:14px}.qrow{font-size:32px}
   .choice{height:64px}
 }
+
+/* ===== v2: Omega / new moves / Kanegon / Dada ===== */
+.hero .h-spiral{transform-box:fill-box;transform-origin:center;animation:spin 3s linear infinite}
+.hero.no-slug .h-slug{display:none}
+.hero.pose-tuck .h-armL{transform:rotate(-38deg)}
+.hero.pose-tuck .h-armR{transform:rotate(38deg)}
+.hero.rainbow .h-aura{animation:aura .2s ease-in-out infinite alternate,rbfill .6s linear infinite}
+@keyframes rbfill{0%{fill:#ff6b6b}17%{fill:#ffb84d}33%{fill:#fff34d}50%{fill:#5bff8a}67%{fill:#4dd2ff}83%{fill:#b58cff}100%{fill:#ff6b6b}}
+.mon .k-open{display:none}
+.mon.open .k-open{display:inline}
+.mon.open .k-closed{display:none}
+.mon-dada .d-face{display:none}
+.mon-dada.face-a .d-fa,.mon-dada.face-b .d-fb,.mon-dada.face-c .d-fc{display:inline}
+.mon-dada .d-head{transform-box:fill-box;transform-origin:50% 50%}
+.mon-dada .d-head.flip{animation:dflip .34s ease-in-out}
+@keyframes dflip{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.04)}}
+.swirl{position:absolute;pointer-events:none}
+.swirl svg{width:100%;height:100%;display:block;animation:spin .28s linear infinite}
+.rblade{position:absolute}
+.rblade b{display:block;width:100%;height:100%;transform:scaleY(.5)}
+.rblade i{display:block;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,#fff 0 16%,rgba(255,255,255,0) 17% 26%,rgba(255,255,255,.9) 27% 31%,rgba(255,255,255,0) 32%),conic-gradient(#ff4d4d,#ffb84d,#fff34d,#4dff88,#4dd2ff,#9d6bff,#ff4dd8,#ff4d4d);border:4px solid #fff;box-shadow:0 0 22px 8px rgba(255,255,255,.9),0 0 50px 18px rgba(255,120,220,.6);animation:spin .14s linear infinite}
+.slash{position:absolute;height:12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0),#ff4d4d 12%,#ffb84d 26%,#fff34d 40%,#fff 50%,#4dff88 60%,#4dd2ff 74%,#9d6bff 88%,rgba(255,255,255,0));box-shadow:0 0 16px 4px rgba(255,255,255,.85)}
+.rainbowbg{position:absolute;inset:0;z-index:1;background:linear-gradient(120deg,rgba(255,77,77,.45),rgba(255,184,77,.35),rgba(255,243,77,.35),rgba(77,255,136,.35),rgba(77,210,255,.4),rgba(157,107,255,.45));background-size:300% 300%;animation:rbmove 1.2s linear infinite}
+@keyframes rbmove{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.hs-name{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);text-align:center;font-weight:900;font-size:clamp(15px,3.6vw,20px);color:#fff;background:linear-gradient(180deg,#ff5454,#c4161c);border:3px solid #fff;border-radius:999px;padding:1px 12px;box-shadow:0 4px 0 #6b0909;white-space:nowrap;z-index:2}
+.hs-monname{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);font-weight:900;font-size:clamp(13px,3.2vw,17px);background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.4);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.heroname{font-size:clamp(12px,3vw,15px);color:#ffb4b4;letter-spacing:1px}
+.herohud .dots i.dada{background:repeating-linear-gradient(45deg,#fff 0 3px,#111 3px 6px)}
+.coinfly{position:absolute;font-weight:900;font-size:clamp(22px,5vw,34px);color:#ffe14d;text-shadow:2px 2px 0 #8a5a00,-2px -2px 0 #8a5a00,2px -2px 0 #8a5a00,-2px 2px 0 #8a5a00;white-space:nowrap}

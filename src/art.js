@@ -19,56 +19,64 @@ const ICONS = {
 function icon(name){ return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEach(el=>{ el.innerHTML = icon(el.dataset.icon); }); }
 
-/* Original silver-and-red giant hero. p = unique id prefix */
+/* Fan-art hero: 超人奧米加 (red body & face, silver lines, thick red crest, blue compound eyes, pentagon timer). Drawn from scratch. p = unique id prefix */
+function pent(cx,cy,r){ const pts=[]; for(let i=0;i<5;i++){ const a=(-90+i*72)*Math.PI/180; pts.push((cx+Math.cos(a)*r).toFixed(1)+','+(cy+Math.sin(a)*r).toFixed(1)); } return pts.join(' '); }
 function heroSVG(p){
-  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', ol='#4a5566';
-  const legL = '<g class="h-legL"><path d="M74 190 L95 190 L93 256 L76 256 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M75 198 L81 198 L80 252 L77 252Z" fill="'+rd+'"/><path d="M70 250 Q84 243 98 250 L99 279 Q84 285 67 279 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2.5"/></g>';
-  const legR = '<g class="h-legR"><path d="M105 190 L126 190 L124 256 L107 256 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M119 198 L125 198 L123 252 L120 252Z" fill="'+rd+'"/><path d="M102 250 Q116 243 130 250 L133 279 Q116 285 101 279 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2.5"/></g>';
-  const kick = '<g class="h-kick"><path d="M104 186 L126 184 L182 172 L186 192 L126 206 L104 204 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M130 190 L180 180 L181 186 L131 196Z" fill="'+rd+'"/><path d="M176 164 Q198 164 200 182 Q200 200 178 200 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2.5"/></g>';
-  const torso = '<path d="M60 122 Q100 108 140 122 L134 196 Q100 206 66 196 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M61 124 C72 140 82 162 85 196 L67 196 Z" fill="'+rd+'"/><path d="M139 124 C128 140 118 162 115 196 L133 196 Z" fill="'+rd+'"/>'+
-    '<path d="M76 118 Q100 128 124 118 L120 124 Q100 134 80 124Z" fill="'+rd+'"/>'+
-    '<path d="M86 172 Q100 180 114 172" stroke="#9aa7b8" stroke-width="2" fill="none"/>'+
-    '<rect x="68" y="186" width="64" height="9" rx="4" fill="#c6cfdb" stroke="'+ol+'" stroke-width="2"/>'+
-    '<circle cx="100" cy="148" r="15" fill="#5b6675" stroke="#2f3745" stroke-width="2"/>'+
-    '<circle class="h-tglow" cx="100" cy="148" r="16" filter="url(#'+p+'gl)" opacity=".85"/>'+
-    '<circle class="h-timer" cx="100" cy="148" r="10.5"/>'+
-    '<ellipse cx="96.5" cy="144.5" rx="4" ry="2.6" fill="#fff" opacity=".85"/>'+
-    '<circle class="mk-chest" cx="100" cy="148" r="1" fill="none"/>';
-  const armL = '<g class="h-armL"><path d="M61 123 Q49 126 47 142 L44 182 L59 184 L64 142 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M45.2 160 L60.5 161 L60 169 L44.6 168Z" fill="'+rd+'"/><circle cx="51" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/></g>';
-  const armR = '<g class="h-armR"><path d="M139 123 Q151 126 153 142 L156 182 L141 184 L136 142 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M139.5 161 L154.8 160 L155.4 168 L140 169Z" fill="'+rd+'"/><circle cx="149" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><circle class="mk-hand" cx="149" cy="191" r="1" fill="none"/></g>';
+  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', ol='#3a1016', sl='#e6ebf2';
+  const legL = '<g class="h-legL"><path d="M74 190 L95 190 L93 256 L76 256 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M77 196 L80 196 L79 252 L77.5 252Z" fill="'+sl+'"/><path d="M70 250 Q84 243 98 250 L99 279 Q84 285 67 279 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M70 262 Q84 257 98 262" stroke="'+sl+'" stroke-width="2.5" fill="none"/></g>';
+  const legR = '<g class="h-legR"><path d="M105 190 L126 190 L124 256 L107 256 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M120 196 L123 196 L121.5 252 L120 252Z" fill="'+sl+'"/><path d="M102 250 Q116 243 130 250 L133 279 Q116 285 101 279 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M102 262 Q116 257 131 262" stroke="'+sl+'" stroke-width="2.5" fill="none"/></g>';
+  const kick = '<g class="h-kick"><path d="M104 186 L126 184 L182 172 L186 192 L126 206 L104 204 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M130 187 L181 176 L181.5 180 L130.5 191Z" fill="'+sl+'"/><path d="M176 164 Q198 164 200 182 Q200 200 178 200 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M184 166 L184 199" stroke="'+sl+'" stroke-width="2.5"/></g>';
+  const torso = '<path d="M60 122 Q100 108 140 122 L134 196 Q100 206 66 196 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M66 124 Q100 114 134 124 L129 148 Q118 170 100 172 Q82 170 71 148 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M74 132 Q100 124 126 132" stroke="#1d2230" stroke-width="2" fill="none"/>'+
+    '<path d="M72 150 Q79 174 76 196" stroke="'+sl+'" stroke-width="3" fill="none"/><path d="M128 150 Q121 174 124 196" stroke="'+sl+'" stroke-width="3" fill="none"/>'+
+    '<path d="M100 172 L100 188" stroke="'+sl+'" stroke-width="2.5"/>'+
+    '<rect x="68" y="186" width="64" height="9" rx="4" fill="#b3121a" stroke="'+ol+'" stroke-width="2"/>'+
+    '<polygon points="'+pent(100,149,16.5)+'" fill="#3d4352" stroke="#1d2230" stroke-width="2" stroke-linejoin="round"/>'+
+    '<polygon class="h-tglow" points="'+pent(100,149,15)+'" filter="url(#'+p+'gl)" opacity=".9"/>'+
+    '<polygon class="h-timer" points="'+pent(100,149,11.5)+'" stroke-linejoin="round"/>'+
+    '<g class="h-spiral"><path d="M100 149 m0 -1.5 a1.5 1.5 0 1 1 -1.5 1.5 a3.5 3.5 0 0 1 3.5 -3.5 a5.5 5.5 0 0 1 5.5 5.5 a7.5 7.5 0 0 1 -7.5 7.5" stroke="#fff" stroke-width="1.4" fill="none" opacity=".8"/><circle cx="95" cy="145" r=".9" fill="#fff"/><circle cx="105" cy="153" r=".8" fill="#fff"/><circle cx="104" cy="144" r=".6" fill="#fff"/></g>'+
+    '<circle class="mk-chest" cx="100" cy="149" r="1" fill="none"/>';
+  const armL = '<g class="h-armL"><path d="M61 123 Q49 126 47 142 L44 182 L59 184 L64 142 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M50 140 L52.5 140 L49 181 L46.5 181Z" fill="'+sl+'"/><circle cx="51" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/></g>';
+  const armR = '<g class="h-armR"><path d="M139 123 Q151 126 153 142 L156 182 L141 184 L136 142 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M147.5 140 L150 140 L153.5 181 L151 181Z" fill="'+sl+'"/><circle cx="149" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><circle class="mk-hand" cx="149" cy="191" r="1" fill="none"/></g>';
+  /* "+" cross pose: right forearm vertical, left forearm horizontal crossing it */
   const cross = '<g class="h-cross">'+
-    '<path d="M62 124 Q50 132 54 150 Q60 164 80 166 L150 166 L150 180 L78 180 Q46 176 42 150 Q42 128 60 122Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M104 166 L112 166 L112 180 L104 180Z" fill="'+rd+'"/>'+
-    '<path d="M137 124 L152 122 L163 172 L147 176 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<rect x="147" y="92" width="17" height="84" rx="8" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<rect x="147" y="128" width="17" height="8" fill="'+rd+'"/>'+
-    '<circle cx="155.5" cy="90" r="10" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<circle cx="165" cy="130" r="9" fill="#bff3ff" filter="url(#'+p+'gl)"/></g>';
+    '<path d="M137 124 L152 121 L164 166 L149 171 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<rect x="149" y="88" width="17" height="84" rx="8" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M156 96 L159 96 L159 166 L156 166Z" fill="'+sl+'"/>'+
+    '<circle cx="157.5" cy="86" r="10" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M60 122 Q50 134 60 142 Q74 146 96 140 L118 136 L118 120 L94 124 Q76 126 68 118Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<rect x="112" y="118" width="74" height="17" rx="8" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M118 125 L180 125 L180 128 L118 128Z" fill="'+sl+'"/>'+
+    '<circle cx="189" cy="126.5" r="9.5" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<circle cx="158" cy="126.5" r="11" fill="#bff3ff" filter="url(#'+p+'gl)"/></g>';
+  const slug = '<g class="h-slug"><path d="M86 48 C85 28 92 12 100 2 C108 12 115 28 114 48 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<path d="M100 8 C96 20 95 32 96 46" stroke="#ff8a8a" stroke-width="3" fill="none" opacity=".8"/><path d="M104 12 C107 24 108 34 107 46" stroke="'+sl+'" stroke-width="2" fill="none"/>'+
+    '<polygon points="'+pent(100,38,5)+'" fill="#bfe9ff" stroke="#3d4352" stroke-width="1.5"/><circle class="mk-slug" cx="100" cy="24" r="1" fill="none"/></g>';
   const head = '<g class="h-head">'+
-    '<rect x="90" y="106" width="20" height="16" fill="#aab4c3" stroke="'+ol+'" stroke-width="2"/>'+
-    '<path d="M66 72 L46 50 L74 58 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2"/><path d="M134 72 L154 50 L126 58 Z" fill="'+rd+'" stroke="#7f1010" stroke-width="2"/>'+
-    '<ellipse cx="100" cy="72" rx="38" ry="42" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M68 52 Q100 26 132 52 L126 60 Q100 40 74 60 Z" fill="'+rd+'"/>'+
-    '<path d="M100 38 L106 46 L100 54 L94 46Z" fill="#ffd84d" stroke="#b45309" stroke-width="1.5"/>'+
-    '<path d="M100 56 L100 66" stroke="#9aa7b8" stroke-width="2"/>'+
-    '<ellipse class="h-eyeglow" cx="84" cy="77" rx="17" ry="12" fill="#fff3a0" filter="url(#'+p+'gl)"/><ellipse class="h-eyeglow" cx="116" cy="77" rx="17" ry="12" fill="#fff3a0" filter="url(#'+p+'gl)"/>'+
-    '<ellipse cx="84" cy="77" rx="13" ry="8.5" transform="rotate(14 84 77)" fill="url(#'+p+'ey)" stroke="#c99a00" stroke-width="1.5"/>'+
-    '<ellipse cx="116" cy="77" rx="13" ry="8.5" transform="rotate(-14 116 77)" fill="url(#'+p+'ey)" stroke="#c99a00" stroke-width="1.5"/>'+
-    '<path d="M91 99 Q100 106 109 99" stroke="'+ol+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+
-    '<path d="M70 80 Q72 96 84 106" stroke="#c81e1e" stroke-width="3" fill="none" opacity=".7"/><path d="M130 80 Q128 96 116 106" stroke="#c81e1e" stroke-width="3" fill="none" opacity=".7"/>'+
+    '<rect x="90" y="106" width="20" height="16" fill="#b3121a" stroke="'+ol+'" stroke-width="2"/>'+
+    '<ellipse cx="100" cy="72" rx="38" ry="42" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M65 60 Q62 82 72 100" stroke="'+sl+'" stroke-width="3" fill="none"/><path d="M135 60 Q138 82 128 100" stroke="'+sl+'" stroke-width="3" fill="none"/>'+
+    '<path d="M72 50 Q100 30 128 50 L123 57 Q100 42 77 57 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.5"/>'+
+    slug+
+    '<path d="M95 57 L100 63 L105 57" stroke="'+sl+'" stroke-width="2.5" fill="none" stroke-linejoin="round"/>'+
+    '<path d="M83 91 Q100 86 117 91 Q116 108 100 112 Q84 108 83 91Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+    '<path d="M92 99 Q100 104 108 99" stroke="#3d4352" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
+    '<ellipse class="h-eyeglow" cx="83" cy="74" rx="18" ry="13" fill="#8feaff" filter="url(#'+p+'gl)"/><ellipse class="h-eyeglow" cx="117" cy="74" rx="18" ry="13" fill="#8feaff" filter="url(#'+p+'gl)"/>'+
+    '<path d="M67 70 Q71 61 86 63 Q97 65 97 74 Q96 85 84 85 Q70 83 67 70 Z" fill="url(#'+p+'ey)" stroke="#0b3f7a" stroke-width="1.8"/>'+
+    '<path d="M133 70 Q129 61 114 63 Q103 65 103 74 Q104 85 116 85 Q130 83 133 70 Z" fill="url(#'+p+'ey)" stroke="#0b3f7a" stroke-width="1.8"/>'+
+    '<g stroke="#ffffff" stroke-width=".9" opacity=".45" fill="none"><path d="M72 71 Q84 67 95 72M74 78 Q85 75 95 79M84 64 L84 84"/><path d="M128 71 Q116 67 105 72M126 78 Q115 75 105 79M116 64 L116 84"/></g>'+
+    '<ellipse cx="80" cy="68" rx="4" ry="2.4" fill="#fff" opacity=".85"/><ellipse cx="112" cy="68" rx="4" ry="2.4" fill="#fff" opacity=".85"/>'+
     '</g>';
   return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#38bdf8">'+
     '<defs>'+
-    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e3e9f1"/><stop offset="1" stop-color="#9eabbd"/></linearGradient>'+
-    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5454"/><stop offset="1" stop-color="#c81e1e"/></linearGradient>'+
-    '<radialGradient id="'+p+'ey" cx=".45" cy=".4" r=".65"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#fff8c4"/><stop offset="1" stop-color="#ffd84d"/></radialGradient>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#dfe5ee"/><stop offset="1" stop-color="#98a5b8"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a5a"/><stop offset=".55" stop-color="#e3222a"/><stop offset="1" stop-color="#a50f16"/></linearGradient>'+
+    '<radialGradient id="'+p+'ey" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#f2ffff"/><stop offset=".45" stop-color="#8ee6ff"/><stop offset="1" stop-color="#1f86e6"/></radialGradient>'+
     '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>'+
     '</defs>'+
     '<ellipse class="h-aura" cx="100" cy="165" rx="92" ry="138" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".7"/>'+
     '<ellipse cx="100" cy="284" rx="52" ry="8" fill="#000" opacity=".28"/>'+
     legL + legR + kick + armL + torso + head + armR + cross +
-    '<circle class="mk-beam" cx="168" cy="130" r="1" fill="none"/>'+
+    '<circle class="mk-beam" cx="160" cy="126.5" r="1" fill="none"/>'+
     '</svg>';
 }
 
@@ -79,10 +87,14 @@ const MONS = {
   rock:{name:'岩石怪獸', nick:'石頭哥', body:'#a67c5b', light:'#d9b594', dark:'#5f3f28', belly:'#ecd6bb', shot:'#c8a27c'},
   poison:{name:'毒霧怪獸', nick:'紫紫', body:'#a35cf0', light:'#d2b0ff', dark:'#5b1d9a', belly:'#f0e3ff', shot:'#b6f25c'},
   sea:{name:'海浪怪獸', nick:'浪浪', body:'#27c4b0', light:'#98f0e2', dark:'#0d6b61', belly:'#d8fff7', shot:'#5ee8ff'},
-  boss:{name:'魔王怪獸', nick:'黑暗大魔王', body:'#5b2aa8', light:'#9f7ae0', dark:'#240b52', belly:'#c8b3f5', shot:'#ff4d6d', boss:true}
+  boss:{name:'魔王怪獸', nick:'黑暗大魔王', body:'#5b2aa8', light:'#9f7ae0', dark:'#240b52', belly:'#c8b3f5', shot:'#ff4d6d', boss:true},
+  kanegon:{name:'食錢怪', nick:'最鍾意食金幣', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
+  dada:{name:'三面怪人達達', nick:'最終大頭目', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true}
 };
 
 function monsterSVG(type, p){
+  if(type==='kanegon') return kanegonSVG(p);
+  if(type==='dada') return dadaSVG(p);
   const m = MONS[type]; const dk=m.dark;
   let back='', front='', body2='';
   if(type==='fire'){
@@ -135,6 +147,88 @@ function monsterSVG(type, p){
     '<path d="M104 141 L108 151 L113 143Z" fill="#fff"/><path d="M127 142 L131 151 L135 140Z" fill="#fff"/>'+
     front+
     '<circle class="mk-core" cx="120" cy="140" r="1" fill="none"/><circle class="mk-mouth" cx="100" cy="144" r="1" fill="none"/>'+
+    '</svg>';
+}
+
+
+/* Fan-art 食錢怪 (coin-purse head with zipper-lip mouth on top, eyes on stalks, chest coin counter) */
+function kanegonSVG(p){
+  const m=MONS.kanegon, dk=m.dark, bd='url(#'+p+'bd)', pu='url(#'+p+'pu)';
+  let teeth=''; for(let x=62;x<=176;x+=7){ const y=66+Math.pow((x-120)/58,2)*-3; teeth+='<rect x="'+x+'" y="'+(y-3).toFixed(1)+'" width="4" height="6" rx="1" fill="#e9eef5" stroke="#8a93a3" stroke-width=".8"/>'; }
+  let freck=''; [[96,100],[104,106],[112,99],[122,105],[130,99],[138,105],[146,100],[118,112],[88,106],[152,108]].forEach(q=>{ freck+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="2.1" fill="#3b1a06"/>'; });
+  let thorns=''; [[48,86,-1],[46,102,-1],[192,86,1],[194,102,1]].forEach(t=>{ const x=t[0],y=t[1],d=t[2]; thorns+='<path d="M'+x+' '+(y-6)+' L'+(x+d*14)+' '+(y-2)+' L'+x+' '+(y+5)+'Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="2" stroke-linejoin="round"/>'; });
+  [[78,74],[100,70],[140,70],[162,74]].forEach(t=>{ thorns+='<path d="M'+(t[0]-5)+' '+(t[1]+6)+' L'+t[0]+' '+(t[1]-6)+' L'+(t[0]+5)+' '+(t[1]+6)+'Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="1.8" stroke-linejoin="round" opacity=".95"/>'; });
+  const coin=(x,y,r)=>'<g><ellipse cx="'+x+'" cy="'+y+'" rx="'+r+'" ry="'+r+'" fill="#ffd23f" stroke="#a87400" stroke-width="2"/><ellipse cx="'+x+'" cy="'+y+'" rx="'+(r*.6)+'" ry="'+(r*.6)+'" fill="none" stroke="#fff3a8" stroke-width="1.5"/><text x="'+x+'" y="'+(y+r*.38)+'" text-anchor="middle" font-size="'+(r*1.1)+'" font-weight="900" fill="#a87400">$</text></g>';
+  return '<svg class="mon mon-kanegon" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">'+
+    '<defs><radialGradient id="'+p+'bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="'+m.light+'"/><stop offset=".55" stop-color="'+m.body+'"/><stop offset="1" stop-color="'+dk+'"/></radialGradient>'+
+    '<radialGradient id="'+p+'pu" cx=".4" cy=".25" r=".85"><stop offset="0" stop-color="#ffd08a"/><stop offset=".5" stop-color="#d98f3f"/><stop offset="1" stop-color="#7a3f12"/></radialGradient></defs>'+
+    '<ellipse cx="122" cy="229" rx="78" ry="9" fill="#000" opacity=".28"/>'+
+    '<path d="M168 196 Q214 200 230 164 L221 167 L224 154 L213 160 L214 147 L203 157 Q198 180 166 180Z" fill="'+bd+'" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"/>'+
+    '<rect x="86" y="190" width="24" height="26" rx="8" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/><rect x="130" y="190" width="24" height="26" rx="8" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/>'+
+    '<ellipse cx="96" cy="219" rx="20" ry="9" fill="'+dk+'"/><ellipse cx="144" cy="219" rx="20" ry="9" fill="'+dk+'"/>'+
+    '<g fill="#ffd23f" stroke="#a87400" stroke-width="1.5"><circle cx="88" cy="213" r="5"/><circle cx="100" cy="213" r="5"/><circle cx="140" cy="213" r="5"/><circle cx="152" cy="213" r="5"/></g>'+
+    '<path d="M80 118 Q66 168 84 204 Q120 214 156 204 Q174 168 160 118 Z" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/>'+
+    '<g stroke="'+dk+'" stroke-width="2.5" fill="none" opacity=".35"><path d="M82 150 Q120 160 158 150"/><path d="M80 172 Q120 182 160 172"/><path d="M84 192 Q120 200 156 192"/></g>'+
+    '<g class="k-reg"><rect x="126" y="140" width="34" height="21" rx="3" fill="#1d1d1d" stroke="#c0c6d0" stroke-width="2"/><text class="k-count" x="143" y="155.5" text-anchor="middle" font-size="12" font-family="monospace" font-weight="900" fill="#7dff7d">088</text><circle cx="133" cy="166" r="2.5" fill="#ff5b5b"/><circle cx="141" cy="166" r="2.5" fill="#ffd23f"/><circle cx="149" cy="166" r="2.5" fill="#5bff8a"/></g>'+
+    '<ellipse cx="72" cy="140" rx="11" ry="20" transform="rotate(38 72 140)" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/><g fill="'+m.light+'" stroke="'+dk+'" stroke-width="1.5"><circle cx="58" cy="126" r="4"/><circle cx="64" cy="121" r="4"/></g>'+
+    '<ellipse cx="170" cy="150" rx="10" ry="19" transform="rotate(-18 170 150)" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/>'+
+    thorns+
+    '<path d="M46 112 Q38 72 62 62 L178 62 Q202 72 194 112 Q120 140 46 112 Z" fill="'+pu+'" stroke="'+dk+'" stroke-width="3"/>'+
+    freck+
+    '<ellipse cx="80" cy="116" rx="9" ry="5" fill="#ff7a9a" opacity=".5"/><ellipse cx="160" cy="116" rx="9" ry="5" fill="#ff7a9a" opacity=".5"/>'+
+    '<path d="M84 62 Q70 44 60 32" stroke="'+dk+'" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M84 62 Q70 44 60 32" stroke="'+m.light+'" stroke-width="7" stroke-linecap="round" fill="none"/>'+
+    '<path d="M156 62 Q170 44 180 32" stroke="'+dk+'" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M156 62 Q170 44 180 32" stroke="'+m.light+'" stroke-width="7" stroke-linecap="round" fill="none"/>'+
+    '<g class="m-eyes"><circle cx="58" cy="26" r="15" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/><circle cx="182" cy="26" r="15" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/>'+
+    '<circle cx="55" cy="31" r="6.5" fill="#1f2937"/><circle cx="179" cy="31" r="6.5" fill="#1f2937"/><circle cx="53" cy="29" r="2.2" fill="#fff"/><circle cx="177" cy="29" r="2.2" fill="#fff"/>'+
+    '<path d="M42 24 Q56 8 74 20 L73 24 Q58 18 42 28Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="2"/><path d="M198 24 Q184 8 166 20 L167 24 Q182 18 198 28Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="2"/></g>'+
+    '<g class="m-ouch" stroke="#1f2937" stroke-width="4.5" stroke-linecap="round" fill="none"><path d="M48 18 L68 34M68 18 L48 34"/><path d="M172 18 L192 34M192 18 L172 34"/></g>'+
+    '<g class="k-closed"><path d="M54 67 Q120 92 186 67 Q120 78 54 67Z" fill="#f2b56a" stroke="'+dk+'" stroke-width="2.5"/><path d="M54 67 Q120 46 186 67 Q120 60 54 67Z" fill="#f7c98a" stroke="'+dk+'" stroke-width="2.5"/>'+teeth+'</g>'+
+    '<g class="k-open"><path d="M52 64 Q120 30 188 64 Q120 104 52 64Z" fill="#3b0d0d" stroke="'+dk+'" stroke-width="3"/><ellipse cx="120" cy="76" rx="32" ry="10" fill="#ff6f8e"/>'+
+    '<path d="M52 64 Q120 30 188 64 Q120 44 52 64Z" fill="#f7c98a" stroke="'+dk+'" stroke-width="2.5"/><path d="M52 64 Q120 104 188 64 Q120 90 52 64Z" fill="#f2b56a" stroke="'+dk+'" stroke-width="2.5"/></g>'+
+    '<path d="M116 52 L114 44 M124 52 L126 44" stroke="#a87400" stroke-width="3"/><circle cx="113" cy="40" r="6" fill="#ffd23f" stroke="#a87400" stroke-width="2"/><circle cx="127" cy="40" r="6" fill="#ffd23f" stroke="#a87400" stroke-width="2"/>'+
+    '<g class="m-float">'+coin(24,64,9)+'</g>'+
+    '<circle class="mk-core" cx="120" cy="140" r="1" fill="none"/><circle class="mk-mouth" cx="120" cy="64" r="1" fill="none"/>'+
+    '</svg>';
+}
+
+/* Fan-art 三面怪人達達 (black/white geometric stripes; three swappable faces A/B/C) */
+function dadaSVG(p){
+  const st='url(#'+p+'st)', vs='url(#'+p+'vs)', ck='url(#'+p+'ck)', K='#111';
+  const mask='<path d="M120 26 C140 26 146 50 145 66 C144 88 134 102 120 102 C106 102 96 88 95 66 C94 50 100 26 120 26Z" stroke="'+K+'" stroke-width="3"';
+  const faceA='<g class="d-face d-fa">'+mask+' fill="#ffe3ec"/>'+
+    '<ellipse cx="110" cy="58" rx="8" ry="11" fill="#ff4f9a" stroke="'+K+'" stroke-width="2"/><ellipse cx="130" cy="58" rx="8" ry="11" fill="#ff4f9a" stroke="'+K+'" stroke-width="2"/>'+
+    '<circle cx="109" cy="61" r="4" fill="'+K+'"/><circle cx="129" cy="61" r="4" fill="'+K+'"/><circle cx="107.5" cy="58" r="1.8" fill="#fff"/><circle cx="127.5" cy="58" r="1.8" fill="#fff"/>'+
+    '<ellipse cx="120" cy="86" rx="11" ry="8" fill="#7a1030" stroke="'+K+'" stroke-width="2"/><ellipse cx="120" cy="90" rx="6" ry="3" fill="#ff8fb0"/>'+
+    '<ellipse cx="103" cy="75" rx="5" ry="3" fill="#ff8fb0" opacity=".7"/><ellipse cx="137" cy="75" rx="5" ry="3" fill="#ff8fb0" opacity=".7"/></g>';
+  const faceB='<g class="d-face d-fb">'+mask+' fill="#e3f0ff"/>'+
+    '<path d="M98 64 L110 72 L99 84Z" fill="'+K+'"/><path d="M142 64 L130 72 L141 84Z" fill="'+K+'"/>'+
+    '<ellipse cx="111" cy="57" rx="7" ry="9" fill="#2f7bff" stroke="'+K+'" stroke-width="2"/><ellipse cx="129" cy="57" rx="7" ry="9" fill="#2f7bff" stroke="'+K+'" stroke-width="2"/>'+
+    '<circle cx="110" cy="59" r="3.5" fill="'+K+'"/><circle cx="128" cy="59" r="3.5" fill="'+K+'"/><circle cx="109" cy="56" r="1.6" fill="#fff"/><circle cx="127" cy="56" r="1.6" fill="#fff"/>'+
+    '<path d="M113 86 Q120 92 127 86" stroke="'+K+'" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
+  const faceC='<g class="d-face d-fc">'+mask+' fill="#fff4bf"/>'+
+    '<path d="M104 48 Q111 44 116 48M124 48 Q129 44 136 48" stroke="'+K+'" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
+    '<ellipse cx="111" cy="58" rx="4.5" ry="5.5" fill="#f5b800" stroke="'+K+'" stroke-width="2"/><ellipse cx="129" cy="58" rx="4.5" ry="5.5" fill="#f5b800" stroke="'+K+'" stroke-width="2"/>'+
+    '<circle cx="111" cy="59" r="2" fill="'+K+'"/><circle cx="129" cy="59" r="2" fill="'+K+'"/>'+
+    '<ellipse cx="120" cy="87" rx="5.5" ry="3.5" fill="#e2556e" stroke="'+K+'" stroke-width="1.5"/>'+
+    '<ellipse cx="104" cy="74" rx="5" ry="3" fill="#ffb14d" opacity=".6"/><ellipse cx="136" cy="74" rx="5" ry="3" fill="#ffb14d" opacity=".6"/></g>';
+  return '<svg class="mon mon-dada face-a" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">'+
+    '<defs><pattern id="'+p+'st" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="12" height="12" fill="#fff"/><rect width="6" height="12" fill="'+K+'"/></pattern>'+
+    '<pattern id="'+p+'vs" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fff"/><rect width="5" height="10" fill="'+K+'"/></pattern>'+
+    '<pattern id="'+p+'ck" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#fff"/><rect width="7" height="7" fill="'+K+'"/><rect x="7" y="7" width="7" height="7" fill="'+K+'"/></pattern></defs>'+
+    '<ellipse cx="120" cy="230" rx="62" ry="8" fill="#000" opacity=".28"/>'+
+    '<rect x="98" y="176" width="19" height="48" rx="6" fill="'+vs+'" stroke="'+K+'" stroke-width="3"/><rect x="123" y="176" width="19" height="48" rx="6" fill="'+vs+'" stroke="'+K+'" stroke-width="3"/>'+
+    '<ellipse cx="106" cy="226" rx="15" ry="7" fill="'+K+'"/><ellipse cx="134" cy="226" rx="15" ry="7" fill="'+K+'"/>'+
+    '<path d="M92 108 L60 128 L66 140 L98 124Z" fill="'+st+'" stroke="'+K+'" stroke-width="3" stroke-linejoin="round"/><circle cx="56" cy="130" r="10" fill="#fff" stroke="'+K+'" stroke-width="3"/><path d="M50 124 L44 118M52 136 L45 140" stroke="'+K+'" stroke-width="3" stroke-linecap="round"/>'+
+    '<path d="M148 108 L176 150 L166 156 L142 122Z" fill="'+st+'" stroke="'+K+'" stroke-width="3" stroke-linejoin="round"/><circle cx="174" cy="158" r="10" fill="#fff" stroke="'+K+'" stroke-width="3"/>'+
+    '<path d="M88 102 Q120 94 152 102 Q158 144 146 182 L94 182 Q82 144 88 102Z" fill="'+st+'" stroke="'+K+'" stroke-width="4"/>'+
+    '<path d="M120 116 L140 138 L120 160 L100 138Z" fill="'+ck+'" stroke="'+K+'" stroke-width="3"/>'+
+    '<path d="M90 112 Q104 126 100 150M150 112 Q136 126 140 150" stroke="'+K+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<rect x="92" y="166" width="56" height="10" fill="#fff" stroke="'+K+'" stroke-width="3"/><g fill="'+K+'"><rect x="98" y="168" width="6" height="6"/><rect x="110" y="168" width="6" height="6"/><rect x="122" y="168" width="6" height="6"/><rect x="134" y="168" width="6" height="6"/></g>'+
+    '<rect x="111" y="94" width="18" height="12" fill="'+vs+'" stroke="'+K+'" stroke-width="2.5"/>'+
+    '<g class="d-head"><ellipse cx="120" cy="60" rx="34" ry="46" fill="'+vs+'" stroke="'+K+'" stroke-width="4"/>'+
+    '<path d="M92 34 L100 16 L108 30Z M112 22 L120 6 L128 22Z M132 30 L140 16 L148 34Z" fill="'+K+'"/>'+
+    faceA+faceB+faceC+'</g>'+
+    '<circle class="mk-core" cx="120" cy="136" r="1" fill="none"/><circle class="mk-mouth" cx="54" cy="130" r="1" fill="none"/>'+
     '</svg>';
 }
 
