@@ -19,79 +19,128 @@ const ICONS = {
 function icon(name){ return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEach(el=>{ el.innerHTML = icon(el.dataset.icon); }); }
 
-/* Fan-art hero: 超人奧米加 (red body & face, silver lines, thick red crest, blue compound eyes, pentagon timer). Drawn from scratch. p = unique id prefix */
+/* Fan-art hero: chibi SD 超人（銀紅配金線、黃眼、圓形計時器）. Drawn from scratch — not official art. p = unique id prefix */
 function pent(cx,cy,r){ const pts=[]; for(let i=0;i<5;i++){ const a=(-90+i*72)*Math.PI/180; pts.push((cx+Math.cos(a)*r).toFixed(1)+','+(cy+Math.sin(a)*r).toFixed(1)); } return pts.join(' '); }
 function heroSVG(p){
-  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', ol='#3a1016', sl='#eef2f7', RC='#e8483e', RD='#b52a2a', OL=ol, TE='#38d6cf';
-  /* stroke-drawn limb helper: dark outline + red fill + highlight */
-  const limb=(d,w,cls)=>'<path d="'+d+'" stroke="'+OL+'" stroke-width="'+(w+4)+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="'+RC+'" stroke-width="'+w+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="#ff9d8f" stroke-width="'+(w*.22)+'" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55" transform="translate(-'+(w*.2)+',-'+(w*.12)+')"/>';
-  const limb2=(pts,w1,w2)=>{ const [a,b,c]=pts; const d1='M'+a+' L'+b, d2='M'+b+' L'+c; return '<path d="'+d1+'" stroke="'+OL+'" stroke-width="'+(w1+4)+'" stroke-linecap="round"/><path d="'+d2+'" stroke="'+OL+'" stroke-width="'+(w2+4)+'" stroke-linecap="round"/><path d="'+d1+'" stroke="'+RC+'" stroke-width="'+w1+'" stroke-linecap="round"/><path d="'+d2+'" stroke="'+RC+'" stroke-width="'+w2+'" stroke-linecap="round"/><path d="'+d1+'" stroke="#ff9d8f" stroke-width="'+(w1*.2)+'" stroke-linecap="round" opacity=".5" transform="translate(-'+(w1*.22)+',-1)"/><path d="'+d2+'" stroke="#ff9d8f" stroke-width="'+(w2*.2)+'" stroke-linecap="round" opacity=".5" transform="translate(-'+(w2*.22)+',-1)"/>'; };
-  const glove=(x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+RC+'" stroke="'+OL+'" stroke-width="2.5"/><path d="M'+(x-r*.55)+' '+(y-r*.35)+' q'+(r*.4)+' -'+(r*.4)+' '+(r*.9)+' -'+(r*.2)+'" stroke="#ffb3a8" stroke-width="2" fill="none" stroke-linecap="round"/>';
-  const cuff=(x1,y1,x2,y2)=>'<path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+OL+'" stroke-width="14" stroke-linecap="butt"/><path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+sl+'" stroke-width="10" stroke-linecap="butt"/>';
-  const legL = '<g class="h-legL"><path d="M74 168 C62 196 58 214 54 232 L44 260 L64 265 L76 232 C82 216 92 204 100 192 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
-    '<path d="M79 176 C69 204 63 222 51 259" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
-    '<path d="M42 256 L66 261 Q69 272 67 283 L31 283 Q29 275 36 270 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M42 261 L65 266" stroke="'+sl+'" stroke-width="3"/></g>';
-  const legR = '<g class="h-legR"><path d="M126 168 C138 196 142 214 146 232 L156 260 L136 265 L124 232 C118 216 108 204 100 192 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
-    '<path d="M121 176 C131 204 137 222 149 259" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
-    '<path d="M158 256 L134 261 Q131 272 133 283 L169 283 Q171 275 164 270 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M158 261 L135 266" stroke="'+sl+'" stroke-width="3"/></g>';
-  const kick = '<g class="h-kick">'+limb2(['112 182','150 175','180 170'],26,20)+'<path d="M118 180 L178 167" stroke="'+sl+'" stroke-width="4" stroke-linecap="round"/>'+
-    '<path d="M176 158 Q196 156 198 170 Q198 184 178 182 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M183 158 L183 183" stroke="'+sl+'" stroke-width="3"/></g>';
-  const torso = '<path d="M52 94 L148 94 Q146 120 135 138 Q124 156 122 168 L127 182 Q112 192 100 196 Q88 192 73 182 L78 168 Q76 156 65 138 Q54 120 52 94 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
-    '<path d="M62 110 Q72 150 83 170 Q92 186 99 194" stroke="'+sl+'" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M138 110 Q128 150 117 170 Q108 186 101 194" stroke="'+sl+'" stroke-width="7" fill="none" stroke-linecap="round"/>'+
-    '<path d="M86 150 Q100 160 114 150" stroke="#ff9d8f" stroke-width="2" fill="none" opacity=".6"/><path d="M100 152 L100 186" stroke="#9e1f22" stroke-width="1.5" opacity=".5"/>'+
-    /* neck */ '<path d="M91 76 L109 76 L111 94 L89 94 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
-    /* star/crown chest armour */
-    '<path d="M46 98 L68 85 L88 90 L100 96 L112 90 L132 85 L154 98 L150 110 L136 113 L131 128 L142 137 L118 139 L108 147 L100 159 L92 147 L82 139 L58 137 L69 128 L64 113 L50 110 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
-    '<path d="M50 99 L68 89 L86 94 L96 102 M150 99 L132 89 L114 94 L104 102" stroke="#fff" stroke-width="2" fill="none" opacity=".9"/>'+
-    '<path d="M70 128 L84 124 M130 128 L116 124 M82 138 L90 132 M118 138 L110 132 M100 158 L100 148" stroke="#8793a6" stroke-width="1.6" fill="none"/>'+
-    '<g stroke="'+TE+'" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M86 108 L68 104 L62 100"/><path d="M114 108 L132 104 L138 100"/><path d="M88 122 L74 130"/><path d="M112 122 L126 130"/><path d="M100 130 L100 146"/></g>'+
-    '<polygon points="'+pent(100,116,17)+'" fill="#c9d2de" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
-    '<polygon class="h-tglow" points="'+pent(100,116,15)+'" filter="url(#'+p+'gl)" opacity=".95"/>'+
-    '<polygon class="h-timer" points="'+pent(100,116,12.5)+'" stroke="#2b2a6e" stroke-width="1.5" stroke-linejoin="round"/>'+
-    '<g stroke="#fff" stroke-width=".9" opacity=".55" fill="none"><polygon points="'+pent(100,116,6.5)+'"/><path d="M100 103.5 L100 109.5 M111.9 112.1 L106.2 114 M107.3 126.1 L103.8 121.3 M92.7 126.1 L96.2 121.3 M88.1 112.1 L93.8 114"/></g>'+
-    '<g class="h-spiral"><path d="M100 116 m0 -1.3 a1.3 1.3 0 1 1 -1.3 1.3 a3 3 0 0 1 3 -3 a4.8 4.8 0 0 1 4.8 4.8" stroke="#fff" stroke-width="1.3" fill="none" opacity=".85"/></g>'+
-    '<path d="M94 108 L98 106" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/>'+
-    '<circle class="mk-chest" cx="100" cy="116" r="1" fill="none"/>';
-  /* straight arms (used by action poses) */
-  const armL = '<g class="h-armL">'+limb2(['56 100','52 140','54 170'],21,18)+'<path d="M47 106 L44 140 L46 164" stroke="'+sl+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+cuff(54,164,54,175)+glove(54,183,10.5)+'</g>';
-  const armR = '<g class="h-armR">'+limb2(['144 100','148 140','146 170'],21,18)+'<path d="M153 106 L156 140 L154 164" stroke="'+sl+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+cuff(146,164,146,175)+glove(146,183,10.5)+'<circle class="mk-hand" cx="146" cy="183" r="1" fill="none"/></g>';
-  /* idle fighting stance: front fist raised, back fist guarding chest */
+  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', gd='url(#'+p+'gd)', ol='#2a2438', OL=ol, RC='#e53935';
+  const arm=(side)=>{
+    /* side L: shoulder 62,118 ; R: 138,118 — stubby chibi limbs */
+    if(side==='L') return '<g class="h-armL">'+
+      '<path d="M62 118 C48 132 42 150 44 168" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
+      '<path d="M62 118 C48 132 42 150 44 168" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+      '<path d="M62 118 C52 130 48 142 46 152" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+      '<circle cx="44" cy="172" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
+      '<path d="M38 168 Q44 164 50 168" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/>'+
+      '</g>';
+    return '<g class="h-armR">'+
+      '<path d="M138 118 C152 132 158 150 156 168" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
+      '<path d="M138 118 C152 132 158 150 156 168" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+      '<path d="M138 118 C148 130 152 142 154 152" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+      '<circle cx="156" cy="172" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
+      '<path d="M150 168 Q156 164 162 168" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/>'+
+      '<circle class="mk-hand" cx="156" cy="172" r="1" fill="none"/>'+
+      '</g>';
+  };
+  const legL = '<g class="h-legL">'+
+    '<path d="M82 178 C74 198 70 218 66 242" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/>'+
+    '<path d="M82 178 C74 198 70 218 66 242" stroke="'+sv+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M82 178 C76 196 72 210 70 224" stroke="'+RC+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M54 238 Q66 232 78 240 L76 252 Q64 258 52 250 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2" stroke-linejoin="round"/>'+
+    '<path d="M58 242 L74 246" stroke="#ff9a90" stroke-width="2" opacity=".7"/>'+
+    '</g>';
+  const legR = '<g class="h-legR">'+
+    '<path d="M118 178 C126 198 130 218 134 242" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/>'+
+    '<path d="M118 178 C126 198 130 218 134 242" stroke="'+sv+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M118 178 C124 196 128 210 130 224" stroke="'+RC+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M146 238 Q134 232 122 240 L124 252 Q136 258 148 250 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2" stroke-linejoin="round"/>'+
+    '<path d="M126 246 L142 242" stroke="#ff9a90" stroke-width="2" opacity=".7"/>'+
+    '</g>';
+  const kick = '<g class="h-kick">'+
+    '<path d="M118 178 C148 170 176 166 188 164" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/>'+
+    '<path d="M118 178 C148 170 176 166 188 164" stroke="'+sv+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M118 178 C140 172 158 168 172 166" stroke="'+RC+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
+    '<path d="M180 152 Q200 150 202 166 Q200 182 178 178 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2"/>'+
+    '<path d="M186 154 L186 176" stroke="#ff9a90" stroke-width="2"/>'+
+    '</g>';
+  /* compact chibi torso: silver mid, red sides, gold V + circular timer */
+  const torso =
+    '<path d="M68 112 Q100 104 132 112 L138 168 Q100 186 62 168 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<path d="M68 112 L78 168 Q70 172 62 168 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
+    '<path d="M132 112 L122 168 Q130 172 138 168 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
+    /* gold chest V ornaments — thick plates like reference */
+    '<path d="M72 116 L100 152 L128 116 L118 114 L100 138 L82 114 Z" fill="'+gd+'" stroke="'+ol+'" stroke-width="1.8" stroke-linejoin="round"/>'+
+    '<path d="M78 118 L100 144 L122 118" fill="none" stroke="#fff3b0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>'+
+    '<path d="M86 120 L100 140 L114 120" fill="none" stroke="#e53935" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
+    /* circular color timer */
+    '<circle cx="100" cy="138" r="15" fill="#cfd8e6" stroke="'+ol+'" stroke-width="2.2"/>'+
+    '<circle class="h-tglow" cx="100" cy="138" r="12.5" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<circle class="h-timer" cx="100" cy="138" r="11" stroke="#1e3a5f" stroke-width="1.5"/>'+
+    '<circle cx="96" cy="134" r="3.5" fill="#fff" opacity=".6"/>'+
+    '<g class="h-spiral"><path d="M100 138 m0 -2.2 a2.2 2.2 0 1 1 -2.2 2.2 a4.5 4.5 0 0 1 4.5 -4.5" stroke="#fff" stroke-width="1.3" fill="none" opacity=".85"/></g>'+
+    '<circle class="mk-chest" cx="100" cy="138" r="1" fill="none"/>'+
+    /* neck */
+    '<path d="M88 98 L112 98 L114 114 L86 114 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>';
+  /* idle: one fist up, one guard — chibi heroic */
   const guard = '<g class="h-guard">'+
-    limb2(['56 100','40 140','70 150'],21,18)+'<path d="M49 104 L35 136" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(64,148,73,151)+glove(80,153,10.5)+
-    limb2(['144 100','170 134','176 96'],21,18)+'<path d="M150 101 L174 131" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(175,104,176,95)+glove(177,85,11)+
+    '<path d="M62 118 C40 128 36 148 58 158" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
+    '<path d="M62 118 C40 128 36 148 58 158" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+    '<path d="M62 118 C46 126 42 140 50 150" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="62" cy="160" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
+    '<path d="M138 118 C160 100 168 78 158 68" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
+    '<path d="M138 118 C160 100 168 78 158 68" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+    '<path d="M138 118 C154 104 160 88 158 78" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="156" cy="64" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
     '</g>';
-  /* "+" cross pose */
+  /* Specium-style cross beam pose */
   const cross = '<g class="h-cross">'+
-    limb2(['56 100','80 124','150 116'],21,18)+limb2(['144 100','155 156','155 76'],21,18)+
-    limb('M86 118 L184 115',18)+'<path d="M100 111 L178 110" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(176,115,184,115)+glove(192,115,10.5)+
-    '<path d="M161 150 L161 82" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(155,82,155,73)+glove(155,64,10.5)+
-    '<circle cx="155" cy="115" r="13" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="155" cy="115" r="5.5" fill="#fff"/></g>';
-  const slug = '<g class="h-slug"><path d="M93.5 36 L100 1 L106.5 36 Q104 46 100 56 Q96 46 93.5 36 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2" stroke-linejoin="round"/>'+
-    '<path d="M95.5 34 L100 7 L104.5 34" stroke="'+sl+'" stroke-width="2" fill="none" stroke-linejoin="round"/><path d="M100 10 L100 50" stroke="#ff9d8f" stroke-width="1.6" opacity=".8"/>'+
-    '<circle class="mk-slug" cx="100" cy="24" r="1" fill="none"/></g>';
-  const head = '<g class="h-head" transform="translate(100 84) scale(1.1) translate(-100 -84)">'+
-    '<path d="M100 26 C115 26 123 38 123 52 C123 65 116 75 108 81 L92 81 C84 75 77 65 77 52 C77 38 85 26 100 26 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M78 44 C76 58 81 70 90 79 L93 73 C87 66 85 56 86 46 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.6"/><path d="M122 44 C124 58 119 70 110 79 L107 73 C113 66 115 56 114 46 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.6"/>'+
-    '<path d="M84 34 Q92 29 97 31" stroke="#ffb3a8" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>'+
-    slug+
-    '<path class="h-eyeglow" d="M97.5 56 L95.5 46 Q88 41.5 80 43.5 L76.5 48.5 Q83 59.5 97.5 56 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/><path class="h-eyeglow" d="M102.5 56 L104.5 46 Q112 41.5 120 43.5 L123.5 48.5 Q117 59.5 102.5 56 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/>'+
-    '<path d="M97.5 56 L95.5 46 Q88 41.5 80 43.5 L76.5 48.5 Q83 59.5 97.5 56 Z" fill="url(#'+p+'ey)" stroke="#0b3f5a" stroke-width="1.6" stroke-linejoin="round"/>'+
-    '<path d="M102.5 56 L104.5 46 Q112 41.5 120 43.5 L123.5 48.5 Q117 59.5 102.5 56 Z" fill="url(#'+p+'ey)" stroke="#0b3f5a" stroke-width="1.6" stroke-linejoin="round"/>'+
-    '<g stroke="#ffffff" stroke-width=".8" opacity=".6" fill="none"><path d="M81 47 L96 52 M88 45 L86 55 M93 46 L91 55"/><path d="M119 47 L104 52 M112 45 L114 55 M107 46 L109 55"/></g>'+
-    '<path d="M84 47 L89 46" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M111 46 L116 47" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>'+
-    '<path d="M92.5 65 L107.5 65 L105.5 75 L94.5 75 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8" stroke-linejoin="round"/><path d="M96 70 L104 70" stroke="#4a5263" stroke-width="1.6" stroke-linecap="round"/>'+
+    '<path d="M62 118 C90 128 130 124 168 120" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
+    '<path d="M62 118 C90 128 130 124 168 120" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+    '<path d="M138 118 C148 150 148 70 148 58" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
+    '<path d="M138 118 C148 150 148 70 148 58" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
+    '<circle cx="176" cy="120" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
+    '<circle cx="148" cy="52" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
+    '<circle cx="148" cy="120" r="12" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="148" cy="120" r="5" fill="#fff"/>'+
     '</g>';
-  return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#6d7cff">'+
+  const slug = '<g class="h-slug">'+
+    '<path d="M90 34 L100 -4 L110 34 Q106 48 100 58 Q94 48 90 34 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<path d="M94 32 L100 4 L106 32" stroke="#fff" stroke-width="2.5" fill="none" opacity=".8"/>'+
+    '<circle class="mk-slug" cx="100" cy="20" r="1" fill="none"/>'+
+    '</g>';
+  const head = '<g class="h-head">'+
+    /* big silver dome head */
+    '<ellipse cx="100" cy="68" rx="50" ry="46" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.8"/>'+
+    '<ellipse cx="100" cy="68" rx="42" ry="38" fill="none" stroke="#fff" stroke-width="2" opacity=".25"/>'+
+    /* side panels */
+    '<path d="M58 58 Q54 78 66 100 L74 90 Q64 74 64 58 Z" fill="#a8b6c8" stroke="'+ol+'" stroke-width="1.5" opacity=".85"/>'+
+    '<path d="M142 58 Q146 78 134 100 L126 90 Q136 74 136 58 Z" fill="#a8b6c8" stroke="'+ol+'" stroke-width="1.5" opacity=".85"/>'+
+    /* ear fins */
+    '<rect x="44" y="52" width="14" height="22" rx="4" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+    '<rect x="142" y="52" width="14" height="22" rx="4" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+    slug+
+    /* big yellow glowing eyes */
+    '<ellipse class="h-eyeglow" cx="76" cy="72" rx="18" ry="13" fill="#ffe566" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<ellipse class="h-eyeglow" cx="124" cy="72" rx="18" ry="13" fill="#ffe566" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<ellipse cx="76" cy="72" rx="15.5" ry="11.5" fill="url(#'+p+'ey)" stroke="#8a5a00" stroke-width="1.6"/>'+
+    '<ellipse cx="124" cy="72" rx="15.5" ry="11.5" fill="url(#'+p+'ey)" stroke="#8a5a00" stroke-width="1.6"/>'+
+    '<ellipse cx="70" cy="67" rx="4.5" ry="3" fill="#fff" opacity=".9"/>'+
+    '<ellipse cx="118" cy="67" rx="4.5" ry="3" fill="#fff" opacity=".9"/>'+
+    /* tiny mouth */
+    '<path d="M94 90 Q100 94 106 90" stroke="#5a4a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+    /* cheek shine */
+    '<path d="M60 48 Q78 38 92 44" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".55"/>'+
+    '</g>';
+  return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
     '<defs>'+
-    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#e2e8f0"/><stop offset="1" stop-color="#9aa6b8"/></linearGradient>'+
-    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8474"/><stop offset=".5" stop-color="#e8483e"/><stop offset="1" stop-color="#ad2628"/></linearGradient>'+
-    '<radialGradient id="'+p+'ey" cx=".5" cy=".45" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#a6fbff"/><stop offset="1" stop-color="#1fb6d6"/></radialGradient>'+
-    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.5"/></filter>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#e8eef6"/><stop offset="1" stop-color="#9aabbc"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b63"/><stop offset=".55" stop-color="#e53935"/><stop offset="1" stop-color="#b71c1c"/></linearGradient>'+
+    '<linearGradient id="'+p+'gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe566"/><stop offset=".5" stop-color="#f5c542"/><stop offset="1" stop-color="#e6a817"/></linearGradient>'+
+    '<radialGradient id="'+p+'ey" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#fffde7"/><stop offset=".45" stop-color="#ffeb3b"/><stop offset="1" stop-color="#f9a825"/></radialGradient>'+
+    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.2"/></filter>'+
     '</defs>'+
-    '<ellipse class="h-aura" cx="100" cy="150" rx="96" ry="146" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".7"/>'+
-    '<ellipse cx="100" cy="284" rx="72" ry="8" fill="#000" opacity=".28"/>'+
-    legL + legR + kick + armL + armR + torso + head + guard + cross +
-    '<circle class="mk-beam" cx="157" cy="115" r="1" fill="none"/>'+
+    '<ellipse class="h-aura" cx="100" cy="150" rx="92" ry="130" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".65"/>'+
+    '<ellipse cx="100" cy="268" rx="58" ry="8" fill="#000" opacity=".25"/>'+
+    legL + legR + kick + arm('L') + arm('R') + torso + head + guard + cross +
+    '<circle class="mk-beam" cx="148" cy="120" r="1" fill="none"/>'+
     '</svg>';
 }
 
