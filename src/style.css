@@ -114,6 +114,14 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes flicker{from{transform:scale(1,1)}to{transform:scale(1.06,.9)}}
 .mon .m-float{animation:mfloat 2s ease-in-out infinite alternate}
 @keyframes mfloat{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+.mon-ice .ic-wing{transform-box:view-box;transform-origin:120px 120px;animation:icflap 2.4s ease-in-out infinite alternate}
+@keyframes icflap{from{transform:scaleY(1)}to{transform:scaleY(1.06) translateY(-3px)}}
+.mon-thunder .thun-cloak{animation:thcloak 4.5s ease-in-out infinite}
+@keyframes thcloak{0%,70%,100%{opacity:1}80%{opacity:.22}90%{opacity:.85}}
+.mon-poison .tt-tail{transform-box:view-box;transform-origin:160px 168px;animation:ttwhip 1.8s ease-in-out infinite alternate}
+@keyframes ttwhip{from{transform:rotate(-4deg)}to{transform:rotate(6deg)}}
+.mon-boss .bs-wing{transform-box:view-box;transform-origin:120px 110px;animation:bswing 2.6s ease-in-out infinite alternate}
+@keyframes bswing{from{transform:scaleY(1)}to{transform:scaleY(1.05) translateY(-2px)}}
 
 /* PICK (learn) + SETUP tiles */
 .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:760px}

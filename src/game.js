@@ -470,79 +470,153 @@ async function monsterAttack(){
   };
 
   if(type==='dada'){
-    dadaSwitch(false); showMoveName('三面混亂光！','banner',1100);
+    dadaSwitch(false); showMoveName('三面幻影・次元亂光！','banner',1200);
     const L=lunge(); await sleep(200*K());
     for(let i=0;i<3;i++){ dadaSwitch(false); const oo=o(), th=tHero();
       const orb=fxEl('orb'); orb.style.background='repeating-radial-gradient(circle,#fff 0 4px,'+s.shot+' 4px 8px)'; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
       play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:320*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
       await sleep(140*K()); }
-    hitHero('變面攻擊！',['#fff',s.shot,'#ff6fb0']); await L; await sleep(200*K()); return;
+    hitHero('三面同擊！',['#fff',s.shot,'#ff6fb0']); await L; await sleep(200*K()); return;
   }
   if(type==='kanegon'){
     if(msv){ msv.classList.add('open'); setTimeout(()=>msv.classList.remove('open'),900); }
-    showMoveName('偽幣彈幕！','banner',1000);
+    showMoveName('銅臭大爆發・偽幣彈幕！','banner',1200);
     const L=lunge(); await sleep(220*K()); const oo=o(), th=tHero();
-    for(let i=0;i<6;i++){ FX.burst(oo.x,oo.y,{n:2,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.35,speed:9,min:5,colors:['#ffd23f'],shape:'coin',size:10,life:50,gravity:.2,drag:.99}); if(i%2===0) Sfx.coin(); await sleep(60*K()); }
-    hitHero('金幣砸中！',['#ffd23f','#fff']); await L; await sleep(200*K()); return;
+    for(let i=0;i<8;i++){ FX.burst(oo.x,oo.y,{n:3,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.45,speed:10,min:5,colors:['#ffd23f','#fff3a8'],shape:'coin',size:11,life:55,gravity:.2,drag:.99}); if(i%2===0) Sfx.coin(); await sleep(55*K()); }
+    hitHero('金幣暴雨！',['#ffd23f','#fff']); await L; await sleep(200*K()); return;
   }
   if(type==='graim'){
-    showMoveName('鑽頭突刺！','banner',1000); Sfx.whoosh();
-    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-22%) rotate(-12deg)',offset:.45},{transform:'translateX(0) rotate(0)'}],{duration:780*K()});
-    await sleep(320*K()); hitHero('鑽中喇！',['#ff8a1c','#fff','#ffd84d']);
-    const th=tHero(); FX.burst(th.x,th.y,{n:22,speed:8,colors:['#ff8a1c','#ffe066'],shape:'star',size:8}); await L; await sleep(180*K()); return;
+    showMoveName('地獄鑽頭・地脈貫通裂！','banner',1200); Sfx.whoosh();
+    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-24%) rotate(-14deg)',offset:.45},{transform:'translateX(0) rotate(0)'}],{duration:800*K()});
+    await sleep(300*K()); const th=tHero();
+    for(let i=0;i<3;i++){ FX.burst(th.x+rand(-20,20),th.y+rand(-10,10),{n:10,speed:9,colors:['#ff8a1c','#ffe066','#a8a29e'],shape:'star',size:8}); await sleep(60*K()); }
+    hitHero('貫通！',['#ff8a1c','#fff','#ffd84d']); shake(12); await L; await sleep(180*K()); return;
   }
   if(type==='dugrid'){
-    showMoveName('毒液大口！','banner',1000);
+    showMoveName('鈾金大口・毒瓣吞噬！','banner',1200);
     if(msv){ msv.classList.add('ouch'); setTimeout(()=>msv.classList.remove('ouch'),500); }
-    return shootOrb('radial-gradient(circle,#d9f99d 0 20%,#a3e635 35% 55%,#3f6212 60%,rgba(0,0,0,0) 70%)','毒液！');
+    const L=lunge(); await sleep(200*K()); const oo=o(), th=tHero();
+    for(let i=0;i<5;i++){ FX.burst(oo.x,oo.y,{n:4,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.5,speed:8,colors:['#a3e635','#c084fc','#d9f99d'],size:8,life:40}); await sleep(70*K()); }
+    hitHero('吞噬！',['#a3e635','#c084fc']); await L; await sleep(180*K()); return;
   }
   if(type==='pegunos'){
-    showMoveName('無重力拍擊！','banner',1000);
-    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-8%,-28%)',offset:.35},{transform:'translate(-16%,-10%)',offset:.55},{transform:'translate(0,0)'}],{duration:900*K()});
-    await sleep(400*K()); hitHero('浮起咗！',['#bfefff','#fff']);
-    await play(heroWrap,[{transform:'translateY(0)'},{transform:'translateY(-18%)',offset:.4},{transform:'translateY(0)'}],{duration:700*K()});
+    showMoveName('無重蒼穹・羽翼俯衝斬！','banner',1200);
+    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-6%,-32%)',offset:.3},{transform:'translate(-20%,-8%) rotate(-10deg)',offset:.55},{transform:'translate(0,0)'}],{duration:950*K()});
+    await sleep(420*K()); hitHero('俯衝斬！',['#bfefff','#fff','#7fe3ff']);
+    const th=tHero(); FX.spiral(th.x,th.y,{n:24,r:18,speed:6,colors:['#bfefff','#fff'],size:6}); 
+    await play(heroWrap,[{transform:'translateY(0)'},{transform:'translateY(-20%)',offset:.4},{transform:'translateY(0)'}],{duration:700*K()});
     await L; await sleep(150*K()); return;
   }
   if(type==='therizirus'){
-    showMoveName('隱形突襲！','banner',1000);
-    await play(monWrap,[{opacity:1},{opacity:.15}],{duration:280*K(),fill:'forwards'});
-    await sleep(200*K());
-    await play(monWrap,[{transform:'translateX(0)',opacity:.15},{transform:'translateX(-28%)',opacity:.9,offset:.5},{transform:'translateX(0)',opacity:1}],{duration:700*K()});
-    hitHero('爪擊！',['#ff4d6d','#fff']); await sleep(200*K()); return;
+    showMoveName('赤鐮隱形・千裂一閃！','banner',1200);
+    await play(monWrap,[{opacity:1},{opacity:.12}],{duration:260*K(),fill:'forwards'});
+    await sleep(180*K());
+    await play(monWrap,[{transform:'translateX(0)',opacity:.12},{transform:'translateX(-30%)',opacity:1,offset:.45},{transform:'translateX(0)',opacity:1}],{duration:720*K()});
+    const th=tHero(); for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
+      play(sl,[{transform:'rotate('+(-40+i*22)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-40+i*22)+'deg) scaleX(1)',opacity:0}],{duration:280}).then(()=>rm(sl)); Sfx.shing(); await sleep(50*K()); }
+    hitHero('千裂！',['#ff4d6d','#fff','#ff7ac8']); await sleep(200*K()); return;
   }
   if(type==='ohebinushi'){
-    showMoveName('蛇尾橫掃！','banner',1000);
-    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(-18deg) translateX(-10%)',offset:.4},{transform:'rotate(8deg) translateX(-4%)',offset:.7},{transform:'rotate(0)'}],{duration:850*K()});
-    await sleep(350*K()); hitHero('掃中！',['#ffd166','#fff']); shake(10); await L; await sleep(150*K()); return;
+    showMoveName('神州長頸・九天一嘯掃！','banner',1200);
+    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(-22deg) translateX(-12%)',offset:.35},{transform:'rotate(12deg) translateX(-6%)',offset:.65},{transform:'rotate(0)'}],{duration:900*K()});
+    await sleep(320*K()); hitHero('九天掃！',['#ffd166','#fff','#efe4c4']); shake(14);
+    FX.burst(tHero().x,tHero().y,{n:28,speed:10,colors:['#ffd166','#fff'],shape:'star',size:9}); await L; await sleep(150*K()); return;
   }
   if(type==='gedrago'){
-    showMoveName('粉紅衝撞！','banner',1000);
-    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.15) translateX(-20%)',offset:.5},{transform:'scale(1) translateX(0)'}],{duration:780*K()});
-    await sleep(300*K()); hitHero('毛毛衝！',['#ff8fc8','#fff','#ffd1e8']); FX.burst(tHero().x,tHero().y,{n:24,speed:7,colors:['#ff8fc8','#fff'],size:7}); await L; await sleep(150*K()); return;
+    showMoveName('粉紅毛毛・友情爆走衝！','banner',1200);
+    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.2) translateX(-22%)',offset:.5},{transform:'scale(1) translateX(0)'}],{duration:800*K()});
+    await sleep(280*K()); hitHero('爆走！',['#ff8fc8','#fff','#ffd1e8']);
+    FX.burst(tHero().x,tHero().y,{n:36,speed:8,colors:['#ff8fc8','#fff','#ffd1e8'],size:8,shape:'star'}); await L; await sleep(150*K()); return;
   }
-  if(type==='vugsect'||type==='boss'){
-    showMoveName(type==='vugsect'?'甲殼破壞光！':'黑暗魔彈！','banner',1100);
-    return shootOrb(type==='vugsect'
-      ? 'radial-gradient(circle,#fff 0 18%,#ff3b6b 40%,#2c2342 58%,rgba(0,0,0,0) 70%)'
-      : 'radial-gradient(circle,#fff 0 18%,#ff4d6d 40%,#5b2aa8 58%,rgba(0,0,0,0) 70%)', type==='vugsect'?'甲光！':'魔彈！');
+  if(type==='vugsect'){
+    showMoveName('甲殼雙鐮・破界破壞光！','banner',1200);
+    const L=lunge(); await sleep(220*K()); const oo=o(), th=tHero();
+    makeBeam(oo,th,28,'super',900); Sfx.beam();
+    await sleep(200*K()); hitHero('破界！',['#ff3b6b','#fff','#c4a0ff']); FX.ring(th.x,th.y,'#ff3b6b',36); await L; await sleep(180*K()); return;
   }
-  if(type==='rekiness'||type==='trigaron'){
-    showMoveName('流星特訓彈！','banner',1000);
-    return shootOrb('radial-gradient(circle,#fff 0 20%,'+s.shot+' 40%,rgba(255,255,255,0) 70%)','特訓！');
+  if(type==='boss'){
+    showMoveName('千芒閃光・混沌吞噬！','banner',1300);
+    const L=lunge(); await sleep(200*K()); const oo=o(), th=tHero();
+    for(let i=0;i<5;i++){
+      const orb=fxEl('orb'); orb.style.background='radial-gradient(circle,#fff 0 15%,#ff4d6d 35%,#5b2aa8 55%,rgba(0,0,0,0) 70%)';
+      orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
+      const jx=rand(-30,30), jy=rand(-40,20);
+      play(orb,[{transform:'translate(0,0) scale(.3)'},{transform:'translate('+(th.x-oo.x+jx)+'px,'+(th.y-oo.y+jy)+'px) scale(1.1)'}],{duration:360*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
+      await sleep(90*K());
+    }
+    hitHero('混沌吞噬！',['#ff4d6d','#c4a0ff','#fff']); FX.spiral(th.x,th.y,{n:30,r:22,speed:7,colors:['#ff4d6d','#c4a0ff','#fff'],size:7}); await L; await sleep(200*K()); return;
   }
-  // cute elementals
-  const labels={fire:['火焰彈！','燒到！'],ice:['冰錐！','凍親！'],thunder:['雷擊！','觸電！'],rock:['落石！','砸中！'],poison:['毒霧！','咳咳！'],sea:['水彈！','濕晒！']};
-  const lab=labels[type]||['攻擊！','哎呀！'];
-  showMoveName(lab[0],'banner',900);
-  const styles={
-    fire:'radial-gradient(circle,#fff7ed 0 15%,#ff9f1c 35%,#ea580c 55%,rgba(0,0,0,0) 70%)',
-    ice:'radial-gradient(circle,#fff 0 20%,#bae6fd 40%,#38bdf8 60%,rgba(0,0,0,0) 72%)',
-    thunder:'radial-gradient(circle,#fff 0 18%,#fde047 40%,#eab308 58%,rgba(0,0,0,0) 70%)',
-    rock:'radial-gradient(circle,#e7e5e4 0 25%,#a8a29e 50%,#57534e 65%,rgba(0,0,0,0) 75%)',
-    poison:'radial-gradient(circle,#f7fee7 0 18%,#b6f25c 40%,#65a30d 58%,rgba(0,0,0,0) 70%)',
-    sea:'radial-gradient(circle,#ecfeff 0 18%,#5ee8ff 40%,#06b6d4 58%,rgba(0,0,0,0) 70%)'
-  };
-  return shootOrb(styles[type]||('radial-gradient(circle,#fff 0 22%,'+s.shot+' 45%,rgba(255,255,255,0) 72%)'), lab[1]);
+  if(type==='rekiness'){
+    showMoveName('流星守護・虹晶特訓彈！','banner',1200);
+    return shootOrb('radial-gradient(circle,#fff 0 18%,#b58cff 40%,#2f7fe0 60%,rgba(0,0,0,0) 72%)','虹晶特訓！');
+  }
+  if(type==='trigaron'){
+    showMoveName('黑金流星・翼刃特訓斬！','banner',1200);
+    const L=lunge(); await sleep(220*K()); const th=tHero();
+    for(let i=0;i<3;i++){ const len=Math.max(monWrap.clientWidth*1.1,150); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
+      play(sl,[{transform:'rotate('+(-28+i*28)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-28+i*28)+'deg) scaleX(1.1)',opacity:0}],{duration:320}).then(()=>rm(sl)); Sfx.shing(); await sleep(80*K()); }
+    hitHero('翼刃斬！',['#ffc21a','#fff','#6a7280']); FX.burst(th.x,th.y,{n:22,speed:9,colors:['#ffc21a','#fff'],shape:'star',size:8}); await L; await sleep(150*K()); return;
+  }
+  if(type==='fire'){
+    showMoveName('熔岩甲獸・地心噴火！','banner',1200);
+    const L=lunge(); await sleep(200*K()); const th=tHero(); const oo=o();
+    for(let i=0;i<6;i++){
+      FX.burst(oo.x+rand(-16,16),oo.y,{n:5,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.4,speed:9,colors:['#ff6a00','#ffb703','#fff3b0'],size:9,life:45,gravity:.15});
+      if(i%2===0) Sfx.whoosh(); await sleep(70*K());
+    }
+    hitHero('地心噴火！',['#ff6a00','#ffb703','#fff']); flash('#ff8a3d',.35); await L; await sleep(180*K()); return;
+  }
+  if(type==='ice'){
+    showMoveName('絕對零度・霜翼凍結！','banner',1200);
+    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-4%,-10%)',offset:.3},{transform:'translate(-12%,0)',offset:.55},{transform:'translate(0,0)'}],{duration:850*K()});
+    await sleep(280*K()); const oo=o(), th=tHero();
+    makeBeam(oo,th,22,'',900); Sfx.beam();
+    await sleep(200*K()); hitHero('凍結！',['#bae6fd','#fff','#7ec8f5']);
+    FX.burst(th.x,th.y,{n:30,speed:6,colors:['#e8f7ff','#bae6fd','#fff'],size:8,life:55,gravity:.05,shape:'star'}); FX.ring(th.x,th.y,'#bae6fd',40);
+    await L; await sleep(180*K()); return;
+  }
+  if(type==='thunder'){
+    showMoveName('十萬伏特・隱身雷鞭！','banner',1200);
+    await play(monWrap,[{opacity:1},{opacity:.18}],{duration:240*K(),fill:'forwards'});
+    await sleep(160*K());
+    const th=tHero(); const oo=(()=>{ const p=relPos(monWrap); return {x:p.x,y:p.y}; })();
+    for(let i=0;i<4;i++){
+      makeBeam({x:oo.x+rand(-20,20),y:oo.y+rand(-30,10)},{x:th.x+rand(-16,16),y:th.y+rand(-12,12)}, 10+i*3, '', 420);
+      Sfx.beam(); FX.burst(th.x,th.y,{n:8,speed:10,colors:['#fde047','#fff','#fff06a'],size:6,shape:'star'}); await sleep(90*K());
+    }
+    await play(monWrap,[{transform:'translateX(0)',opacity:.18},{transform:'translateX(-18%)',opacity:1,offset:.5},{transform:'translateX(0)',opacity:1}],{duration:600*K()});
+    hitHero('雷鞭！',['#fde047','#fff']); flash('#fff06a',.4); await sleep(180*K()); return;
+  }
+  if(type==='rock'){
+    showMoveName('超振動・斷空新月角！','banner',1200); Sfx.whoosh();
+    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-20%) rotate(-16deg)',offset:.4},{transform:'translateX(0) rotate(0)'}],{duration:820*K()});
+    await sleep(300*K()); const th=tHero();
+    hitHero('新月角！',['#a8a29e','#fff','#d0d4dc']); shake(14);
+    FX.burst(th.x,th.y,{n:26,speed:11,colors:['#a8a29e','#57534e','#fff'],size:9,shape:'star',gravity:.2}); impactStar(th,'角！');
+    await L; await sleep(180*K()); return;
+  }
+  if(type==='poison'){
+    showMoveName('雙尾纏殺・地底暗殺！','banner',1200);
+    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(12deg) translateX(-8%)',offset:.3},{transform:'rotate(-14deg) translateX(-14%)',offset:.55},{transform:'rotate(0)'}],{duration:900*K()});
+    await sleep(280*K()); const oo=o(), th=tHero();
+    for(let i=0;i<2;i++){
+      const whip=fxEl('beam'); whip.style.cssText='left:'+oo.x+'px;top:'+(oo.y-4)+'px;width:'+Math.hypot(th.x-oo.x,th.y-oo.y)+'px;height:8px;background:linear-gradient(90deg,#a3e635,#65a30d);transform-origin:0 50%;border-radius:4px';
+      const ang=Math.atan2(th.y-oo.y+(i?20:-20),th.x-oo.x)*180/Math.PI;
+      play(whip,[{transform:'rotate('+ang+'deg) scaleX(0)',opacity:1},{transform:'rotate('+ang+'deg) scaleX(1)',opacity:1,offset:.4},{transform:'rotate('+ang+'deg) scaleX(1)',opacity:0}],{duration:400*K()}).then(()=>rm(whip));
+      await sleep(120*K());
+    }
+    hitHero('纏殺！',['#a3e635','#c084fc','#fff']); FX.burst(th.x,th.y,{n:20,speed:7,colors:['#a3e635','#c084fc'],size:7}); await L; await sleep(180*K()); return;
+  }
+  if(type==='sea'){
+    showMoveName('深淵黑洞・撕空一咬！','banner',1200);
+    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.12) translateX(-24%)',offset:.45},{transform:'scale(1) translateX(0)'}],{duration:820*K()});
+    await sleep(280*K()); const th=tHero();
+    FX.spiral(th.x,th.y,{n:28,r:16,speed:-8,colors:['#38bdf8','#0e7490','#fff'],size:7,life:40});
+    hitHero('撕空咬！',['#38bdf8','#fff','#9ff3ff']); shake(11); flash('#38bdf8',.3);
+    await L; await sleep(180*K()); return;
+  }
+  showMoveName(s.nick+'！','banner',1000);
+  return shootOrb('radial-gradient(circle,#fff 0 22%,'+s.shot+' 45%,rgba(255,255,255,0) 72%)','反擊！');
 }
 async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
   FX.burst(t.x,t.y,{n:60,speed:9,shape:'star',colors:['#bff3ff','#fff','#ffe066','#9ad8ff'],size:11,life:80,gravity:.05}); FX.ring(t.x,t.y,'#bff3ff',36);
