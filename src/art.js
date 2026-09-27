@@ -22,61 +22,76 @@ function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEa
 /* Fan-art hero: 超人奧米加 (red body & face, silver lines, thick red crest, blue compound eyes, pentagon timer). Drawn from scratch. p = unique id prefix */
 function pent(cx,cy,r){ const pts=[]; for(let i=0;i<5;i++){ const a=(-90+i*72)*Math.PI/180; pts.push((cx+Math.cos(a)*r).toFixed(1)+','+(cy+Math.sin(a)*r).toFixed(1)); } return pts.join(' '); }
 function heroSVG(p){
-  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', ol='#3a1016', sl='#e6ebf2';
-  const legL = '<g class="h-legL"><path d="M74 190 L95 190 L93 256 L76 256 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M77 196 L80 196 L79 252 L77.5 252Z" fill="'+sl+'"/><path d="M70 250 Q84 243 98 250 L99 279 Q84 285 67 279 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M70 262 Q84 257 98 262" stroke="'+sl+'" stroke-width="2.5" fill="none"/></g>';
-  const legR = '<g class="h-legR"><path d="M105 190 L126 190 L124 256 L107 256 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M120 196 L123 196 L121.5 252 L120 252Z" fill="'+sl+'"/><path d="M102 250 Q116 243 130 250 L133 279 Q116 285 101 279 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M102 262 Q116 257 131 262" stroke="'+sl+'" stroke-width="2.5" fill="none"/></g>';
-  const kick = '<g class="h-kick"><path d="M104 186 L126 184 L182 172 L186 192 L126 206 L104 204 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M130 187 L181 176 L181.5 180 L130.5 191Z" fill="'+sl+'"/><path d="M176 164 Q198 164 200 182 Q200 200 178 200 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M184 166 L184 199" stroke="'+sl+'" stroke-width="2.5"/></g>';
-  const torso = '<path d="M60 122 Q100 108 140 122 L134 196 Q100 206 66 196 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M66 124 Q100 114 134 124 L129 148 Q118 170 100 172 Q82 170 71 148 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M74 132 Q100 124 126 132" stroke="#1d2230" stroke-width="2" fill="none"/>'+
-    '<path d="M72 150 Q79 174 76 196" stroke="'+sl+'" stroke-width="3" fill="none"/><path d="M128 150 Q121 174 124 196" stroke="'+sl+'" stroke-width="3" fill="none"/>'+
-    '<path d="M100 172 L100 188" stroke="'+sl+'" stroke-width="2.5"/>'+
-    '<rect x="68" y="186" width="64" height="9" rx="4" fill="#b3121a" stroke="'+ol+'" stroke-width="2"/>'+
-    '<polygon points="'+pent(100,149,16.5)+'" fill="#3d4352" stroke="#1d2230" stroke-width="2" stroke-linejoin="round"/>'+
-    '<polygon class="h-tglow" points="'+pent(100,149,15)+'" filter="url(#'+p+'gl)" opacity=".9"/>'+
-    '<polygon class="h-timer" points="'+pent(100,149,11.5)+'" stroke-linejoin="round"/>'+
-    '<g class="h-spiral"><path d="M100 149 m0 -1.5 a1.5 1.5 0 1 1 -1.5 1.5 a3.5 3.5 0 0 1 3.5 -3.5 a5.5 5.5 0 0 1 5.5 5.5 a7.5 7.5 0 0 1 -7.5 7.5" stroke="#fff" stroke-width="1.4" fill="none" opacity=".8"/><circle cx="95" cy="145" r=".9" fill="#fff"/><circle cx="105" cy="153" r=".8" fill="#fff"/><circle cx="104" cy="144" r=".6" fill="#fff"/></g>'+
-    '<circle class="mk-chest" cx="100" cy="149" r="1" fill="none"/>';
-  const armL = '<g class="h-armL"><path d="M61 123 Q49 126 47 142 L44 182 L59 184 L64 142 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M50 140 L52.5 140 L49 181 L46.5 181Z" fill="'+sl+'"/><circle cx="51" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/></g>';
-  const armR = '<g class="h-armR"><path d="M139 123 Q151 126 153 142 L156 182 L141 184 L136 142 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M147.5 140 L150 140 L153.5 181 L151 181Z" fill="'+sl+'"/><circle cx="149" cy="191" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/><circle class="mk-hand" cx="149" cy="191" r="1" fill="none"/></g>';
-  /* "+" cross pose: right forearm vertical, left forearm horizontal crossing it */
-  const cross = '<g class="h-cross">'+
-    '<path d="M137 124 L152 121 L164 166 L149 171 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<rect x="149" y="88" width="17" height="84" rx="8" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M156 96 L159 96 L159 166 L156 166Z" fill="'+sl+'"/>'+
-    '<circle cx="157.5" cy="86" r="10" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M60 122 Q50 134 60 142 Q74 146 96 140 L118 136 L118 120 L94 124 Q76 126 68 118Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<rect x="112" y="118" width="74" height="17" rx="8" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M118 125 L180 125 L180 128 L118 128Z" fill="'+sl+'"/>'+
-    '<circle cx="189" cy="126.5" r="9.5" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<circle cx="158" cy="126.5" r="11" fill="#bff3ff" filter="url(#'+p+'gl)"/></g>';
-  const slug = '<g class="h-slug"><path d="M86 48 C85 28 92 12 100 2 C108 12 115 28 114 48 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
-    '<path d="M100 8 C96 20 95 32 96 46" stroke="#ff8a8a" stroke-width="3" fill="none" opacity=".8"/><path d="M104 12 C107 24 108 34 107 46" stroke="'+sl+'" stroke-width="2" fill="none"/>'+
-    '<polygon points="'+pent(100,38,5)+'" fill="#bfe9ff" stroke="#3d4352" stroke-width="1.5"/><circle class="mk-slug" cx="100" cy="24" r="1" fill="none"/></g>';
-  const head = '<g class="h-head">'+
-    '<rect x="90" y="106" width="20" height="16" fill="#b3121a" stroke="'+ol+'" stroke-width="2"/>'+
-    '<ellipse cx="100" cy="72" rx="38" ry="42" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
-    '<path d="M65 60 Q62 82 72 100" stroke="'+sl+'" stroke-width="3" fill="none"/><path d="M135 60 Q138 82 128 100" stroke="'+sl+'" stroke-width="3" fill="none"/>'+
-    '<path d="M72 50 Q100 30 128 50 L123 57 Q100 42 77 57 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.5"/>'+
-    slug+
-    '<path d="M95 57 L100 63 L105 57" stroke="'+sl+'" stroke-width="2.5" fill="none" stroke-linejoin="round"/>'+
-    '<path d="M83 91 Q100 86 117 91 Q116 108 100 112 Q84 108 83 91Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
-    '<path d="M92 99 Q100 104 108 99" stroke="#3d4352" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
-    '<ellipse class="h-eyeglow" cx="83" cy="74" rx="18" ry="13" fill="#8feaff" filter="url(#'+p+'gl)"/><ellipse class="h-eyeglow" cx="117" cy="74" rx="18" ry="13" fill="#8feaff" filter="url(#'+p+'gl)"/>'+
-    '<path d="M67 70 Q71 61 86 63 Q97 65 97 74 Q96 85 84 85 Q70 83 67 70 Z" fill="url(#'+p+'ey)" stroke="#0b3f7a" stroke-width="1.8"/>'+
-    '<path d="M133 70 Q129 61 114 63 Q103 65 103 74 Q104 85 116 85 Q130 83 133 70 Z" fill="url(#'+p+'ey)" stroke="#0b3f7a" stroke-width="1.8"/>'+
-    '<g stroke="#ffffff" stroke-width=".9" opacity=".45" fill="none"><path d="M72 71 Q84 67 95 72M74 78 Q85 75 95 79M84 64 L84 84"/><path d="M128 71 Q116 67 105 72M126 78 Q115 75 105 79M116 64 L116 84"/></g>'+
-    '<ellipse cx="80" cy="68" rx="4" ry="2.4" fill="#fff" opacity=".85"/><ellipse cx="112" cy="68" rx="4" ry="2.4" fill="#fff" opacity=".85"/>'+
+  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', ol='#3a1016', sl='#eef2f7', RC='#e8483e', RD='#b52a2a', OL=ol, TE='#38d6cf';
+  /* stroke-drawn limb helper: dark outline + red fill + highlight */
+  const limb=(d,w,cls)=>'<path d="'+d+'" stroke="'+OL+'" stroke-width="'+(w+4)+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="'+RC+'" stroke-width="'+w+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="#ff9d8f" stroke-width="'+(w*.22)+'" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55" transform="translate(-'+(w*.2)+',-'+(w*.12)+')"/>';
+  const limb2=(pts,w1,w2)=>{ const [a,b,c]=pts; const d1='M'+a+' L'+b, d2='M'+b+' L'+c; return '<path d="'+d1+'" stroke="'+OL+'" stroke-width="'+(w1+4)+'" stroke-linecap="round"/><path d="'+d2+'" stroke="'+OL+'" stroke-width="'+(w2+4)+'" stroke-linecap="round"/><path d="'+d1+'" stroke="'+RC+'" stroke-width="'+w1+'" stroke-linecap="round"/><path d="'+d2+'" stroke="'+RC+'" stroke-width="'+w2+'" stroke-linecap="round"/><path d="'+d1+'" stroke="#ff9d8f" stroke-width="'+(w1*.2)+'" stroke-linecap="round" opacity=".5" transform="translate(-'+(w1*.22)+',-1)"/><path d="'+d2+'" stroke="#ff9d8f" stroke-width="'+(w2*.2)+'" stroke-linecap="round" opacity=".5" transform="translate(-'+(w2*.22)+',-1)"/>'; };
+  const glove=(x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+RC+'" stroke="'+OL+'" stroke-width="2.5"/><path d="M'+(x-r*.55)+' '+(y-r*.35)+' q'+(r*.4)+' -'+(r*.4)+' '+(r*.9)+' -'+(r*.2)+'" stroke="#ffb3a8" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  const cuff=(x1,y1,x2,y2)=>'<path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+OL+'" stroke-width="14" stroke-linecap="butt"/><path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+sl+'" stroke-width="10" stroke-linecap="butt"/>';
+  const legL = '<g class="h-legL"><path d="M74 168 C62 196 58 214 54 232 L44 260 L64 265 L76 232 C82 216 92 204 100 192 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<path d="M79 176 C69 204 63 222 51 259" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M42 256 L66 261 Q69 272 67 283 L31 283 Q29 275 36 270 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M42 261 L65 266" stroke="'+sl+'" stroke-width="3"/></g>';
+  const legR = '<g class="h-legR"><path d="M126 168 C138 196 142 214 146 232 L156 260 L136 265 L124 232 C118 216 108 204 100 192 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<path d="M121 176 C131 204 137 222 149 259" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M158 256 L134 261 Q131 272 133 283 L169 283 Q171 275 164 270 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/><path d="M158 261 L135 266" stroke="'+sl+'" stroke-width="3"/></g>';
+  const kick = '<g class="h-kick">'+limb2(['112 182','150 175','180 170'],26,20)+'<path d="M118 180 L178 167" stroke="'+sl+'" stroke-width="4" stroke-linecap="round"/>'+
+    '<path d="M176 158 Q196 156 198 170 Q198 184 178 182 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/><path d="M183 158 L183 183" stroke="'+sl+'" stroke-width="3"/></g>';
+  const torso = '<path d="M52 94 L148 94 Q146 120 135 138 Q124 156 122 168 L127 182 Q112 192 100 196 Q88 192 73 182 L78 168 Q76 156 65 138 Q54 120 52 94 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<path d="M62 110 Q72 150 83 170 Q92 186 99 194" stroke="'+sl+'" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M138 110 Q128 150 117 170 Q108 186 101 194" stroke="'+sl+'" stroke-width="7" fill="none" stroke-linecap="round"/>'+
+    '<path d="M86 150 Q100 160 114 150" stroke="#ff9d8f" stroke-width="2" fill="none" opacity=".6"/><path d="M100 152 L100 186" stroke="#9e1f22" stroke-width="1.5" opacity=".5"/>'+
+    /* neck */ '<path d="M91 76 L109 76 L111 94 L89 94 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+    /* star/crown chest armour */
+    '<path d="M46 98 L68 85 L88 90 L100 96 L112 90 L132 85 L154 98 L150 110 L136 113 L131 128 L142 137 L118 139 L108 147 L100 159 L92 147 L82 139 L58 137 L69 128 L64 113 L50 110 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<path d="M50 99 L68 89 L86 94 L96 102 M150 99 L132 89 L114 94 L104 102" stroke="#fff" stroke-width="2" fill="none" opacity=".9"/>'+
+    '<path d="M70 128 L84 124 M130 128 L116 124 M82 138 L90 132 M118 138 L110 132 M100 158 L100 148" stroke="#8793a6" stroke-width="1.6" fill="none"/>'+
+    '<g stroke="'+TE+'" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M86 108 L68 104 L62 100"/><path d="M114 108 L132 104 L138 100"/><path d="M88 122 L74 130"/><path d="M112 122 L126 130"/><path d="M100 130 L100 146"/></g>'+
+    '<polygon points="'+pent(100,116,17)+'" fill="#c9d2de" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
+    '<polygon class="h-tglow" points="'+pent(100,116,15)+'" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<polygon class="h-timer" points="'+pent(100,116,12.5)+'" stroke="#2b2a6e" stroke-width="1.5" stroke-linejoin="round"/>'+
+    '<g stroke="#fff" stroke-width=".9" opacity=".55" fill="none"><polygon points="'+pent(100,116,6.5)+'"/><path d="M100 103.5 L100 109.5 M111.9 112.1 L106.2 114 M107.3 126.1 L103.8 121.3 M92.7 126.1 L96.2 121.3 M88.1 112.1 L93.8 114"/></g>'+
+    '<g class="h-spiral"><path d="M100 116 m0 -1.3 a1.3 1.3 0 1 1 -1.3 1.3 a3 3 0 0 1 3 -3 a4.8 4.8 0 0 1 4.8 4.8" stroke="#fff" stroke-width="1.3" fill="none" opacity=".85"/></g>'+
+    '<path d="M94 108 L98 106" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/>'+
+    '<circle class="mk-chest" cx="100" cy="116" r="1" fill="none"/>';
+  /* straight arms (used by action poses) */
+  const armL = '<g class="h-armL">'+limb2(['56 100','52 140','54 170'],21,18)+'<path d="M47 106 L44 140 L46 164" stroke="'+sl+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+cuff(54,164,54,175)+glove(54,183,10.5)+'</g>';
+  const armR = '<g class="h-armR">'+limb2(['144 100','148 140','146 170'],21,18)+'<path d="M153 106 L156 140 L154 164" stroke="'+sl+'" stroke-width="3" fill="none" stroke-linecap="round"/>'+cuff(146,164,146,175)+glove(146,183,10.5)+'<circle class="mk-hand" cx="146" cy="183" r="1" fill="none"/></g>';
+  /* idle fighting stance: front fist raised, back fist guarding chest */
+  const guard = '<g class="h-guard">'+
+    limb2(['56 100','40 140','70 150'],21,18)+'<path d="M49 104 L35 136" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(64,148,73,151)+glove(80,153,10.5)+
+    limb2(['144 100','170 134','176 96'],21,18)+'<path d="M150 101 L174 131" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(175,104,176,95)+glove(177,85,11)+
     '</g>';
-  return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#38bdf8">'+
+  /* "+" cross pose */
+  const cross = '<g class="h-cross">'+
+    limb2(['56 100','80 124','150 116'],21,18)+limb2(['144 100','155 156','155 76'],21,18)+
+    limb('M86 118 L184 115',18)+'<path d="M100 111 L178 110" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(176,115,184,115)+glove(192,115,10.5)+
+    '<path d="M161 150 L161 82" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(155,82,155,73)+glove(155,64,10.5)+
+    '<circle cx="155" cy="115" r="13" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="155" cy="115" r="5.5" fill="#fff"/></g>';
+  const slug = '<g class="h-slug"><path d="M93.5 36 L100 1 L106.5 36 Q104 46 100 56 Q96 46 93.5 36 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2" stroke-linejoin="round"/>'+
+    '<path d="M95.5 34 L100 7 L104.5 34" stroke="'+sl+'" stroke-width="2" fill="none" stroke-linejoin="round"/><path d="M100 10 L100 50" stroke="#ff9d8f" stroke-width="1.6" opacity=".8"/>'+
+    '<circle class="mk-slug" cx="100" cy="24" r="1" fill="none"/></g>';
+  const head = '<g class="h-head" transform="translate(100 84) scale(1.1) translate(-100 -84)">'+
+    '<path d="M100 26 C115 26 123 38 123 52 C123 65 116 75 108 81 L92 81 C84 75 77 65 77 52 C77 38 85 26 100 26 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<path d="M78 44 C76 58 81 70 90 79 L93 73 C87 66 85 56 86 46 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.6"/><path d="M122 44 C124 58 119 70 110 79 L107 73 C113 66 115 56 114 46 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.6"/>'+
+    '<path d="M84 34 Q92 29 97 31" stroke="#ffb3a8" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>'+
+    slug+
+    '<path class="h-eyeglow" d="M97.5 56 L95.5 46 Q88 41.5 80 43.5 L76.5 48.5 Q83 59.5 97.5 56 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/><path class="h-eyeglow" d="M102.5 56 L104.5 46 Q112 41.5 120 43.5 L123.5 48.5 Q117 59.5 102.5 56 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/>'+
+    '<path d="M97.5 56 L95.5 46 Q88 41.5 80 43.5 L76.5 48.5 Q83 59.5 97.5 56 Z" fill="url(#'+p+'ey)" stroke="#0b3f5a" stroke-width="1.6" stroke-linejoin="round"/>'+
+    '<path d="M102.5 56 L104.5 46 Q112 41.5 120 43.5 L123.5 48.5 Q117 59.5 102.5 56 Z" fill="url(#'+p+'ey)" stroke="#0b3f5a" stroke-width="1.6" stroke-linejoin="round"/>'+
+    '<g stroke="#ffffff" stroke-width=".8" opacity=".6" fill="none"><path d="M81 47 L96 52 M88 45 L86 55 M93 46 L91 55"/><path d="M119 47 L104 52 M112 45 L114 55 M107 46 L109 55"/></g>'+
+    '<path d="M84 47 L89 46" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M111 46 L116 47" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>'+
+    '<path d="M92.5 65 L107.5 65 L105.5 75 L94.5 75 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8" stroke-linejoin="round"/><path d="M96 70 L104 70" stroke="#4a5263" stroke-width="1.6" stroke-linecap="round"/>'+
+    '</g>';
+  return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#6d7cff">'+
     '<defs>'+
-    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#dfe5ee"/><stop offset="1" stop-color="#98a5b8"/></linearGradient>'+
-    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5a5a"/><stop offset=".55" stop-color="#e3222a"/><stop offset="1" stop-color="#a50f16"/></linearGradient>'+
-    '<radialGradient id="'+p+'ey" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#f2ffff"/><stop offset=".45" stop-color="#8ee6ff"/><stop offset="1" stop-color="#1f86e6"/></radialGradient>'+
-    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#e2e8f0"/><stop offset="1" stop-color="#9aa6b8"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8474"/><stop offset=".5" stop-color="#e8483e"/><stop offset="1" stop-color="#ad2628"/></linearGradient>'+
+    '<radialGradient id="'+p+'ey" cx=".5" cy=".45" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#a6fbff"/><stop offset="1" stop-color="#1fb6d6"/></radialGradient>'+
+    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.5"/></filter>'+
     '</defs>'+
-    '<ellipse class="h-aura" cx="100" cy="165" rx="92" ry="138" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".7"/>'+
-    '<ellipse cx="100" cy="284" rx="52" ry="8" fill="#000" opacity=".28"/>'+
-    legL + legR + kick + armL + torso + head + armR + cross +
-    '<circle class="mk-beam" cx="160" cy="126.5" r="1" fill="none"/>'+
+    '<ellipse class="h-aura" cx="100" cy="150" rx="96" ry="146" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".7"/>'+
+    '<ellipse cx="100" cy="284" rx="72" ry="8" fill="#000" opacity=".28"/>'+
+    legL + legR + kick + armL + armR + torso + head + guard + cross +
+    '<circle class="mk-beam" cx="157" cy="115" r="1" fill="none"/>'+
     '</svg>';
 }
 
@@ -87,14 +102,28 @@ const MONS = {
   rock:{name:'岩石怪獸', nick:'石頭哥', body:'#a67c5b', light:'#d9b594', dark:'#5f3f28', belly:'#ecd6bb', shot:'#c8a27c'},
   poison:{name:'毒霧怪獸', nick:'紫紫', body:'#a35cf0', light:'#d2b0ff', dark:'#5b1d9a', belly:'#f0e3ff', shot:'#b6f25c'},
   sea:{name:'海浪怪獸', nick:'浪浪', body:'#27c4b0', light:'#98f0e2', dark:'#0d6b61', belly:'#d8fff7', shot:'#5ee8ff'},
-  boss:{name:'魔王怪獸', nick:'黑暗大魔王', body:'#5b2aa8', light:'#9f7ae0', dark:'#240b52', belly:'#c8b3f5', shot:'#ff4d6d', boss:true},
+  boss:{name:'魔王怪獸', short:'魔王', nick:'黑暗大魔王', body:'#5b2aa8', light:'#9f7ae0', dark:'#240b52', belly:'#c8b3f5', shot:'#ff4d6d', boss:true},
   kanegon:{name:'食錢怪', nick:'最鍾意食金幣', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
-  dada:{name:'三面怪人達達', nick:'最終大頭目', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true}
+  dada:{name:'三面怪人達達', nick:'最終大頭目', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true},
+  /* v3: kaiju from 超人奧米加 (names: zh-Hant wiki / 萌娘百科 transliterations) */
+  graim:{name:'格萊姆', nick:'熱線怪獸・鑽頭角', body:'#6b6f7a', light:'#b3b8c2', dark:'#2f3238', belly:'#f2c230', shot:'#ff8a1c', omega:true},
+  dugrid:{name:'多格利德', nick:'水棲毒獸・大大口', body:'#5b4636', light:'#a0806a', dark:'#2a1d14', belly:'#e8b93a', frill:'#d8323a', shot:'#a3e635', omega:true},
+  pegunos:{name:'佩古諾斯', nick:'無重力怪獸・識飛企鵝', body:'#1f3f86', light:'#5a84d8', dark:'#0e1f4a', belly:'#eef3fa', beak:'#ffcc33', shot:'#bfefff', omega:true},
+  therizirus:{name:'特利吉拉斯', nick:'刃爪怪獸・會隱形', body:'#2b3039', light:'#6a7486', dark:'#12151b', belly:'#c8324d', shot:'#ff4d6d', omega:true},
+  ohebinushi:{name:'大蛇主命', nick:'傳說蛇獸・超長身', body:'#4a5147', light:'#8e9a86', dark:'#1f241d', belly:'#efe4c4', accent:'#d84a3a', shot:'#ffd166', omega:true},
+  gedrago:{name:'蓋多拉哥', nick:'猛突怪獸・粉紅毛毛', body:'#d8418f', light:'#f59ac6', dark:'#7d1b4f', belly:'#6b3a44', horn:'#a7adb7', shot:'#ff8fc8', omega:true},
+  rekiness:{name:'雷基尼斯', nick:'流星怪獸・夥伴特訓', body:'#2f7fe0', light:'#9fd8ff', dark:'#123a7a', belly:'#bfe4ff', shot:'#b58cff', omega:true, friend:true},
+  trigaron:{name:'特萊加隆', nick:'流星怪獸・夥伴特訓', body:'#2c3038', light:'#6a7280', dark:'#101216', belly:'#8a93a3', gold:'#ffc21a', shot:'#ffc21a', omega:true, friend:true},
+  vugsect:{name:'瓦古塞克特', nick:'宇宙甲獸・中頭目', short:'瓦古塞克特', body:'#2c2342', light:'#7a68a8', dark:'#130d22', belly:'#4a3b6b', shot:'#ff3b6b', boss:true, omega:true}
 };
+const DEX_ORDER=['graim','dugrid','pegunos','therizirus','ohebinushi','gedrago','rekiness','trigaron','vugsect','kanegon','dada','boss','fire','ice','thunder','rock','poison','sea'];
 
 function monsterSVG(type, p){
   if(type==='kanegon') return kanegonSVG(p);
   if(type==='dada') return dadaSVG(p);
+  if(type==='graim') return graimSVG(p); if(type==='dugrid') return dugridSVG(p); if(type==='pegunos') return pegunosSVG(p);
+  if(type==='therizirus') return therizirusSVG(p); if(type==='ohebinushi') return ohebinushiSVG(p); if(type==='gedrago') return gedragoSVG(p);
+  if(type==='rekiness') return rekinessSVG(p); if(type==='trigaron') return trigaronSVG(p); if(type==='vugsect') return vugsectSVG(p);
   const m = MONS[type]; const dk=m.dark;
   let back='', front='', body2='';
   if(type==='fire'){
@@ -260,3 +289,246 @@ function buildSky(svg){
   s += '<rect y="'+(H-16)+'" width="'+W+'" height="16" fill="#070a1f"/>';
   svg.innerHTML = s;
 }
+
+/* ===== v3: 超人奧米加 series kaiju — original cute fan-art SVGs (240x240, facing left toward the hero) ===== */
+function omEye(x,y,r,dk,iris){ return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${dk}" stroke-width="2.5"/><circle cx="${x-r*.25}" cy="${y+r*.1}" r="${r*.6}" fill="${iris}"/><circle cx="${x-r*.3}" cy="${y+r*.12}" r="${r*.32}" fill="#111"/><circle cx="${x-r*.48}" cy="${y-r*.15}" r="${r*.22}" fill="#fff"/>`; }
+function omOuch(pts){ return '<g class="m-ouch" stroke="#1f2937" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none">'+pts.map((q,i)=>{ const [x,y,s]=q, d=i%2?-1:1; return `<path d="M${x-d*s} ${y-s*.7} L${x+d*s*.6} ${y} L${x-d*s} ${y+s*.7}"/>`; }).join('')+'</g>'; }
+function omSpike(x,y,ang,len,w,fill,dk){ const a=ang*Math.PI/180, tx=x+Math.sin(a)*len, ty=y-Math.cos(a)*len, bx=Math.cos(a)*w, by=Math.sin(a)*w; return `<path d="M${(x-bx).toFixed(1)} ${(y-by).toFixed(1)} L${tx.toFixed(1)} ${ty.toFixed(1)} L${(x+bx).toFixed(1)} ${(y+by).toFixed(1)} Z" fill="${fill}" stroke="${dk}" stroke-width="2.2" stroke-linejoin="round"/>`; }
+function omSvg(type,p,m,inner,defs){ return `<svg class="mon mon-${type}" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><defs><radialGradient id="${p}bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${m.light}"/><stop offset=".55" stop-color="${m.body}"/><stop offset="1" stop-color="${m.dark}"/></radialGradient>${defs||''}</defs><ellipse cx="124" cy="229" rx="82" ry="9" fill="#000" opacity=".28"/>${inner}</svg>`; }
+function omFeet(dk,claw,xs){ return xs.map(x=>`<ellipse cx="${x}" cy="214" rx="25" ry="12" fill="${dk}"/><g fill="${claw}" stroke="${dk}" stroke-width="1.5"><path d="M${x-22} 214 l-7 6 l10 0z"/><path d="M${x-12} 219 l-5 7 l10 -2z"/></g>`).join(''); }
+
+/* 熱線怪獸 格萊姆: grey spiky mole, yellow belly, spinning drill-horn snout */
+function graimSVG(p){ const m=MONS.graim, dk=m.dark, bd=`url(#${p}bd)`;
+  let spikes=''; [[118,76,-12],[142,80,8],[164,94,28],[180,114,46],[191,138,62],[196,164,76]].forEach(s=>{ spikes+=omSpike(s[0],s[1],s[2],24,9,'#4a4e57',dk); });
+  let stripes=''; for(let x=-20;x<=80;x+=10) stripes+=`<path d="M${x} 70 L${x+10} 112" stroke="#6b707b" stroke-width="4"/>`;
+  const inner=`${spikes}
+  <path d="M168 196 Q222 198 232 152 L222 158 L224 142 L212 152 L208 138 L200 154 Q194 176 164 178 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  ${omFeet(dk,'#e8e2d0',[92,160])}
+  <path d="M66 212 C48 160 60 104 104 90 C150 78 198 124 192 212 Q128 226 66 212 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M84 206 C74 170 84 132 116 126 C150 122 166 160 160 206 Q122 216 84 206Z" fill="#f2c230" stroke="#b98a0e" stroke-width="2"/>
+  <g stroke="#c99a12" stroke-width="2.5" fill="none"><path d="M88 150 Q120 158 156 148"/><path d="M84 168 Q120 176 160 166"/><path d="M84 186 Q120 194 160 184"/></g>
+  <ellipse cx="180" cy="152" rx="11" ry="20" transform="rotate(-20 180 152)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M84 136 Q56 138 42 158 L52 168 Q66 156 90 156 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#ece6d4" stroke="${dk}" stroke-width="2" stroke-linejoin="round"><path d="M46 154 L20 146 L42 164Z"/><path d="M44 162 L16 166 L46 170Z"/><path d="M48 168 L26 182 L52 172Z"/></g>
+  ${omSpike(98,56,-20,20,8,'#e9a13b',dk)}${omSpike(118,56,6,22,8,'#e9a13b',dk)}${omSpike(134,68,34,18,7,'#e9a13b',dk)}
+  <path d="M60 98 C56 64 84 48 108 52 C132 56 144 78 138 100 C130 120 96 126 76 118 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g class="gr-drill"><path d="M66 78 L66 110 L4 92 Z" fill="#c3c8d2" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
+  <g clip-path="url(#${p}dc)"><g>${stripes}<animateTransform attributeName="transform" type="translate" from="0 0" to="10 0" dur=".25s" repeatCount="indefinite"/></g></g>
+  <path d="M18 88 L18 96 L4 92 Z" fill="#e53935" stroke="${dk}" stroke-width="1.5"/>
+  <ellipse cx="67" cy="94" rx="6" ry="17" fill="#8b9099" stroke="${dk}" stroke-width="2.5"/></g>
+  <g class="m-eyes">${omEye(90,76,11,dk,'#f5b700')}${omEye(114,72,10,dk,'#f5b700')}</g>
+  ${omOuch([[90,76,9],[114,72,8]])}
+  <path d="M78 62 L100 68" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M106 64 L126 58" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="80" cy="100" rx="7" ry="4" fill="#ff7a9a" opacity=".55"/><ellipse cx="128" cy="92" rx="7" ry="4" fill="#ff7a9a" opacity=".55"/>
+  <path d="M84 108 Q102 118 122 104" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M90 111 L93 118 L96 112Z" fill="#fff"/><path d="M111 110 L113 117 L116 109Z" fill="#fff"/>
+  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="8" cy="92" r="1" fill="none"/>`;
+  return omSvg('graim',p,m,inner,`<clipPath id="${p}dc"><path d="M66 78 L66 110 L4 92 Z"/></clipPath>`); }
+
+/* 水棲毒獸 多格利德: brown lizard with a huge chomping mouth and a red frill collar */
+function dugridSVG(p){ const m=MONS.dugrid, dk=m.dark, bd=`url(#${p}bd)`;
+  let ut='', lt=''; for(let i=0;i<7;i++){ const x=44+i*11, y=79+i*1.9; ut+=`<path d="M${x} ${y} l4 8 l4 -7z" fill="#fff"/>`; lt+=`<path d="M${x+4} ${y+22-i*1.2} l4 -8 l4 7z" fill="#fff"/>`; }
+  const inner=`
+  <path d="M168 200 Q222 206 232 168 Q220 176 214 162 Q206 184 164 182Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  ${omFeet(dk,'#e8dcc0',[92,160])}
+  <path d="M62 212 C46 170 58 128 92 116 C140 100 196 136 192 212 Q126 226 62 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="116" cy="180" rx="38" ry="30" fill="#b99474"/>
+  <g stroke="${dk}" stroke-width="2.5" fill="none" opacity=".3"><path d="M84 168 Q116 176 150 166"/><path d="M82 188 Q116 196 152 186"/></g>
+  <g fill="${m.belly}" stroke="#8a6410" stroke-width="1.5"><ellipse cx="164" cy="156" rx="13" ry="9" transform="rotate(-30 164 156)"/><ellipse cx="176" cy="186" rx="10" ry="7"/><ellipse cx="150" cy="200" rx="8" ry="5"/><ellipse cx="72" cy="186" rx="7" ry="10"/></g>
+  <ellipse cx="72" cy="150" rx="11" ry="20" transform="rotate(38 72 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/><g fill="#e8dcc0" stroke="${dk}" stroke-width="1.5"><circle cx="58" cy="136" r="4"/><circle cx="64" cy="131" r="4"/></g>
+  <path d="M46 156 Q34 132 52 114 Q60 94 84 98 Q102 80 124 92 Q148 86 154 108 Q174 118 166 142 Q156 156 136 150 Q114 162 92 152 Q68 166 46 156Z" fill="${m.frill}" stroke="#7a1016" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#9c1a22" stroke-width="2" fill="none"><path d="M58 146 Q62 128 76 118"/><path d="M92 144 Q94 124 104 108"/><path d="M130 142 Q132 124 128 104"/><path d="M152 132 Q150 120 142 110"/></g>
+  <path d="M148 92 C152 56 126 32 96 34 C62 36 38 56 32 78 Q64 82 126 96 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M34 80 Q80 86 128 96 Q92 128 42 106 Z" fill="#a8223a" stroke="${dk}" stroke-width="2.5"/>
+  <ellipse cx="74" cy="102" rx="16" ry="6" fill="#ff7a9a"/>
+  ${ut}
+  <g class="dg-jaw"><path d="M38 100 Q84 120 130 96 Q126 126 90 132 Q54 132 38 100Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>${lt}</g>
+  <circle cx="44" cy="66" r="2.5" fill="${dk}"/><circle cx="52" cy="62" r="2.5" fill="${dk}"/>
+  <g class="m-eyes">${omEye(94,52,11,dk,'#ffd23f')}${omEye(118,50,9,dk,'#ffd23f')}</g>
+  ${omOuch([[94,52,9],[118,50,7]])}
+  <path d="M82 38 L104 44" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M110 40 L128 38" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
+  <g class="m-float" opacity=".85"><circle cx="18" cy="100" r="6" fill="#a3e635" stroke="#4d7c0f" stroke-width="1.5"/><circle cx="12" cy="122" r="4" fill="#c084fc" stroke="#6b21a8" stroke-width="1.5"/><circle cx="26" cy="84" r="3.5" fill="#a3e635" stroke="#4d7c0f" stroke-width="1.2"/></g>
+  <circle class="mk-core" cx="118" cy="160" r="1" fill="none"/><circle class="mk-mouth" cx="56" cy="98" r="1" fill="none"/>`;
+  return omSvg('dugrid',p,m,inner); }
+
+/* 無重力怪獸 佩古諾斯: floating navy penguin with a hooked yellow beak and big wing-arms */
+function pegunosSVG(p){ const m=MONS.pegunos, dk=m.dark, bd=`url(#${p}bd)`;
+  let crest=''; [[112,46,-10],[124,48,14],[134,54,36],[142,64,58],[146,76,78]].forEach(s=>{ crest+=omSpike(s[0],s[1],s[2],22,6,bd,dk); });
+  let fth=''; for(let y=132;y<=196;y+=16) for(let x=96;x<=144;x+=16) fth+=`<path d="M${x+((y/16)%2?8:0)} ${y} q5 6 10 0" stroke="#c3cee0" stroke-width="2" fill="none"/>`;
+  const inner=`<g class="pg-float">
+  <g class="pg-wingR"><path d="M160 116 Q212 122 238 150 Q204 154 168 152 Z" fill="#e8edf5" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/><path d="M160 116 Q212 122 238 150 Q206 134 164 132Z" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/></g>
+  <g class="m-float" fill="#eaf8ff" opacity=".9"><circle cx="84" cy="228" r="7"/><circle cx="96" cy="232" r="5"/><circle cx="152" cy="228" r="7"/><circle cx="164" cy="232" r="5"/></g>
+  <g fill="#8aa0c8" stroke="${dk}" stroke-width="2.5"><ellipse cx="92" cy="212" rx="20" ry="9"/><ellipse cx="156" cy="212" rx="20" ry="9"/></g>
+  <path d="M68 210 C52 160 64 98 118 94 C172 92 186 160 172 210 Q120 222 68 210Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M84 206 C72 166 84 118 118 114 C152 112 162 166 156 206 Q120 216 84 206Z" fill="#eef3fa" stroke="#b9c6dc" stroke-width="2"/>
+  ${fth}
+  <g class="pg-wingL"><path d="M82 120 Q40 136 6 170 Q46 164 84 150Z" fill="#e8edf5" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/><path d="M82 120 Q40 136 6 170 Q42 146 84 136Z" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/></g>
+  ${crest}
+  <path d="M70 94 C62 58 86 40 112 42 C140 44 152 66 146 92 Q110 110 70 94Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M80 96 Q110 110 140 94 Q128 118 108 120 Q90 118 80 96Z" fill="#eef3fa"/>
+  <path d="M80 70 C58 62 34 70 24 86 C22 96 30 102 36 96 C40 88 52 84 78 88 Z" fill="${m.beak}" stroke="#a36a00" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M78 88 Q56 88 42 96 Q58 102 80 96Z" fill="#f0b020" stroke="#a36a00" stroke-width="2"/>
+  <path d="M40 78 Q54 74 70 76" stroke="#fff3b0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <g class="m-eyes"><circle cx="96" cy="66" r="14" fill="#ffd23f" opacity=".9"/>${omEye(96,66,11,dk,'#3b82f6')}${omEye(122,62,9,dk,'#3b82f6')}</g>
+  ${omOuch([[96,66,9],[122,62,7]])}
+  <path d="M84 50 L106 54" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="112" cy="84" rx="7" ry="4" fill="#ff7a9a" opacity=".5"/>
+  <circle class="mk-core" cx="118" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="28" cy="90" r="1" fill="none"/></g>`;
+  return omSvg('pegunos',p,m,inner); }
+
+/* 流星怪獸 雷基尼斯: friendly blue dinosaur partner — crystal horn, red/white shoulder spikes, pentagon chest, floating rocks */
+function rekinessSVG(p){ const m=MONS.rekiness, dk=m.dark, bd=`url(#${p}bd)`;
+  let ws=''; [[62,194,-70],[64,180,-60],[66,166,-50],[178,194,70],[180,178,60],[184,164,50]].forEach(s=>{ ws+=omSpike(s[0],s[1],s[2],14,5,'#fff',dk); });
+  let sh=''; [[58,118,-60],[64,106,-30],[76,100,0],[166,110,20],[178,108,50],[186,118,80]].forEach(s=>{ sh+=omSpike(s[0],s[1],s[2],16,5.5,'#fff',dk); });
+  let tsp=''; [[196,176,20],[210,166,40],[222,152,60]].forEach(s=>{ tsp+=omSpike(s[0],s[1],s[2],14,5,'#fff',dk); });
+  const rock=(x,y,s)=>`<path d="M${x-s} ${y} L${x-s*.5} ${y-s*.8} L${x+s*.6} ${y-s*.7} L${x+s} ${y+s*.1} L${x+s*.3} ${y+s*.8} L${x-s*.7} ${y+s*.6}Z" fill="#9a7b5c" stroke="#c9a6ff" stroke-width="3" stroke-linejoin="round"/>`;
+  const inner=`
+  <g class="m-float">${rock(24,60,11)}${rock(212,36,9)}${rock(224,110,7)}</g>
+  ${tsp}<path d="M170 198 Q222 200 234 150 Q222 160 216 150 Q208 180 168 180Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  ${omFeet(dk,'#fff',[92,160])}
+  ${ws}
+  <path d="M68 212 C52 164 62 108 106 96 C152 86 192 132 188 212 Q128 226 68 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M88 206 C78 172 86 136 118 130 C150 128 160 170 154 206 Q120 214 88 206Z" fill="${m.belly}" stroke="#5a9ad8" stroke-width="2"/>
+  <g stroke="${dk}" stroke-width="2.5" fill="none" opacity=".45"><path d="M160 150 q10 8 4 18 q-6 8 4 16"/><path d="M76 160 q-8 8 -2 18"/><path d="M96 180 Q120 188 146 180"/><path d="M98 196 Q120 202 144 196"/></g>
+  ${sh}
+  <ellipse cx="70" cy="122" rx="16" ry="13" fill="#e8413a" stroke="${dk}" stroke-width="2.5"/><ellipse cx="176" cy="118" rx="15" ry="12" fill="#e8413a" stroke="${dk}" stroke-width="2.5"/>
+  <ellipse cx="66" cy="150" rx="10" ry="18" transform="rotate(34 66 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/><g fill="#fff" stroke="${dk}" stroke-width="1.5"><circle cx="54" cy="137" r="3.5"/><circle cx="60" cy="132" r="3.5"/></g>
+  <polygon points="${pent(120,146,13)}" fill="#dfe8f2" stroke="${dk}" stroke-width="2" stroke-linejoin="round"/>
+  <polygon points="${pent(120,146,13)}" fill="#6ff6ff" filter="url(#${p}gl)" opacity=".9"/><polygon points="${pent(120,146,9)}" fill="#7af" stroke="#fff" stroke-width="1.2"/>
+  <path d="M100 52 L112 4 L126 52 Z" fill="#c8f3ff" stroke="#3a8fd0" stroke-width="2.5" stroke-linejoin="round"/><path d="M112 10 L114 50" stroke="#fff" stroke-width="2"/>
+  <path d="M90 56 L92 32 L102 54Z" fill="#c8f3ff" stroke="#3a8fd0" stroke-width="2"/><path d="M124 54 L136 36 L134 60Z" fill="#c8f3ff" stroke="#3a8fd0" stroke-width="2"/>
+  <path d="M60 92 C56 60 84 42 110 46 C138 50 150 74 144 96 Q104 114 60 92Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g class="m-eyes">${omEye(88,74,12,dk,'#1e6fd9')}${omEye(116,72,11,dk,'#1e6fd9')}</g>
+  ${omOuch([[88,74,9],[116,72,8]])}
+  <path d="M78 58 Q88 54 98 58" stroke="${dk}" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M106 56 Q116 52 126 56" stroke="${dk}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="76" cy="92" rx="7" ry="4" fill="#ff7a9a" opacity=".6"/><ellipse cx="130" cy="90" rx="7" ry="4" fill="#ff7a9a" opacity=".6"/>
+  <path d="M86 96 Q102 106 118 96" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="70" cy="96" r="1" fill="none"/>`;
+  return omSvg('rekiness',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>`); }
+
+/* 刃爪怪獸 特利吉拉斯: black feathered dino-bird, red belly & face, pink crest, long red claws (turns see-through sometimes) */
+function therizirusSVG(p){ const m=MONS.therizirus, dk=m.dark, bd=`url(#${p}bd)`;
+  let fth=''; for(let y=126;y<=196;y+=14) for(let x=134;x<=178;x+=14){ const xx=x+((y/14)%2?7:0); if((xx-156)*(xx-156)/900+(y-164)*(y-164)/1600<1) fth+=`<path d="M${xx-6} ${y} L${xx} ${y+7} L${xx+6} ${y}" stroke="${m.light}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`; }
+  let mane=''; [[122,64,40],[132,78,60],[140,94,80],[144,110,96]].forEach(s=>{ mane+=omSpike(s[0],s[1],s[2],20,7,bd,dk); });
+  const inner=`<g class="th-cloak">
+  <g fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"><path d="M176 190 Q218 186 234 160 Q214 168 206 160 Q214 176 180 176Z"/><path d="M178 176 Q214 164 226 138 Q208 148 200 142 Q204 160 176 164Z"/></g>
+  ${omFeet(dk,'#e0354f',[94,160])}
+  ${mane}
+  <path d="M60 212 C44 168 56 118 100 102 C150 86 200 130 194 212 Q126 226 60 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${fth}
+  <path d="M78 206 C68 176 76 140 104 128 C126 132 132 176 126 208 Q100 212 78 206Z" fill="${m.belly}" stroke="#7d1426" stroke-width="2"/>
+  <g stroke="#8f1b30" stroke-width="2" fill="none"><path d="M82 160 Q102 166 124 158"/><path d="M80 178 Q102 184 126 176"/><path d="M82 194 Q102 200 126 192"/></g>
+  <path d="M104 134 Q72 136 58 154 L68 164 Q80 152 106 152Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#e0354f" stroke="#7d1426" stroke-width="2" stroke-linejoin="round"><path d="M62 150 Q30 136 10 150 Q34 146 60 160Z"/><path d="M60 158 Q28 158 12 176 Q36 166 60 166Z"/><path d="M64 164 Q40 176 32 196 Q48 180 68 170Z"/></g>
+  <path d="M100 54 L94 22 L108 46 L114 16 L120 48 L132 28 L126 58Z" fill="#ff7ac8" stroke="#b0307a" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M62 90 C60 62 84 48 106 52 C128 56 136 78 128 96 Q98 110 62 90Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M62 90 Q90 106 126 98 Q114 114 88 112 Q70 106 62 90Z" fill="${m.belly}" stroke="#7d1426" stroke-width="2"/>
+  <path d="M68 74 C50 68 32 74 24 88 C38 86 52 88 66 94Z" fill="#3a3f48" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 80 Q48 76 62 78" stroke="#7b8494" stroke-width="2" fill="none"/>
+  <g class="m-eyes">${omEye(88,72,11,dk,'#22d3ee')}${omEye(110,70,9,dk,'#22d3ee')}</g>
+  ${omOuch([[88,72,9],[110,70,7]])}
+  <path d="M76 58 L98 64" stroke="${dk}" stroke-width="4.5" stroke-linecap="round"/><path d="M104 60 L120 56" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
+  <circle class="mk-core" cx="120" cy="160" r="1" fill="none"/><circle class="mk-mouth" cx="28" cy="86" r="1" fill="none"/></g>`;
+  return omSvg('therizirus',p,m,inner); }
+
+/* 傳說蛇獸 大蛇主命: very long serpent — coiled body, segmented neck, cream dragon head with swept-back mane (sways) */
+function ohebinushiSVG(p){ const m=MONS.ohebinushi, dk=m.dark, bd=`url(#${p}bd)`, cr=m.belly;
+  const neck='M150 190 C176 146 164 112 124 100 C90 90 84 66 98 44';
+  const inner=`
+  <path d="M84 214 Q52 218 38 204 Q32 196 40 192" stroke="${dk}" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M84 214 Q52 218 38 204 Q32 196 40 192" stroke="${m.body}" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <ellipse cx="148" cy="206" rx="72" ry="19" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M82 212 Q148 234 214 210" stroke="${cr}" stroke-width="8" fill="none" stroke-dasharray="10 4"/>
+  <ellipse cx="148" cy="188" rx="54" ry="15" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M98 192 Q148 210 198 190" stroke="${cr}" stroke-width="7" fill="none" stroke-dasharray="9 4"/>
+  <g class="ob-neck">
+  <path d="${neck}" stroke="${dk}" stroke-width="34" fill="none" stroke-linecap="round"/><path d="${neck}" stroke="${m.body}" stroke-width="29" fill="none" stroke-linecap="round"/>
+  <path d="${neck}" stroke="${cr}" stroke-width="14" fill="none" stroke-dasharray="9 4" transform="translate(-7 2)"/>
+  <path d="${neck}" stroke="${m.light}" stroke-width="4" fill="none" transform="translate(8 -2)" opacity=".6"/>
+  <path d="M104 26 L142 10 L120 32 L150 30 L118 44 L142 56 L112 50Z" fill="#fff6dc" stroke="${dk}" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M118 42 C114 22 94 14 76 20 C58 26 42 34 30 44 C28 52 34 60 44 60 L72 62 C94 64 116 60 118 42Z" fill="${cr}" stroke="${dk}" stroke-width="3"/>
+  <path d="M40 60 Q62 76 94 66 Q70 64 44 56Z" fill="#d9ccaa" stroke="${dk}" stroke-width="2"/><path d="M52 60 l3 6 l3 -5z M66 62 l3 6 l3 -6z" fill="#fff"/>
+  <path d="M60 30 Q84 22 108 30" stroke="${m.accent}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M34 44 Q46 40 58 44" stroke="#b9ab86" stroke-width="2" fill="none"/>
+  <circle cx="36" cy="46" r="2.5" fill="${dk}"/>
+  <g class="m-eyes">${omEye(80,40,10,dk,'#f59e0b')}${omEye(100,38,8,dk,'#f59e0b')}</g>
+  ${omOuch([[80,40,8],[100,38,6]])}
+  <path d="M70 28 L90 32" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="66" cy="54" rx="6" ry="3.5" fill="#ff7a9a" opacity=".55"/>
+  <circle class="mk-mouth" cx="38" cy="56" r="1" fill="none"/><circle class="mk-core" cx="140" cy="128" r="1" fill="none"/></g>`;
+  return omSvg('ohebinushi',p,m,inner); }
+
+/* 猛突怪獸 蓋多拉哥: pink furry mole with a long snout and grey horn-helmet over its light-shy eyes */
+function gedragoSVG(p){ const m=MONS.gedrago, dk=m.dark, bd=`url(#${p}bd)`;
+  const fur=(cx,cy,rx,ry,n,a0,a1,bottom)=>{ let d=''; for(let i=0;i<=n;i++){ const a=(a0+(a1-a0)*i/n)*Math.PI/180, k=i%2?1.08:1; let x=cx+Math.cos(a)*rx*k, y=cy+Math.sin(a)*ry*k; if(bottom&&y>bottom) y=bottom; d+=(i?' L':'M')+x.toFixed(1)+' '+y.toFixed(1); } return d+' Z'; };
+  const inner=`
+  <path d="${fur(196,176,26,16,14,-60,150)}" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
+  ${omFeet('#6d7480','#d6dae0',[92,160])}
+  <g class="gd-fur"><path d="${fur(126,150,70,72,52,0,360,214)}" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M106 118 Q126 112 146 118 L142 208 Q124 213 110 208Z" fill="${m.belly}" stroke="#3b1e24" stroke-width="2"/>
+  <g stroke="#3b1e24" stroke-width="2" fill="none"><path d="M108 138 Q126 142 144 138"/><path d="M109 158 Q126 162 143 158"/><path d="M109 178 Q126 182 143 178"/><path d="M110 196 Q126 200 142 196"/></g>
+  <g stroke="${m.light}" stroke-width="2" fill="none" opacity=".8"><path d="M160 120 l6 8 l4 -9"/><path d="M170 160 l6 8 l4 -9"/><path d="M76 176 l6 8 l4 -9"/><path d="M150 196 l6 8 l4 -9"/></g></g>
+  <path d="M76 140 Q52 142 42 160 L54 168 Q64 156 84 156 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#d6dae0" stroke="#4b5059" stroke-width="2" stroke-linejoin="round"><path d="M46 156 L24 152 L42 166Z"/><path d="M44 164 L22 170 L46 172Z"/><path d="M50 170 L34 184 L54 174Z"/></g>
+  <path d="${fur(92,86,38,34,30,0,360)}" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M64 94 C44 96 28 106 22 118 C30 124 46 120 68 110Z" fill="${m.light}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
+  <ellipse cx="23" cy="117" rx="6" ry="5" fill="#ff4f97" stroke="${dk}" stroke-width="2"/>
+  <path d="M112 62 C128 44 146 42 158 50 C146 52 136 58 126 70Z" fill="${m.horn}" stroke="#4b5059" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M58 72 C72 50 112 48 126 66 L118 76 C104 64 80 64 66 80Z" fill="${m.horn}" stroke="#4b5059" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M68 66 Q92 54 116 62" stroke="#e4e7ec" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <g class="m-eyes">${omEye(80,84,9,dk,'#5b1234')}${omEye(102,82,8,dk,'#5b1234')}<path d="M71 83 A9 9 0 0 1 89 83 Z" fill="${m.light}" stroke="${dk}" stroke-width="2"/><path d="M94 81 A8 8 0 0 1 110 81 Z" fill="${m.light}" stroke="${dk}" stroke-width="2"/></g>
+  ${omOuch([[80,84,8],[102,82,7]])}
+  <path d="M46 116 Q58 122 70 114" stroke="${dk}" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M52 118 l2 5 l3 -4z M62 118 l2 5 l3 -5z" fill="#fff"/>
+  <ellipse cx="94" cy="104" rx="7" ry="4" fill="#ff4f97" opacity=".6"/>
+  <circle class="mk-core" cx="124" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="26" cy="116" r="1" fill="none"/>`;
+  return omSvg('gedrago',p,m,inner); }
+
+/* 宇宙甲獸 瓦古塞克特: dark space-insect mid-boss — glowing red eyes, scythe arms, mandibles */
+function vugsectSVG(p){ const m=MONS.vugsect, dk=m.dark, bd=`url(#${p}bd)`;
+  let sp=''; [[120,98,-10],[146,94,6],[172,100,24],[196,114,44],[210,136,64]].forEach(s=>{ sp+=omSpike(s[0],s[1],s[2],20,7,'#4b3d6e',dk); });
+  const leg=d=>`<path d="${d}" stroke="${dk}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" stroke="#4b3d6e" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const inner=`
+  <g class="m-float" fill="#ff4fd8"><circle cx="20" cy="30" r="2.5"/><circle cx="220" cy="60" r="3"/><circle cx="200" cy="20" r="2"/><circle cx="30" cy="190" r="2.5"/><circle cx="230" cy="200" r="2"/></g>
+  ${leg('M160 180 L196 196 L208 224')}${leg('M186 168 L222 182 L232 214')}
+  <path d="M110 118 L128 66" stroke="${dk}" stroke-width="12" stroke-linecap="round"/><path d="M110 118 L128 66" stroke="#4b3d6e" stroke-width="7" stroke-linecap="round"/>
+  <path d="M128 66 C112 40 80 34 58 44 C80 46 104 54 122 78Z" fill="#8f7fc0" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
+  ${sp}
+  <path d="M70 190 C56 140 88 96 140 96 C196 96 224 140 214 180 C206 206 150 214 110 208 C90 206 76 200 70 190Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g stroke="${m.light}" stroke-width="2.5" fill="none" opacity=".7"><path d="M112 110 Q124 150 116 204"/><path d="M150 102 Q164 150 156 206"/><path d="M186 112 Q200 150 192 196"/></g>
+  <path d="M110 112 Q140 104 170 110" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".35"/>
+  ${leg('M96 190 L90 212 L76 226')}${leg('M124 200 L130 214 L122 228')}
+  <path d="M40 124 C38 94 62 76 90 80 C116 84 124 108 118 130 C110 150 80 156 60 148 C48 142 42 134 40 124Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M60 84 Q50 58 36 50" stroke="${dk}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M80 80 Q82 54 96 42" stroke="${dk}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="36" cy="50" r="5" fill="#ff4fd8" stroke="${dk}" stroke-width="2"/><circle cx="96" cy="42" r="5" fill="#ff4fd8" stroke="${dk}" stroke-width="2"/>
+  <g fill="#a99ad8" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"><path d="M52 138 Q26 140 20 158 Q34 150 56 148Z"/><path d="M66 146 Q50 166 60 178 Q62 162 74 152Z"/></g>
+  <path d="M98 120 L84 72" stroke="${dk}" stroke-width="12" stroke-linecap="round"/><path d="M98 120 L84 72" stroke="#5b4d80" stroke-width="7" stroke-linecap="round"/>
+  <path d="M84 72 C66 48 34 44 12 58 C36 56 60 62 80 86Z" fill="#b7a8e8" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#fff" opacity=".8"><path d="M22 58 l4 5 l3 -6z"/><path d="M36 54 l4 6 l3 -6z"/><path d="M50 54 l4 6 l3 -6z"/></g>
+  <g class="m-eyes"><g class="vg-glow" filter="url(#${p}gl)"><ellipse cx="64" cy="108" rx="14" ry="11" fill="#ff2d55"/><ellipse cx="94" cy="104" rx="15" ry="12" fill="#ff2d55"/></g>
+  <ellipse cx="64" cy="108" rx="11" ry="9" fill="#ff3b5c" stroke="#5a0016" stroke-width="2"/><ellipse cx="94" cy="104" rx="12" ry="10" fill="#ff3b5c" stroke="#5a0016" stroke-width="2"/>
+  <ellipse cx="60" cy="105" rx="4" ry="3" fill="#fff"/><ellipse cx="90" cy="100" rx="4.5" ry="3.2" fill="#fff"/><circle cx="68" cy="112" r="1.8" fill="#ffd1dc"/><circle cx="99" cy="108" r="2" fill="#ffd1dc"/>
+  <circle cx="72" cy="90" r="4" fill="#ff3b5c" stroke="#5a0016" stroke-width="1.5"/><circle cx="92" cy="88" r="4" fill="#ff3b5c" stroke="#5a0016" stroke-width="1.5"/></g>
+  ${omOuch([[64,108,9],[94,104,9]])}
+  <circle class="mk-core" cx="130" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="40" cy="148" r="1" fill="none"/>`;
+  return omSvg('vugsect',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>`); }
+
+/* 流星怪獸 特萊加隆: friendly black-and-gold mecha tiger partner with blade fins and a pentagon chest light */
+function trigaronSVG(p){ const m=MONS.trigaron, dk=m.dark, bd=`url(#${p}bd)`, G=m.gold, GD='#a87400';
+  const legP=(x)=>`<path d="M${x-12} 150 L${x-14} 204 L${x+10} 204 L${x+12} 150Z" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><path d="M${x-10} 170 L${x+10} 170" stroke="${m.light}" stroke-width="2"/><path d="M${x-13} 162 L${x+13} 160 L${x+8} 176 L${x-9} 176Z" fill="${G}" stroke="${GD}" stroke-width="1.8" stroke-linejoin="round"/><path d="M${x-20} 204 L${x+14} 204 L${x+16} 218 L${x-24} 218Z" fill="#3a3f48" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><g fill="${G}" stroke="${GD}" stroke-width="1.5" stroke-linejoin="round"><path d="M${x-24} 218 l-6 4 l10 0z"/><path d="M${x-12} 218 l-5 5 l9 0z"/></g>`;
+  const inner=`
+  <g class="m-spark" stroke="#ffe14d" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M150 36 l6 8 l-5 3 l7 9"/><path d="M214 72 l-7 6 l5 4 l-8 6"/><path d="M104 40 l5 7 l-4 3 l6 8"/></g>
+  <path d="M204 132 Q226 124 230 100" stroke="${dk}" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M204 132 Q226 124 230 100" stroke="#4a505c" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="8 3"/>
+  <path d="M222 104 L238 70 L234 108Z" fill="${G}" stroke="${GD}" stroke-width="2" stroke-linejoin="round"/>
+  ${legP(186)}${legP(158)}
+  <path d="M110 94 L136 46 L142 96Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M142 96 L176 54 L172 102Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M172 104 L212 76 L198 118Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M52 122 C60 98 100 90 140 94 C176 96 204 106 210 128 C212 152 196 166 170 168 L84 168 C62 164 48 146 52 122Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g stroke="${m.light}" stroke-width="2" fill="none"><path d="M96 104 L100 164"/><path d="M136 100 L138 166"/><path d="M172 104 L170 164"/><path d="M104 132 L166 132"/></g>
+  <path d="M100 100 Q140 94 184 104" stroke="#9aa2b0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+  ${legP(106)}${legP(74)}
+  <path d="M86 112 L126 78 L118 124Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="${pent(80,142,11)}" fill="#3a3f48" stroke="${dk}" stroke-width="2"/><polygon points="${pent(80,142,10)}" fill="#ffb000" filter="url(#${p}gl)"/><polygon points="${pent(80,142,7)}" fill="#ffd66b" stroke="#fff" stroke-width="1"/>
+  <path d="M52 76 L90 40 L76 80Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M68 74 L108 52 L88 84Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M20 110 C18 86 38 70 62 72 C86 74 96 92 92 112 C88 130 62 138 42 134 C28 130 20 122 20 110Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M20 112 C26 104 46 104 60 110 C58 124 44 132 30 128 C22 124 20 118 20 112Z" fill="#dfe3ea" stroke="${dk}" stroke-width="2.5"/>
+  <path d="M24 122 L56 120" stroke="${dk}" stroke-width="2"/><path d="M28 120 l3 -5 l3 5z M38 120 l3 -5 l3 5z M48 119 l3 -5 l3 5z" fill="#fff"/>
+  <path d="M40 76 L60 78" stroke="${G}" stroke-width="3" stroke-linecap="round"/>
+  <g class="m-eyes">${omEye(46,94,10,dk,'#ff9d00')}${omEye(70,92,9,dk,'#ff9d00')}</g>
+  ${omOuch([[46,94,8],[70,92,7]])}
+  <path d="M34 80 L56 86" stroke="${dk}" stroke-width="4.5" stroke-linecap="round"/><path d="M62 82 L80 78" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
+  <circle class="mk-core" cx="130" cy="132" r="1" fill="none"/><circle class="mk-mouth" cx="24" cy="116" r="1" fill="none"/>`;
+  return omSvg('trigaron',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>`); }

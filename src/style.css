@@ -50,7 +50,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* HOME */
 .title{font-size:clamp(48px,13vw,96px);font-weight:900;line-height:1.05;margin:4px 0 0;letter-spacing:4px;background:linear-gradient(180deg,#fffbd1 0%,#ffe14d 45%,#ff9d00 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(3px 0 0 #c01616) drop-shadow(-3px 0 0 #c01616) drop-shadow(0 3px 0 #c01616) drop-shadow(0 -3px 0 #c01616) drop-shadow(0 7px 0 #6b0909) drop-shadow(0 0 22px rgba(255,210,80,.55));text-align:center}
 .tagline{font-size:clamp(17px,4.2vw,24px);font-weight:900;margin:8px 0 2px;color:#bfe9ff;text-shadow:0 2px 0 #1b2a7a;text-align:center}
-.homescene{position:relative;width:100%;max-width:620px;height:clamp(170px,30vh,300px);margin:4px auto 22px}
+.homescene{position:relative;width:100%;max-width:620px;height:clamp(170px,30vh,300px);margin:4px auto 34px}
 .homescene .hs-hero{position:absolute;left:8%;bottom:0;height:100%;aspect-ratio:2/3;cursor:pointer}
 .homescene .hs-mon{position:absolute;right:6%;bottom:0;height:78%;aspect-ratio:1/1}
 .homescene .vs{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) rotate(-8deg);font-size:clamp(34px,8vw,60px);font-weight:900;color:#ffe14d;text-shadow:3px 3px 0 #c01616,-3px -3px 0 #c01616,3px -3px 0 #c01616,-3px 3px 0 #c01616,0 6px 0 #6b0909;animation:vsPulse 1.2s ease-in-out infinite}
@@ -74,8 +74,8 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
-.hero .h-armL{transform-origin:60px 128px}
-.hero .h-armR{transform-origin:140px 128px}
+.hero .h-armL{transform-origin:56px 100px}
+.hero .h-armR{transform-origin:144px 100px}
 .hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
@@ -317,8 +317,8 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* ===== v2: Omega / new moves / Kanegon / Dada ===== */
 .hero .h-spiral{transform-box:fill-box;transform-origin:center;animation:spin 3s linear infinite}
 .hero.no-slug .h-slug{display:none}
-.hero.pose-tuck .h-armL{transform:rotate(-38deg)}
-.hero.pose-tuck .h-armR{transform:rotate(38deg)}
+.hero.pose-tuck .h-armL{transform:rotate(34deg)}
+.hero.pose-tuck .h-armR{transform:rotate(-34deg)}
 .hero.rainbow .h-aura{animation:aura .2s ease-in-out infinite alternate,rbfill .6s linear infinite}
 @keyframes rbfill{0%{fill:#ff6b6b}17%{fill:#ffb84d}33%{fill:#fff34d}50%{fill:#5bff8a}67%{fill:#4dd2ff}83%{fill:#b58cff}100%{fill:#ff6b6b}}
 .mon .k-open{display:none}
@@ -337,8 +337,51 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .slash{position:absolute;height:12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0),#ff4d4d 12%,#ffb84d 26%,#fff34d 40%,#fff 50%,#4dff88 60%,#4dd2ff 74%,#9d6bff 88%,rgba(255,255,255,0));box-shadow:0 0 16px 4px rgba(255,255,255,.85)}
 .rainbowbg{position:absolute;inset:0;z-index:1;background:linear-gradient(120deg,rgba(255,77,77,.45),rgba(255,184,77,.35),rgba(255,243,77,.35),rgba(77,255,136,.35),rgba(77,210,255,.4),rgba(157,107,255,.45));background-size:300% 300%;animation:rbmove 1.2s linear infinite}
 @keyframes rbmove{0%{background-position:0% 50%}100%{background-position:100% 50%}}
-.hs-name{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);text-align:center;font-weight:900;font-size:clamp(15px,3.6vw,20px);color:#fff;background:linear-gradient(180deg,#ff5454,#c4161c);border:3px solid #fff;border-radius:999px;padding:1px 12px;box-shadow:0 4px 0 #6b0909;white-space:nowrap;z-index:2}
-.hs-monname{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);font-weight:900;font-size:clamp(13px,3.2vw,17px);background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.4);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.hs-name{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);text-align:center;font-weight:900;font-size:clamp(15px,3.6vw,20px);color:#fff;background:linear-gradient(180deg,#ff5454,#c4161c);border:3px solid #fff;border-radius:999px;padding:1px 12px;box-shadow:0 4px 0 #6b0909;white-space:nowrap;z-index:2}
+.hs-monname{position:absolute;left:50%;bottom:-24px;transform:translateX(-50%);font-weight:900;font-size:clamp(13px,3.2vw,17px);background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.4);border-radius:999px;padding:1px 10px;white-space:nowrap}
 .heroname{font-size:clamp(12px,3vw,15px);color:#ffb4b4;letter-spacing:1px}
 .herohud .dots i.dada{background:repeating-linear-gradient(45deg,#fff 0 3px,#111 3px 6px)}
 .coinfly{position:absolute;font-weight:900;font-size:clamp(22px,5vw,34px);color:#ffe14d;text-shadow:2px 2px 0 #8a5a00,-2px -2px 0 #8a5a00,2px -2px 0 #8a5a00,-2px 2px 0 #8a5a00;white-space:nowrap}
+
+/* v3 heroic stance: guard arms in idle, straight arms for action poses */
+.hero .h-guard{display:inline}
+.hero[class*="pose-"] .h-guard{display:none}
+.hero:not([class*="pose-"]) .h-armL,.hero:not([class*="pose-"]) .h-armR{display:none}
+
+/* v3 kaiju signature animations */
+.mon-pegunos .pg-float{animation:pgfloat 2.2s ease-in-out infinite alternate}
+@keyframes pgfloat{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.mon-pegunos .pg-wingR{transform-box:view-box;transform-origin:162px 124px;animation:flapR .45s ease-in-out infinite alternate}
+.mon-pegunos .pg-wingL{transform-box:view-box;transform-origin:82px 132px;animation:flapL .45s ease-in-out infinite alternate}
+@keyframes flapR{from{transform:rotate(-12deg)}to{transform:rotate(10deg)}}
+@keyframes flapL{from{transform:rotate(12deg)}to{transform:rotate(-10deg)}}
+.mon-dugrid .dg-jaw{transform-box:view-box;transform-origin:128px 98px;animation:chomp 1.8s ease-in-out infinite}
+@keyframes chomp{0%,55%,100%{transform:rotate(0)}70%{transform:rotate(-14deg)}85%{transform:rotate(0)}}
+.mon-ohebinushi .ob-neck{transform-box:view-box;transform-origin:150px 192px;animation:sway 2.4s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(4deg)}}
+.mon-therizirus .th-cloak{animation:cloak 5s ease-in-out infinite}
+@keyframes cloak{0%,78%,100%{opacity:1}84%,92%{opacity:.35}}
+.mon-gedrago .gd-fur{transform-box:fill-box;transform-origin:50% 100%;animation:fluff 1.3s ease-in-out infinite alternate}
+@keyframes fluff{from{transform:scale(1,1)}to{transform:scale(1.035,.97)}}
+.mon-vugsect .vg-glow{animation:vgglow 1.1s ease-in-out infinite alternate}
+@keyframes vgglow{from{opacity:.35}to{opacity:1}}
+.mon .m-spark{animation:spark .9s steps(2,jump-none) infinite}
+@keyframes spark{0%{opacity:1}50%{opacity:0}100%{opacity:1}}
+
+/* v3 怪獸圖鑑 */
+.section-t small{font-size:.75em;opacity:.8;margin-left:6px}
+.dex{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin:4px 0 18px}
+.dcard{position:relative;background:rgba(40,46,120,.88);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:6px 4px 8px;text-align:center}
+.dcard .dimg{height:84px}
+.dcard .dimg svg{width:100%;height:100%}
+.dcard .dimg *{animation:none!important}
+.dcard .dname{font-weight:900;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dcard .dn{font-size:12px;opacity:.8}
+.dcard.locked .dimg svg{filter:brightness(0) opacity(.4)}
+.dcard.locked{border-style:dashed;background:rgba(14,18,56,.9)}
+.dcard.locked .dname{opacity:.6}
+.dtag{position:absolute;top:4px;right:4px;font-style:normal;font-size:11px;font-weight:900;padding:1px 6px;border-radius:8px;background:#ef4444}
+.dtag.f{background:#2f7fe0}.dtag.b{background:#7c3aed}.dtag.o{background:#e8483e}
+.dcard.locked .dtag{opacity:.5}
+.rdex{margin:4px auto 2px;padding:4px 12px;border-radius:12px;background:rgba(125,255,178,.18);color:#7dffb2;font-weight:900;display:inline-block}
+@media (max-width:520px){ .homescene .hs-hero{left:1%} .homescene .vs{left:57%} }

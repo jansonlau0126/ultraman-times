@@ -10,11 +10,11 @@ function play(el, kf, opts){ try{ const a=el.animate(kf, opts); return a.finishe
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
-    return {facts:d.facts||{}, badges:d.badges||{}, best:d.best||{}, stats:Object.assign(def.stats, d.stats||{}), settings:Object.assign(def.settings, d.settings||{})}; } }catch(e){}
+    return {facts:d.facts||{}, badges:d.badges||{}, best:d.best||{}, dex:d.dex||{}, stats:Object.assign(def.stats, d.stats||{}), settings:Object.assign(def.settings, d.settings||{})}; } }catch(e){}
   return def;
 }
 let DATA = loadData();
@@ -141,7 +141,7 @@ function makeChoices(a,b){ const ans=a*b; const set=[ans];
   return shuffle(set); }
 
 /* ---------- HOME ---------- */
-const HOME_MONS=['dada','kanegon','fire','thunder','ice','sea']; let homeMonIdx=0;
+const HOME_MONS=['dada','graim','pegunos','kanegon','gedrago','ohebinushi','therizirus','dugrid','rekiness','vugsect','trigaron','fire']; let homeMonIdx=0;
 function setHomeMon(){ const t=HOME_MONS[homeMonIdx%HOME_MONS.length]; homeMonIdx++; $('#homeMon').innerHTML='<div class="mon-bob">'+monsterSVG(t,'hm'+homeMonIdx)+'</div><div class="hs-monname">'+MONS[t].name+'</div>'; }
 function initHome(){
   $('#homeHero').innerHTML = '<div class="hero-bob">'+heroSVG('hh')+'</div><div class="hs-name">超人奧米加</div>';
@@ -227,6 +227,9 @@ function initSetup(){
 
 /* ---------- BATTLE ---------- */
 const NORMALS = ['fire','ice','thunder','rock','poison','sea'];
+const OMEGA_NORMALS = ['graim','dugrid','pegunos','therizirus','ohebinushi','gedrago','rekiness','trigaron'];
+function pickFresh(list, avoid){ const c=list.filter(t=>(avoid||[]).indexOf(t)<0); const fresh=c.filter(t=>!(DATA.dex&&DATA.dex[t])); return pick(fresh.length?fresh:c); }
+function dexAdd(t){ if(!DATA.dex) DATA.dex={}; const first=!DATA.dex[t]; DATA.dex[t]=(DATA.dex[t]||0)+1; save(); return first; }
 const MOVES = { beam:'十字死光！', kick:'飛踢！', disc:'光輪斬！', punch:'光之拳！', whirl:'旋風拳！', flip:'超人打關斗！', super:'超級十字死光！', rainbow:'彩虹旋風斬！' };
 const NORMAL_MOVES = ['beam','kick','disc','punch','whirl','flip'];
 const B = {token:0, busy:true, input:'', recent:[]};
@@ -237,10 +240,10 @@ function monSvgEl(){ return $('#monBob .mon'); }
 function mk(sel, root){ return (root||stageEl).querySelector(sel); }
 function relPos(el){ const s=stageEl.getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:r.left-s.left+r.width/2, y:r.top-s.top+r.height/2, w:r.width, h:r.height, l:r.left-s.left, t:r.top-s.top}; }
 function heroPose(p){ const h=heroSvgEl(); if(!h) return; const keep=[]; h.classList.forEach(c=>{ if(c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug') keep.push(c); }); h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' ')); }
-function setChestTimer(wrongs){ const h=heroSvgEl(); if(!h) return; const col = wrongs<=0?'#38bdf8': wrongs===1?'#facc15':'#ef4444'; h.style.setProperty('--tc',col); h.classList.toggle('t-blink', wrongs>=3); }
+function setChestTimer(wrongs){ const h=heroSvgEl(); if(!h) return; const col = wrongs<=0?'#6d7cff': wrongs===1?'#facc15':'#ef4444'; h.style.setProperty('--tc',col); h.classList.toggle('t-blink', wrongs>=3); }
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
   const hh = Math.min(h*.66, w*.38*1.5); heroWrap.style.height=hh+'px'; heroWrap.style.width=(hh/1.5)+'px';
-  const boss = B.type==='boss'||B.type==='dada'; const mh = B.type==='dada' ? Math.min(h*.82, w*.5) : Math.min(h*(boss?.72:.6), w*(boss?.5:.44)); monWrap.style.height=mh+'px'; monWrap.style.width=mh+'px'; }
+  const boss = !!(MONS[B.type]&&MONS[B.type].boss); const mh = (B.type==='dada'||B.type==='ohebinushi') ? Math.min(h*.82, w*.5) : Math.min(h*(boss?.72:.6), w*(boss?.5:.44)); monWrap.style.height=mh+'px'; monWrap.style.width=mh+'px'; }
 
 function fxEl(cls, html){ const e=document.createElement('div'); e.className=cls; if(html) e.innerHTML=html; fxLayer.appendChild(e); return e; }
 function shake(px){ const a=px||8; play(stageEl,[{transform:'translate(0,0)'},{transform:'translate('+(-a)+'px,'+(a*.5)+'px)'},{transform:'translate('+a+'px,'+(-a*.4)+'px)'},{transform:'translate('+(-a*.6)+'px,'+(-a*.3)+'px)'},{transform:'translate('+(a*.4)+'px,'+(a*.3)+'px)'},{transform:'translate(0,0)'}],{duration:420}); }
@@ -269,8 +272,8 @@ async function mvBeam(hit, sup){ heroPose('beam'); Sfx.charge(); await sleep(60)
   await sleep((sup?850:520)*K()); clearInterval(iv); if(sup){ FX.ring(t.x,t.y,'#ffe066'); FX.ring(t.x,t.y,'#ff7ad9',36); }
   await sleep(260*K()); heroPose('idle'); }
 async function mvKick(hit){ const h=relPos(heroWrap), m=relPos(monWrap); const dx=(m.l+m.w*.28)-(h.l+h.w*.95);
-  heroPose('kick'); Sfx.whoosh(); speedLines();
-  const a=play(heroWrap,[{transform:'translate(0,0) rotate(0)'},{transform:'translate('+(dx*.45)+'px,'+(-h.h*.42)+'px) rotate(-14deg)',offset:.35},{transform:'translate('+dx+'px,'+(-h.h*.1)+'px) rotate(-8deg)',offset:.55},{transform:'translate('+dx+'px,'+(-h.h*.1)+'px) rotate(-8deg)',offset:.66},{transform:'translate(0,0) rotate(0)'}],{duration:1150*K(),easing:'ease-in-out'});
+  heroPose('kick'); Sfx.whoosh(); speedLines(); const rise=Math.max(h.h*.12, Math.min(h.h*.42, h.t+h.h*.06));
+  const a=play(heroWrap,[{transform:'translate(0,0) rotate(0)'},{transform:'translate('+(dx*.45)+'px,'+(-rise)+'px) rotate(-14deg)',offset:.35},{transform:'translate('+dx+'px,'+(-h.h*.1)+'px) rotate(-8deg)',offset:.55},{transform:'translate('+dx+'px,'+(-h.h*.1)+'px) rotate(-8deg)',offset:.66},{transform:'translate(0,0) rotate(0)'}],{duration:1150*K(),easing:'ease-in-out'});
   await sleep(630*K()); const t=relPos(mk('.mk-core',monWrap)); hit(); Sfx.bigHit(); shake(12); impactStar(t,'砰！');
   FX.burst(t.x,t.y,{n:30,speed:9,colors:['#fff','#ffd84d','#ff8a3d'],shape:'star',size:9});
   await a; heroPose('idle'); }
@@ -376,7 +379,12 @@ async function monsterAttack(){ const s=MONS[B.type]; Sfx.growl(); const msv=mon
   play(heroSvgEl(),[{transform:'rotate(0)',filter:'brightness(1)'},{transform:'rotate(-9deg) translateX(-6px)',filter:'brightness(2)'},{transform:'rotate(-5deg)',filter:'brightness(1)'},{transform:'rotate(-7deg)',filter:'brightness(1.8)'},{transform:'rotate(0)',filter:'brightness(1)'}],{duration:620});
   const hp=relPos(heroWrap); floatText('ouchtxt', pick(['哎呀！','好痛呀！','唔緊要！']), hp.x, hp.t+hp.h*.05);
   await lunge; await sleep(250*K()); }
-async function monsterExplode(){ const ms=monSvgEl(); if(B.type!=='dada') ms.classList.add('ouch'); Sfx.noise(.8,{vol:.2,type:'lowpass',f:400});
+async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
+  FX.burst(t.x,t.y,{n:60,speed:9,shape:'star',colors:['#bff3ff','#fff','#ffe066','#9ad8ff'],size:11,life:80,gravity:.05}); FX.ring(t.x,t.y,'#bff3ff',36);
+  showMoveName('特訓完成！','banner',1400);
+  await play(monWrap,[{transform:'scale(1) translateY(0)',opacity:1,filter:'brightness(1)'},{transform:'scale(1.08) translateY(-4%)',opacity:1,filter:'brightness(1.8)',offset:.35},{transform:'scale(.18) translateY(60%)',opacity:0,filter:'brightness(3)'}],{duration:1100*K(),easing:'ease-in',fill:'forwards'});
+  Sfx.star(2); await sleep(500*K()); }
+async function monsterExplode(){ if(MONS[B.type].friend){ await friendRest(); return; } const ms=monSvgEl(); if(B.type!=='dada') ms.classList.add('ouch'); Sfx.noise(.8,{vol:.2,type:'lowpass',f:400});
   let fiv=null; if(B.type==='dada'){ const fs=['face-a','face-b','face-c']; let k=0; fiv=setInterval(()=>{ fs.forEach(f=>ms.classList.remove(f)); ms.classList.add(fs[k++%3]); },90); }
   if(B.type==='kanegon'){ await kanegonCoinSpit(); }
   await play(ms,[{transform:'translate(0,0)',filter:'brightness(1)'},{transform:'translate(-4%,1%)',filter:'brightness(2.5)'},{transform:'translate(4%,-1%)',filter:'brightness(1)'},{transform:'translate(-4%,0)',filter:'brightness(2.5)'},{transform:'translate(4%,1%)',filter:'brightness(1)'},{transform:'translate(-3%,0)',filter:'brightness(3)'},{transform:'translate(0,0)',filter:'brightness(3)'}],{duration:800*K()});
@@ -393,14 +401,14 @@ async function kanegonCoinSpit(){ const ms=monSvgEl(); ms.classList.remove('ouch
   floatText('coinfly', B.mode==='timed'?'金幣！':'+30 金幣！', mo.x, mo.y-30);
   await sleep(1300*K()); clearInterval(iv); if(tk!==B.token) return; if(B.mode!=='timed'){ DATA.stats.coins=(DATA.stats.coins||0)+30; B.gotCoins=30; save(); } }
 async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); Sfx.appear();
-  const m=MONS[B.type]; showMoveName(B.type==='dada'?'三面怪人達達出現！':m.boss?'大魔王出現！':(m.name+'出現！'),'banner',1500);
+  const m=MONS[B.type]; showMoveName(B.type==='dada'?'三面怪人達達出現！':B.type==='boss'?'大魔王出現！':m.friend?(m.name+'嚟特訓！'):(m.name+'出現！'),'banner',1500);
   await play(monWrap,[{transform:'translateX(130%)',opacity:0},{transform:'translateX(-6%)',opacity:1,offset:.7},{transform:'translateX(0)',opacity:1}],{duration:950*K(),easing:'ease-out'});
   shake(5); Sfx.hit(); }
 
 function renderRoundHud(){
   if(B.mode==='timed'){ $('#roundLbl').innerHTML='<div class="heroname">超人奧米加</div><span class="timerbox" id="timerBox">'+Math.ceil(B.timeLeft)+'秒</span>'; $('#roundDots').innerHTML='<span>答啱：<b id="scoreLbl">'+B.score+'</b> 題</span>'; return; }
-  $('#roundLbl').innerHTML = '<div class="heroname">超人奧米加</div>'+(B.type==='dada' ? '最終關：達達！' : B.type==='boss' ? '第 '+(B.round+1)+' 關：魔王！' : '第 '+(B.round+1)+' 關');
-  $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(t==='boss'?'boss ':'')+(t==='dada'?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join(''); }
+  $('#roundLbl').innerHTML = '<div class="heroname">超人奧米加</div>'+(B.type==='dada' ? '最終關：達達！' : MONS[B.type].boss ? '第 '+(B.round+1)+' 關：'+(MONS[B.type].short||'頭目')+'！' : '第 '+(B.round+1)+' 關');
+  $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(MONS[t].boss&&t!=='dada'?'boss ':'')+(t==='dada'?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join(''); }
 function renderCombo(){ const c=$('#combo'); if(B.combo>=2){ c.textContent=B.combo+' 連擊！'; c.classList.add('show'); play(c,[{transform:'translateX(-50%) scale(1.6)'},{transform:'translateX(-50%) scale(1)'}],{duration:300,easing:'ease-out'}); } else c.classList.remove('show'); }
 
 function startSession(mode, tables){
@@ -411,8 +419,8 @@ function startSession(mode, tables){
   if(!$('#heroBob .hero')) $('#heroBob').innerHTML=heroSVG('hb');
   heroWrap.getAnimations().forEach(a=>a.cancel());
   show('battle');
-  if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(NORMALS.concat(['kanegon'])); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
-  else { B.order=shuffle(['kanegon', pick(NORMALS)]).concat(['boss','dada']); B.round=0; startRound(B.order[0]); }
+  if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(OMEGA_NORMALS.concat(NORMALS,['kanegon'])); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
+  else { const x=pickFresh(OMEGA_NORMALS); const y=Math.random()<.7?pickFresh(OMEGA_NORMALS,[x]):pick(NORMALS); B.order=shuffle(['kanegon',x,y]).concat([pickFresh(['vugsect','boss']),'dada']); B.round=0; startRound(B.order[0]); }
 }
 async function startRound(type){
   const tk=B.token; B.type=type; const m=MONS[type];
@@ -454,7 +462,7 @@ async function submit(){
     const kind=chooseMove(first);
     await performMove(kind, ()=>damageMonster(dmg)); if(tk!==B.token) return;
     if(B.hp<=0){ await monsterExplode(); if(tk!==B.token) return;
-      if(B.mode==='timed'){ B.monIdx++; startRound(B.timedOrder[B.monIdx%B.timedOrder.length]); return; }
+      if(B.mode==='timed'){ dexAdd(B.type); B.monIdx++; startRound(B.timedOrder[B.monIdx%B.timedOrder.length]); return; }
       roundWon(); return; }
     B.busy=false; nextQuestion();
   } else {
@@ -472,19 +480,19 @@ async function submit(){
 }
 function roundWon(){
   const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const boss=B.type==='dada'; const m=MONS[B.type];
-  DATA.stats.monsters++; if(B.type==='boss'||boss) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
+  DATA.stats.monsters++; const newDex=dexAdd(B.type); if(m.boss) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
   const asked=Object.keys(B.rtables).map(Number); asked.forEach(t=>{ DATA.badges[t]=Math.max(DATA.badges[t]||0, stars); }); save();
   heroPose('win'); Sfx.victory(); $('#combo').classList.remove('show'); confetti();
   const label = B.tables.length===1 ? B.tables[0] : '混'; const tierName=['','銅','銀','金'][stars];
   const msg = stars===3 ? '超勁！你係乘數表英雄！' : stars===2 ? '好叻呀！繼續加油！' : '做得好！多啲練習會更叻！';
   const next = B.round < B.order.length-1 ? B.order[B.round+1] : null;
-  const html = '<h3>'+(boss?'打敗咗三面怪人達達！':'打敗咗'+m.name+'！')+'</h3>'+
+  const html = '<h3>'+(boss?'打敗咗三面怪人達達！':m.friend?'同'+m.name+'特訓完成！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+(m.friend?'<div class="rstat">'+m.name+'係超人奧米加嘅好夥伴！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
     '<div class="rmedal">'+medalSVG(label,stars)+'<div class="mt">'+(B.tables.length===1?label+' 乘數表':'混合乘數表')+'<br>'+tierName+'勳章！</div></div>'+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
     '<div class="rstat">最高連擊：<b>'+B.rMaxCombo+'</b></div>'+(B.gotCoins?'<div class="rstat">食錢怪吐出：<b style="color:#ffe14d">'+B.gotCoins+' 個金幣！</b></div>':'')+
     '<div class="rmsg">'+(boss?'超人奧米加大勝利！你係乘數表英雄！':msg)+'</div>'+
-    '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(next==='dada'?'最終關：挑戰三面怪人達達！':next==='boss'?'下一關：魔王出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
+    '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(next==='dada'?'最終關：挑戰三面怪人達達！':MONS[next].boss?'下一關：'+MONS[next].short+'出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
     '<button class="btn blue small" id="rPick">揀過乘數表</button><button class="btn gray small" id="rHome">返主頁</button></div>';
   showResult(html, stars);
   const rn=$('#rNext'); if(rn) rn.addEventListener('click',()=>{ Sfx.click(); hideResult(); B.round++; startRound(B.order[B.round]); });
@@ -537,8 +545,14 @@ function renderProgress(){
   $('#mgrid').innerHTML=g;
   const weak=facts.filter(k=>(DATA.facts[k].p||0)>0).sort((x,y)=>DATA.facts[y].p-DATA.facts[x].p).slice(0,10);
   $('#weak').innerHTML = weak.length ? weak.map(k=>{ const [a,b]=k.split('x').map(Number); return '<span>'+a+' × '+b+' = '+(a*b)+'</span>'; }).join('') : '<div style="opacity:.8">暫時冇！繼續保持 👍</div>'.replace(' 👍','');
+  renderDex();
   $('#badges').innerHTML = [1,2,3,4,5,6,7,8,9,10].map(t=>{ const tier=DATA.badges[t]||0; return '<div class="badge">'+medalSVG(t,tier)+'<div>'+(tier?['','銅','銀','金'][tier]+'勳章':'未有')+'</div></div>'; }).join('');
 }
+
+function renderDex(){ const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
+  $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
+  $('#dex').innerHTML=DEX_ORDER.map((t,i)=>{ const m=MONS[t], n=dex[t]||0; const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':m.omega?'<i class="dtag o">奧米加</i>':'';
+    return '<div class="dcard'+(n?'':' locked')+'"><div class="dimg">'+monsterSVG(t,'dx'+i)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</div>'; }).join(''); }
 
 /* ---------- modal ---------- */
 let modalCb=null;
@@ -576,5 +590,5 @@ function init(){
   });
 }
 function pressKey(k){ const b=$('#keypad .key[data-k="'+k+'"]'); if(!b) return; b.classList.add('press'); setTimeout(()=>b.classList.remove('press'),110); }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, dadaSwitch:()=>dadaSwitch(true) };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, dadaSwitch:()=>dadaSwitch(true), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; } };
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
