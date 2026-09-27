@@ -123,6 +123,14 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes flicker{from{transform:scale(1,1)}to{transform:scale(1.06,.9)}}
 .mon .m-float{animation:mfloat 2s ease-in-out infinite alternate}
 @keyframes mfloat{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+.mon-ice .ic-wing{transform-box:view-box;transform-origin:120px 120px;animation:icflap 2.4s ease-in-out infinite alternate}
+@keyframes icflap{from{transform:scaleY(1)}to{transform:scaleY(1.06) translateY(-3px)}}
+.mon-thunder .thun-cloak{animation:thcloak 4.5s ease-in-out infinite}
+@keyframes thcloak{0%,70%,100%{opacity:1}80%{opacity:.22}90%{opacity:.85}}
+.mon-poison .tt-tail{transform-box:view-box;transform-origin:160px 168px;animation:ttwhip 1.8s ease-in-out infinite alternate}
+@keyframes ttwhip{from{transform:rotate(-4deg)}to{transform:rotate(6deg)}}
+.mon-boss .bs-wing{transform-box:view-box;transform-origin:120px 110px;animation:bswing 2.6s ease-in-out infinite alternate}
+@keyframes bswing{from{transform:scaleY(1)}to{transform:scaleY(1.05) translateY(-2px)}}
 
 /* PICK (learn) + SETUP tiles */
 .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:760px}
@@ -228,6 +236,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .impact svg{position:absolute;inset:0;width:100%;height:100%}
 .impact span{position:relative;font-weight:900;font-size:36px;color:#fff;text-shadow:2px 2px 0 #c01616,-2px -2px 0 #c01616,2px -2px 0 #c01616,-2px 2px 0 #c01616,0 5px 0 #6b0909}
 .dmg{position:absolute;font-weight:900;font-size:clamp(26px,6vw,40px);color:#fff;text-shadow:2px 2px 0 #c01616,-2px -2px 0 #c01616,2px -2px 0 #c01616,-2px 2px 0 #c01616;white-space:nowrap}
+.yell{position:absolute;font-weight:900;font-size:clamp(28px,7vw,48px);color:#ffe14d;text-shadow:3px 3px 0 #c01616,-3px -3px 0 #c01616,3px -3px 0 #c01616,-3px 3px 0 #c01616,0 0 18px rgba(255,255,255,.9);white-space:nowrap;letter-spacing:2px}
 .ouchtxt{position:absolute;font-weight:900;font-size:clamp(20px,4.5vw,30px);color:#ffe14d;text-shadow:2px 2px 0 #1e3a8a,-2px -2px 0 #1e3a8a,2px -2px 0 #1e3a8a,-2px 2px 0 #1e3a8a;white-space:nowrap}
 .flash{position:absolute;inset:0;background:#fff;opacity:0}
 .speedline{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,#fff);opacity:.8}
@@ -337,8 +346,9 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* ===== v2: Omega / new moves / Kanegon / Dada ===== */
 .hero .h-spiral{transform-box:fill-box;transform-origin:center;animation:spin 3s linear infinite}
 .hero.no-slug .h-slug{display:none}
-.hero.pose-tuck .h-armL{transform:rotate(34deg)}
-.hero.pose-tuck .h-armR{transform:rotate(-34deg)}
+.hero.pose-tuck .h-armL{transform:rotate(42deg)}
+.hero.pose-tuck .h-armR{transform:rotate(-42deg)}
+.hero.pose-tuck{transform:scale(.92) translateY(6px)}
 .hero.rainbow .h-aura{animation:aura .2s ease-in-out infinite alternate,rbfill .6s linear infinite}
 @keyframes rbfill{0%{fill:#ff6b6b}17%{fill:#ffb84d}33%{fill:#fff34d}50%{fill:#5bff8a}67%{fill:#4dd2ff}83%{fill:#b58cff}100%{fill:#ff6b6b}}
 .mon .k-open{display:none}
@@ -656,25 +666,26 @@ function heroSVG(p){
 }
 
 const MONS = {
-  fire:{name:'火焰怪獸', nick:'炎炎', body:'#ff6b3d', light:'#ffb08a', dark:'#b93a0e', belly:'#ffe0b0', shot:'#ff9f1c'},
-  ice:{name:'冰凍怪獸', nick:'雪雪', body:'#6cc9f7', light:'#c8efff', dark:'#1d6fa5', belly:'#eefaff', shot:'#bae6fd'},
-  thunder:{name:'雷電怪獸', nick:'閃閃', body:'#f7c21b', light:'#ffe98a', dark:'#9a6206', belly:'#fff6cf', shot:'#fde047'},
-  rock:{name:'岩石怪獸', nick:'石頭哥', body:'#a67c5b', light:'#d9b594', dark:'#5f3f28', belly:'#ecd6bb', shot:'#c8a27c'},
-  poison:{name:'毒霧怪獸', nick:'紫紫', body:'#a35cf0', light:'#d2b0ff', dark:'#5b1d9a', belly:'#f0e3ff', shot:'#b6f25c'},
-  sea:{name:'海浪怪獸', nick:'浪浪', body:'#27c4b0', light:'#98f0e2', dark:'#0d6b61', belly:'#d8fff7', shot:'#5ee8ff'},
-  boss:{name:'魔王怪獸', short:'魔王', nick:'黑暗大魔王', body:'#5b2aa8', light:'#9f7ae0', dark:'#240b52', belly:'#c8b3f5', shot:'#ff4d6d', boss:true},
-  kanegon:{name:'食錢怪', nick:'最鍾意食金幣', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
-  dada:{name:'三面怪人達達', nick:'最終大頭目', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true},
-  /* v3: kaiju from 超人奧米加 (names: zh-Hant wiki / 萌娘百科 transliterations) */
-  graim:{name:'格萊姆', nick:'熱線怪獸・鑽頭角', body:'#6b6f7a', light:'#b3b8c2', dark:'#2f3238', belly:'#f2c230', shot:'#ff8a1c', omega:true},
-  dugrid:{name:'多格利德', nick:'水棲毒獸・大大口', body:'#5b4636', light:'#a0806a', dark:'#2a1d14', belly:'#e8b93a', frill:'#d8323a', shot:'#a3e635', omega:true},
-  pegunos:{name:'佩古諾斯', nick:'無重力怪獸・識飛企鵝', body:'#1f3f86', light:'#5a84d8', dark:'#0e1f4a', belly:'#eef3fa', beak:'#ffcc33', shot:'#bfefff', omega:true},
-  therizirus:{name:'特利吉拉斯', nick:'刃爪怪獸・會隱形', body:'#2b3039', light:'#6a7486', dark:'#12151b', belly:'#c8324d', shot:'#ff4d6d', omega:true},
-  ohebinushi:{name:'大蛇主命', nick:'傳說蛇獸・超長身', body:'#4a5147', light:'#8e9a86', dark:'#1f241d', belly:'#efe4c4', accent:'#d84a3a', shot:'#ffd166', omega:true},
-  gedrago:{name:'蓋多拉哥', nick:'猛突怪獸・粉紅毛毛', body:'#d8418f', light:'#f59ac6', dark:'#7d1b4f', belly:'#6b3a44', horn:'#a7adb7', shot:'#ff8fc8', omega:true},
-  rekiness:{name:'雷基尼斯', nick:'流星怪獸・夥伴特訓', body:'#2f7fe0', light:'#9fd8ff', dark:'#123a7a', belly:'#bfe4ff', shot:'#b58cff', omega:true, friend:true},
-  trigaron:{name:'特萊加隆', nick:'流星怪獸・夥伴特訓', body:'#2c3038', light:'#6a7280', dark:'#101216', belly:'#8a93a3', gold:'#ffc21a', shot:'#ffc21a', omega:true, friend:true},
-  vugsect:{name:'瓦古塞克特', nick:'宇宙甲獸・中頭目', short:'瓦古塞克特', body:'#2c2342', light:'#7a68a8', dark:'#130d22', belly:'#4a3b6b', shot:'#ff3b6b', boss:true, omega:true}
+  /* 列表靈感・卡通同人重畫（剪影要一眼分得開） */
+  fire:{name:'獄炎哥爾贊', nick:'熔岩甲獸・地心噴火', body:'#c4451a', light:'#ff8a3d', dark:'#5c1a08', belly:'#ffd28a', shot:'#ff6a00'},
+  ice:{name:'霜翼佩吉拉', nick:'絕對零度・霜翼凍結', body:'#7ec8f5', light:'#e8f7ff', dark:'#1a5a8a', belly:'#ffffff', shot:'#bae6fd'},
+  thunder:{name:'隱雷內隆嘎', nick:'十萬伏特・隱身雷鞭', body:'#f5d76e', light:'#fff6b0', dark:'#8a6200', belly:'#fffde7', shot:'#fde047'},
+  rock:{name:'哥莫拉', nick:'超振動・斷空新月角', body:'#8b8f98', light:'#d0d4dc', dark:'#3a3e46', belly:'#c8b89a', shot:'#a8a29e'},
+  poison:{name:'雙尾怪', nick:'雙尾纏殺・地底暗殺', body:'#6b7a3a', light:'#b8c878', dark:'#2f3618', belly:'#dfe8a8', shot:'#a3e635'},
+  sea:{name:'深淵鯊獸', nick:'深淵黑洞・撕空一咬', body:'#3a5a72', light:'#7aa0b8', dark:'#142430', belly:'#c5d8e4', shot:'#38bdf8'},
+  boss:{name:'災厄魔王', short:'災厄魔王', nick:'千芒閃光・混沌吞噬', body:'#5b2aa8', light:'#c4a0ff', dark:'#1a0838', belly:'#f0e6ff', shot:'#ff4d6d', boss:true},
+  kanegon:{name:'食錢怪', nick:'銅臭大爆發・偽幣彈幕', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
+  dada:{name:'三面怪人達達', nick:'三面幻影・次元亂光', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true},
+  /* 《超人奧米加》怪獸・剪影強化 */
+  graim:{name:'格萊姆', nick:'地獄鑽頭・地脈貫通裂', body:'#6b6f7a', light:'#b3b8c2', dark:'#2f3238', belly:'#f2c230', shot:'#ff8a1c', omega:true},
+  dugrid:{name:'多格利德', nick:'鈾金大口・毒瓣吞噬', body:'#5b4636', light:'#a0806a', dark:'#2a1d14', belly:'#e8b93a', frill:'#d8323a', shot:'#a3e635', omega:true},
+  pegunos:{name:'佩古諾斯', nick:'無重蒼穹・羽翼俯衝斬', body:'#1f3f86', light:'#5a84d8', dark:'#0e1f4a', belly:'#eef3fa', beak:'#ffcc33', shot:'#bfefff', omega:true},
+  therizirus:{name:'特利吉拉斯', nick:'赤鐮隱形・千裂一閃', body:'#2b3039', light:'#6a7486', dark:'#12151b', belly:'#c8324d', shot:'#ff4d6d', omega:true},
+  ohebinushi:{name:'大蛇主命', nick:'神州長頸・九天一嘯掃', body:'#4a5147', light:'#8e9a86', dark:'#1f241d', belly:'#efe4c4', accent:'#d84a3a', shot:'#ffd166', omega:true},
+  gedrago:{name:'蓋多拉哥', nick:'粉紅毛毛・友情爆走衝', body:'#d8418f', light:'#f59ac6', dark:'#7d1b4f', belly:'#6b3a44', horn:'#a7adb7', shot:'#ff8fc8', omega:true},
+  rekiness:{name:'雷基尼斯', nick:'流星守護・虹晶特訓彈', body:'#2f7fe0', light:'#9fd8ff', dark:'#123a7a', belly:'#bfe4ff', shot:'#b58cff', omega:true, friend:true},
+  trigaron:{name:'特萊加隆', nick:'黑金流星・翼刃特訓斬', body:'#2c3038', light:'#6a7280', dark:'#101216', belly:'#8a93a3', gold:'#ffc21a', shot:'#ffc21a', omega:true, friend:true},
+  vugsect:{name:'瓦古塞克特', short:'瓦古塞克特', nick:'甲殼雙鐮・破界破壞光', body:'#2c2342', light:'#7a68a8', dark:'#130d22', belly:'#4a3b6b', shot:'#ff3b6b', boss:true, omega:true}
 };
 const DEX_ORDER=['graim','dugrid','pegunos','therizirus','ohebinushi','gedrago','rekiness','trigaron','vugsect','kanegon','dada','boss','fire','ice','thunder','rock','poison','sea'];
 
@@ -684,60 +695,191 @@ function monsterSVG(type, p){
   if(type==='graim') return graimSVG(p); if(type==='dugrid') return dugridSVG(p); if(type==='pegunos') return pegunosSVG(p);
   if(type==='therizirus') return therizirusSVG(p); if(type==='ohebinushi') return ohebinushiSVG(p); if(type==='gedrago') return gedragoSVG(p);
   if(type==='rekiness') return rekinessSVG(p); if(type==='trigaron') return trigaronSVG(p); if(type==='vugsect') return vugsectSVG(p);
-  const m = MONS[type]; const dk=m.dark;
-  let back='', front='', body2='';
-  if(type==='fire'){
-    back = '<g class="m-flame"><path d="M92 82 C78 56 96 40 100 16 C108 38 118 30 116 10 C134 30 142 48 134 62 C144 58 150 50 150 38 C164 60 158 82 146 90 Z" fill="#ffb703" stroke="#e85d04" stroke-width="3"/><path d="M106 82 C100 64 110 56 112 42 C118 56 126 52 126 40 C138 58 134 76 128 84 Z" fill="#fff3b0"/></g>';
-    front = '<g class="m-flame"><path d="M220 130 C210 112 224 100 228 84 C236 102 246 110 238 130Z" fill="#ffb703" stroke="#e85d04" stroke-width="2.5"/></g>';
-  } else if(type==='ice'){
-    back = '<g fill="#e8faff" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"><path d="M112 74 L122 18 L136 72Z"/><path d="M90 84 L86 48 L106 76Z"/><path d="M148 78 L162 44 L162 86Z"/><path d="M184 98 L220 86 L196 120Z"/><path d="M198 132 L232 124 L206 152Z"/></g>';
-    body2 = '<g stroke="#8fd8ff" stroke-width="3" stroke-linecap="round"><path d="M118 146 L118 178M104 154 L132 170M104 170 L132 154"/></g>';
-  } else if(type==='thunder'){
-    back = '<g fill="#fff06a" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"><path d="M96 82 L76 50 L91 52 L78 16 L110 58 L95 56 L108 80Z"/><path d="M150 78 L168 46 L153 50 L172 14 L140 56 L155 54 L140 78Z"/></g>';
-    body2 = '<g stroke="'+dk+'" stroke-width="7" stroke-linecap="round" fill="none" opacity=".45"><path d="M170 84 Q184 96 188 114"/><path d="M188 132 Q198 144 200 160"/><path d="M70 120 Q62 132 62 148"/></g>';
-  } else if(type==='rock'){
-    back = '<g fill="#8d929c" stroke="#484d56" stroke-width="3" stroke-linejoin="round"><path d="M98 74 L106 42 L128 36 L138 68Z"/><path d="M150 82 L170 58 L190 72 L180 98Z"/><path d="M186 114 L214 104 L218 130 L196 140Z"/></g>';
-    body2 = '<g fill="'+dk+'" opacity=".3"><circle cx="175" cy="120" r="7"/><circle cx="186" cy="170" r="5"/><circle cx="70" cy="170" r="6"/><circle cx="160" cy="88" r="4"/></g>';
-  } else if(type==='poison'){
-    back = '<g stroke="'+dk+'" stroke-width="5" stroke-linecap="round" fill="none"><path d="M108 72 Q98 46 86 30"/><path d="M140 70 Q152 44 168 30"/></g><circle cx="86" cy="28" r="11" fill="#b6f25c" stroke="#4d7c0f" stroke-width="3"/><circle cx="168" cy="28" r="11" fill="#b6f25c" stroke="#4d7c0f" stroke-width="3"/>';
-    body2 = '<g fill="#e3c8ff" opacity=".75"><circle cx="172" cy="112" r="9"/><circle cx="188" cy="150" r="6"/><circle cx="160" cy="84" r="5"/><circle cx="70" cy="176" r="6"/></g>';
-    front = '<g class="m-float" fill="#b6f25c" opacity=".75"><circle cx="30" cy="80" r="7"/><circle cx="18" cy="104" r="4"/><circle cx="40" cy="60" r="3"/></g>';
-  } else if(type==='sea'){
-    back = '<path d="M104 74 Q118 14 170 28 Q148 44 154 80Z" fill="#12a594" stroke="'+dk+'" stroke-width="3"/><path d="M188 100 Q224 88 228 116 Q208 114 198 130Z" fill="#12a594" stroke="'+dk+'" stroke-width="3"/>';
-    body2 = '<g stroke="'+dk+'" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"><path d="M176 118 q6 6 0 12"/><path d="M184 116 q6 6 0 12"/></g>';
-    front = '<g class="m-float"><path d="M34 70 Q40 58 46 70 A7 7 0 1 1 34 70Z" fill="#9ff3ff" stroke="#0d6b61" stroke-width="2"/></g>';
-  } else if(type==='boss'){
-    back = '<g fill="#2a0f5c" stroke="#150533" stroke-width="3" stroke-linejoin="round"><path d="M74 122 C34 84 14 94 4 62 C20 72 30 68 38 54 C44 74 56 72 64 62 C68 86 78 98 88 106Z"/><path d="M178 116 C206 72 228 80 238 48 C224 62 214 58 206 44 C200 64 190 64 182 54 C182 80 176 94 166 104Z"/></g>'+
-      '<g fill="#f5f0e6" stroke="#44403c" stroke-width="3"><path d="M90 84 C68 72 66 46 78 32 C82 54 96 64 106 72Z"/><path d="M152 78 C172 62 172 40 160 26 C158 48 146 58 138 68Z"/></g>'+
-      '<path d="M100 78 L102 46 L114 62 L124 36 L134 62 L146 46 L148 76Z" fill="#fbbf24" stroke="#b45309" stroke-width="3" stroke-linejoin="round"/><circle cx="124" cy="60" r="5" fill="#ef4444"/><circle cx="108" cy="66" r="3" fill="#38bdf8"/><circle cx="140" cy="66" r="3" fill="#38bdf8"/>';
-    body2 = '<path d="M84 150 L118 196 L152 150" stroke="#fbbf24" stroke-width="4" fill="none" opacity=".7"/>';
-  }
-  const pupil = m.boss ? '#e11d48' : '#1f2937';
-  return '<svg class="mon mon-'+type+'" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">'+
-    '<defs><radialGradient id="'+p+'bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="'+m.light+'"/><stop offset=".55" stop-color="'+m.body+'"/><stop offset="1" stop-color="'+dk+'"/></radialGradient></defs>'+
-    '<ellipse cx="125" cy="228" rx="84" ry="9" fill="#000" opacity=".28"/>'+
-    back+
-    '<path d="M184 186 Q236 182 228 128 Q224 116 214 126 Q218 164 180 164 Z" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
-    '<ellipse cx="90" cy="213" rx="27" ry="15" fill="'+dk+'"/><ellipse cx="162" cy="213" rx="27" ry="15" fill="'+dk+'"/>'+
-    '<g fill="#fff"><circle cx="70" cy="220" r="4"/><circle cx="80" cy="224" r="4"/><circle cx="142" cy="221" r="4"/><circle cx="152" cy="225" r="4"/></g>'+
-    '<path d="M58 206 C36 150 54 70 122 64 C192 58 214 140 197 206 Q127 224 58 206Z" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
-    '<ellipse cx="118" cy="162" rx="48" ry="42" fill="'+m.belly+'"/>'+
-    '<g stroke="'+dk+'" stroke-width="2.5" fill="none" opacity=".25"><path d="M84 150 Q118 158 152 150"/><path d="M80 170 Q118 178 156 170"/><path d="M86 190 Q118 197 150 190"/></g>'+
-    body2+
-    '<ellipse cx="60" cy="150" rx="12" ry="21" transform="rotate(35 60 150)" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
-    '<g fill="#fff"><circle cx="46" cy="136" r="3.5"/><circle cx="52" cy="131" r="3.5"/></g>'+
-    '<ellipse cx="194" cy="152" rx="11" ry="19" transform="rotate(-22 194 152)" fill="url(#'+p+'bd)" stroke="'+dk+'" stroke-width="3"/>'+
-    '<g class="m-eyes"><circle cx="98" cy="112" r="19" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/><circle cx="145" cy="110" r="17" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/>'+
-    '<circle cx="91" cy="115" r="9" fill="'+pupil+'"/><circle cx="138" cy="113" r="8" fill="'+pupil+'"/><circle cx="88" cy="111" r="3.2" fill="#fff"/><circle cx="135" cy="109" r="3" fill="#fff"/></g>'+
-    '<g class="m-ouch" stroke="#1f2937" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M86 102 L108 113 L86 124"/><path d="M158 100 L135 111 L158 122"/></g>'+
-    '<path d="M76 88 L112 97" stroke="'+dk+'" stroke-width="'+(m.boss?8:6)+'" stroke-linecap="round"/><path d="M130 96 L164 86" stroke="'+dk+'" stroke-width="'+(m.boss?8:6)+'" stroke-linecap="round"/>'+
-    '<ellipse cx="76" cy="136" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/><ellipse cx="166" cy="132" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/>'+
-    '<path d="M96 138 Q119 164 144 136 Q119 147 96 138 Z" fill="#7f1d1d" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"/>'+
-    '<path d="M104 141 L108 151 L113 143Z" fill="#fff"/><path d="M127 142 L131 151 L135 140Z" fill="#fff"/>'+
-    front+
-    '<circle class="mk-core" cx="120" cy="140" r="1" fill="none"/><circle class="mk-mouth" cx="100" cy="144" r="1" fill="none"/>'+
-    '</svg>';
+  if(type==='fire') return fireSVG(p); if(type==='ice') return iceSVG(p); if(type==='thunder') return thunderSVG(p);
+  if(type==='rock') return rockSVG(p); if(type==='poison') return poisonSVG(p); if(type==='sea') return seaSVG(p);
+  if(type==='boss') return bossSVG(p);
+  return graimSVG(p);
 }
+
+/* 獄炎哥爾贊: 熔岩甲獸 — 厚甲、背脊火柱、岩漿裂紋 */
+function fireSVG(p){ const m=MONS.fire, dk=m.dark, bd=`url(#${p}bd)`;
+  const inner=`
+  <g class="m-flame"><path d="M118 70 C104 40 118 18 124 0 C132 22 148 16 146 -4 C164 20 170 48 158 68 C172 60 180 46 178 30 C192 54 184 78 168 88 Z" fill="#ffb703" stroke="#e85d04" stroke-width="3"/><path d="M130 72 C124 52 134 42 136 28 C142 44 152 40 150 26 C162 48 156 70 148 78 Z" fill="#fff3b0"/></g>
+  <path d="M176 196 Q228 200 236 148 L224 154 L226 136 L214 148 L208 132 L198 150 Q190 176 170 178 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  ${omFeet(dk,'#ffd28a',[90,158])}
+  <path d="M58 214 C40 160 56 96 112 82 C168 70 206 128 198 214 Q128 228 58 214 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M78 208 C68 170 82 128 116 122 C152 118 168 162 160 208 Q118 218 78 208Z" fill="${m.belly}" stroke="#b45309" stroke-width="2"/>
+  <g stroke="#ea580c" stroke-width="3" fill="none" stroke-linecap="round"><path d="M92 150 Q118 142 148 152"/><path d="M86 172 Q118 184 154 170"/><path d="M90 194 Q118 200 150 192"/></g>
+  <g fill="#ff6a00" opacity=".85"><path d="M100 146 L108 168 L116 148Z"/><path d="M130 168 L138 190 L146 170Z"/><path d="M74 180 L82 200 L90 182Z"/></g>
+  <ellipse cx="62" cy="148" rx="14" ry="24" transform="rotate(32 62 148)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#ffd28a" stroke="${dk}" stroke-width="1.5"><circle cx="46" cy="132" r="4"/><circle cx="52" cy="126" r="4"/><circle cx="58" cy="122" r="3.5"/></g>
+  <ellipse cx="186" cy="150" rx="12" ry="22" transform="rotate(-18 186 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M88 52 L96 8 L112 48 L124 4 L138 50 L152 18 L148 64 Z" fill="#ff8a3d" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M70 88 C64 52 92 34 120 38 C150 42 166 70 158 100 Q116 118 70 88Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M92 70 L100 92 L112 74 L124 96 L136 72" stroke="#ff6a00" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <g class="m-eyes">${omEye(98,74,12,dk,'#ff6a00')}${omEye(128,72,11,dk,'#ff6a00')}</g>
+  ${omOuch([[98,74,9],[128,72,8]])}
+  <path d="M84 58 L110 66" stroke="${dk}" stroke-width="6" stroke-linecap="round"/><path d="M118 62 L146 54" stroke="${dk}" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="84" cy="98" rx="8" ry="5" fill="#ff7a9a" opacity=".55"/><ellipse cx="146" cy="94" rx="8" ry="5" fill="#ff7a9a" opacity=".55"/>
+  <path d="M96 108 Q118 126 142 106" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M104 112 L108 120 L112 112Z" fill="#fff"/><path d="M126 112 L130 120 L134 110Z" fill="#fff"/>
+  <g class="m-flame"><path d="M210 120 C202 100 216 88 220 70 C228 90 240 98 232 120Z" fill="#ffb703" stroke="#e85d04" stroke-width="2.5"/></g>
+  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="112" r="1" fill="none"/>`;
+  return omSvg('fire',p,m,inner); }
+
+/* 霜翼佩吉拉: 霜翼巨獸 — 大冰翼、水晶角、凍結鱗片 */
+function iceSVG(p){ const m=MONS.ice, dk=m.dark, bd=`url(#${p}bd)`;
+  const crystal=(x,y,h,w,c)=>`<path d="M${x} ${y} L${x-w} ${y+h*.45} L${x} ${y+h} L${x+w} ${y+h*.45}Z" fill="${c}" stroke="${dk}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  const inner=`
+  <g class="ic-wing" fill="#e8f7ff" stroke="${dk}" stroke-width="3" stroke-linejoin="round">
+    <path d="M150 100 Q210 60 232 30 Q220 70 210 100 Q228 90 236 70 Q224 110 198 130 Q170 140 152 124 Z"/>
+    <path d="M70 110 Q20 70 4 40 Q16 80 30 112 Q10 100 2 78 Q18 120 50 136 Q68 138 74 122 Z"/>
+    <path d="M168 90 Q200 50 214 28" stroke="#8fd8ff" stroke-width="2" fill="none"/><path d="M52 100 Q24 64 12 44" stroke="#8fd8ff" stroke-width="2" fill="none"/>
+  </g>
+  ${omFeet(dk,'#ffffff',[92,158])}
+  <path d="M188 198 Q230 190 234 150 Q220 160 212 148 Q208 176 180 180Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M64 212 C48 160 62 100 116 88 C172 78 200 136 192 212 Q126 226 64 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="168" rx="42" ry="36" fill="${m.belly}"/>
+  <g stroke="#8fd8ff" stroke-width="3" stroke-linecap="round" fill="none"><path d="M100 150 L100 186M88 158 L112 176M88 176 L112 158"/><path d="M132 152 L132 188M120 160 L144 178M120 178 L144 160"/></g>
+  <ellipse cx="58" cy="146" rx="11" ry="20" transform="rotate(36 58 146)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#fff"><circle cx="44" cy="132" r="3.5"/><circle cx="50" cy="127" r="3.5"/></g>
+  ${crystal(108,18,48,10,'#e8f7ff')}${crystal(128,10,56,11,'#bae6fd')}${crystal(148,22,42,9,'#e8f7ff')}${crystal(88,40,28,7,'#bae6fd')}
+  <path d="M72 92 C66 56 92 38 120 42 C150 46 164 72 156 100 Q116 116 72 92Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M84 100 Q120 118 156 98 Q120 108 84 100Z" fill="#fff" opacity=".7"/>
+  <g class="m-eyes">${omEye(100,76,12,dk,'#38bdf8')}${omEye(130,74,11,dk,'#38bdf8')}</g>
+  ${omOuch([[100,76,9],[130,74,8]])}
+  <path d="M86 60 L112 68" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M120 64 L148 56" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="84" cy="98" rx="8" ry="4" fill="#ff7a9a" opacity=".4"/><ellipse cx="148" cy="94" rx="8" ry="4" fill="#ff7a9a" opacity=".4"/>
+  <path d="M100 108 Q120 122 142 106" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <g class="m-float" fill="#e8f7ff" stroke="${dk}" stroke-width="1.5" opacity=".9">${crystal(22,70,18,5,'#bae6fd')}${crystal(210,86,16,4,'#e8f7ff')}</g>
+  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="112" r="1" fill="none"/>`;
+  return omSvg('ice',p,m,inner); }
+
+/* 隱雷內隆嘎: 雷電隱獸 — 細長黃身、雷角、電弧（會隱身） */
+function thunderSVG(p){ const m=MONS.thunder, dk=m.dark, bd=`url(#${p}bd)`;
+  const bolt=(x,y,s)=>`<path d="M${x} ${y} L${x-s*.4} ${y+s*.55} L${x+s*.15} ${y+s*.5} L${x-s*.1} ${y+s} L${x+s*.55} ${y+s*.4} L${x} ${y+s*.45} L${x+s*.35} ${y}Z" fill="#fff06a" stroke="${dk}" stroke-width="2" stroke-linejoin="round"/>`;
+  const inner=`<g class="thun-cloak">
+  <g class="m-spark" stroke="#fff06a" stroke-width="2.5" fill="none" stroke-linecap="round">${bolt(28,50,22)}${bolt(200,40,18)}${bolt(216,120,14)}</g>
+  <path d="M176 200 Q226 194 232 148 Q218 158 210 146 Q206 174 170 178Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${omFeet(dk,'#fffde7',[88,156])}
+  <path d="M72 210 C54 150 70 86 118 74 C168 64 198 122 188 210 Q128 224 72 210Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="160" rx="36" ry="40" fill="${m.belly}"/>
+  <g stroke="${dk}" stroke-width="6" stroke-linecap="round" fill="none" opacity=".35"><path d="M168 90 Q186 108 190 130"/><path d="M188 148 Q200 164 202 182"/><path d="M68 118 Q56 136 54 156"/></g>
+  <ellipse cx="56" cy="140" rx="10" ry="22" transform="rotate(28 56 140)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#fff"><circle cx="42" cy="124" r="3"/><circle cx="48" cy="119" r="3"/></g>
+  <ellipse cx="184" cy="146" rx="9" ry="20" transform="rotate(-20 184 146)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${bolt(96,8,36)}${bolt(136,4,40)}
+  <path d="M78 86 C72 52 96 36 120 40 C146 44 160 68 152 96 Q116 110 78 86Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g class="m-eyes">${omEye(100,70,11,dk,'#eab308')}${omEye(128,68,10,dk,'#eab308')}</g>
+  ${omOuch([[100,70,8],[128,68,7]])}
+  <path d="M88 54 L112 62" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M118 58 L144 50" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="86" cy="94" rx="7" ry="4" fill="#ff7a9a" opacity=".5"/><ellipse cx="146" cy="90" rx="7" ry="4" fill="#ff7a9a" opacity=".5"/>
+  <path d="M100 102 Q120 116 140 100" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="108" cy="106" r="1" fill="none"/></g>`;
+  return omSvg('thunder',p,m,inner); }
+
+/* 哥莫拉: 古代怪獸 — 粗壯岩身、巨大新月角、獠牙 */
+function rockSVG(p){ const m=MONS.rock, dk=m.dark, bd=`url(#${p}bd)`;
+  const bump=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${dk}" opacity=".28"/>`;
+  const inner=`
+  <path d="M170 200 Q224 206 234 160 Q220 170 212 156 Q206 184 164 182Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  ${omFeet(dk,'#c8b89a',[88,158])}
+  <path d="M52 214 C36 158 52 96 108 84 C166 72 208 130 200 214 Q124 230 52 214Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="118" cy="172" rx="46" ry="38" fill="${m.belly}"/>
+  ${bump(168,120,8)}${bump(180,168,6)}${bump(70,168,7)}${bump(150,100,5)}${bump(96,140,6)}${bump(140,190,5)}
+  <ellipse cx="54" cy="150" rx="16" ry="26" transform="rotate(30 54 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#c8b89a" stroke="${dk}" stroke-width="1.8" stroke-linejoin="round"><path d="M40 136 L18 128 L36 150Z"/><path d="M38 148 L14 152 L40 158Z"/><path d="M42 156 L22 172 L48 162Z"/></g>
+  <ellipse cx="190" cy="152" rx="14" ry="24" transform="rotate(-16 190 152)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M100 78 L118 2 L148 78 Z" fill="#a8a29e" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M108 78 L118 18 L138 78" fill="#d0d4dc" stroke="none" opacity=".7"/>
+  <path d="M86 70 L92 42 L108 68Z" fill="#8b8f98" stroke="${dk}" stroke-width="2"/><path d="M148 72 L162 48 L158 78Z" fill="#8b8f98" stroke="${dk}" stroke-width="2"/>
+  <path d="M68 96 C62 58 90 38 120 42 C152 46 170 74 162 106 Q116 122 68 96Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#efe8d8" stroke="${dk}" stroke-width="2" stroke-linejoin="round"><path d="M78 112 L62 128 L80 124Z"/><path d="M150 110 L168 126 L148 122Z"/></g>
+  <g class="m-eyes">${omEye(98,78,13,dk,'#57534e')}${omEye(132,76,12,dk,'#57534e')}</g>
+  ${omOuch([[98,78,10],[132,76,9]])}
+  <path d="M84 60 L112 70" stroke="${dk}" stroke-width="7" stroke-linecap="round"/><path d="M122 66 L152 56" stroke="${dk}" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="82" cy="104" rx="9" ry="5" fill="#ff7a9a" opacity=".45"/><ellipse cx="150" cy="100" rx="9" ry="5" fill="#ff7a9a" opacity=".45"/>
+  <path d="M96 116 Q120 136 146 114" stroke="${dk}" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M106 122 L110 132 L114 122Z" fill="#fff"/><path d="M128 122 L132 132 L136 120Z" fill="#fff"/>
+  <circle class="mk-core" cx="120" cy="155" r="1" fill="none"/><circle class="mk-mouth" cx="100" cy="120" r="1" fill="none"/>`;
+  return omSvg('rock',p,m,inner); }
+
+/* 雙尾怪: 雙尾毒獸 — 兩條長鞭尾、蟲形頭、毒囊 */
+function poisonSVG(p){ const m=MONS.poison, dk=m.dark, bd=`url(#${p}bd)`;
+  const inner=`
+  <g class="tt-tail" fill="none" stroke-linecap="round">
+    <path d="M160 160 Q210 120 228 60" stroke="${dk}" stroke-width="14"/><path d="M160 160 Q210 120 228 60" stroke="${m.body}" stroke-width="9"/>
+    <path d="M148 176 Q200 200 230 170" stroke="${dk}" stroke-width="14"/><path d="M148 176 Q200 200 230 170" stroke="${m.light}" stroke-width="9"/>
+    <circle cx="228" cy="60" r="10" fill="#a3e635" stroke="#4d7c0f" stroke-width="2.5"/><circle cx="230" cy="170" r="10" fill="#a3e635" stroke="#4d7c0f" stroke-width="2.5"/>
+    <circle cx="228" cy="60" r="4" fill="#ecfccb"/><circle cx="230" cy="170" r="4" fill="#ecfccb"/>
+  </g>
+  ${omFeet(dk,'#dfe8a8',[90,158])}
+  <path d="M70 212 C52 162 64 108 110 96 C158 86 190 136 182 212 Q124 226 70 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="118" cy="168" rx="38" ry="34" fill="${m.belly}"/>
+  <g fill="#c084fc" opacity=".7"><circle cx="140" cy="140" r="8"/><circle cx="156" cy="170" r="5"/><circle cx="100" cy="150" r="6"/><circle cx="84" cy="186" r="5"/></g>
+  <ellipse cx="56" cy="148" rx="11" ry="20" transform="rotate(34 56 148)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#dfe8a8"><circle cx="42" cy="134" r="3.5"/><circle cx="48" cy="129" r="3.5"/></g>
+  <path d="M100 48 Q88 18 74 6" stroke="${dk}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M132 48 Q146 16 162 4" stroke="${dk}" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="74" cy="6" r="9" fill="#b6f25c" stroke="#4d7c0f" stroke-width="2.5"/><circle cx="162" cy="4" r="9" fill="#b6f25c" stroke="#4d7c0f" stroke-width="2.5"/>
+  <path d="M78 90 C72 54 96 36 120 40 C146 44 160 68 152 96 Q116 112 78 90Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g class="m-eyes">${omEye(100,72,11,dk,'#84cc16')}${omEye(130,70,10,dk,'#84cc16')}</g>
+  ${omOuch([[100,72,8],[130,70,7]])}
+  <path d="M88 56 L112 64" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M118 60 L144 52" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="86" cy="96" rx="7" ry="4" fill="#ff7a9a" opacity=".45"/><ellipse cx="146" cy="92" rx="7" ry="4" fill="#ff7a9a" opacity=".45"/>
+  <path d="M100 106 Q120 120 140 104" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <g class="m-float" fill="#a3e635" opacity=".8"><circle cx="24" cy="90" r="7" stroke="#4d7c0f" stroke-width="1.5"/><circle cx="16" cy="112" r="4"/><circle cx="34" cy="70" r="3"/></g>
+  <circle class="mk-core" cx="118" cy="155" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="110" r="1" fill="none"/>`;
+  return omSvg('poison',p,m,inner); }
+
+/* 深淵鯊獸: 鯊魚人 — 鯊頭、背鰭、流線身軀 */
+function seaSVG(p){ const m=MONS.sea, dk=m.dark, bd=`url(#${p}bd)`;
+  const inner=`
+  <path d="M130 70 Q148 8 176 28 Q156 40 150 78Z" fill="#12a594" stroke="${dk}" stroke-width="3"/>
+  <path d="M188 120 Q234 100 236 140 Q214 132 198 152Z" fill="#12a594" stroke="${dk}" stroke-width="3"/>
+  <path d="M176 198 Q228 204 236 158 Q222 168 214 154 Q208 180 168 180Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${omFeet(dk,'#c5d8e4',[90,158])}
+  <path d="M62 212 C46 158 58 104 108 90 C160 78 198 128 190 212 Q124 226 62 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M84 206 C74 168 86 130 118 124 C150 120 162 164 154 206 Q118 216 84 206Z" fill="${m.belly}" stroke="#7aa0b8" stroke-width="2"/>
+  <g stroke="${dk}" stroke-width="2.5" fill="none" opacity=".45"><path d="M168 130 q8 8 0 16"/><path d="M176 128 q8 8 0 16"/><path d="M92 160 Q118 170 148 158"/><path d="M90 180 Q118 190 150 178"/></g>
+  <ellipse cx="56" cy="150" rx="12" ry="22" transform="rotate(34 56 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#c5d8e4" stroke="${dk}" stroke-width="1.5"><circle cx="42" cy="136" r="3.5"/><circle cx="48" cy="131" r="3.5"/></g>
+  <ellipse cx="184" cy="152" rx="11" ry="20" transform="rotate(-18 184 152)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M40 100 C36 70 60 48 96 46 C130 44 152 64 148 92 C146 112 120 124 90 122 C60 120 42 114 40 100Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M42 108 Q90 124 146 100 Q120 140 70 136 Q48 128 42 108Z" fill="#0e7490" stroke="${dk}" stroke-width="2.5"/>
+  <g fill="#fff"><path d="M56 112 l4 8 l4 -7z"/><path d="M72 118 l4 8 l4 -7z"/><path d="M88 120 l4 8 l4 -7z"/><path d="M104 118 l4 8 l4 -7z"/><path d="M120 114 l4 8 l4 -7z"/></g>
+  <path d="M48 100 Q70 96 92 100" stroke="#7aa0b8" stroke-width="3" fill="none"/>
+  <g class="m-eyes">${omEye(88,78,11,dk,'#0ea5e9')}${omEye(118,76,10,dk,'#0ea5e9')}</g>
+  ${omOuch([[88,78,8],[118,76,7]])}
+  <path d="M76 60 L100 66" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M108 62 L134 56" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
+  <g class="m-float"><path d="M22 76 Q28 62 34 76 A7 7 0 1 1 22 76Z" fill="#9ff3ff" stroke="#0d6b61" stroke-width="2"/></g>
+  <circle class="mk-core" cx="120" cy="155" r="1" fill="none"/><circle class="mk-mouth" cx="70" cy="118" r="1" fill="none"/>`;
+  return omSvg('sea',p,m,inner); }
+
+/* 災厄魔王: 混沌魔王 — 雙翼、金冠、紅眼、混沌核心 */
+function bossSVG(p){ const m=MONS.boss, dk=m.dark, bd=`url(#${p}bd)`;
+  const inner=`
+  <g class="bs-wing" fill="#2a0f5c" stroke="#150533" stroke-width="3" stroke-linejoin="round">
+    <path d="M70 120 C28 78 8 90 -4 52 C14 64 26 58 36 42 C44 66 58 66 68 54 C72 82 82 98 94 108Z"/>
+    <path d="M176 114 C210 66 234 76 246 40 C230 56 218 50 208 34 C200 58 188 56 178 44 C176 76 168 94 158 106Z"/>
+  </g>
+  <g fill="#f5f0e6" stroke="#44403c" stroke-width="2.5"><path d="M86 86 C62 72 58 44 72 28 C78 54 94 66 106 74Z"/><path d="M156 82 C178 64 180 38 166 22 C162 48 148 60 138 70Z"/></g>
+  <path d="M96 76 L98 38 L112 58 L124 28 L136 58 L150 38 L152 74Z" fill="#fbbf24" stroke="#b45309" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="124" cy="52" r="5" fill="#ef4444"/><circle cx="108" cy="60" r="3" fill="#38bdf8"/><circle cx="140" cy="60" r="3" fill="#38bdf8"/>
+  <path d="M178 198 Q230 192 238 140 Q224 152 216 138 Q212 170 170 174Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${omFeet(dk,'#f0e6ff',[90,158])}
+  <path d="M56 214 C38 156 54 90 118 76 C182 64 214 130 204 214 Q128 230 56 214Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="165" rx="44" ry="40" fill="${m.belly}"/>
+  <path d="M84 150 L118 198 L152 150" stroke="#fbbf24" stroke-width="4" fill="none" opacity=".75"/>
+  <circle cx="120" cy="158" r="14" fill="#ff4d6d" filter="url(#${p}gl)"/><circle cx="120" cy="158" r="8" fill="#fff"/><circle cx="120" cy="158" r="5" fill="#ff4d6d"/>
+  <ellipse cx="54" cy="148" rx="13" ry="24" transform="rotate(32 54 148)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#f0e6ff"><circle cx="40" cy="132" r="3.5"/><circle cx="46" cy="126" r="3.5"/></g>
+  <ellipse cx="190" cy="150" rx="12" ry="22" transform="rotate(-18 190 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M68 94 C62 54 90 34 120 38 C152 42 170 70 162 102 Q116 120 68 94Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g class="m-eyes">${omEye(98,74,13,dk,'#e11d48')}${omEye(134,72,12,dk,'#e11d48')}</g>
+  ${omOuch([[98,74,10],[134,72,9]])}
+  <path d="M82 56 L114 68" stroke="${dk}" stroke-width="8" stroke-linecap="round"/><path d="M126 64 L160 52" stroke="${dk}" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="82" cy="102" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/><ellipse cx="152" cy="98" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/>
+  <path d="M96 116 Q120 142 146 114 Q120 128 96 116Z" fill="#7f1d1d" stroke="${dk}" stroke-width="3"/><path d="M108 122 L112 134 L118 124Z" fill="#fff"/><path d="M128 122 L132 134 L138 120Z" fill="#fff"/>
+  <circle class="mk-core" cx="120" cy="158" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="124" r="1" fill="none"/>`;
+  return omSvg('boss',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>`); }
 
 
 /* Fan-art 食錢怪 (coin-purse head with zipper-lip mouth on top, eyes on stalks, chest coin counter) */
@@ -1553,79 +1695,153 @@ async function monsterAttack(){
   };
 
   if(type==='dada'){
-    dadaSwitch(false); showMoveName('三面混亂光！','banner',1100);
+    dadaSwitch(false); showMoveName('三面幻影・次元亂光！','banner',1200);
     const L=lunge(); await sleep(200*K());
     for(let i=0;i<3;i++){ dadaSwitch(false); const oo=o(), th=tHero();
       const orb=fxEl('orb'); orb.style.background='repeating-radial-gradient(circle,#fff 0 4px,'+s.shot+' 4px 8px)'; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
       play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:320*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
       await sleep(140*K()); }
-    hitHero('變面攻擊！',['#fff',s.shot,'#ff6fb0']); await L; await sleep(200*K()); return;
+    hitHero('三面同擊！',['#fff',s.shot,'#ff6fb0']); await L; await sleep(200*K()); return;
   }
   if(type==='kanegon'){
     if(msv){ msv.classList.add('open'); setTimeout(()=>msv.classList.remove('open'),900); }
-    showMoveName('偽幣彈幕！','banner',1000);
+    showMoveName('銅臭大爆發・偽幣彈幕！','banner',1200);
     const L=lunge(); await sleep(220*K()); const oo=o(), th=tHero();
-    for(let i=0;i<6;i++){ FX.burst(oo.x,oo.y,{n:2,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.35,speed:9,min:5,colors:['#ffd23f'],shape:'coin',size:10,life:50,gravity:.2,drag:.99}); if(i%2===0) Sfx.coin(); await sleep(60*K()); }
-    hitHero('金幣砸中！',['#ffd23f','#fff']); await L; await sleep(200*K()); return;
+    for(let i=0;i<8;i++){ FX.burst(oo.x,oo.y,{n:3,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.45,speed:10,min:5,colors:['#ffd23f','#fff3a8'],shape:'coin',size:11,life:55,gravity:.2,drag:.99}); if(i%2===0) Sfx.coin(); await sleep(55*K()); }
+    hitHero('金幣暴雨！',['#ffd23f','#fff']); await L; await sleep(200*K()); return;
   }
   if(type==='graim'){
-    showMoveName('鑽頭突刺！','banner',1000); Sfx.whoosh();
-    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-22%) rotate(-12deg)',offset:.45},{transform:'translateX(0) rotate(0)'}],{duration:780*K()});
-    await sleep(320*K()); hitHero('鑽中喇！',['#ff8a1c','#fff','#ffd84d']);
-    const th=tHero(); FX.burst(th.x,th.y,{n:22,speed:8,colors:['#ff8a1c','#ffe066'],shape:'star',size:8}); await L; await sleep(180*K()); return;
+    showMoveName('地獄鑽頭・地脈貫通裂！','banner',1200); Sfx.whoosh();
+    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-24%) rotate(-14deg)',offset:.45},{transform:'translateX(0) rotate(0)'}],{duration:800*K()});
+    await sleep(300*K()); const th=tHero();
+    for(let i=0;i<3;i++){ FX.burst(th.x+rand(-20,20),th.y+rand(-10,10),{n:10,speed:9,colors:['#ff8a1c','#ffe066','#a8a29e'],shape:'star',size:8}); await sleep(60*K()); }
+    hitHero('貫通！',['#ff8a1c','#fff','#ffd84d']); shake(12); await L; await sleep(180*K()); return;
   }
   if(type==='dugrid'){
-    showMoveName('毒液大口！','banner',1000);
+    showMoveName('鈾金大口・毒瓣吞噬！','banner',1200);
     if(msv){ msv.classList.add('ouch'); setTimeout(()=>msv.classList.remove('ouch'),500); }
-    return shootOrb('radial-gradient(circle,#d9f99d 0 20%,#a3e635 35% 55%,#3f6212 60%,rgba(0,0,0,0) 70%)','毒液！');
+    const L=lunge(); await sleep(200*K()); const oo=o(), th=tHero();
+    for(let i=0;i<5;i++){ FX.burst(oo.x,oo.y,{n:4,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.5,speed:8,colors:['#a3e635','#c084fc','#d9f99d'],size:8,life:40}); await sleep(70*K()); }
+    hitHero('吞噬！',['#a3e635','#c084fc']); await L; await sleep(180*K()); return;
   }
   if(type==='pegunos'){
-    showMoveName('無重力拍擊！','banner',1000);
-    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-8%,-28%)',offset:.35},{transform:'translate(-16%,-10%)',offset:.55},{transform:'translate(0,0)'}],{duration:900*K()});
-    await sleep(400*K()); hitHero('浮起咗！',['#bfefff','#fff']);
-    await play(heroWrap,[{transform:'translateY(0)'},{transform:'translateY(-18%)',offset:.4},{transform:'translateY(0)'}],{duration:700*K()});
+    showMoveName('無重蒼穹・羽翼俯衝斬！','banner',1200);
+    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-6%,-32%)',offset:.3},{transform:'translate(-20%,-8%) rotate(-10deg)',offset:.55},{transform:'translate(0,0)'}],{duration:950*K()});
+    await sleep(420*K()); hitHero('俯衝斬！',['#bfefff','#fff','#7fe3ff']);
+    const th=tHero(); FX.spiral(th.x,th.y,{n:24,r:18,speed:6,colors:['#bfefff','#fff'],size:6}); 
+    await play(heroWrap,[{transform:'translateY(0)'},{transform:'translateY(-20%)',offset:.4},{transform:'translateY(0)'}],{duration:700*K()});
     await L; await sleep(150*K()); return;
   }
   if(type==='therizirus'){
-    showMoveName('隱形突襲！','banner',1000);
-    await play(monWrap,[{opacity:1},{opacity:.15}],{duration:280*K(),fill:'forwards'});
-    await sleep(200*K());
-    await play(monWrap,[{transform:'translateX(0)',opacity:.15},{transform:'translateX(-28%)',opacity:.9,offset:.5},{transform:'translateX(0)',opacity:1}],{duration:700*K()});
-    hitHero('爪擊！',['#ff4d6d','#fff']); await sleep(200*K()); return;
+    showMoveName('赤鐮隱形・千裂一閃！','banner',1200);
+    await play(monWrap,[{opacity:1},{opacity:.12}],{duration:260*K(),fill:'forwards'});
+    await sleep(180*K());
+    await play(monWrap,[{transform:'translateX(0)',opacity:.12},{transform:'translateX(-30%)',opacity:1,offset:.45},{transform:'translateX(0)',opacity:1}],{duration:720*K()});
+    const th=tHero(); for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
+      play(sl,[{transform:'rotate('+(-40+i*22)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-40+i*22)+'deg) scaleX(1)',opacity:0}],{duration:280}).then(()=>rm(sl)); Sfx.shing(); await sleep(50*K()); }
+    hitHero('千裂！',['#ff4d6d','#fff','#ff7ac8']); await sleep(200*K()); return;
   }
   if(type==='ohebinushi'){
-    showMoveName('蛇尾橫掃！','banner',1000);
-    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(-18deg) translateX(-10%)',offset:.4},{transform:'rotate(8deg) translateX(-4%)',offset:.7},{transform:'rotate(0)'}],{duration:850*K()});
-    await sleep(350*K()); hitHero('掃中！',['#ffd166','#fff']); shake(10); await L; await sleep(150*K()); return;
+    showMoveName('神州長頸・九天一嘯掃！','banner',1200);
+    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(-22deg) translateX(-12%)',offset:.35},{transform:'rotate(12deg) translateX(-6%)',offset:.65},{transform:'rotate(0)'}],{duration:900*K()});
+    await sleep(320*K()); hitHero('九天掃！',['#ffd166','#fff','#efe4c4']); shake(14);
+    FX.burst(tHero().x,tHero().y,{n:28,speed:10,colors:['#ffd166','#fff'],shape:'star',size:9}); await L; await sleep(150*K()); return;
   }
   if(type==='gedrago'){
-    showMoveName('粉紅衝撞！','banner',1000);
-    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.15) translateX(-20%)',offset:.5},{transform:'scale(1) translateX(0)'}],{duration:780*K()});
-    await sleep(300*K()); hitHero('毛毛衝！',['#ff8fc8','#fff','#ffd1e8']); FX.burst(tHero().x,tHero().y,{n:24,speed:7,colors:['#ff8fc8','#fff'],size:7}); await L; await sleep(150*K()); return;
+    showMoveName('粉紅毛毛・友情爆走衝！','banner',1200);
+    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.2) translateX(-22%)',offset:.5},{transform:'scale(1) translateX(0)'}],{duration:800*K()});
+    await sleep(280*K()); hitHero('爆走！',['#ff8fc8','#fff','#ffd1e8']);
+    FX.burst(tHero().x,tHero().y,{n:36,speed:8,colors:['#ff8fc8','#fff','#ffd1e8'],size:8,shape:'star'}); await L; await sleep(150*K()); return;
   }
-  if(type==='vugsect'||type==='boss'){
-    showMoveName(type==='vugsect'?'甲殼破壞光！':'黑暗魔彈！','banner',1100);
-    return shootOrb(type==='vugsect'
-      ? 'radial-gradient(circle,#fff 0 18%,#ff3b6b 40%,#2c2342 58%,rgba(0,0,0,0) 70%)'
-      : 'radial-gradient(circle,#fff 0 18%,#ff4d6d 40%,#5b2aa8 58%,rgba(0,0,0,0) 70%)', type==='vugsect'?'甲光！':'魔彈！');
+  if(type==='vugsect'){
+    showMoveName('甲殼雙鐮・破界破壞光！','banner',1200);
+    const L=lunge(); await sleep(220*K()); const oo=o(), th=tHero();
+    makeBeam(oo,th,28,'super',900); Sfx.beam();
+    await sleep(200*K()); hitHero('破界！',['#ff3b6b','#fff','#c4a0ff']); FX.ring(th.x,th.y,'#ff3b6b',36); await L; await sleep(180*K()); return;
   }
-  if(type==='rekiness'||type==='trigaron'){
-    showMoveName('流星特訓彈！','banner',1000);
-    return shootOrb('radial-gradient(circle,#fff 0 20%,'+s.shot+' 40%,rgba(255,255,255,0) 70%)','特訓！');
+  if(type==='boss'){
+    showMoveName('千芒閃光・混沌吞噬！','banner',1300);
+    const L=lunge(); await sleep(200*K()); const oo=o(), th=tHero();
+    for(let i=0;i<5;i++){
+      const orb=fxEl('orb'); orb.style.background='radial-gradient(circle,#fff 0 15%,#ff4d6d 35%,#5b2aa8 55%,rgba(0,0,0,0) 70%)';
+      orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
+      const jx=rand(-30,30), jy=rand(-40,20);
+      play(orb,[{transform:'translate(0,0) scale(.3)'},{transform:'translate('+(th.x-oo.x+jx)+'px,'+(th.y-oo.y+jy)+'px) scale(1.1)'}],{duration:360*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
+      await sleep(90*K());
+    }
+    hitHero('混沌吞噬！',['#ff4d6d','#c4a0ff','#fff']); FX.spiral(th.x,th.y,{n:30,r:22,speed:7,colors:['#ff4d6d','#c4a0ff','#fff'],size:7}); await L; await sleep(200*K()); return;
   }
-  // cute elementals
-  const labels={fire:['火焰彈！','燒到！'],ice:['冰錐！','凍親！'],thunder:['雷擊！','觸電！'],rock:['落石！','砸中！'],poison:['毒霧！','咳咳！'],sea:['水彈！','濕晒！']};
-  const lab=labels[type]||['攻擊！','哎呀！'];
-  showMoveName(lab[0],'banner',900);
-  const styles={
-    fire:'radial-gradient(circle,#fff7ed 0 15%,#ff9f1c 35%,#ea580c 55%,rgba(0,0,0,0) 70%)',
-    ice:'radial-gradient(circle,#fff 0 20%,#bae6fd 40%,#38bdf8 60%,rgba(0,0,0,0) 72%)',
-    thunder:'radial-gradient(circle,#fff 0 18%,#fde047 40%,#eab308 58%,rgba(0,0,0,0) 70%)',
-    rock:'radial-gradient(circle,#e7e5e4 0 25%,#a8a29e 50%,#57534e 65%,rgba(0,0,0,0) 75%)',
-    poison:'radial-gradient(circle,#f7fee7 0 18%,#b6f25c 40%,#65a30d 58%,rgba(0,0,0,0) 70%)',
-    sea:'radial-gradient(circle,#ecfeff 0 18%,#5ee8ff 40%,#06b6d4 58%,rgba(0,0,0,0) 70%)'
-  };
-  return shootOrb(styles[type]||('radial-gradient(circle,#fff 0 22%,'+s.shot+' 45%,rgba(255,255,255,0) 72%)'), lab[1]);
+  if(type==='rekiness'){
+    showMoveName('流星守護・虹晶特訓彈！','banner',1200);
+    return shootOrb('radial-gradient(circle,#fff 0 18%,#b58cff 40%,#2f7fe0 60%,rgba(0,0,0,0) 72%)','虹晶特訓！');
+  }
+  if(type==='trigaron'){
+    showMoveName('黑金流星・翼刃特訓斬！','banner',1200);
+    const L=lunge(); await sleep(220*K()); const th=tHero();
+    for(let i=0;i<3;i++){ const len=Math.max(monWrap.clientWidth*1.1,150); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
+      play(sl,[{transform:'rotate('+(-28+i*28)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-28+i*28)+'deg) scaleX(1.1)',opacity:0}],{duration:320}).then(()=>rm(sl)); Sfx.shing(); await sleep(80*K()); }
+    hitHero('翼刃斬！',['#ffc21a','#fff','#6a7280']); FX.burst(th.x,th.y,{n:22,speed:9,colors:['#ffc21a','#fff'],shape:'star',size:8}); await L; await sleep(150*K()); return;
+  }
+  if(type==='fire'){
+    showMoveName('熔岩甲獸・地心噴火！','banner',1200);
+    const L=lunge(); await sleep(200*K()); const th=tHero(); const oo=o();
+    for(let i=0;i<6;i++){
+      FX.burst(oo.x+rand(-16,16),oo.y,{n:5,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.4,speed:9,colors:['#ff6a00','#ffb703','#fff3b0'],size:9,life:45,gravity:.15});
+      if(i%2===0) Sfx.whoosh(); await sleep(70*K());
+    }
+    hitHero('地心噴火！',['#ff6a00','#ffb703','#fff']); flash('#ff8a3d',.35); await L; await sleep(180*K()); return;
+  }
+  if(type==='ice'){
+    showMoveName('絕對零度・霜翼凍結！','banner',1200);
+    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-4%,-10%)',offset:.3},{transform:'translate(-12%,0)',offset:.55},{transform:'translate(0,0)'}],{duration:850*K()});
+    await sleep(280*K()); const oo=o(), th=tHero();
+    makeBeam(oo,th,22,'',900); Sfx.beam();
+    await sleep(200*K()); hitHero('凍結！',['#bae6fd','#fff','#7ec8f5']);
+    FX.burst(th.x,th.y,{n:30,speed:6,colors:['#e8f7ff','#bae6fd','#fff'],size:8,life:55,gravity:.05,shape:'star'}); FX.ring(th.x,th.y,'#bae6fd',40);
+    await L; await sleep(180*K()); return;
+  }
+  if(type==='thunder'){
+    showMoveName('十萬伏特・隱身雷鞭！','banner',1200);
+    await play(monWrap,[{opacity:1},{opacity:.18}],{duration:240*K(),fill:'forwards'});
+    await sleep(160*K());
+    const th=tHero(); const oo=(()=>{ const p=relPos(monWrap); return {x:p.x,y:p.y}; })();
+    for(let i=0;i<4;i++){
+      makeBeam({x:oo.x+rand(-20,20),y:oo.y+rand(-30,10)},{x:th.x+rand(-16,16),y:th.y+rand(-12,12)}, 10+i*3, '', 420);
+      Sfx.beam(); FX.burst(th.x,th.y,{n:8,speed:10,colors:['#fde047','#fff','#fff06a'],size:6,shape:'star'}); await sleep(90*K());
+    }
+    await play(monWrap,[{transform:'translateX(0)',opacity:.18},{transform:'translateX(-18%)',opacity:1,offset:.5},{transform:'translateX(0)',opacity:1}],{duration:600*K()});
+    hitHero('雷鞭！',['#fde047','#fff']); flash('#fff06a',.4); await sleep(180*K()); return;
+  }
+  if(type==='rock'){
+    showMoveName('超振動・斷空新月角！','banner',1200); Sfx.whoosh();
+    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-20%) rotate(-16deg)',offset:.4},{transform:'translateX(0) rotate(0)'}],{duration:820*K()});
+    await sleep(300*K()); const th=tHero();
+    hitHero('新月角！',['#a8a29e','#fff','#d0d4dc']); shake(14);
+    FX.burst(th.x,th.y,{n:26,speed:11,colors:['#a8a29e','#57534e','#fff'],size:9,shape:'star',gravity:.2}); impactStar(th,'角！');
+    await L; await sleep(180*K()); return;
+  }
+  if(type==='poison'){
+    showMoveName('雙尾纏殺・地底暗殺！','banner',1200);
+    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(12deg) translateX(-8%)',offset:.3},{transform:'rotate(-14deg) translateX(-14%)',offset:.55},{transform:'rotate(0)'}],{duration:900*K()});
+    await sleep(280*K()); const oo=o(), th=tHero();
+    for(let i=0;i<2;i++){
+      const whip=fxEl('beam'); whip.style.cssText='left:'+oo.x+'px;top:'+(oo.y-4)+'px;width:'+Math.hypot(th.x-oo.x,th.y-oo.y)+'px;height:8px;background:linear-gradient(90deg,#a3e635,#65a30d);transform-origin:0 50%;border-radius:4px';
+      const ang=Math.atan2(th.y-oo.y+(i?20:-20),th.x-oo.x)*180/Math.PI;
+      play(whip,[{transform:'rotate('+ang+'deg) scaleX(0)',opacity:1},{transform:'rotate('+ang+'deg) scaleX(1)',opacity:1,offset:.4},{transform:'rotate('+ang+'deg) scaleX(1)',opacity:0}],{duration:400*K()}).then(()=>rm(whip));
+      await sleep(120*K());
+    }
+    hitHero('纏殺！',['#a3e635','#c084fc','#fff']); FX.burst(th.x,th.y,{n:20,speed:7,colors:['#a3e635','#c084fc'],size:7}); await L; await sleep(180*K()); return;
+  }
+  if(type==='sea'){
+    showMoveName('深淵黑洞・撕空一咬！','banner',1200);
+    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.12) translateX(-24%)',offset:.45},{transform:'scale(1) translateX(0)'}],{duration:820*K()});
+    await sleep(280*K()); const th=tHero();
+    FX.spiral(th.x,th.y,{n:28,r:16,speed:-8,colors:['#38bdf8','#0e7490','#fff'],size:7,life:40});
+    hitHero('撕空咬！',['#38bdf8','#fff','#9ff3ff']); shake(11); flash('#38bdf8',.3);
+    await L; await sleep(180*K()); return;
+  }
+  showMoveName(s.nick+'！','banner',1000);
+  return shootOrb('radial-gradient(circle,#fff 0 22%,'+s.shot+' 45%,rgba(255,255,255,0) 72%)','反擊！');
 }
 async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
   FX.burst(t.x,t.y,{n:60,speed:9,shape:'star',colors:['#bff3ff','#fff','#ffe066','#9ad8ff'],size:11,life:80,gravity:.05}); FX.ring(t.x,t.y,'#bff3ff',36);
