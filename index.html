@@ -135,6 +135,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .seg{display:inline-flex;background:rgba(0,0,0,.3);border-radius:18px;padding:5px;gap:5px;border:2px solid var(--line)}
 .seg button{border:0;border-radius:14px;padding:10px 16px;font-size:clamp(16px,4vw,20px);font-weight:900;background:transparent;color:#cbd5ff}
 .seg button.on{background:#ffd84d;color:#3b2300;box-shadow:0 3px 0 #b98900}
+.mwrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
 .besttxt{font-size:18px;color:#ffe9a8;margin:6px 0 0;min-height:24px;text-align:center}
 .warn{color:#ffb4b4;font-weight:700;min-height:24px;margin:4px 0}
 
@@ -393,7 +394,10 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .dtag.f{background:#2f7fe0}.dtag.b{background:#7c3aed}.dtag.o{background:#e8483e}
 .dcard.locked .dtag{opacity:.5}
 .rdex{margin:4px auto 2px;padding:4px 12px;border-radius:12px;background:rgba(125,255,178,.18);color:#7dffb2;font-weight:900;display:inline-block}
-@media (max-width:520px){ .homescene .hs-hero{left:1%} .homescene .vs{left:57%} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .hero-bob,.mon-bob{animation:none}
+}
 
 </style>
 </head>
@@ -474,8 +478,14 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
         </div>
         <div class="row">
           <div class="seg" id="modeSeg">
-            <button data-choice="0">自己打答案</button>
-            <button data-choice="1">揀答案（易啲）</button>
+            <button data-choice="0" aria-pressed="true">自己打答案</button>
+            <button data-choice="1" aria-pressed="false">揀答案（易啲）</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="seg" id="speakSeg">
+            <button data-speak="1" aria-pressed="true">答錯讀出口訣</button>
+            <button data-speak="0" aria-pressed="false">唔讀</button>
           </div>
         </div>
         <div class="besttxt" id="bestTxt"></div>
@@ -515,7 +525,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
         <div class="pcols">
         <div class="pcol">
         <div class="section-t">乘數表地圖</div>
-        <table class="mgrid" id="mgrid"></table>
+        <div class="mwrap"><table class="mgrid" id="mgrid"></table></div>
         <div class="legend"><span><i style="background:#22c55e"></i>識晒</span><span><i style="background:#facc15"></i>練習緊</span><span><i style="background:#4b5578"></i>未試過</span></div>
         </div>
         <div class="pcol">
@@ -1081,7 +1091,8 @@ const randi = (a,b)=> Math.floor(rand(a,b+1));
 const pick = arr => arr[Math.floor(Math.random()*arr.length)];
 const shuffle = arr => { for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; } return arr; };
 const sleep = ms => new Promise(r=>setTimeout(r, ms));
-function play(el, kf, opts){ try{ const a=el.animate(kf, opts); return a.finished.catch(()=>{}); }catch(e){ return Promise.resolve(); } }
+function play(el, kf, opts){ if(!el) return Promise.resolve(); try{ const a=el.animate(kf, opts); return a.finished.catch(()=>{}); }catch(e){ return Promise.resolve(); } }
+function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
@@ -1191,7 +1202,7 @@ let current = 'home';
 function show(id){
   $$('.screen').forEach(s=>s.classList.toggle('active', s.id===id));
   current = id; document.body.dataset.screen = id;
-  if(id!=='learn') stopAuto();
+  if(id!=='learn'){ stopAuto(); $$('body > .movename').forEach(rm); }
   if(id==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
   const sc=$('#'+id); if(sc) sc.scrollTop=0;
 }
@@ -1221,8 +1232,8 @@ function setHomeMon(){ const t=HOME_MONS[homeMonIdx%HOME_MONS.length]; homeMonId
 function initHome(){
   $('#homeHero').innerHTML = '<div class="hero-bob">'+heroSVG('hh')+'</div><div class="hs-name">超人奧米加</div>';
   setHomeMon();
-  $('#homeHero').addEventListener('click', ()=>{ const h=$('#homeHero .hero'); const pose=pick(['pose-punch','pose-win','pose-disc','pose-beam','pose-kick','pose-tuck']);
-    h.className.baseVal='hero '+pose; Sfx.whoosh(); setTimeout(()=>{ h.className.baseVal='hero'; }, 700); });
+  $('#homeHero').addEventListener('click', ()=>{ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['pose-punch','pose-win','pose-disc','pose-beam','pose-kick','pose-tuck']);
+    h.setAttribute('class','hero '+pose); Sfx.whoosh(); setTimeout(()=>{ h.setAttribute('class','hero'); }, 700); });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
     else if(g==='setup-battle') openSetup('battle');
@@ -1262,18 +1273,24 @@ function renderLearn(speak){
   $('#lNext').innerHTML = b===9 ? '完成！'+icon('check') : '下一個'+icon('next');
   if(speak && !DATA.settings.muted) Speech.speak(chant(a,b));
 }
-function learnNext(){ if(L.i<9){ L.i++; renderLearn(true); Sfx.click(); } else { stopAuto(); Sfx.victory();
-  const c=$('.lcard').getBoundingClientRect(); const lay=document.createElement('div'); lay.className='movename'; lay.style.position='fixed'; lay.style.left=(c.left+c.width/2)+'px'; lay.style.top=(c.top+c.height*0.4)+'px'; lay.textContent='好叻呀！'; document.body.appendChild(lay);
-  play(lay,[{transform:'translate(-50%,-50%) scale(.2)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1,offset:.3},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.8},{transform:'translate(-50%,-50%) scale(1.2)',opacity:0}],{duration:1500}).then(()=>lay.remove()); } }
+function markTableLearned(t){
+  for(let b=1;b<=9;b++){ const k=t+'x'+b; const f=DATA.facts[k]||(DATA.facts[k]={c:0,w:0,s:0,p:0});
+    if((f.c||0)+(f.w||0)===0){ f.c=1; f.s=Math.max(f.s||0,1); f.t=Date.now(); }
+    else if((f.s||0)<1){ f.s=1; f.t=Date.now(); } }
+  DATA.badges[t]=Math.max(DATA.badges[t]||0, 1); save();
+}
+function learnNext(){ if(L.i<9){ L.i++; renderLearn(true); Sfx.click(); } else { stopAuto(); markTableLearned(L.t); Sfx.victory();
+  const card=$('.lcard'); if(!card) return; const c=card.getBoundingClientRect(); const lay=document.createElement('div'); lay.className='movename'; lay.style.position='fixed'; lay.style.left=(c.left+c.width/2)+'px'; lay.style.top=(c.top+c.height*0.4)+'px'; lay.textContent='好叻呀！'; document.body.appendChild(lay);
+  play(lay,[{transform:'translate(-50%,-50%) scale(.2)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1,offset:.3},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.8},{transform:'translate(-50%,-50%) scale(1.2)',opacity:0}],{duration:1500}).then(()=>rm(lay)); } }
 function learnPrev(){ if(L.i>1){ L.i--; renderLearn(true); Sfx.click(); } }
 function stopAuto(){ L.auto=false; clearInterval(L.timer); L.timer=null; const b=$('#lAuto'); if(b) b.innerHTML=icon('play')+'<span class="lbl">自動</span>'; }
 function toggleAuto(){ if(L.auto){ stopAuto(); return; } L.auto=true; $('#lAuto').innerHTML=icon('pause')+'<span class="lbl">停</span>'; if(L.i>=9){ L.i=1; renderLearn(true); }
-  L.timer=setInterval(()=>{ if(L.i>=9){ stopAuto(); return; } learnNext(); }, 3200); }
+  L.timer=setInterval(()=>learnNext(), 3200); }
 function initLearn(){
   $('#lBack').addEventListener('click',()=>{ Sfx.click(); buildLearnTiles(); show('learnPick'); });
   $('#lPrev').addEventListener('click',()=>{ stopAuto(); learnPrev(); });
   $('#lNext').addEventListener('click',()=>{ stopAuto(); learnNext(); });
-  $('#lSpeak').addEventListener('click',()=>{ Speech.speak(chant(L.t,L.i)); play($('#lChant'),[{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:400}); });
+  $('#lSpeak').addEventListener('click',()=>{ if(DATA.settings.muted){ play($('#btnMute'),[{transform:'scale(1)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:280}); return; } Speech.speak(chant(L.t,L.i)); play($('#lChant'),[{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:400}); });
   $('#lAuto').addEventListener('click',()=>{ Sfx.click(); toggleAuto(); });
   $('#lGo').addEventListener('click',()=>{ Sfx.click(); DATA.settings.tables=[L.t]; save(); startSession('battle',[L.t]); });
 }
@@ -1287,16 +1304,18 @@ function openSetup(mode){ setupMode=mode;
   $('#startBtn').className = 'btn'+(mode==='timed'?' orange':'');
   const el=$('#setupTiles'); el.innerHTML=[2,3,4,5,6,7,8,9,1,10].map(t=>tileHTML(t,'<span class="chk">'+icon('check')+'</span>')).join('');
   $$('.tile',el).forEach(b=>b.addEventListener('click',()=>{ Sfx.click(); b.classList.toggle('on'); syncSetup(); }));
-  applySel(DATA.settings.tables||[2]); syncSeg(); show('setup'); }
+  applySel(DATA.settings.tables||[2]); syncSeg(); syncSpeakSeg(); show('setup'); }
 function selTables(){ return $$('#setupTiles .tile.on').map(b=>+b.dataset.t).sort((a,b)=>a-b); }
 function applySel(arr){ $$('#setupTiles .tile').forEach(b=>b.classList.toggle('on', arr.indexOf(+b.dataset.t)>=0)); syncSetup(); }
 function syncSetup(){ const t=selTables(); DATA.settings.tables=t; save(); $('#startBtn').disabled = t.length===0; $('#setupWarn').textContent = t.length? '' : '請揀最少一個乘數表呀！';
   if(setupMode==='timed'){ const best=DATA.best['t:'+t.join(',')]||0; $('#bestTxt').textContent = t.length ? ('呢個組合最佳紀錄：'+best+' 題'+(DATA.best.all?('　｜　總最佳：'+DATA.best.all+' 題'):'')) : ''; } else $('#bestTxt').textContent=''; }
-function syncSeg(){ $$('#modeSeg button').forEach(b=>b.classList.toggle('on', (+b.dataset.choice===1)===!!DATA.settings.choice)); }
+function syncSeg(){ $$('#modeSeg button').forEach(b=>{ const on=(+b.dataset.choice===1)===!!DATA.settings.choice; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); }); }
+function syncSpeakSeg(){ $$('#speakSeg button').forEach(b=>{ const on=(b.dataset.speak==='1')===!!DATA.settings.autoSpeak; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); }); }
 function initSetup(){
   $('#selMix').addEventListener('click',()=>{ Sfx.click(); applySel([2,3,4,5,6,7,8,9]); });
   $('#selNone').addEventListener('click',()=>{ Sfx.click(); applySel([]); });
   $$('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{ Sfx.click(); DATA.settings.choice = b.dataset.choice==='1'; save(); syncSeg(); }));
+  $$('#speakSeg button').forEach(b=>b.addEventListener('click',()=>{ Sfx.click(); DATA.settings.autoSpeak = b.dataset.speak==='1'; save(); syncSpeakSeg(); }));
   $('#startBtn').addEventListener('click',()=>{ const t=selTables(); if(!t.length) return; Sfx.click(); startSession(setupMode, t); });
 }
 
@@ -1322,19 +1341,19 @@ function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stag
 
 function fxEl(cls, html){ const e=document.createElement('div'); e.className=cls; if(html) e.innerHTML=html; fxLayer.appendChild(e); return e; }
 function shake(px){ const a=px||8; play(stageEl,[{transform:'translate(0,0)'},{transform:'translate('+(-a)+'px,'+(a*.5)+'px)'},{transform:'translate('+a+'px,'+(-a*.4)+'px)'},{transform:'translate('+(-a*.6)+'px,'+(-a*.3)+'px)'},{transform:'translate('+(a*.4)+'px,'+(a*.3)+'px)'},{transform:'translate(0,0)'}],{duration:420}); }
-function flash(color, op){ const f=fxEl('flash'); if(color) f.style.background=color; play(f,[{opacity:op||.75},{opacity:0}],{duration:380}).then(()=>f.remove()); }
+function flash(color, op){ const f=fxEl('flash'); if(color) f.style.background=color; play(f,[{opacity:op||.75},{opacity:0}],{duration:380}).then(()=>rm(f)); }
 function showMoveName(text, cls, dur){ const e=fxEl('movename '+(cls||'')); e.textContent=text;
-  return play(e,[{transform:'translate(-50%,-50%) scale(.2) rotate(-10deg)',opacity:0},{transform:'translate(-50%,-50%) scale(1.25) rotate(3deg)',opacity:1,offset:.2},{transform:'translate(-50%,-50%) scale(1) rotate(0)',opacity:1,offset:.32},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.85},{transform:'translate(-50%,-50%) scale(1.3)',opacity:0}],{duration:(dur||1400)*K(),easing:'ease-out'}).then(()=>e.remove()); }
+  return play(e,[{transform:'translate(-50%,-50%) scale(.2) rotate(-10deg)',opacity:0},{transform:'translate(-50%,-50%) scale(1.25) rotate(3deg)',opacity:1,offset:.2},{transform:'translate(-50%,-50%) scale(1) rotate(0)',opacity:1,offset:.32},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.85},{transform:'translate(-50%,-50%) scale(1.3)',opacity:0}],{duration:(dur||1400)*K(),easing:'ease-out'}).then(()=>rm(e)); }
 function floatText(cls, text, x, y){ const e=fxEl(cls); e.textContent=text; e.style.left=x+'px'; e.style.top=y+'px';
-  play(e,[{transform:'translate(-50%,0) scale(.5)',opacity:0},{transform:'translate(-50%,-30px) scale(1.2)',opacity:1,offset:.25},{transform:'translate(-50%,-70px) scale(1)',opacity:0}],{duration:1100}).then(()=>e.remove()); }
+  play(e,[{transform:'translate(-50%,0) scale(.5)',opacity:0},{transform:'translate(-50%,-30px) scale(1.2)',opacity:1,offset:.25},{transform:'translate(-50%,-70px) scale(1)',opacity:0}],{duration:1100}).then(()=>rm(e)); }
 function impactStar(t, text){ const e=fxEl('impact','<svg viewBox="0 0 100 100"><polygon points="50,2 60,32 92,18 72,46 98,60 66,66 74,96 50,76 26,96 34,66 2,60 28,46 8,18 40,32" fill="#ffe14d" stroke="#ff3b3b" stroke-width="4" stroke-linejoin="round"/></svg><span>'+text+'</span>');
-  e.style.left=t.x+'px'; e.style.top=t.y+'px'; play(e,[{transform:'scale(0) rotate(-20deg)',opacity:1},{transform:'scale(1.15) rotate(5deg)',opacity:1,offset:.3},{transform:'scale(1)',opacity:1,offset:.7},{transform:'scale(1.2)',opacity:0}],{duration:700}).then(()=>e.remove()); }
+  e.style.left=t.x+'px'; e.style.top=t.y+'px'; play(e,[{transform:'scale(0) rotate(-20deg)',opacity:1},{transform:'scale(1.15) rotate(5deg)',opacity:1,offset:.3},{transform:'scale(1)',opacity:1,offset:.7},{transform:'scale(1.2)',opacity:0}],{duration:700}).then(()=>rm(e)); }
 function makeBeam(o,t,thick,cls,dur){ const dx=t.x-o.x, dy=t.y-o.y, len=Math.hypot(dx,dy), ang=Math.atan2(dy,dx)*180/Math.PI; const e=fxEl('beam '+(cls||''));
   e.style.left=o.x+'px'; e.style.top=(o.y-thick/2)+'px'; e.style.width=len+'px'; e.style.height=thick+'px'; e.style.transformOrigin='0 50%';
   const R='rotate('+ang+'deg)';
-  play(e,[{transform:R+' scaleX(0)',opacity:1},{transform:R+' scaleX(1)',opacity:1,offset:.22},{transform:R+' scaleX(1) scaleY(1.25)',opacity:1,offset:.5},{transform:R+' scaleX(1) scaleY(.9)',opacity:1,offset:.8},{transform:R+' scaleX(1) scaleY(0)',opacity:0}],{duration:dur*K(),easing:'ease-out'}).then(()=>e.remove()); return e; }
+  play(e,[{transform:R+' scaleX(0)',opacity:1},{transform:R+' scaleX(1)',opacity:1,offset:.22},{transform:R+' scaleX(1) scaleY(1.25)',opacity:1,offset:.5},{transform:R+' scaleX(1) scaleY(.9)',opacity:1,offset:.8},{transform:R+' scaleX(1) scaleY(0)',opacity:0}],{duration:dur*K(),easing:'ease-out'}).then(()=>rm(e)); return e; }
 function speedLines(){ const h=stageEl.clientHeight, w=stageEl.clientWidth; for(let i=0;i<7;i++){ const e=fxEl('speedline'); e.style.top=rand(h*.2,h*.85)+'px'; e.style.left=rand(0,w*.3)+'px'; e.style.width=rand(60,160)+'px';
-  play(e,[{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.3},{transform:'translateX('+(w*.5)+'px)',opacity:0}],{duration:380,delay:i*30}).then(()=>e.remove()); } }
+  play(e,[{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.3},{transform:'translateX('+(w*.5)+'px)',opacity:0}],{duration:380,delay:i*30}).then(()=>rm(e)); } }
 const RAINBOW=['#ff7ad9','#ffe066','#7ff0ff','#b58cff','#9dff6b','#fff'];
 
 async function mvBeam(hit, sup){ heroPose('beam'); Sfx.charge(); await sleep(60);
@@ -1359,7 +1378,7 @@ async function mvDisc(hit){ heroPose('disc'); Sfx.charge(); await sleep(190);
   Sfx.disc(); heroPose('punch'); const dx=t.x-sx, dy=t.y-sy;
   await play(d,[{transform:'translate(0,0) scale(1)'},{transform:'translate('+(dx*.5)+'px,'+(dy*.5-60)+'px) scale(1.1)'},{transform:'translate('+dx+'px,'+dy+'px) scale(1.25)'}],{duration:460*K(),fill:'forwards',easing:'ease-in'});
   hit(); Sfx.hit(); shake(9); FX.ring(t.x,t.y,'#bff3ff'); FX.burst(t.x,t.y,{n:26,speed:8,colors:['#fff','#7fe3ff','#c4f1ff'],size:7});
-  play(d,[{transform:'translate('+dx+'px,'+dy+'px) scale(1.25)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(2.2)',opacity:0}],{duration:260,fill:'forwards'}).then(()=>d.remove());
+  play(d,[{transform:'translate('+dx+'px,'+dy+'px) scale(1.25)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(2.2)',opacity:0}],{duration:260,fill:'forwards'}).then(()=>rm(d));
   await sleep(350*K()); heroPose('idle'); }
 async function mvPunch(hit){ const h=relPos(heroWrap), m=relPos(monWrap); const dx=(m.l+m.w*.22)-(h.l+h.w*.98);
   heroPose('punch'); Sfx.whoosh(); speedLines();
@@ -1377,7 +1396,7 @@ async function mvWhirl(hit){ const h=relPos(heroWrap), m=relPos(monWrap); const 
   const iv=setInterval(()=>{ const q=relPos(heroWrap); FX.burst(q.x,q.y,{n:4,speed:4,colors:['#bff6ff','#fff'],gravity:0,life:20,size:4}); },60);
   await spin; clearInterval(iv); const t=relPos(mk('.mk-core',monWrap));
   hit(); Sfx.bigHit(); shake(13); impactStar(t,'呼呼！'); FX.spiral(t.x,t.y,{n:36,r:24,speed:7,colors:['#bff6ff','#fff','#7fe3ff'],size:7,life:45});
-  play(sw,[{transform:'translateX('+dx+'px) scale(1.1)',opacity:1},{transform:'translateX('+dx+'px) scale(2)',opacity:0}],{duration:350,fill:'forwards'}).then(()=>sw.remove());
+  play(sw,[{transform:'translateX('+dx+'px) scale(1.1)',opacity:1},{transform:'translateX('+dx+'px) scale(2)',opacity:0}],{duration:350,fill:'forwards'}).then(()=>rm(sw));
   setTimeout(()=>Sfx.hit(),120); setTimeout(()=>Sfx.hit(),240);
   await sleep(300*K());
   await play(heroWrap,[{transform:'translateX('+dx+'px)'},{transform:'translateX(0)'}],{duration:380*K(),easing:'ease-out'});
@@ -1410,7 +1429,7 @@ async function mvRainbow(hit){ const hs=heroSvgEl(); hs.classList.add('aura','ra
   const trail=setInterval(()=>{ const q=relPos(bl); FX.burst(q.x,q.y,{n:5,speed:2.5,colors:RAINBOW,gravity:0,life:34,size:7,shape:'star'}); },35);
   const angs=[-32,38,-78,8,58];
   angs.forEach((ag,i)=>setTimeout(()=>{ const len=Math.max(monWrap.clientWidth*1.3,160); const s=fxEl('slash'); s.style.left=(t.x-len/2)+'px'; s.style.top=(t.y-6)+'px'; s.style.width=len+'px';
-    play(s,[{transform:'rotate('+ag+'deg) scaleX(0)',opacity:1},{transform:'rotate('+ag+'deg) scaleX(1.1)',opacity:1,offset:.35},{transform:'rotate('+ag+'deg) scaleX(1) scaleY(.2)',opacity:0}],{duration:420}).then(()=>s.remove());
+    play(s,[{transform:'rotate('+ag+'deg) scaleX(0)',opacity:1},{transform:'rotate('+ag+'deg) scaleX(1.1)',opacity:1,offset:.35},{transform:'rotate('+ag+'deg) scaleX(1) scaleY(.2)',opacity:0}],{duration:420}).then(()=>rm(s));
     Sfx.shing(); shake(7); FX.burst(t.x,t.y,{n:14,speed:9,colors:RAINBOW,size:7,shape:'star'}); if(i===0) hit(); else { const ms=monSvgEl(); if(ms) play(ms,[{filter:'brightness(2.5)'},{filter:'brightness(1)'}],{duration:180}); } }, D*(.25+i*.14)));
   await fl; clearInterval(trail);
   Sfx.bigHit(); Sfx.explode(); flash('#fff',.85); shake(22);
@@ -1418,7 +1437,7 @@ async function mvRainbow(hit){ const hs=heroSvgEl(); hs.classList.add('aura','ra
   FX.burst(t.x,t.y,{n:90,speed:14,colors:RAINBOW,size:12,life:70,shape:'star',gravity:.06});
   await play(bl,[{transform:'translate('+(t.x-sp.x)+'px,'+(t.y-sp.y)+'px) scale(1.6)'},{transform:'translate(0,0) scale(.8)'}],{duration:450*K(),fill:'forwards',easing:'ease-in-out'});
   bl.remove(); hs.classList.remove('no-slug'); Sfx.coin();
-  play(bg,[{opacity:1},{opacity:0}],{duration:400}).then(()=>bg.remove());
+  play(bg,[{opacity:1},{opacity:0}],{duration:400}).then(()=>rm(bg));
   await play(heroWrap,[{transform:'translateY(-14%)'},{transform:'translateY(0)'}],{duration:350*K(),easing:'ease-in'});
   heroWrap.getAnimations().forEach(a=>a.cancel()); hs.classList.remove('aura','rainbow'); heroPose('idle'); }
 
@@ -1525,7 +1544,7 @@ function keyIn(k){ if(current!=='battle'||B.busy||!B.q||$('#result').classList.c
 async function submit(){
   if(B.busy||!B.q||B.input==='') return; const q=B.q, n=parseInt(B.input,10), tk=B.token; const first=q.tries===0;
   B.busy=true;
-  if(first && B.mode!=='timed'){ B.rq++; B.rtables[q.a]=1; }
+  if(first && B.mode!=='timed'){ B.rq++; B.rtables[q.a]=(B.rtables[q.a]||0)+1; }
   if(n===q.ans){
     Sfx.correct(); renderAns('good');
     if(first){ recordFact(q.key,true); B.combo++; if(B.mode!=='timed'){ B.rfirst++; B.rMaxCombo=Math.max(B.rMaxCombo,B.combo); } B.maxCombo=Math.max(B.maxCombo,B.combo); if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); } }
@@ -1556,14 +1575,26 @@ async function submit(){
 function roundWon(){
   const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const boss=B.type==='dada'; const m=MONS[B.type];
   DATA.stats.monsters++; const newDex=dexAdd(B.type); if(m.boss) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
-  const asked=Object.keys(B.rtables).map(Number); asked.forEach(t=>{ DATA.badges[t]=Math.max(DATA.badges[t]||0, stars); }); save();
+  const asked=Object.keys(B.rtables).map(Number); const upgraded=[];
+  asked.forEach(t=>{ const n=B.rtables[t]||0; if(n<3) return; let tier=stars; if(n<5) tier=Math.min(tier,1); else if(n<8) tier=Math.min(tier,2);
+    const prev=DATA.badges[t]||0; if(tier>prev){ DATA.badges[t]=tier; upgraded.push(t); } });
+  save();
   heroPose('win'); Sfx.victory(); $('#combo').classList.remove('show'); confetti();
-  const label = B.tables.length===1 ? B.tables[0] : '混'; const tierName=['','銅','銀','金'][stars];
   const msg = stars===3 ? '超勁！你係乘數表英雄！' : stars===2 ? '好叻呀！繼續加油！' : '做得好！多啲練習會更叻！';
   const next = B.round < B.order.length-1 ? B.order[B.round+1] : null;
+  let medalBlock='';
+  if(B.tables.length===1){
+    const t=B.tables[0], n=B.rtables[t]||0, tier=DATA.badges[t]||0;
+    if(n>=3 && tier){ const tn=['','銅','銀','金'][tier]; medalBlock='<div class="rmedal">'+medalSVG(t,tier)+'<div class="mt">'+t+' 乘數表<br>'+tn+'勳章！</div></div>'; }
+    else medalBlock='<div class="rstat">再答多幾題 '+t+' 乘數表，就可以攞勳章啦！</div>';
+  } else if(upgraded.length){
+    medalBlock='<div class="rstat">勳章升級：'+upgraded.map(t=>t+' 乘數表'+['','銅','銀','金'][DATA.badges[t]]).join('、')+'</div>';
+  } else {
+    medalBlock='<div class="rstat">混合練習要每個乘數表答夠幾題先攞勳章！</div>';
+  }
   const html = '<h3>'+(boss?'打敗咗三面怪人達達！':m.friend?'同'+m.name+'特訓完成！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+(m.friend?'<div class="rstat">'+m.name+'係超人奧米加嘅好夥伴！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
-    '<div class="rmedal">'+medalSVG(label,stars)+'<div class="mt">'+(B.tables.length===1?label+' 乘數表':'混合乘數表')+'<br>'+tierName+'勳章！</div></div>'+
+    medalBlock+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
     '<div class="rstat">最高連擊：<b>'+B.rMaxCombo+'</b></div>'+(B.gotCoins?'<div class="rstat">食錢怪吐出：<b style="color:#ffe14d">'+B.gotCoins+' 個金幣！</b></div>':'')+
     '<div class="rmsg">'+(boss?'超人奧米加大勝利！你係乘數表英雄！':msg)+'</div>'+
@@ -1582,12 +1613,15 @@ function confetti(){ const w=stageEl.clientWidth, h=stageEl.clientHeight; for(le
 function hideResult(){ $('#result').classList.remove('show'); }
 
 /* timed */
-function startTimer(){ stopTimer(); B.endAt=Date.now()+60000; B.paused=false; let lastSec=60;
-  B.timer=setInterval(()=>{ if(B.paused) return; B.timeLeft=Math.max(0,(B.endAt-Date.now())/1000); const s=Math.ceil(B.timeLeft); const tb=$('#timerBox');
+function startTimer(){ stopTimer(); B.endAt=Date.now()+60000; B.paused=false; B._freezeAt=0; let lastSec=60;
+  B.timer=setInterval(()=>{
+    if(B.paused || B.busy){ if(!B._freezeAt) B._freezeAt=Date.now(); return; }
+    if(B._freezeAt){ B.endAt+=Date.now()-B._freezeAt; B._freezeAt=0; }
+    B.timeLeft=Math.max(0,(B.endAt-Date.now())/1000); const s=Math.ceil(B.timeLeft); const tb=$('#timerBox');
     if(tb){ tb.textContent=s+'秒'; tb.classList.toggle('low', s<=10); }
     if(s!==lastSec){ lastSec=s; if(s<=10 && s>0) Sfx.tick(); }
     if(B.timeLeft<=0) timedEnd(); }, 100); }
-function stopTimer(){ clearInterval(B.timer); B.timer=null; }
+function stopTimer(){ clearInterval(B.timer); B.timer=null; B._freezeAt=0; }
 function timedEnd(){ stopTimer(); B.token++; B.busy=true; const key='t:'+B.tables.join(','); const prev=DATA.best[key]||0; const isNew=B.score>prev;
   if(isNew) DATA.best[key]=B.score; DATA.best.all=Math.max(DATA.best.all||0,B.score); save();
   heroPose('win'); Sfx.victory(); const stars = B.score>=20?3:B.score>=10?2:1;
@@ -1616,7 +1650,7 @@ function renderProgress(){
   const s=DATA.stats; const facts=Object.keys(DATA.facts); const mastered=facts.filter(k=>mastery(k)===2).length;
   $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗達達',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
   let g='<tr><th>×</th>'+[1,2,3,4,5,6,7,8,9].map(b=>'<th>'+b+'</th>').join('')+'</tr>';
-  for(let a=1;a<=9;a++){ g+='<tr><th>'+a+'</th>'; for(let b=1;b<=9;b++){ const m=mastery(a+'x'+b); g+='<td class="m'+m+'" title="'+a+'×'+b+'">'+(a*b)+'</td>'; } g+='</tr>'; }
+  [1,2,3,4,5,6,7,8,9,10].forEach(a=>{ g+='<tr><th>'+a+'</th>'; for(let b=1;b<=9;b++){ const m=mastery(a+'x'+b); g+='<td class="m'+m+'" title="'+a+'×'+b+'">'+(a*b)+'</td>'; } g+='</tr>'; });
   $('#mgrid').innerHTML=g;
   const weak=facts.filter(k=>(DATA.facts[k].p||0)>0).sort((x,y)=>DATA.facts[y].p-DATA.facts[x].p).slice(0,10);
   $('#weak').innerHTML = weak.length ? weak.map(k=>{ const [a,b]=k.split('x').map(Number); return '<span>'+a+' × '+b+' = '+(a*b)+'</span>'; }).join('') : '<div style="opacity:.8">暫時冇！繼續保持 👍</div>'.replace(' 👍','');
@@ -1646,9 +1680,9 @@ function init(){
   document.addEventListener('keydown', ()=>Sfx.init());
   $('#btnMute').addEventListener('click',()=>{ DATA.settings.muted=!DATA.settings.muted; save(); syncMute(); if(DATA.settings.muted) Speech.stop(); else Sfx.click(); });
   $('#btnHome').addEventListener('click',()=>{ Sfx.click();
-    if(current==='battle' && !$('#result').classList.contains('show')){ B.paused=true; const pAt=Date.now();
-      confirmBox('要離開呢場戰鬥嗎？','離開','繼續打',v=>{ if(v) goHome(); else { if(B.endAt) B.endAt+=Date.now()-pAt; B.paused=false; } }); }
-    else if(current==='learn'){ show('learnPick'); goHome(); }
+    if(current==='battle' && !$('#result').classList.contains('show')){ B.paused=true;
+      confirmBox('要離開呢場戰鬥嗎？','離開','繼續打',v=>{ if(v) goHome(); else B.paused=false; }); }
+    else if(current==='learn'){ stopAuto(); Speech.stop(); buildLearnTiles(); show('learnPick'); }
     else goHome(); });
   $('#mYes').addEventListener('click',()=>closeModal(true)); $('#mNo').addEventListener('click',()=>closeModal(false));
   $('#resetBtn').addEventListener('click',()=>confirmBox('真係要清除晒所有進度同勳章？','清除','唔好',v=>{ if(v){ const st=DATA.settings; DATA=defaultData(); DATA.settings=st; save(); renderProgress(); } }));
