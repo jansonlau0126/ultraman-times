@@ -79,22 +79,31 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
+.hero.pose-beam{transform:rotate(-6deg) translateX(4px)}
 .hero.pose-kick .h-legR{display:none}
 .hero.pose-kick .h-kick{display:inline}
-.hero.pose-kick .h-armL{transform:rotate(50deg)}
-.hero.pose-kick .h-armR{transform:rotate(-70deg)}
-.hero.pose-disc .h-armR{transform:rotate(-168deg)}
-.hero.pose-disc .h-armL{transform:rotate(18deg)}
-.hero.pose-punch .h-armR{transform:rotate(-92deg)}
-.hero.pose-punch .h-armL{transform:rotate(28deg)}
-.hero.pose-win .h-armR{transform:rotate(-158deg)}
-.hero.pose-win .h-armL{transform:rotate(24deg)}
+.hero.pose-kick .h-armL{transform:rotate(62deg)}
+.hero.pose-kick .h-armR{transform:rotate(-88deg)}
+.hero.pose-kick{transform:rotate(-10deg) translate(6px,-4px)}
+.hero.pose-disc .h-armR{transform:rotate(-175deg)}
+.hero.pose-disc .h-armL{transform:rotate(28deg)}
+.hero.pose-disc{transform:rotate(4deg)}
+.hero.pose-punch .h-armR{transform:rotate(-105deg)}
+.hero.pose-punch .h-armL{transform:rotate(36deg)}
+.hero.pose-punch{transform:translateX(8px) rotate(-4deg)}
+.hero.pose-win .h-armR{transform:rotate(-168deg)}
+.hero.pose-win .h-armL{transform:rotate(32deg)}
+.hero.pose-win{transform:translateY(-3px)}
 .hero.aura .h-aura{display:inline;animation:aura .25s ease-in-out infinite alternate}
 @keyframes aura{from{opacity:.45}to{opacity:.95}}
 .hero .h-eyeglow{animation:eyeglow 1.8s ease-in-out infinite alternate}
 @keyframes eyeglow{from{opacity:.45}to{opacity:1}}
 .hero .h-timer,.hero .h-tglow{fill:var(--tc,#38bdf8);transition:fill .3s}
 .hero.t-blink .h-timer,.hero.t-blink .h-tglow{animation:tblink .7s steps(2,jump-none) infinite}
+.hero.combo-rainbow .h-tglow{animation:rbfill .55s linear infinite,tblink .55s steps(2,jump-none) infinite}
+.hero.combo-omega .h-tglow,.hero.combo-omega .h-timer{animation:rbfill .35s linear infinite,tblink .4s steps(2,jump-none) infinite}
+.hero.charging{filter:brightness(1.45) drop-shadow(0 0 12px rgba(255,255,255,.85))}
+.hero.charging .h-aura{display:inline;opacity:.9}
 @keyframes tblink{0%{opacity:1}100%{opacity:.2}}
 .mon .m-eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
 @keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
@@ -194,6 +203,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .timerbox.low{color:#ff6b6b;animation:pulse .5s ease-in-out infinite alternate}
 @keyframes pulse{to{transform:scale(1.1)}}
 .combo{position:absolute;left:50%;top:18%;transform:translateX(-50%);z-index:8;font-weight:900;font-size:clamp(22px,5vw,34px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:4px 16px;border-radius:999px;border:3px solid #fff;box-shadow:0 4px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none}
+.combo.omega{background:linear-gradient(180deg,#ffe14d,#ff5bd1,#7ff0ff);color:#1a1040;box-shadow:0 4px 0 #7c3aed,0 0 20px rgba(255,225,77,.8);border-color:#fff}
 .combo.show{display:block}
 .movename{position:absolute;left:50%;top:34%;z-index:9;font-weight:900;font-size:clamp(30px,7.5vw,64px);color:#fff35c;white-space:nowrap;letter-spacing:2px;text-shadow:3px 3px 0 #d10000,-3px -3px 0 #d10000,3px -3px 0 #d10000,-3px 3px 0 #d10000,0 3px 0 #d10000,0 -3px 0 #d10000,3px 0 0 #d10000,-3px 0 0 #d10000,0 8px 0 #6b0000,0 0 26px rgba(255,255,255,.9);pointer-events:none}
 .movename.super{color:#fff;text-shadow:3px 3px 0 #7c3aed,-3px -3px 0 #7c3aed,3px -3px 0 #7c3aed,-3px 3px 0 #7c3aed,0 3px 0 #7c3aed,0 -3px 0 #7c3aed,3px 0 0 #7c3aed,-3px 0 0 #7c3aed,0 8px 0 #2e1065,0 0 30px #ff7ad9}
@@ -209,6 +219,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .impact svg{position:absolute;inset:0;width:100%;height:100%}
 .impact span{position:relative;font-weight:900;font-size:36px;color:#fff;text-shadow:2px 2px 0 #c01616,-2px -2px 0 #c01616,2px -2px 0 #c01616,-2px 2px 0 #c01616,0 5px 0 #6b0909}
 .dmg{position:absolute;font-weight:900;font-size:clamp(26px,6vw,40px);color:#fff;text-shadow:2px 2px 0 #c01616,-2px -2px 0 #c01616,2px -2px 0 #c01616,-2px 2px 0 #c01616;white-space:nowrap}
+.yell{position:absolute;font-weight:900;font-size:clamp(28px,7vw,48px);color:#ffe14d;text-shadow:3px 3px 0 #c01616,-3px -3px 0 #c01616,3px -3px 0 #c01616,-3px 3px 0 #c01616,0 0 18px rgba(255,255,255,.9);white-space:nowrap;letter-spacing:2px}
 .ouchtxt{position:absolute;font-weight:900;font-size:clamp(20px,4.5vw,30px);color:#ffe14d;text-shadow:2px 2px 0 #1e3a8a,-2px -2px 0 #1e3a8a,2px -2px 0 #1e3a8a,-2px 2px 0 #1e3a8a;white-space:nowrap}
 .flash{position:absolute;inset:0;background:#fff;opacity:0}
 .speedline{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,#fff);opacity:.8}
@@ -318,8 +329,9 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* ===== v2: Omega / new moves / Kanegon / Dada ===== */
 .hero .h-spiral{transform-box:fill-box;transform-origin:center;animation:spin 3s linear infinite}
 .hero.no-slug .h-slug{display:none}
-.hero.pose-tuck .h-armL{transform:rotate(34deg)}
-.hero.pose-tuck .h-armR{transform:rotate(-34deg)}
+.hero.pose-tuck .h-armL{transform:rotate(42deg)}
+.hero.pose-tuck .h-armR{transform:rotate(-42deg)}
+.hero.pose-tuck{transform:scale(.92) translateY(6px)}
 .hero.rainbow .h-aura{animation:aura .2s ease-in-out infinite alternate,rbfill .6s linear infinite}
 @keyframes rbfill{0%{fill:#ff6b6b}17%{fill:#ffb84d}33%{fill:#fff34d}50%{fill:#5bff8a}67%{fill:#4dd2ff}83%{fill:#b58cff}100%{fill:#ff6b6b}}
 .mon .k-open{display:none}
