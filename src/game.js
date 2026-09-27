@@ -21,13 +21,25 @@ function loadData(){
 let DATA = loadData();
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); }catch(e){} }
 
-/* ---------- 九因歌 chant ---------- */
+/* ---------- 九因歌 chant（跟傳統九因歌表） ---------- */
 const DIG = '零一二三四五六七八九';
-function cnNum(n){ if(n<10) return DIG[n]; if(n===100) return '一百'; const t=Math.floor(n/10), u=n%10; return (t===1?'':DIG[t])+'十'+(u?DIG[u]:''); }
+function cnNum(n){
+  if(n<10) return DIG[n]; if(n===100) return '一百';
+  const t=Math.floor(n/10), u=n%10;
+  /* 九因歌讀法：10–19 用「一十／一十二」，唔好讀「十二」 */
+  if(t===1) return '一十'+(u?DIG[u]:'');
+  return DIG[t]+'十'+(u?DIG[u]:'');
+}
 function chant(a,b){
   if(a>9||b>9) return cnNum(a)+'乘'+cnNum(b)+'等於'+cnNum(a*b);
-  const x=Math.min(a,b), y=Math.max(a,b), p=x*y;
-  return DIG[x]+DIG[y]+(p<10?'得':'')+(p===10?'一十':cnNum(p));
+  const p=a*b, left=DIG[a]+DIG[b];
+  if(a===3 && b===3) return '三三歸九';
+  if(p===10 && ((a===2&&b===5)||(a===5&&b===2))) return left+'得一十';
+  if(p===20 && ((a===4&&b===5)||(a===5&&b===4))) return left+'中二十';
+  if(p===30 && ((a===5&&b===6)||(a===6&&b===5))) return left+'中三十';
+  if(p===40 && ((a===5&&b===8)||(a===8&&b===5))) return left+'中四十';
+  if(p<10) return left+'如'+DIG[p];
+  return left+cnNum(p);
 }
 window.__chant = chant;
 
