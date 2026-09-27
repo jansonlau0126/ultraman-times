@@ -228,6 +228,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .impact svg{position:absolute;inset:0;width:100%;height:100%}
 .impact span{position:relative;font-weight:900;font-size:36px;color:#fff;text-shadow:2px 2px 0 #c01616,-2px -2px 0 #c01616,2px -2px 0 #c01616,-2px 2px 0 #c01616,0 5px 0 #6b0909}
 .dmg{position:absolute;font-weight:900;font-size:clamp(26px,6vw,40px);color:#fff;text-shadow:2px 2px 0 #c01616,-2px -2px 0 #c01616,2px -2px 0 #c01616,-2px 2px 0 #c01616;white-space:nowrap}
+.yell{position:absolute;font-weight:900;font-size:clamp(28px,7vw,48px);color:#ffe14d;text-shadow:3px 3px 0 #c01616,-3px -3px 0 #c01616,3px -3px 0 #c01616,-3px 3px 0 #c01616,0 0 18px rgba(255,255,255,.9);white-space:nowrap;letter-spacing:2px}
 .ouchtxt{position:absolute;font-weight:900;font-size:clamp(20px,4.5vw,30px);color:#ffe14d;text-shadow:2px 2px 0 #1e3a8a,-2px -2px 0 #1e3a8a,2px -2px 0 #1e3a8a,-2px 2px 0 #1e3a8a;white-space:nowrap}
 .flash{position:absolute;inset:0;background:#fff;opacity:0}
 .speedline{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,#fff);opacity:.8}
@@ -337,8 +338,9 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* ===== v2: Omega / new moves / Kanegon / Dada ===== */
 .hero .h-spiral{transform-box:fill-box;transform-origin:center;animation:spin 3s linear infinite}
 .hero.no-slug .h-slug{display:none}
-.hero.pose-tuck .h-armL{transform:rotate(34deg)}
-.hero.pose-tuck .h-armR{transform:rotate(-34deg)}
+.hero.pose-tuck .h-armL{transform:rotate(42deg)}
+.hero.pose-tuck .h-armR{transform:rotate(-42deg)}
+.hero.pose-tuck{transform:scale(.92) translateY(6px)}
 .hero.rainbow .h-aura{animation:aura .2s ease-in-out infinite alternate,rbfill .6s linear infinite}
 @keyframes rbfill{0%{fill:#ff6b6b}17%{fill:#ffb84d}33%{fill:#fff34d}50%{fill:#5bff8a}67%{fill:#4dd2ff}83%{fill:#b58cff}100%{fill:#ff6b6b}}
 .mon .k-open{display:none}
@@ -1116,13 +1118,25 @@ function loadData(){
 let DATA = loadData();
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); }catch(e){} }
 
-/* ---------- 九因歌 chant ---------- */
+/* ---------- 九因歌 chant（跟傳統九因歌表） ---------- */
 const DIG = '零一二三四五六七八九';
-function cnNum(n){ if(n<10) return DIG[n]; if(n===100) return '一百'; const t=Math.floor(n/10), u=n%10; return (t===1?'':DIG[t])+'十'+(u?DIG[u]:''); }
+function cnNum(n){
+  if(n<10) return DIG[n]; if(n===100) return '一百';
+  const t=Math.floor(n/10), u=n%10;
+  /* 九因歌讀法：10–19 用「一十／一十二」，唔好讀「十二」 */
+  if(t===1) return '一十'+(u?DIG[u]:'');
+  return DIG[t]+'十'+(u?DIG[u]:'');
+}
 function chant(a,b){
   if(a>9||b>9) return cnNum(a)+'乘'+cnNum(b)+'等於'+cnNum(a*b);
-  const x=Math.min(a,b), y=Math.max(a,b), p=x*y;
-  return DIG[x]+DIG[y]+(p<10?'得':'')+(p===10?'一十':cnNum(p));
+  const p=a*b, left=DIG[a]+DIG[b];
+  if(a===3 && b===3) return '三三歸九';
+  if(p===10 && ((a===2&&b===5)||(a===5&&b===2))) return left+'得一十';
+  if(p===20 && ((a===4&&b===5)||(a===5&&b===4))) return left+'中二十';
+  if(p===30 && ((a===5&&b===6)||(a===6&&b===5))) return left+'中三十';
+  if(p===40 && ((a===5&&b===8)||(a===8&&b===5))) return left+'中四十';
+  if(p<10) return left+'如'+DIG[p];
+  return left+cnNum(p);
 }
 window.__chant = chant;
 
