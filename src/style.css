@@ -74,31 +74,31 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
-.hero .h-armL{transform-origin:56px 100px}
-.hero .h-armR{transform-origin:144px 100px}
+.hero .h-armL{transform-origin:62px 118px}
+.hero .h-armR{transform-origin:138px 118px}
 .hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
 .hero.pose-beam{transform:rotate(-6deg) translateX(4px)}
 .hero.pose-kick .h-legR{display:none}
 .hero.pose-kick .h-kick{display:inline}
-.hero.pose-kick .h-armL{transform:rotate(62deg)}
-.hero.pose-kick .h-armR{transform:rotate(-88deg)}
-.hero.pose-kick{transform:rotate(-10deg) translate(6px,-4px)}
-.hero.pose-disc .h-armR{transform:rotate(-175deg)}
-.hero.pose-disc .h-armL{transform:rotate(28deg)}
-.hero.pose-disc{transform:rotate(4deg)}
-.hero.pose-punch .h-armR{transform:rotate(-105deg)}
-.hero.pose-punch .h-armL{transform:rotate(36deg)}
-.hero.pose-punch{transform:translateX(8px) rotate(-4deg)}
-.hero.pose-win .h-armR{transform:rotate(-168deg)}
-.hero.pose-win .h-armL{transform:rotate(32deg)}
-.hero.pose-win{transform:translateY(-3px)}
+.hero.pose-kick .h-armL{transform:rotate(55deg)}
+.hero.pose-kick .h-armR{transform:rotate(-80deg)}
+.hero.pose-kick{transform:rotate(-8deg) translate(4px,-2px)}
+.hero.pose-disc .h-armR{transform:rotate(-160deg)}
+.hero.pose-disc .h-armL{transform:rotate(24deg)}
+.hero.pose-disc{transform:rotate(3deg)}
+.hero.pose-punch .h-armR{transform:rotate(-95deg)}
+.hero.pose-punch .h-armL{transform:rotate(30deg)}
+.hero.pose-punch{transform:translateX(6px) rotate(-3deg)}
+.hero.pose-win .h-armR{transform:rotate(-155deg)}
+.hero.pose-win .h-armL{transform:rotate(28deg)}
+.hero.pose-win{transform:translateY(-2px)}
 .hero.aura .h-aura{display:inline;animation:aura .25s ease-in-out infinite alternate}
 @keyframes aura{from{opacity:.45}to{opacity:.95}}
 .hero .h-eyeglow{animation:eyeglow 1.8s ease-in-out infinite alternate}
 @keyframes eyeglow{from{opacity:.45}to{opacity:1}}
-.hero .h-timer,.hero .h-tglow{fill:var(--tc,#38bdf8);transition:fill .3s}
+.hero .h-timer,.hero .h-tglow{fill:var(--tc,#5ee7ff);transition:fill .3s}
 .hero.t-blink .h-timer,.hero.t-blink .h-tglow{animation:tblink .7s steps(2,jump-none) infinite}
 .hero.combo-rainbow .h-tglow{animation:rbfill .55s linear infinite,tblink .55s steps(2,jump-none) infinite}
 .hero.combo-omega .h-tglow,.hero.combo-omega .h-timer{animation:rbfill .35s linear infinite,tblink .4s steps(2,jump-none) infinite}
