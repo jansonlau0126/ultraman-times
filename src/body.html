@@ -74,8 +74,14 @@
         </div>
         <div class="row">
           <div class="seg" id="modeSeg">
-            <button data-choice="0">自己打答案</button>
-            <button data-choice="1">揀答案（易啲）</button>
+            <button data-choice="0" aria-pressed="true">自己打答案</button>
+            <button data-choice="1" aria-pressed="false">揀答案（易啲）</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="seg" id="speakSeg">
+            <button data-speak="1" aria-pressed="true">答錯讀出口訣</button>
+            <button data-speak="0" aria-pressed="false">唔讀</button>
           </div>
         </div>
         <div class="besttxt" id="bestTxt"></div>
@@ -115,7 +121,7 @@
         <div class="pcols">
         <div class="pcol">
         <div class="section-t">乘數表地圖</div>
-        <table class="mgrid" id="mgrid"></table>
+        <div class="mwrap"><table class="mgrid" id="mgrid"></table></div>
         <div class="legend"><span><i style="background:#22c55e"></i>識晒</span><span><i style="background:#facc15"></i>練習緊</span><span><i style="background:#4b5578"></i>未試過</span></div>
         </div>
         <div class="pcol">

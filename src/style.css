@@ -126,6 +126,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .seg{display:inline-flex;background:rgba(0,0,0,.3);border-radius:18px;padding:5px;gap:5px;border:2px solid var(--line)}
 .seg button{border:0;border-radius:14px;padding:10px 16px;font-size:clamp(16px,4vw,20px);font-weight:900;background:transparent;color:#cbd5ff}
 .seg button.on{background:#ffd84d;color:#3b2300;box-shadow:0 3px 0 #b98900}
+.mwrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
 .besttxt{font-size:18px;color:#ffe9a8;margin:6px 0 0;min-height:24px;text-align:center}
 .warn{color:#ffb4b4;font-weight:700;min-height:24px;margin:4px 0}
 
@@ -384,4 +385,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .dtag.f{background:#2f7fe0}.dtag.b{background:#7c3aed}.dtag.o{background:#e8483e}
 .dcard.locked .dtag{opacity:.5}
 .rdex{margin:4px auto 2px;padding:4px 12px;border-radius:12px;background:rgba(125,255,178,.18);color:#7dffb2;font-weight:900;display:inline-block}
-@media (max-width:520px){ .homescene .hs-hero{left:1%} .homescene .vs{left:57%} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .hero-bob,.mon-bob{animation:none}
+}
