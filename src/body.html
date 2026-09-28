@@ -139,8 +139,24 @@
         <div class="badges" id="badges"></div>
         </div>
         </div>
-        <div class="section-t">怪獸圖鑑 <small id="dexCount"></small></div>
-        <div class="dex" id="dex"></div>
+        <div class="dex-stage">
+          <h2 class="dex-title">怪獸圖鑑 <span id="dexCount"></span></h2>
+          <div class="dex-layout">
+            <div class="dex" id="dex"></div>
+            <aside class="dex-panel" id="dexPanel" aria-live="polite">
+              <div class="dex-panel-empty" id="dexPanelEmpty">撳左邊怪獸睇詳情</div>
+              <div class="dex-panel-body" id="dexPanelBody" hidden>
+                <div class="dex-panel-art" id="dexPanelArt"></div>
+                <div class="dex-panel-tags" id="dexPanelTags"></div>
+                <h3 class="dex-panel-name" id="dexPanelName"></h3>
+                <div class="dex-panel-nick" id="dexPanelNick"></div>
+                <div class="dex-bars" id="dexBars"></div>
+                <p class="dex-panel-lore" id="dexPanelLore"></p>
+                <button type="button" class="btn small blue" id="dexPanelMore">睇完整資料</button>
+              </div>
+            </aside>
+          </div>
+        </div>
         <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
       </div>
     </section>

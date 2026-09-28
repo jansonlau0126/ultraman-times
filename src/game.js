@@ -789,12 +789,53 @@ function renderProgress(){
   $('#badges').innerHTML = [1,2,3,4,5,6,7,8,9,10].map(t=>{ const tier=DATA.badges[t]||0; return '<div class="badge">'+medalSVG(t,tier)+'<div>'+(tier?['','銅','銀','金'][tier]+'勳章':'未有')+'</div></div>'; }).join('');
 }
 
-function renderDex(){ const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
+function renderDex(){
+  const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
   $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
-  $('#dex').innerHTML=DEX_ORDER.map((t,i)=>{ const m=MONS[t], n=dex[t]||0; const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':m.omega?'<i class="dtag o">奧米加</i>':'';
-    return '<button type="button" class="dcard'+(n?'':' locked')+'" data-dex="'+t+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>'; }).join('');
-  $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); openDexDetail(c.dataset.dex); })); }
-
+  const elemBorder={fire:'#ff7a3d',ice:'#5ee7ff',thunder:'#fde047',rock:'#9ca3af',poison:'#a3e635',shadow:'#c4a0ff'};
+  const sel=window.__dexSel;
+  $('#dex').innerHTML=DEX_ORDER.map((t)=>{
+    const m=MONS[t], n=dex[t]||0;
+    const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':'';
+    const border=elemBorder[m.elem]||'#7c8cff';
+    return '<button type="button" class="dcard'+(n?'':' locked')+(sel===t?' on':'')+'" data-dex="'+t+'" style="--db:'+border+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>';
+  }).join('');
+  $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); selectDex(c.dataset.dex); }));
+  if(sel && dex[sel]) fillDexPanel(sel);
+  else if(got){ const first=DEX_ORDER.find(t=>dex[t]); if(first) selectDex(first, true); else clearDexPanel(); }
+  else clearDexPanel();
+}
+function clearDexPanel(){
+  window.__dexSel=null;
+  const empty=$('#dexPanelEmpty'), body=$('#dexPanelBody');
+  if(empty) empty.hidden=false; if(body) body.hidden=true;
+}
+function selectDex(type, quiet){
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
+  window.__dexSel=type;
+  $$('#dex .dcard').forEach(c=>c.classList.toggle('on', c.dataset.dex===type));
+  fillDexPanel(type);
+  if(!quiet){ /* keep panel in view on mobile */ const p=$('#dexPanel'); if(p && window.matchMedia('(max-width:859px)').matches) p.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+}
+function fillDexPanel(type){
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0;
+  $('#dexPanelEmpty').hidden=true; $('#dexPanelBody').hidden=false;
+  $('#dexPanelArt').innerHTML=monRasterHTML(type);
+  const tags=[]; if(m.friend) tags.push('<i class="f">夥伴</i>'); if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
+  tags.push('<i>'+(m.kind||'怪獸')+'</i>');
+  $('#dexPanelTags').innerHTML=tags.join('');
+  $('#dexPanelName').textContent=m.name;
+  $('#dexPanelNick').textContent=m.nick;
+  // soft “stats” from encounter count + elem flavor (concept-like bars)
+  const p1=Math.min(96, 12+n*11), p2=Math.min(88, 8+n*7), p3=Math.min(92, 10+n*9);
+  $('#dexBars').innerHTML=
+    '<div class="dex-bar"><span>出沒</span><i class="g"><b style="--p:'+p1+'%"></b></i><span>'+p1+'%</span></div>'+
+    '<div class="dex-bar"><span>威力</span><i class="r"><b style="--p:'+p2+'%"></b></i><span>'+p2+'%</span></div>'+
+    '<div class="dex-bar"><span>稀有</span><i class="o"><b style="--p:'+p3+'%"></b></i><span>'+p3+'%</span></div>';
+  $('#dexPanelLore').textContent=m.lore||'暫時未有資料。';
+  const more=$('#dexPanelMore');
+  more.onclick=()=>{ Sfx.click(); openDexDetail(type); };
+}
 const DEX_BG = {
   heidragon:['#101014','#2a0a00'], lavaover:['#4a1508','#1a0600'], holyturt:['#14532d','#062418'],
   sandwyrm:['#6b4e2e','#2a1a08'], thundwolf:['#1a4a7a','#061828'], ninjacat:['#0a0a10','#1a0828'],
@@ -805,6 +846,7 @@ const DEX_BG = {
 };
 function openDexDetail(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
+  selectDex(type, true);
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
   $('#dsArt').innerHTML = '<div class="mon-bob">'+monRasterHTML(type)+'</div>';
