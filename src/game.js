@@ -162,6 +162,19 @@ const HOME_ART = {
 const BATTLE_HERO = [null,
   'assets/battle/hero_h1.png','assets/battle/hero_h2.png','assets/battle/hero_h3.png',
   'assets/battle/hero_h4.png','assets/battle/hero_h5.png'];
+const BATTLE_POSE = {
+  kick:'assets/battle/hero_pose_kick.png',
+  beam:'assets/battle/hero_pose_beam.png',
+  punch:'assets/battle/hero_pose_punch.png',
+  disc:'assets/battle/hero_pose_punch.png',
+  whirl:'assets/battle/hero_pose_punch.png',
+  flip:'assets/battle/hero_pose_kick.png',
+  tuck:'assets/battle/hero_pose_kick.png',
+  win:'assets/battle/hero_pose_win.png',
+  omega:'assets/battle/hero_pose_omega.png',
+  rainbow:'assets/battle/hero_pose_omega.png',
+  super:'assets/battle/hero_pose_beam.png'
+};
 const BATTLE_MON = {
   heidragon:'assets/battle/mon_heidragon.png', lavaover:'assets/battle/mon_lavaover.png',
   holyturt:'assets/battle/mon_holyturt.png', sandwyrm:'assets/battle/mon_sandwyrm.png',
@@ -312,7 +325,18 @@ function heroSvgEl(){ return $('#heroBob .hero'); }
 function monSvgEl(){ return $('#monBob .mon'); }
 function mk(sel, root){ return (root||stageEl).querySelector(sel); }
 function relPos(el){ const s=stageEl.getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:r.left-s.left+r.width/2, y:r.top-s.top+r.height/2, w:r.width, h:r.height, l:r.left-s.left, t:r.top-s.top}; }
-function heroPose(p){ const h=heroSvgEl(); if(!h) return; const keep=[]; h.classList.forEach(c=>{ if(c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug'||c==='charging'||c.indexOf('combo-')===0||c.indexOf('henshin-')===0) keep.push(c); }); h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' ')); }
+function heroPose(p){
+  const h=heroSvgEl(); if(!h) return;
+  const keep=[]; h.classList.forEach(c=>{ if(c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug'||c==='charging'||c.indexOf('combo-')===0||c.indexOf('henshin-')===0) keep.push(c); });
+  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' '));
+  const img=h.querySelector('.hero-raster'); if(!img) return;
+  const poseKey = (!p||p==='idle') ? null : (BATTLE_POSE[p] ? p : null);
+  if(poseKey) img.setAttribute('src', BATTLE_POSE[poseKey]);
+  else {
+    let st=1; for(let i=1;i<=5;i++) if(h.classList.contains('henshin-'+i)) st=i;
+    img.setAttribute('src', BATTLE_HERO[st]||BATTLE_HERO[1]);
+  }
+}
 function henshinStage(){ const c=B.combo||0; if(c>=8) return 5; if(c>=7) return 4; if(c>=5) return 3; if(c>=3) return 2; return 1; }
 function syncHenshin(){
   const h=heroSvgEl(); if(!h) return;
@@ -479,7 +503,7 @@ async function mvRainbow(hit){ const hs=heroSvgEl(); hs.classList.add('aura','ra
 
 async function mvOmega(hit){
   const hs=heroSvgEl(); hs.classList.add('aura','combo-omega'); Sfx.rainbow();
-  heroPose('win'); const chest=relPos(mk('.mk-chest',heroWrap));
+  heroPose('omega'); const chest=relPos(mk('.mk-chest',heroWrap));
   FX.spiral(chest.x,chest.y,{n:50,r:30,speed:-8,colors:RAINBOW,life:50,size:9,shape:'star'});
   await sleep(280*K());
   const t=relPos(mk('.mk-core',monWrap));
