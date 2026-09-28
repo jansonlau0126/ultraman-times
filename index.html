@@ -83,9 +83,12 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
-.hero .h-armL{transform-origin:52px 100px}
-.hero .h-armR{transform-origin:148px 100px}
-.hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
+.hero .h-armL{transform-origin:70px 130px}
+.hero .h-armR{transform-origin:150px 130px}
+.hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost,
+.hero .h-mark-red,.hero .h-mark-blue,.hero .h-collar,
+.hero .h-cape-red,.hero .h-cape-blue,.hero .h-cape-gold,
+.hero .h-gold-aura,.hero .h-halo,.hero .h-wings{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
 .hero.pose-beam{transform:rotate(-6deg) translateX(4px)}
@@ -105,21 +108,26 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .hero.pose-win{transform:translateY(-2px)}
 .hero.aura .h-aura{display:inline;animation:aura .25s ease-in-out infinite alternate}
 @keyframes aura{from{opacity:.45}to{opacity:.95}}
-/* Five-stage henshin overlays */
-.hero .h-pauldron,.hero .h-meteor,.hero .h-crystal,.hero .h-wings{display:none}
-.hero.henshin-2 .h-pauldron,.hero.henshin-3 .h-pauldron,.hero.henshin-4 .h-pauldron,.hero.henshin-5 .h-pauldron{display:inline}
-.hero.henshin-3 .h-meteor,.hero.henshin-4 .h-meteor,.hero.henshin-5 .h-meteor{display:inline}
-.hero.henshin-4 .h-crystal,.hero.henshin-5 .h-crystal{display:inline}
-.hero.henshin-5 .h-wings{display:inline}
-.hero.henshin-2 .h-aura{display:inline;opacity:.55;fill:#9ee7ff}
-.hero.henshin-3 .h-aura{display:inline;opacity:.7;fill:#7ff0ff}
-.hero.henshin-4 .h-aura{display:inline;opacity:.85;fill:#ff7ad9;animation:aura .2s ease-in-out infinite alternate,rbfill .8s linear infinite}
-.hero.henshin-5 .h-aura{display:inline;opacity:.95;fill:#ffe066;animation:aura .18s ease-in-out infinite alternate,rbfill .45s linear infinite}
-.hero.henshin-3 .h-meteor{animation:mfloat 1.1s ease-in-out infinite alternate}
+/* Five-stage henshin — final chibi cast */
+.hero.henshin-2 .h-mark-red,.hero.henshin-4 .h-mark-red,.hero.henshin-5 .h-mark-red{display:inline}
+.hero.henshin-2 .h-collar,.hero.henshin-3 .h-collar,.hero.henshin-4 .h-collar,.hero.henshin-5 .h-collar{display:inline}
+.hero.henshin-3 .h-mark-blue{display:inline}
+.hero.henshin-3 .h-mark-red{display:none}
+.hero.henshin-3 .h-cape-blue{display:inline}
+.hero.henshin-4 .h-cape-gold{display:inline}
+.hero.henshin-4 .h-gold-aura{display:inline}
+.hero.henshin-5 .h-wings,.hero.henshin-5 .h-halo{display:inline}
+.hero.henshin-2 .h-aura{display:inline;opacity:.45;fill:#9ee7ff}
+.hero.henshin-3 .h-aura{display:inline;opacity:.6;fill:#7ff0ff}
+.hero.henshin-4 .h-aura{display:inline;opacity:.8;fill:#ffe066;animation:aura .2s ease-in-out infinite alternate,rbfill .8s linear infinite}
+.hero.henshin-5 .h-aura{display:inline;opacity:.9;fill:#ffe066;animation:aura .18s ease-in-out infinite alternate,rbfill .45s linear infinite}
+.hero.henshin-4 .h-gold-aura{animation:mfloat 1s ease-in-out infinite alternate}
 .hero.henshin-5 .h-wings{animation:icflap 1.4s ease-in-out infinite alternate}
-.hero.henshin-4{filter:drop-shadow(0 0 10px rgba(255,180,255,.45))}
-.hero.henshin-5{filter:drop-shadow(0 0 14px rgba(255,224,100,.55))}
+.hero.henshin-5 .h-halo{animation:aura .8s ease-in-out infinite alternate}
+.hero.henshin-4{filter:drop-shadow(0 0 10px rgba(255,220,80,.45))}
+.hero.henshin-5{filter:drop-shadow(0 0 14px rgba(127,240,255,.55))}
 .hero.henshin-up{filter:brightness(1.55) drop-shadow(0 0 16px rgba(255,255,255,.9))}
+.hero.pose-kick .h-cape-red,.hero.pose-beam .h-cape-red,.hero.pose-punch .h-cape-red,.hero.pose-win .h-cape-red{display:inline;opacity:.9}
 .hero .h-eyeglow{animation:eyeglow 1.8s ease-in-out infinite alternate}
 @keyframes eyeglow{from{opacity:.45}to{opacity:1}}
 .hero .h-timer,.hero .h-tglow{fill:var(--tc,#5ee7ff);transition:fill .3s}
@@ -670,7 +678,7 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 <script>
 (function(){
 'use strict';
-/* ===== ART: icons, hero, monsters, skyline, medals (all original drawings) ===== */
+/* ===== ART: icons, chibi hero, 18 kaiju, skyline, medals (final cast) ===== */
 const ICONS = {
   home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
   sound:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.6 5.8a9 9 0 010 12.4"/>',
@@ -691,390 +699,302 @@ const ICONS = {
 function icon(name){ return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEach(el=>{ el.innerHTML = icon(el.dataset.icon); }); }
 
-/* Fan-art hero: 有型超人奧米加（高挑戰鬥姿、銀紅甲、金 V、圓形計時器）. Drawn from scratch — not official art. */
-function pent(cx,cy,r){ const pts=[]; for(let i=0;i<5;i++){ const a=(-90+i*72)*Math.PI/180; pts.push((cx+Math.cos(a)*r).toFixed(1)+','+(cy+Math.sin(a)*r).toFixed(1)); } return pts.join(' '); }
+/* Fan-art chibi 超人奧米加 — 五段變身最終定稿 */
 function heroSVG(p){
-  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', gd='url(#'+p+'gd)', ol='#2a1018', RC='#e53935', sl='#eef2f7';
-  const limb=(d,w)=>'<path d="'+d+'" stroke="'+ol+'" stroke-width="'+(w+5)+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="'+RC+'" stroke-width="'+w+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="'+sl+'" stroke-width="'+(w*.28)+'" fill="none" stroke-linecap="round" opacity=".75" transform="translate(-'+(w*.18)+',-'+(w*.1)+')"/>';
-  const glove=(x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M'+(x-r*.5)+' '+(y-r*.25)+' q'+(r*.45)+' -'+(r*.35)+' '+(r*.95)+' -'+(r*.15)+'" stroke="#fff" stroke-width="1.8" fill="none" opacity=".7"/>';
-  const cuff=(x1,y1,x2,y2)=>'<path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+ol+'" stroke-width="13" stroke-linecap="butt"/><path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+sl+'" stroke-width="9" stroke-linecap="butt"/>';
-  const slug = '<g class="h-slug"><path d="M93 22 L100 -14 L107 22 Q104 36 100 48 Q96 36 93 22 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
-    '<path d="M95 20 L100 -4 L105 20" stroke="#fff" stroke-width="2.2" fill="none" opacity=".85"/><path d="M100 0 L100 42" stroke="#ff9d8f" stroke-width="1.5" opacity=".65"/>'+
-    '<circle class="mk-slug" cx="100" cy="12" r="1" fill="none"/></g>';
-  const head = '<g class="h-head" transform="translate(100 72) scale(.86) translate(-100 -72)">'+
-    '<path d="M100 14 C117 14 128 30 128 48 C128 64 119 78 110 84 L90 84 C81 78 72 64 72 48 C72 30 83 14 100 14 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6"/>'+
-    '<path d="M74 36 C72 54 78 70 90 82 L94 74 C86 66 82 54 84 40 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/><path d="M126 36 C128 54 122 70 110 82 L106 74 C114 66 118 54 116 40 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/>'+
-    slug+
-    '<path d="M68 44 L54 38 L56 58 L70 62 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/><path d="M132 44 L146 38 L144 58 L130 62 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
-    '<path class="h-eyeglow" d="M96 54 L93 42 Q84 36 74 38 L70 44 Q78 58 96 54 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/><path class="h-eyeglow" d="M104 54 L107 42 Q116 36 126 38 L130 44 Q122 58 104 54 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/>'+
-    '<path d="M96 54 L93 42 Q84 36 74 38 L70 44 Q78 58 96 54 Z" fill="url(#'+p+'ey)" stroke="#0a3a52" stroke-width="1.5"/><path d="M104 54 L107 42 Q116 36 126 38 L130 44 Q122 58 104 54 Z" fill="url(#'+p+'ey)" stroke="#0a3a52" stroke-width="1.5"/>'+
-    '<g stroke="#fff" stroke-width=".75" opacity=".55" fill="none"><path d="M76 44 L94 50 M84 40 L82 52"/><path d="M124 44 L106 50 M116 40 L118 52"/></g>'+
-    '<path d="M90 66 L110 66 L108 76 L92 76 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/><path d="M94 71 L106 71" stroke="#4a5263" stroke-width="1.5" stroke-linecap="round"/>'+
-    '</g>';
-  const torso = '<path d="M46 92 L154 92 Q152 124 140 148 Q128 172 124 186 L130 202 Q108 214 100 218 Q92 214 70 202 L76 186 Q72 172 60 148 Q48 124 46 92 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
-    '<path d="M60 108 Q74 154 88 182 Q96 202 99 214" stroke="'+sl+'" stroke-width="6.5" fill="none" stroke-linecap="round"/><path d="M140 108 Q126 154 112 182 Q104 202 101 214" stroke="'+sl+'" stroke-width="6.5" fill="none" stroke-linecap="round"/>'+
-    '<path d="M90 74 L110 74 L112 94 L88 94 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
-    '<path d="M56 98 L100 146 L144 98 L130 96 L100 130 L70 96 Z" fill="'+gd+'" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
-    '<path d="M66 102 L100 138 L134 102" fill="none" stroke="#fff3b0" stroke-width="2.4" stroke-linecap="round" opacity=".95"/>'+
-    '<path d="M76 106 L100 134 L124 106" fill="none" stroke="#c62828" stroke-width="3.2" stroke-linecap="round"/>'+
-    '<circle cx="100" cy="158" r="16" fill="#cfd8e6" stroke="'+ol+'" stroke-width="2.4"/>'+
-    '<circle class="h-tglow" cx="100" cy="158" r="13.5" filter="url(#'+p+'gl)" opacity=".95"/>'+
-    '<circle class="h-timer" cx="100" cy="158" r="12" stroke="#1a2a4a" stroke-width="1.6"/>'+
-    '<circle cx="95" cy="153" r="3.2" fill="#fff" opacity=".65"/>'+
-    '<g class="h-spiral"><path d="M100 158 m0 -2 a2 2 0 1 1 -2 2 a4.2 4.2 0 0 1 4.2 -4.2" stroke="#fff" stroke-width="1.3" fill="none" opacity=".9"/></g>'+
-    '<circle class="mk-chest" cx="100" cy="158" r="1" fill="none"/>';
-  const legL = '<g class="h-legL"><path d="M78 168 C64 208 54 244 48 284 L36 310 L66 314 L78 276 C88 244 98 212 106 188 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
-    '<path d="M82 176 C70 220 60 256 50 306" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
-    '<path d="M34 306 L68 312 Q70 322 68 330 L24 330 Q22 320 30 316 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M36 312 L66 316" stroke="'+sl+'" stroke-width="3"/></g>';
-  const legR = '<g class="h-legR"><path d="M122 168 C136 208 146 244 152 284 L164 310 L134 314 L122 276 C112 244 102 212 94 188 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
-    '<path d="M118 176 C130 220 140 256 150 306" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
-    '<path d="M166 306 L132 312 Q130 322 132 330 L176 330 Q178 320 170 316 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M164 312 L134 316" stroke="'+sl+'" stroke-width="3"/></g>';
-  const kick = '<g class="h-kick">'+limb('M112 190 L160 178 L196 168',24)+'<path d="M118 186 L190 166" stroke="'+sl+'" stroke-width="4" stroke-linecap="round"/>'+
-    '<path d="M190 154 Q214 152 216 170 Q214 190 188 184 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M198 156 L198 182" stroke="'+sl+'" stroke-width="3"/></g>';
-  const armL = '<g class="h-armL">'+limb('M52 100 L38 148 L36 190',20)+'<path d="M46 106 L34 148 L32 182" stroke="'+sl+'" stroke-width="3.2" fill="none" stroke-linecap="round"/>'+cuff(36,182,36,192)+glove(36,202,11)+'</g>';
-  const armR = '<g class="h-armR">'+limb('M148 100 L162 148 L164 190',20)+'<path d="M154 106 L166 148 L168 182" stroke="'+sl+'" stroke-width="3.2" fill="none" stroke-linecap="round"/>'+cuff(164,182,164,192)+glove(164,202,11)+'<circle class="mk-hand" cx="164" cy="202" r="1" fill="none"/></g>';
-  const guard = '<g class="h-guard">'+
-    limb('M52 100 L24 140 L60 156',20)+'<path d="M46 104 L24 136" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(54,152,64,156)+glove(72,158,11)+
-    limb('M148 100 L180 130 L176 84',20)+'<path d="M154 102 L178 126" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(176,92,176,82)+glove(176,72,11.5)+
-    '</g>';
-  const cross = '<g class="h-cross">'+
-    limb('M52 100 L90 126 L172 116',20)+limb('M148 100 L160 172 L160 68',20)+
-    '<path d="M100 116 L186 114" stroke="'+sl+'" stroke-width="3.5" stroke-linecap="round"/>'+cuff(178,116,188,116)+glove(198,116,11)+
-    '<path d="M160 164 L160 74" stroke="'+sl+'" stroke-width="3.2" stroke-linecap="round"/>'+cuff(160,74,160,64)+glove(160,54,11)+
-    '<circle cx="160" cy="116" r="14" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="160" cy="116" r="5.5" fill="#fff"/></g>';
-  /* henshin overlays — shown by .henshin-N classes */
-  const hen = '<g class="h-pauldron" opacity=".98">'+
-    '<ellipse cx="46" cy="98" rx="20" ry="14" fill="#bff3ff" filter="url(#'+p+'gl)" opacity=".9"/><ellipse cx="154" cy="98" rx="20" ry="14" fill="#bff3ff" filter="url(#'+p+'gl)" opacity=".9"/>'+
-    '<path d="M30 94 L46 84 L62 98 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/><path d="M138 98 L154 84 L170 94 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/>'+
-    '<path d="M36 92 L46 88 L56 96" stroke="#fff" stroke-width="1.6" fill="none" opacity=".85"/><path d="M144 96 L154 88 L164 92" stroke="#fff" stroke-width="1.6" fill="none" opacity=".85"/>'+
-    '</g>'+
-    '<g class="h-meteor" stroke="#7ff0ff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".95">'+
-    '<path d="M108 8 L132 -22"/><path d="M118 22 L148 -4"/><path d="M36 118 L10 90"/><path d="M164 118 L194 88"/>'+
-    '<circle cx="136" cy="-12" r="4" fill="#fff"/><circle cx="16" cy="96" r="3.2" fill="#fff"/><circle cx="188" cy="94" r="3" fill="#ffe066"/>'+
-    '</g>'+
-    '<g class="h-crystal" opacity=".98">'+
-    '<path d="M70 84 L80 64 L90 84 Z" fill="#b58cff" stroke="#fff" stroke-width="1.4"/><path d="M110 84 L120 62 L130 84 Z" fill="#7ff0ff" stroke="#fff" stroke-width="1.4"/>'+
-    '<path d="M36 128 L48 106 L60 128 Z" fill="#ff7ad9" stroke="#fff" stroke-width="1.4"/><path d="M140 128 L152 104 L164 128 Z" fill="#ffe066" stroke="#fff" stroke-width="1.4"/>'+
-    '<path d="M74 78 L80 68 L86 78" stroke="#fff" stroke-width="1.2" fill="none" opacity=".8"/>'+
-    '</g>'+
-    '<g class="h-wings" opacity=".95">'+
-    '<path d="M68 118 C8 86 -24 112 2 158 C28 132 48 142 68 154 Z" fill="#ff7ad9" filter="url(#'+p+'gl)" opacity=".82"/>'+
-    '<path d="M132 118 C192 86 224 112 198 158 C172 132 152 142 132 154 Z" fill="#7ff0ff" filter="url(#'+p+'gl)" opacity=".82"/>'+
-    '<path d="M68 118 C24 96 0 122 22 152" stroke="#ffe066" stroke-width="3" fill="none"/><path d="M132 118 C176 96 200 122 178 152" stroke="#ffe066" stroke-width="3" fill="none"/>'+
-    '<path d="M60 130 C30 118 18 132 28 148" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/><path d="M140 130 C170 118 182 132 172 148" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/>'+
-    '</g>';
-  return '<svg class="hero henshin-1" viewBox="0 0 200 340" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
+  const ol='#2a2a40', sv='#e8edf5', cy='#5ee7ff';
+  const eye=(x)=>'<ellipse class="h-eyeglow" cx="'+x+'" cy="78" rx="18" ry="22" fill="'+cy+'" filter="url(#'+p+'gl)" opacity=".85"/><ellipse cx="'+x+'" cy="78" rx="14" ry="18" fill="'+cy+'" stroke="#0a3a52" stroke-width="2"/><ellipse cx="'+(x-4)+'" cy="74" rx="4" ry="5" fill="#fff" opacity=".7"/>';
+  const gem=(x,y,s)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+s+'" ry="'+(s*1.4)+'" fill="'+cy+'" stroke="#fff" stroke-width="1.2"/>';
+  return '<svg class="hero henshin-1" viewBox="0 0 220 320" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
     '<defs>'+
-    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#e2e8f0"/><stop offset="1" stop-color="#8fa0b4"/></linearGradient>'+
-    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a6e"/><stop offset=".5" stop-color="#e53935"/><stop offset="1" stop-color="#9e1c1c"/></linearGradient>'+
-    '<linearGradient id="'+p+'gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe566"/><stop offset=".55" stop-color="#f0b429"/><stop offset="1" stop-color="#c98a0a"/></linearGradient>'+
-    '<radialGradient id="'+p+'ey" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#9efbff"/><stop offset="1" stop-color="#1494b8"/></radialGradient>'+
-    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.4"/></filter>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#e2e8f0"/><stop offset="1" stop-color="#9aa8bc"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b6b"/><stop offset="1" stop-color="#c62828"/></linearGradient>'+
+    '<linearGradient id="'+p+'bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5bbcff"/><stop offset="1" stop-color="#1565c0"/></linearGradient>'+
+    '<linearGradient id="'+p+'gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe566"/><stop offset="1" stop-color="#f0b429"/></linearGradient>'+
+    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.2"/></filter>'+
     '</defs>'+
-    '<ellipse class="h-aura" cx="100" cy="170" rx="94" ry="155" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".55"/>'+
-    hen+
-    '<ellipse cx="100" cy="326" rx="72" ry="8" fill="#000" opacity=".28"/>'+
-    legL + legR + kick + armL + armR + torso + head + guard + cross +
-    '<circle class="mk-beam" cx="160" cy="116" r="1" fill="none"/>'+
+    '<ellipse class="h-aura" cx="110" cy="170" rx="100" ry="145" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".5"/>'+
+    '<g class="h-halo"><circle cx="110" cy="70" r="58" fill="none" stroke="#ffe566" stroke-width="10" opacity=".9" filter="url(#'+p+'gl)"/><circle cx="110" cy="70" r="48" fill="none" stroke="#fff" stroke-width="3" opacity=".7"/></g>'+
+    '<g class="h-wings">'+
+    '<path d="M70 130 C10 90 -20 120 8 170 C30 145 50 150 70 168 Z" fill="#7ff0ff" filter="url(#'+p+'gl)" opacity=".85"/>'+
+    '<path d="M150 130 C210 90 240 120 212 170 C190 145 170 150 150 168 Z" fill="#7ff0ff" filter="url(#'+p+'gl)" opacity=".85"/>'+
+    '<path d="M70 130 C30 105 10 130 28 162" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M150 130 C190 105 210 130 192 162" stroke="#fff" stroke-width="2.5" fill="none"/>'+
+    '</g>'+
+    '<g class="h-gold-aura" fill="#ffe566" filter="url(#'+p+'gl)" opacity=".85">'+
+    '<path d="M110 40 L118 8 L126 40"/><path d="M70 70 L48 40 L78 78"/><path d="M150 70 L172 40 L142 78"/>'+
+    '<path d="M55 120 L22 110 L60 135"/><path d="M165 120 L198 110 L160 135"/>'+
+    '<path d="M60 180 L28 190 L65 195"/><path d="M160 180 L192 190 L155 195"/>'+
+    '</g>'+
+    '<g class="h-cape-blue"><path d="M78 118 C40 150 30 220 55 270 C70 230 85 200 95 160 Z" fill="url(#'+p+'bl)" stroke="'+ol+'" stroke-width="2.2"/><path d="M142 118 C180 150 190 220 165 270 C150 230 135 200 125 160 Z" fill="url(#'+p+'bl)" stroke="'+ol+'" stroke-width="2.2"/></g>'+
+    '<g class="h-cape-gold"><path d="M78 118 C40 150 30 220 55 270 C70 230 85 200 95 160 Z" fill="url(#'+p+'gd)" stroke="'+ol+'" stroke-width="2.2"/><path d="M142 118 C180 150 190 220 165 270 C150 230 135 200 125 160 Z" fill="url(#'+p+'gd)" stroke="'+ol+'" stroke-width="2.2"/></g>'+
+    '<g class="h-cape-red"><path d="M78 118 C36 160 24 230 50 285 C68 240 86 205 96 165 Z" fill="url(#'+p+'rd)" stroke="'+ol+'" stroke-width="2.2" opacity=".95"/><path d="M142 118 C184 160 196 230 170 285 C152 240 134 205 124 165 Z" fill="url(#'+p+'rd)" stroke="'+ol+'" stroke-width="2.2" opacity=".95"/></g>'+
+    '<ellipse cx="110" cy="302" rx="70" ry="8" fill="#000" opacity=".25"/>'+
+    /* legs */
+    '<g class="h-legL"><path d="M78 200 C70 240 62 270 58 295 L78 298 L90 230 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.4"/><path class="h-mark-red" d="M70 230 L82 290" stroke="url(#'+p+'rd)" stroke-width="10" stroke-linecap="round"/><path class="h-mark-blue" d="M70 230 L82 290" stroke="url(#'+p+'bl)" stroke-width="10" stroke-linecap="round"/></g>'+
+    '<g class="h-legR"><path d="M142 200 C150 240 158 270 162 295 L142 298 L130 230 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.4"/><path class="h-mark-red" d="M150 230 L138 290" stroke="url(#'+p+'rd)" stroke-width="10" stroke-linecap="round"/><path class="h-mark-blue" d="M150 230 L138 290" stroke="url(#'+p+'bl)" stroke-width="10" stroke-linecap="round"/></g>'+
+    '<g class="h-kick"><path d="M130 200 L190 170 L210 165" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/><path d="M130 200 L190 170 L210 165" stroke="url(#'+p+'sv)" stroke-width="16" fill="none" stroke-linecap="round"/><path class="h-mark-red" d="M140 195 L200 168" stroke="url(#'+p+'rd)" stroke-width="8"/><path class="h-mark-blue" d="M140 195 L200 168" stroke="url(#'+p+'bl)" stroke-width="8"/><ellipse cx="214" cy="164" rx="16" ry="12" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.2"/></g>'+
+    /* arms idle */
+    '<g class="h-armL"><path d="M70 130 L48 170 L42 210" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M70 130 L48 170 L42 210" stroke="url(#'+p+'sv)" stroke-width="14" fill="none" stroke-linecap="round"/><path class="h-mark-red" d="M62 140 L46 200" stroke="url(#'+p+'rd)" stroke-width="7"/><path class="h-mark-blue" d="M62 140 L46 200" stroke="url(#'+p+'bl)" stroke-width="7"/><circle cx="42" cy="218" r="12" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.2"/></g>'+
+    '<g class="h-armR"><path d="M150 130 L172 170 L178 210" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M150 130 L172 170 L178 210" stroke="url(#'+p+'sv)" stroke-width="14" fill="none" stroke-linecap="round"/><path class="h-mark-red" d="M158 140 L174 200" stroke="url(#'+p+'rd)" stroke-width="7"/><path class="h-mark-blue" d="M158 140 L174 200" stroke="url(#'+p+'bl)" stroke-width="7"/><circle cx="178" cy="218" r="12" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.2"/><circle class="mk-hand" cx="178" cy="218" r="1" fill="none"/></g>'+
+    /* pose arms */
+    '<g class="h-cross"><path d="M70 130 L100 150 L190 140" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M70 130 L100 150 L190 140" stroke="url(#'+p+'sv)" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M150 130 L165 200 L165 70" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/><path d="M150 130 L165 200 L165 70" stroke="url(#'+p+'sv)" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="198" cy="140" r="13" fill="'+cy+'" filter="url(#'+p+'gl)"/><circle cx="198" cy="140" r="6" fill="#fff"/><circle class="mk-hand" cx="198" cy="140" r="1" fill="none"/></g>'+
+    '<g class="h-guard"><path d="M70 130 L40 165 L70 175" stroke="url(#'+p+'sv)" stroke-width="14" fill="none" stroke-linecap="round" stroke="'+ol+'"/><path d="M150 130 L185 150 L180 90" stroke="url(#'+p+'sv)" stroke-width="14" fill="none" stroke-linecap="round"/></g>'+
+    /* torso */
+    '<path d="M62 118 L158 118 Q156 165 148 200 L72 200 Q64 165 62 118 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+    '<path class="h-mark-red" d="M78 125 L78 195 M142 125 L142 195 M90 125 L100 195 M130 125 L120 195" stroke="url(#'+p+'rd)" stroke-width="11" stroke-linecap="round" opacity=".95"/>'+
+    '<path class="h-mark-blue" d="M78 125 L78 195 M142 125 L142 195 M90 125 L100 195 M130 125 L120 195" stroke="url(#'+p+'bl)" stroke-width="11" stroke-linecap="round" opacity=".95"/>'+
+    '<path d="M86 118 L134 118 L136 136 L84 136 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2"/>'+
+    '<path class="h-collar" d="M78 120 L110 148 L142 120 L130 118 L110 138 L90 118 Z" fill="url(#'+p+'gd)" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
+    '<circle cx="110" cy="162" r="16" fill="#cfd8e6" stroke="'+ol+'" stroke-width="2.2"/>'+
+    '<circle class="h-tglow" cx="110" cy="162" r="13" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<circle class="h-timer" cx="110" cy="162" r="11.5" stroke="#1a2a4a" stroke-width="1.5"/>'+
+    '<circle class="mk-chest" cx="110" cy="162" r="1" fill="none"/>'+
+    /* head */
+    '<g class="h-head">'+
+    '<path d="M110 18 C138 18 152 42 152 72 C152 98 138 118 110 122 C82 118 68 98 68 72 C68 42 82 18 110 18 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.8"/>'+
+    '<g class="h-slug"><path d="M102 22 L110 -8 L118 22 Q114 40 110 52 Q106 40 102 22 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.2"/><circle class="mk-slug" cx="110" cy="10" r="1" fill="none"/></g>'+
+    gem(110,34,5)+gem(110,48,4)+gem(110,60,3.2)+
+    eye(92)+eye(128)+
+    '<path d="M96 98 L124 98 L122 108 L98 108 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="1.6"/>'+
+    '</g>'+
+    '<circle class="mk-beam" cx="198" cy="140" r="1" fill="none"/>'+
     '</svg>';
 }
 
+/* ===== 18 怪獸最終定稿 ===== */
 const MONS = {
-  /* 列表靈感・卡通同人重畫（剪影要一眼分得開）＋圖鑑資料 */
-  fire:{name:'獄炎哥爾贊', nick:'熔岩甲獸・地心噴火', kind:'熔岩甲獸', habitat:'地心火山帶', lore:'背脊噴出地心熔岩，甲殼一裂就會噴火柱。答錯乘數就會俾佢燒到腳底發熱！', body:'#c4451a', light:'#ff8a3d', dark:'#5c1a08', belly:'#ffd28a', shot:'#ff6a00'},
-  ice:{name:'霜翼佩吉拉', nick:'絕對零度・霜翼凍結', kind:'霜翼怪獸', habitat:'極地暴風雪', lore:'雙翼拍落就係絕對零度。城市會即刻結冰，連超人奧米加都要打震先頂得住。', body:'#7ec8f5', light:'#e8f7ff', dark:'#1a5a8a', belly:'#ffffff', shot:'#bae6fd'},
-  thunder:{name:'隱雷內隆嘎', nick:'十萬伏特・隱身雷鞭', kind:'隱雷怪獸', habitat:'雷暴雲層', lore:'會隱身嘅雷電怪獸，只剩下一對發光眼睛。雷鞭一抽，倍數表都要記清楚先避得開！', body:'#f5d76e', light:'#fff6b0', dark:'#8a6200', belly:'#fffde7', shot:'#fde047'},
-  rock:{name:'哥莫拉', nick:'超振動・斷空新月角', kind:'古代怪獸', habitat:'原始荒原', lore:'傳說中嘅古代怪獸，額上新月角可以震碎岩石。硬碰硬就靠光速飛踢同爆裂光拳！', body:'#8b8f98', light:'#d0d4dc', dark:'#3a3e46', belly:'#c8b89a', shot:'#a8a29e'},
-  poison:{name:'雙尾怪', nick:'雙尾纏殺・地底暗殺', kind:'雙尾毒獸', habitat:'地底毒沼', lore:'兩條毒尾可以分別攻擊。一見到綠光球就要小心——答啱題先斬斷佢嘅暗殺線！', body:'#6b7a3a', light:'#b8c878', dark:'#2f3618', belly:'#dfe8a8', shot:'#a3e635'},
-  sea:{name:'深淵鯊獸', nick:'深淵黑洞・撕空一咬', kind:'深淵鯊獸', habitat:'深海裂谷', lore:'鯊魚頭加雙足，一口可以撕開海面。深淵黑洞會吸走錯答案——要答啱先游得返上嚟！', body:'#3a5a72', light:'#7aa0b8', dark:'#142430', belly:'#c5d8e4', shot:'#38bdf8'},
-  boss:{name:'災厄魔王', short:'災厄魔王', nick:'千芒閃光・混沌吞噬', kind:'混沌魔王', habitat:'次元裂縫', lore:'雙翼展開就會放出千芒閃光。混沌核心一旦覺醒，成個城市都會陷入黑暗！', body:'#5b2aa8', light:'#c4a0ff', dark:'#1a0838', belly:'#f0e6ff', shot:'#ff4d6d', boss:true},
-  kanegon:{name:'食錢怪', nick:'銅臭大爆發・偽幣彈幕', kind:'金幣怪獸', habitat:'銀行金庫', lore:'最鍾意食金幣嘅錢包怪獸。打敗佢就會吐出金幣雨——記住乘數先搶得返啲錢！', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
-  dada:{name:'三面怪人達達', nick:'三面幻影・次元亂光', kind:'三面怪人', habitat:'異次元基地', lore:'最終大頭目！每次被打中都會變面。三面亂光可以同時從三個方向襲擊——要連擊先拆穿幻影！', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true},
-  graim:{name:'格萊姆', nick:'地獄鑽頭・地脈貫通裂', kind:'熱線怪獸', habitat:'地底礦脈', lore:'《超人奧米加》登場嘅鑽頭角怪獸。鼻尖鑽頭可以貫通地脈，熱線一射就係熔岩！', body:'#6b6f7a', light:'#b3b8c2', dark:'#2f3238', belly:'#f2c230', shot:'#ff8a1c', omega:true},
-  dugrid:{name:'多格利德', nick:'鈾金大口・毒瓣吞噬', kind:'水棲毒獸', habitat:'毒沼濕地', lore:'大大嘅嘴巴同毒瓣襟。一口吞落去，連能量都消化——要快啲答啱先塞住佢張口！', body:'#5b4636', light:'#a0806a', dark:'#2a1d14', belly:'#e8b93a', frill:'#d8323a', shot:'#a3e635', omega:true},
-  pegunos:{name:'佩古諾斯', nick:'無重蒼穹・羽翼俯衝斬', kind:'無重力怪獸', habitat:'高空雲海', lore:'識飛嘅企鵝型怪獸，無重力狀態下俯衝極快。一浮起身就要準備十字死光迎接！', body:'#1f3f86', light:'#5a84d8', dark:'#0e1f4a', belly:'#eef3fa', beak:'#ffcc33', shot:'#bfefff', omega:true},
-  therizirus:{name:'特利吉拉斯', nick:'赤鐮隱形・千裂一閃', kind:'刃爪怪獸', habitat:'夜影森林', lore:'會隱形嘅刃爪怪獸。赤鐮一閃，影子先至見到傷口——專心答題先睇穿隱形！', body:'#2b3039', light:'#6a7486', dark:'#12151b', belly:'#c8324d', shot:'#ff4d6d', omega:true},
-  ohebinushi:{name:'大蛇主命', nick:'神州長頸・九天一嘯掃', kind:'傳說蛇獸', habitat:'神州山脈', lore:'超長身軀嘅傳說蛇獸。頸一掃就係九天，山都會震。長身對手要用螺旋旋風拳！', body:'#4a5147', light:'#8e9a86', dark:'#1f241d', belly:'#efe4c4', accent:'#d84a3a', shot:'#ffd166', omega:true},
-  gedrago:{name:'蓋多拉哥', nick:'粉紅毛毛・友情爆走衝', kind:'猛突怪獸', habitat:'粉紅草原', lore:'粉紅毛毛怪獸，睇落得意但其實衝力驚人。友情爆走衝——唔好俾外表呃到！', body:'#d8418f', light:'#f59ac6', dark:'#7d1b4f', belly:'#6b3a44', horn:'#a7adb7', shot:'#ff8fc8', omega:true},
-  rekiness:{name:'雷基尼斯', nick:'流星守護・虹晶特訓彈', kind:'流星怪獸', habitat:'流星軌道', lore:'超人奧米加嘅流星夥伴！特訓時會射出虹晶彈。答啱就係特訓成功，一齊變得更強！', body:'#2f7fe0', light:'#9fd8ff', dark:'#123a7a', belly:'#bfe4ff', shot:'#b58cff', omega:true, friend:true},
-  trigaron:{name:'特萊加隆', nick:'黑金流星・翼刃特訓斬', kind:'流星怪獸', habitat:'流星軌道', lore:'黑金配色嘅流星夥伴，翼刃鋒利。同雷基尼斯一齊特訓，鍛鍊超人嘅連擊技巧！', body:'#2c3038', light:'#6a7280', dark:'#101216', belly:'#8a93a3', gold:'#ffc21a', shot:'#ffc21a', omega:true, friend:true},
-  vugsect:{name:'瓦古塞克特', short:'瓦古塞克特', nick:'甲殼雙鐮・破界破壞光', kind:'宇宙甲獸', habitat:'宇宙空洞', lore:'宇宙甲獸中頭目。雙鐮可以切開空間，破界破壞光直轟能量核心——連擊必殺先打碎甲殼！', body:'#2c2342', light:'#7a68a8', dark:'#130d22', belly:'#4a3b6b', shot:'#ff3b6b', boss:true, omega:true}
+  heidragon:{name:'滅世黑龍', nick:'黑炎龍息', kind:'黑炎龍', habitat:'熔岩裂谷', lore:'全身黑甲嘅滅世黑龍。黑炎龍息一噴，連乘數表都燒焦！', body:'#2a2a32', light:'#6a6a78', dark:'#101014', belly:'#c0c4ce', shot:'#ff6a00', elem:'fire'},
+  lavaover:{name:'炎獄霸王', nick:'爆裂地獄擊', kind:'熔岩霸王', habitat:'地獄火口', lore:'滾熱岩漿組成嘅圓滾霸王。爆裂地獄擊會砸出火拳！', body:'#c4451a', light:'#ff8a3d', dark:'#4a1508', belly:'#2a1010', shot:'#ff6a00', elem:'fire'},
+  holyturt:{name:'天輝聖龜', nick:'絕對零度光線', kind:'聖晶龜', habitat:'極地聖湖', lore:'背殼長滿藍水晶嘅聖龜。絕對零度光線會凍結錯答案！', body:'#3cb371', light:'#8ef0b0', dark:'#14532d', belly:'#e8fff0', shot:'#7ff0ff', elem:'ice'},
+  sandwyrm:{name:'黃泉魔龍', nick:'萬毒蝕骨霧', kind:'黃砂魔龍', habitat:'黃泉沙漠', lore:'從黃沙爬出嘅魔龍。萬毒蝕骨霧會令你頭暈眼花！', body:'#c4a574', light:'#e8d4a8', dark:'#6b4e2e', belly:'#f5e6c8', shot:'#a3e635', elem:'poison'},
+  thundwolf:{name:'雷神戰狼', nick:'天雷神滅抓', kind:'雷狼', habitat:'雷雲高原', lore:'毛茸茸嘅雷神戰狼。天雷神滅抓閃電一閃就到！', body:'#7ec8f5', light:'#e8f7ff', dark:'#1a4a7a', belly:'#ffffff', shot:'#fde047', elem:'thunder'},
+  ninjacat:{name:'幻影鬼貓', nick:'永暗影遁', kind:'影忍貓', habitat:'暗影屋簷', lore:'忍者裝束嘅幻影鬼貓。永暗影遁會突然消失再偷襲！', body:'#2b2b32', light:'#6a6a78', dark:'#0a0a10', belly:'#ffd54f', shot:'#c4a0ff', elem:'shadow'},
+  steeltiran:{name:'鋼鐵暴君', short:'鋼鐵暴君', nick:'無限絞肉風暴', kind:'鋼鐵暴君', habitat:'廢鐵要塞', lore:'全身鋸齒鋼鐵嘅暴君。無限絞肉風暴會捲走答錯嘅題！', body:'#6b7280', light:'#d1d5db', dark:'#1f2937', belly:'#9ca3af', shot:'#ef4444', elem:'rock', boss:true},
+  icetiran:{name:'極冰暴君', nick:'絕對零度', kind:'極冰暴君', habitat:'永凍冰原', lore:'圓滾滾嘅極冰暴君。絕對零度一呼，成個畫面結冰！', body:'#93c5fd', light:'#e0f2fe', dark:'#1e3a8a', belly:'#ffffff', shot:'#bae6fd', elem:'ice'},
+  phoenix:{name:'不死鳥', nick:'涅槃天火', kind:'不死鳥', habitat:'太陽火山', lore:'浴火重生嘅不死鳥。涅槃天火從天傾瀉而下！', body:'#f97316', light:'#fdba74', dark:'#7c2d12', belly:'#fde68a', shot:'#ff6a00', elem:'fire'},
+  mtngod:{name:'山岳魔神', nick:'崩天裂地', kind:'山岳魔神', habitat:'崩裂群山', lore:'獨眼岩石魔神。崩天裂地一砸，路面都裂開！', body:'#78716c', light:'#d6d3d1', dark:'#292524', belly:'#ea580c', shot:'#a8a29e', elem:'rock'},
+  manflower:{name:'食人魔花', nick:'絞殺劇毒藤', kind:'魔花', habitat:'毒藤雨林', lore:'巨口魔花伸出劇毒藤蔓。絞殺劇毒藤會纏住你嘅答案！', body:'#4ade80', light:'#bbf7d0', dark:'#14532d', belly:'#fef08a', shot:'#a3e635', elem:'poison'},
+  illusdemon:{name:'虛幻魔', short:'虛幻魔', nick:'真限幻滅光', kind:'虛幻魔', habitat:'鏡像次元', lore:'金屬軀殼嘅虛幻魔。真限幻滅光會從四面八方射出！', body:'#64748b', light:'#cbd5e1', dark:'#0f172a', belly:'#38bdf8', shot:'#38bdf8', elem:'shadow', boss:true},
+  seaking:{name:'深淵海王', nick:'滅世大海嘯', kind:'深淵海王', habitat:'深海裂谷', lore:'海中之王掀起滅世大海嘯，答錯就會被浪捲走！', body:'#2563eb', light:'#93c5fd', dark:'#1e3a8a', belly:'#dbeafe', shot:'#38bdf8', elem:'ice'},
+  deathscorp:{name:'死神蠍', nick:'黃沙萬丈', kind:'黃沙蠍獸', habitat:'萬丈沙海', lore:'沙漠死神蠍一甩尾就揚起黃沙萬丈！', body:'#d6a85c', light:'#f5e0b0', dark:'#6b4e1e', belly:'#1f1a14', shot:'#fbbf24', elem:'rock'},
+  nightmare:{name:'夢魔', nick:'永眠幻視', kind:'夢魔', habitat:'噩夢迷宮', lore:'小小夢魔張開催眠之眼。永眠幻視會令你答錯題！', body:'#4c1d95', light:'#c4b5fd', dark:'#1e0a3c', belly:'#2e1065', shot:'#c084fc', elem:'shadow'},
+  galmoth:{name:'銀河飛蛾', nick:'星塵暴', kind:'銀河飛蛾', habitat:'星塵軌道', lore:'銀河飛蛾拍翼散出星塵暴，閃到你睇唔清題目！', body:'#9ca3af', light:'#f3f4f6', dark:'#374151', belly:'#fde68a', shot:'#ffe066', elem:'thunder'},
+  flamecrab:{name:'爆炎蟹', nick:'地獄爆炎彈', kind:'爆炎蟹', habitat:'岩漿海岸', lore:'滾燙爆炎蟹會發射地獄爆炎彈——答啱先避得開！', body:'#dc2626', light:'#fca5a5', dark:'#7f1d1d', belly:'#fb923c', shot:'#ff6a00', elem:'fire'},
+  starlord:{name:'星辰霸王', short:'星辰霸王', nick:'流星天墜', kind:'星辰霸王', habitat:'流星雨夜空', lore:'最終大頭目！化作流星天墜轟落地球——要連擊變身先擋得住！', body:'#3f3f46', light:'#a1a1aa', dark:'#18181b', belly:'#fb923c', shot:'#ff7ad9', elem:'shadow', boss:true, final:true}
 };
-const DEX_ORDER=['graim','dugrid','pegunos','therizirus','ohebinushi','gedrago','rekiness','trigaron','vugsect','kanegon','dada','boss','fire','ice','thunder','rock','poison','sea'];
+
+const DEX_ORDER=['heidragon','lavaover','holyturt','sandwyrm','thundwolf','ninjacat','steeltiran','icetiran','phoenix','mtngod','manflower','illusdemon','seaking','deathscorp','nightmare','galmoth','flamecrab','starlord'];
+
+function omEye(x,y,r,dk,iris){ return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${dk}" stroke-width="2.4"/><circle cx="${x-r*.2}" cy="${y+r*.08}" r="${r*.55}" fill="${iris}"/><circle cx="${x-r*.25}" cy="${y+r*.1}" r="${r*.28}" fill="#111"/><circle cx="${x-r*.45}" cy="${y-r*.2}" r="${r*.2}" fill="#fff"/>`; }
+function omOuch(pts){ return '<g class="m-ouch" stroke="#1f2937" stroke-width="4" stroke-linecap="round" fill="none">'+pts.map((q,i)=>{ const [x,y,s]=q, d=i%2?-1:1; return `<path d="M${x-d*s} ${y-s*.7} L${x+d*s*.6} ${y} L${x-d*s} ${y+s*.7}"/>`; }).join('')+'</g>'; }
+function omSvg(type,p,m,inner,defs){ return `<svg class="mon mon-${type}" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><defs><radialGradient id="${p}bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${m.light}"/><stop offset=".55" stop-color="${m.body}"/><stop offset="1" stop-color="${m.dark}"/></radialGradient>${defs||''}</defs><ellipse cx="120" cy="228" rx="78" ry="8" fill="#000" opacity=".26"/>${inner}</svg>`; }
+function chibiEyes(x1,x2,y,r,dk,iris){ return `<g class="m-eyes">${omEye(x1,y,r,dk,iris)}${omEye(x2,y,r*.95,dk,iris)}</g>${omOuch([[x1,y,r*.7],[x2,y,r*.65]])}`; }
+function chibiBlush(x1,x2,y){ return `<ellipse cx="${x1}" cy="${y}" rx="8" ry="5" fill="#ff7a9a" opacity=".5"/><ellipse cx="${x2}" cy="${y}" rx="8" ry="5" fill="#ff7a9a" opacity=".5"/>`; }
+function mkPts(){ return '<circle class="mk-core" cx="120" cy="140" r="1" fill="none"/><circle class="mk-mouth" cx="120" cy="155" r="1" fill="none"/>'; }
 
 function monsterSVG(type, p){
-  if(type==='kanegon') return kanegonSVG(p);
-  if(type==='dada') return dadaSVG(p);
-  if(type==='graim') return graimSVG(p); if(type==='dugrid') return dugridSVG(p); if(type==='pegunos') return pegunosSVG(p);
-  if(type==='therizirus') return therizirusSVG(p); if(type==='ohebinushi') return ohebinushiSVG(p); if(type==='gedrago') return gedragoSVG(p);
-  if(type==='rekiness') return rekinessSVG(p); if(type==='trigaron') return trigaronSVG(p); if(type==='vugsect') return vugsectSVG(p);
-  if(type==='fire') return fireSVG(p); if(type==='ice') return iceSVG(p); if(type==='thunder') return thunderSVG(p);
-  if(type==='rock') return rockSVG(p); if(type==='poison') return poisonSVG(p); if(type==='sea') return seaSVG(p);
-  if(type==='boss') return bossSVG(p);
-  return graimSVG(p);
+  const fn = {
+    heidragon:heidragonSVG, lavaover:lavaoverSVG, holyturt:holyturtSVG, sandwyrm:sandwyrmSVG,
+    thundwolf:thundwolfSVG, ninjacat:ninjacatSVG, steeltiran:steeltiranSVG, icetiran:icetiranSVG,
+    phoenix:phoenixSVG, mtngod:mtngodSVG, manflower:manflowerSVG, illusdemon:illusdemonSVG,
+    seaking:seakingSVG, deathscorp:deathscorpSVG, nightmare:nightmareSVG, galmoth:galmothSVG,
+    flamecrab:flamecrabSVG, starlord:starlordSVG
+  }[type];
+  return (fn||heidragonSVG)(p);
 }
 
-/* 獄炎哥爾贊: 熔岩甲獸 — 厚甲、背脊火柱、岩漿裂紋 */
-function fireSVG(p){ const m=MONS.fire, dk=m.dark, bd=`url(#${p}bd)`;
-  const inner=`
-  <g class="m-flame"><path d="M118 70 C104 40 118 18 124 0 C132 22 148 16 146 -4 C164 20 170 48 158 68 C172 60 180 46 178 30 C192 54 184 78 168 88 Z" fill="#ffb703" stroke="#e85d04" stroke-width="3"/><path d="M130 72 C124 52 134 42 136 28 C142 44 152 40 150 26 C162 48 156 70 148 78 Z" fill="#fff3b0"/></g>
-  <path d="M176 196 Q228 200 236 148 L224 154 L226 136 L214 148 L208 132 L198 150 Q190 176 170 178 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  ${omFeet(dk,'#ffd28a',[90,158])}
-  <path d="M58 214 C40 160 56 96 112 82 C168 70 206 128 198 214 Q128 228 58 214 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M78 208 C68 170 82 128 116 122 C152 118 168 162 160 208 Q118 218 78 208Z" fill="${m.belly}" stroke="#b45309" stroke-width="2"/>
-  <g stroke="#ea580c" stroke-width="3" fill="none" stroke-linecap="round"><path d="M92 150 Q118 142 148 152"/><path d="M86 172 Q118 184 154 170"/><path d="M90 194 Q118 200 150 192"/></g>
-  <g fill="#ff6a00" opacity=".85"><path d="M100 146 L108 168 L116 148Z"/><path d="M130 168 L138 190 L146 170Z"/><path d="M74 180 L82 200 L90 182Z"/></g>
-  <ellipse cx="62" cy="148" rx="14" ry="24" transform="rotate(32 62 148)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#ffd28a" stroke="${dk}" stroke-width="1.5"><circle cx="46" cy="132" r="4"/><circle cx="52" cy="126" r="4"/><circle cx="58" cy="122" r="3.5"/></g>
-  <ellipse cx="186" cy="150" rx="12" ry="22" transform="rotate(-18 186 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M88 52 L96 8 L112 48 L124 4 L138 50 L152 18 L148 64 Z" fill="#ff8a3d" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M70 88 C64 52 92 34 120 38 C150 42 166 70 158 100 Q116 118 70 88Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M92 70 L100 92 L112 74 L124 96 L136 72" stroke="#ff6a00" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <g class="m-eyes">${omEye(98,74,12,dk,'#ff6a00')}${omEye(128,72,11,dk,'#ff6a00')}</g>
-  ${omOuch([[98,74,9],[128,72,8]])}
-  <path d="M84 58 L110 66" stroke="${dk}" stroke-width="6" stroke-linecap="round"/><path d="M118 62 L146 54" stroke="${dk}" stroke-width="6" stroke-linecap="round"/>
-  <ellipse cx="84" cy="98" rx="8" ry="5" fill="#ff7a9a" opacity=".55"/><ellipse cx="146" cy="94" rx="8" ry="5" fill="#ff7a9a" opacity=".55"/>
-  <path d="M96 108 Q118 126 142 106" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M104 112 L108 120 L112 112Z" fill="#fff"/><path d="M126 112 L130 120 L134 110Z" fill="#fff"/>
-  <g class="m-flame"><path d="M210 120 C202 100 216 88 220 70 C228 90 240 98 232 120Z" fill="#ffb703" stroke="#e85d04" stroke-width="2.5"/></g>
-  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="112" r="1" fill="none"/>`;
-  return omSvg('fire',p,m,inner); }
+function heidragonSVG(p){ const m=MONS.heidragon, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('heidragon',p,m,`
+  <path d="M168 90 Q210 60 220 100 Q200 110 175 105 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M70 200 C50 140 70 80 120 70 C175 60 200 120 190 200 Q120 220 70 200Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="165" rx="40" ry="34" fill="${m.belly}"/>
+  <path d="M95 55 L110 20 L125 55 L140 25 L150 60" fill="#ff6a00" stroke="${dk}" stroke-width="2"/>
+  ${chibiEyes(100,138,100,13,dk,'#ff6a00')}${chibiBlush(88,152,118)}
+  <path d="M105 130 Q120 145 138 128" stroke="${dk}" stroke-width="3" fill="none"/>
+  <g class="m-flame"><path d="M200 110 C190 80 210 70 215 50 C225 75 235 95 220 120Z" fill="#ff8a3d"/></g>
+  ${mkPts()}`); }
 
-/* 霜翼佩吉拉: 霜翼巨獸 — 大冰翼、水晶角、凍結鱗片 */
-function iceSVG(p){ const m=MONS.ice, dk=m.dark, bd=`url(#${p}bd)`;
-  const crystal=(x,y,h,w,c)=>`<path d="M${x} ${y} L${x-w} ${y+h*.45} L${x} ${y+h} L${x+w} ${y+h*.45}Z" fill="${c}" stroke="${dk}" stroke-width="2.2" stroke-linejoin="round"/>`;
-  const inner=`
-  <g class="ic-wing" fill="#e8f7ff" stroke="${dk}" stroke-width="3" stroke-linejoin="round">
-    <path d="M150 100 Q210 60 232 30 Q220 70 210 100 Q228 90 236 70 Q224 110 198 130 Q170 140 152 124 Z"/>
-    <path d="M70 110 Q20 70 4 40 Q16 80 30 112 Q10 100 2 78 Q18 120 50 136 Q68 138 74 122 Z"/>
-    <path d="M168 90 Q200 50 214 28" stroke="#8fd8ff" stroke-width="2" fill="none"/><path d="M52 100 Q24 64 12 44" stroke="#8fd8ff" stroke-width="2" fill="none"/>
+function lavaoverSVG(p){ const m=MONS.lavaover, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('lavaover',p,m,`
+  <ellipse cx="120" cy="145" rx="78" ry="70" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M70 120 Q90 90 110 115 Q130 85 155 120 Q175 95 185 130" stroke="#2a1010" stroke-width="8" fill="none"/>
+  <ellipse cx="120" cy="160" rx="48" ry="36" fill="#1a0808"/>
+  <path d="M85 155 Q120 195 160 150" fill="#ff6a00" stroke="${dk}" stroke-width="2"/>
+  ${chibiEyes(95,145,125,14,dk,'#ffe066')}
+  <g class="m-flame"><circle cx="70" cy="90" r="14" fill="#ff8a3d"/><circle cx="170" cy="85" r="12" fill="#ffb703"/><circle cx="120" cy="70" r="16" fill="#ff6a00"/></g>
+  ${mkPts()}`); }
+
+function holyturtSVG(p){ const m=MONS.holyturt, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('holyturt',p,m,`
+  <ellipse cx="120" cy="170" rx="70" ry="48" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="165" rx="52" ry="36" fill="#2d6a4f"/>
+  <g fill="#7ff0ff" stroke="#fff" stroke-width="1.5">
+    <path d="M100 120 L108 90 L116 120Z"/><path d="M118 115 L126 80 L134 115Z"/><path d="M136 122 L144 95 L152 122Z"/>
+    <path d="M90 145 L96 125 L104 145Z"/><path d="M150 145 L158 128 L166 145Z"/>
   </g>
-  ${omFeet(dk,'#ffffff',[92,158])}
-  <path d="M188 198 Q230 190 234 150 Q220 160 212 148 Q208 176 180 180Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M64 212 C48 160 62 100 116 88 C172 78 200 136 192 212 Q126 226 64 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <ellipse cx="120" cy="168" rx="42" ry="36" fill="${m.belly}"/>
-  <g stroke="#8fd8ff" stroke-width="3" stroke-linecap="round" fill="none"><path d="M100 150 L100 186M88 158 L112 176M88 176 L112 158"/><path d="M132 152 L132 188M120 160 L144 178M120 178 L144 160"/></g>
-  <ellipse cx="58" cy="146" rx="11" ry="20" transform="rotate(36 58 146)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#fff"><circle cx="44" cy="132" r="3.5"/><circle cx="50" cy="127" r="3.5"/></g>
-  ${crystal(108,18,48,10,'#e8f7ff')}${crystal(128,10,56,11,'#bae6fd')}${crystal(148,22,42,9,'#e8f7ff')}${crystal(88,40,28,7,'#bae6fd')}
-  <path d="M72 92 C66 56 92 38 120 42 C150 46 164 72 156 100 Q116 116 72 92Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M84 100 Q120 118 156 98 Q120 108 84 100Z" fill="#fff" opacity=".7"/>
-  <g class="m-eyes">${omEye(100,76,12,dk,'#38bdf8')}${omEye(130,74,11,dk,'#38bdf8')}</g>
-  ${omOuch([[100,76,9],[130,74,8]])}
-  <path d="M86 60 L112 68" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M120 64 L148 56" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
-  <ellipse cx="84" cy="98" rx="8" ry="4" fill="#ff7a9a" opacity=".4"/><ellipse cx="148" cy="94" rx="8" ry="4" fill="#ff7a9a" opacity=".4"/>
-  <path d="M100 108 Q120 122 142 106" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <g class="m-float" fill="#e8f7ff" stroke="${dk}" stroke-width="1.5" opacity=".9">${crystal(22,70,18,5,'#bae6fd')}${crystal(210,86,16,4,'#e8f7ff')}</g>
-  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="112" r="1" fill="none"/>`;
-  return omSvg('ice',p,m,inner); }
+  <ellipse cx="120" cy="195" rx="36" ry="22" fill="${m.belly}" stroke="${dk}" stroke-width="2"/>
+  <circle cx="78" cy="185" r="14" fill="${bd}" stroke="${dk}" stroke-width="2"/><circle cx="162" cy="185" r="14" fill="${bd}" stroke="${dk}" stroke-width="2"/>
+  <ellipse cx="120" cy="118" rx="32" ry="28" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${chibiEyes(108,132,112,10,dk,'#38bdf8')}${chibiBlush(98,142,124)}
+  <path d="M112 128 Q120 136 130 128" stroke="${dk}" stroke-width="2.5" fill="none"/>
+  ${mkPts()}`); }
 
-/* 隱雷內隆嘎: 雷電隱獸 — 細長黃身、雷角、電弧（會隱身） */
-function thunderSVG(p){ const m=MONS.thunder, dk=m.dark, bd=`url(#${p}bd)`;
-  const bolt=(x,y,s)=>`<path d="M${x} ${y} L${x-s*.4} ${y+s*.55} L${x+s*.15} ${y+s*.5} L${x-s*.1} ${y+s} L${x+s*.55} ${y+s*.4} L${x} ${y+s*.45} L${x+s*.35} ${y}Z" fill="#fff06a" stroke="${dk}" stroke-width="2" stroke-linejoin="round"/>`;
-  const inner=`<g class="thun-cloak">
-  <g class="m-spark" stroke="#fff06a" stroke-width="2.5" fill="none" stroke-linecap="round">${bolt(28,50,22)}${bolt(200,40,18)}${bolt(216,120,14)}</g>
-  <path d="M176 200 Q226 194 232 148 Q218 158 210 146 Q206 174 170 178Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  ${omFeet(dk,'#fffde7',[88,156])}
-  <path d="M72 210 C54 150 70 86 118 74 C168 64 198 122 188 210 Q128 224 72 210Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <ellipse cx="120" cy="160" rx="36" ry="40" fill="${m.belly}"/>
-  <g stroke="${dk}" stroke-width="6" stroke-linecap="round" fill="none" opacity=".35"><path d="M168 90 Q186 108 190 130"/><path d="M188 148 Q200 164 202 182"/><path d="M68 118 Q56 136 54 156"/></g>
-  <ellipse cx="56" cy="140" rx="10" ry="22" transform="rotate(28 56 140)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#fff"><circle cx="42" cy="124" r="3"/><circle cx="48" cy="119" r="3"/></g>
-  <ellipse cx="184" cy="146" rx="9" ry="20" transform="rotate(-20 184 146)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  ${bolt(96,8,36)}${bolt(136,4,40)}
-  <path d="M78 86 C72 52 96 36 120 40 C146 44 160 68 152 96 Q116 110 78 86Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g class="m-eyes">${omEye(100,70,11,dk,'#eab308')}${omEye(128,68,10,dk,'#eab308')}</g>
-  ${omOuch([[100,70,8],[128,68,7]])}
-  <path d="M88 54 L112 62" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M118 58 L144 50" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
-  <ellipse cx="86" cy="94" rx="7" ry="4" fill="#ff7a9a" opacity=".5"/><ellipse cx="146" cy="90" rx="7" ry="4" fill="#ff7a9a" opacity=".5"/>
-  <path d="M100 102 Q120 116 140 100" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="108" cy="106" r="1" fill="none"/></g>`;
-  return omSvg('thunder',p,m,inner); }
+function sandwyrmSVG(p){ const m=MONS.sandwyrm, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('sandwyrm',p,m,`
+  <path d="M40 200 C60 160 90 180 110 150 C130 120 150 140 170 120 C190 100 210 130 200 180 C190 210 60 220 40 200Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="175" cy="110" rx="36" ry="32" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  ${chibiEyes(162,188,105,11,dk,'#a3e635')}
+  <path d="M165 122 Q175 132 188 120" stroke="${dk}" stroke-width="2.5" fill="none"/>
+  <g fill="${m.dark}" opacity=".35"><ellipse cx="80" cy="190" rx="20" ry="8"/><ellipse cx="120" cy="200" rx="28" ry="10"/><ellipse cx="160" cy="185" rx="22" ry="9"/></g>
+  <circle class="mk-core" cx="175" cy="120" r="1" fill="none"/><circle class="mk-mouth" cx="175" cy="128" r="1" fill="none"/>`); }
 
-/* 哥莫拉: 古代怪獸 — 粗壯岩身、巨大新月角、獠牙 */
-function rockSVG(p){ const m=MONS.rock, dk=m.dark, bd=`url(#${p}bd)`;
-  const bump=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${dk}" opacity=".28"/>`;
-  const inner=`
-  <path d="M170 200 Q224 206 234 160 Q220 170 212 156 Q206 184 164 182Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  ${omFeet(dk,'#c8b89a',[88,158])}
-  <path d="M52 214 C36 158 52 96 108 84 C166 72 208 130 200 214 Q124 230 52 214Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <ellipse cx="118" cy="172" rx="46" ry="38" fill="${m.belly}"/>
-  ${bump(168,120,8)}${bump(180,168,6)}${bump(70,168,7)}${bump(150,100,5)}${bump(96,140,6)}${bump(140,190,5)}
-  <ellipse cx="54" cy="150" rx="16" ry="26" transform="rotate(30 54 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#c8b89a" stroke="${dk}" stroke-width="1.8" stroke-linejoin="round"><path d="M40 136 L18 128 L36 150Z"/><path d="M38 148 L14 152 L40 158Z"/><path d="M42 156 L22 172 L48 162Z"/></g>
-  <ellipse cx="190" cy="152" rx="14" ry="24" transform="rotate(-16 190 152)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M100 78 L118 2 L148 78 Z" fill="#a8a29e" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M108 78 L118 18 L138 78" fill="#d0d4dc" stroke="none" opacity=".7"/>
-  <path d="M86 70 L92 42 L108 68Z" fill="#8b8f98" stroke="${dk}" stroke-width="2"/><path d="M148 72 L162 48 L158 78Z" fill="#8b8f98" stroke="${dk}" stroke-width="2"/>
-  <path d="M68 96 C62 58 90 38 120 42 C152 46 170 74 162 106 Q116 122 68 96Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#efe8d8" stroke="${dk}" stroke-width="2" stroke-linejoin="round"><path d="M78 112 L62 128 L80 124Z"/><path d="M150 110 L168 126 L148 122Z"/></g>
-  <g class="m-eyes">${omEye(98,78,13,dk,'#57534e')}${omEye(132,76,12,dk,'#57534e')}</g>
-  ${omOuch([[98,78,10],[132,76,9]])}
-  <path d="M84 60 L112 70" stroke="${dk}" stroke-width="7" stroke-linecap="round"/><path d="M122 66 L152 56" stroke="${dk}" stroke-width="7" stroke-linecap="round"/>
-  <ellipse cx="82" cy="104" rx="9" ry="5" fill="#ff7a9a" opacity=".45"/><ellipse cx="150" cy="100" rx="9" ry="5" fill="#ff7a9a" opacity=".45"/>
-  <path d="M96 116 Q120 136 146 114" stroke="${dk}" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M106 122 L110 132 L114 122Z" fill="#fff"/><path d="M128 122 L132 132 L136 120Z" fill="#fff"/>
-  <circle class="mk-core" cx="120" cy="155" r="1" fill="none"/><circle class="mk-mouth" cx="100" cy="120" r="1" fill="none"/>`;
-  return omSvg('rock',p,m,inner); }
+function thundwolfSVG(p){ const m=MONS.thundwolf, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('thundwolf',p,m,`
+  <ellipse cx="120" cy="165" rx="58" ry="48" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="175" rx="36" ry="30" fill="${m.belly}"/>
+  <path d="M175 150 Q220 140 210 190 Q190 175 170 170Z" fill="${bd}" stroke="${dk}" stroke-width="2.5"/>
+  <ellipse cx="120" cy="100" rx="40" ry="36" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M88 80 L78 45 L102 72Z M152 80 L162 45 L138 72Z" fill="${bd}" stroke="${dk}" stroke-width="2.5"/>
+  ${chibiEyes(105,135,98,12,dk,'#3b82f6')}${chibiBlush(92,148,112)}
+  <path d="M110 115 Q120 125 132 115" stroke="${dk}" stroke-width="2.5" fill="none"/>
+  <g stroke="#fde047" stroke-width="3" fill="none"><path d="M60 100 L50 80 M55 110 L40 105"/><path d="M180 95 L195 75 M185 110 L200 100"/></g>
+  ${mkPts()}`); }
 
-/* 雙尾怪: 雙尾毒獸 — 兩條長鞭尾、蟲形頭、毒囊 */
-function poisonSVG(p){ const m=MONS.poison, dk=m.dark, bd=`url(#${p}bd)`;
-  const inner=`
-  <g class="tt-tail" fill="none" stroke-linecap="round">
-    <path d="M160 160 Q210 120 228 60" stroke="${dk}" stroke-width="14"/><path d="M160 160 Q210 120 228 60" stroke="${m.body}" stroke-width="9"/>
-    <path d="M148 176 Q200 200 230 170" stroke="${dk}" stroke-width="14"/><path d="M148 176 Q200 200 230 170" stroke="${m.light}" stroke-width="9"/>
-    <circle cx="228" cy="60" r="10" fill="#a3e635" stroke="#4d7c0f" stroke-width="2.5"/><circle cx="230" cy="170" r="10" fill="#a3e635" stroke="#4d7c0f" stroke-width="2.5"/>
-    <circle cx="228" cy="60" r="4" fill="#ecfccb"/><circle cx="230" cy="170" r="4" fill="#ecfccb"/>
+function ninjacatSVG(p){ const m=MONS.ninjacat, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('ninjacat',p,m,`
+  <ellipse cx="120" cy="170" rx="48" ry="42" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M95 130 L120 90 L145 130Z" fill="#111" stroke="${dk}" stroke-width="2"/>
+  <ellipse cx="120" cy="125" rx="34" ry="30" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M92 105 L82 70 L108 100Z M148 105 L158 70 L132 100Z" fill="${bd}" stroke="${dk}" stroke-width="2"/>
+  <path d="M88 120 H152" stroke="#222" stroke-width="10"/>
+  ${chibiEyes(105,135,122,11,dk,'#fde047')}
+  <ellipse cx="120" cy="140" rx="8" ry="5" fill="#ffb4b4"/>
+  <path d="M110 145 Q120 152 132 145" stroke="${dk}" stroke-width="2" fill="none"/>
+  <path d="M160 160 Q200 150 190 200" fill="none" stroke="${bd}" stroke-width="10" stroke-linecap="round"/>
+  ${mkPts()}`); }
+
+function steeltiranSVG(p){ const m=MONS.steeltiran, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('steeltiran',p,m,`
+  <path d="M55 200 L70 100 L120 70 L170 100 L185 200 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <circle cx="55" cy="150" r="22" fill="#4b5563" stroke="${dk}" stroke-width="3"/><circle cx="185" cy="150" r="22" fill="#4b5563" stroke="${dk}" stroke-width="3"/>
+  <g stroke="#9ca3af" stroke-width="3"><path d="M40 140 L70 160 M40 160 L70 140"/><path d="M170 140 L200 160 M170 160 L200 140"/></g>
+  ${chibiEyes(100,140,115,14,dk,'#ef4444')}
+  <rect x="100" y="145" width="40" height="18" rx="4" fill="#111" stroke="${dk}" stroke-width="2"/>
+  <path d="M110 70 L120 40 L130 70" fill="#ef4444" stroke="${dk}" stroke-width="2"/>
+  ${mkPts()}`); }
+
+function icetiranSVG(p){ const m=MONS.icetiran, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('icetiran',p,m,`
+  <ellipse cx="120" cy="150" rx="72" ry="62" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="165" rx="44" ry="36" fill="${m.belly}"/>
+  <path d="M90 90 L100 55 L115 88 M125 85 L140 50 L150 90" fill="#e0f2fe" stroke="${dk}" stroke-width="2"/>
+  ${chibiEyes(100,140,130,13,dk,'#38bdf8')}${chibiBlush(88,152,148)}
+  <path d="M105 155 Q120 170 138 152" stroke="${dk}" stroke-width="3" fill="none"/>
+  <g fill="#fff" opacity=".7"><ellipse cx="70" cy="100" rx="16" ry="10"/><ellipse cx="175" cy="110" rx="14" ry="9"/><ellipse cx="150" cy="70" rx="12" ry="8"/></g>
+  ${mkPts()}`); }
+
+function phoenixSVG(p){ const m=MONS.phoenix, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('phoenix',p,m,`
+  <g class="m-flame" fill="#fdba74"><path d="M50 140 C20 100 40 60 80 90 C70 120 60 140 50 140Z"/><path d="M190 140 C220 100 200 60 160 90 C170 120 180 140 190 140Z"/></g>
+  <ellipse cx="120" cy="150" rx="42" ry="48" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="100" rx="30" ry="28" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M120 55 C100 30 130 20 120 5 C140 25 145 45 135 60Z" fill="#fde68a" stroke="${dk}" stroke-width="2"/>
+  ${chibiEyes(108,132,98,10,dk,'#fff')}${chibiBlush(98,142,112)}
+  <path d="M112 112 Q120 120 130 112" stroke="${dk}" stroke-width="2" fill="none"/>
+  <path d="M120 190 Q100 230 120 225 Q140 230 120 190" fill="#fb923c" stroke="${dk}" stroke-width="2"/>
+  ${mkPts()}`); }
+
+function mtngodSVG(p){ const m=MONS.mtngod, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('mtngod',p,m,`
+  <path d="M50 200 L70 120 L100 90 L140 85 L180 120 L195 200 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <circle cx="120" cy="140" r="36" fill="#1c1917" stroke="${dk}" stroke-width="3"/>
+  <circle cx="120" cy="140" r="26" fill="#ea580c"/><circle cx="120" cy="140" r="14" fill="#fde68a"/>
+  <circle cx="112" cy="132" r="5" fill="#fff" opacity=".6"/>
+  <g class="m-eyes"><circle cx="120" cy="140" r="1" fill="none"/></g>
+  <g class="m-ouch" stroke="#1f2937" stroke-width="4" fill="none"><path d="M100 125 L140 155 M100 155 L140 125"/></g>
+  ${mkPts()}`); }
+
+function manflowerSVG(p){ const m=MONS.manflower, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('manflower',p,m,`
+  <g fill="#22c55e" stroke="${dk}" stroke-width="2.5">
+    <path d="M120 150 C60 120 40 180 80 200"/><path d="M120 150 C180 120 200 180 160 200"/>
+    <path d="M120 150 C80 90 30 100 50 140"/><path d="M120 150 C160 90 210 100 190 140"/>
   </g>
-  ${omFeet(dk,'#dfe8a8',[90,158])}
-  <path d="M70 212 C52 162 64 108 110 96 C158 86 190 136 182 212 Q124 226 70 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <ellipse cx="118" cy="168" rx="38" ry="34" fill="${m.belly}"/>
-  <g fill="#c084fc" opacity=".7"><circle cx="140" cy="140" r="8"/><circle cx="156" cy="170" r="5"/><circle cx="100" cy="150" r="6"/><circle cx="84" cy="186" r="5"/></g>
-  <ellipse cx="56" cy="148" rx="11" ry="20" transform="rotate(34 56 148)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#dfe8a8"><circle cx="42" cy="134" r="3.5"/><circle cx="48" cy="129" r="3.5"/></g>
-  <path d="M100 48 Q88 18 74 6" stroke="${dk}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M132 48 Q146 16 162 4" stroke="${dk}" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <circle cx="74" cy="6" r="9" fill="#b6f25c" stroke="#4d7c0f" stroke-width="2.5"/><circle cx="162" cy="4" r="9" fill="#b6f25c" stroke="#4d7c0f" stroke-width="2.5"/>
-  <path d="M78 90 C72 54 96 36 120 40 C146 44 160 68 152 96 Q116 112 78 90Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g class="m-eyes">${omEye(100,72,11,dk,'#84cc16')}${omEye(130,70,10,dk,'#84cc16')}</g>
-  ${omOuch([[100,72,8],[130,70,7]])}
-  <path d="M88 56 L112 64" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M118 60 L144 52" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
-  <ellipse cx="86" cy="96" rx="7" ry="4" fill="#ff7a9a" opacity=".45"/><ellipse cx="146" cy="92" rx="7" ry="4" fill="#ff7a9a" opacity=".45"/>
-  <path d="M100 106 Q120 120 140 104" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <g class="m-float" fill="#a3e635" opacity=".8"><circle cx="24" cy="90" r="7" stroke="#4d7c0f" stroke-width="1.5"/><circle cx="16" cy="112" r="4"/><circle cx="34" cy="70" r="3"/></g>
-  <circle class="mk-core" cx="118" cy="155" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="110" r="1" fill="none"/>`;
-  return omSvg('poison',p,m,inner); }
+  <ellipse cx="120" cy="150" rx="48" ry="44" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="155" rx="30" ry="22" fill="#14532d"/>
+  <g fill="#fff"><path d="M100 150 L108 170 L116 150Z"/><path d="M124 150 L132 170 L140 150Z"/></g>
+  ${chibiEyes(100,140,130,12,dk,'#a3e635')}
+  ${mkPts()}`); }
 
-/* 深淵鯊獸: 鯊魚人 — 鯊頭、背鰭、流線身軀 */
-function seaSVG(p){ const m=MONS.sea, dk=m.dark, bd=`url(#${p}bd)`;
-  const inner=`
-  <path d="M130 70 Q148 8 176 28 Q156 40 150 78Z" fill="#12a594" stroke="${dk}" stroke-width="3"/>
-  <path d="M188 120 Q234 100 236 140 Q214 132 198 152Z" fill="#12a594" stroke="${dk}" stroke-width="3"/>
-  <path d="M176 198 Q228 204 236 158 Q222 168 214 154 Q208 180 168 180Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  ${omFeet(dk,'#c5d8e4',[90,158])}
-  <path d="M62 212 C46 158 58 104 108 90 C160 78 198 128 190 212 Q124 226 62 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M84 206 C74 168 86 130 118 124 C150 120 162 164 154 206 Q118 216 84 206Z" fill="${m.belly}" stroke="#7aa0b8" stroke-width="2"/>
-  <g stroke="${dk}" stroke-width="2.5" fill="none" opacity=".45"><path d="M168 130 q8 8 0 16"/><path d="M176 128 q8 8 0 16"/><path d="M92 160 Q118 170 148 158"/><path d="M90 180 Q118 190 150 178"/></g>
-  <ellipse cx="56" cy="150" rx="12" ry="22" transform="rotate(34 56 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#c5d8e4" stroke="${dk}" stroke-width="1.5"><circle cx="42" cy="136" r="3.5"/><circle cx="48" cy="131" r="3.5"/></g>
-  <ellipse cx="184" cy="152" rx="11" ry="20" transform="rotate(-18 184 152)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M40 100 C36 70 60 48 96 46 C130 44 152 64 148 92 C146 112 120 124 90 122 C60 120 42 114 40 100Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M42 108 Q90 124 146 100 Q120 140 70 136 Q48 128 42 108Z" fill="#0e7490" stroke="${dk}" stroke-width="2.5"/>
-  <g fill="#fff"><path d="M56 112 l4 8 l4 -7z"/><path d="M72 118 l4 8 l4 -7z"/><path d="M88 120 l4 8 l4 -7z"/><path d="M104 118 l4 8 l4 -7z"/><path d="M120 114 l4 8 l4 -7z"/></g>
-  <path d="M48 100 Q70 96 92 100" stroke="#7aa0b8" stroke-width="3" fill="none"/>
-  <g class="m-eyes">${omEye(88,78,11,dk,'#0ea5e9')}${omEye(118,76,10,dk,'#0ea5e9')}</g>
-  ${omOuch([[88,78,8],[118,76,7]])}
-  <path d="M76 60 L100 66" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M108 62 L134 56" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
-  <g class="m-float"><path d="M22 76 Q28 62 34 76 A7 7 0 1 1 22 76Z" fill="#9ff3ff" stroke="#0d6b61" stroke-width="2"/></g>
-  <circle class="mk-core" cx="120" cy="155" r="1" fill="none"/><circle class="mk-mouth" cx="70" cy="118" r="1" fill="none"/>`;
-  return omSvg('sea',p,m,inner); }
+function illusdemonSVG(p){ const m=MONS.illusdemon, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('illusdemon',p,m,`
+  <path d="M80 200 L90 90 L120 60 L150 90 L160 200 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <rect x="95" y="100" width="50" height="60" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+  ${chibiEyes(105,135,115,11,dk,'#38bdf8')}
+  <circle cx="70" cy="140" r="12" fill="#38bdf8" opacity=".8"/><circle cx="170" cy="140" r="12" fill="#38bdf8" opacity=".8"/>
+  <path d="M110 175 H130" stroke="#38bdf8" stroke-width="4"/>
+  ${mkPts()}`); }
 
-/* 災厄魔王: 混沌魔王 — 雙翼、金冠、紅眼、混沌核心 */
-function bossSVG(p){ const m=MONS.boss, dk=m.dark, bd=`url(#${p}bd)`;
-  const inner=`
-  <g class="bs-wing" fill="#2a0f5c" stroke="#150533" stroke-width="3" stroke-linejoin="round">
-    <path d="M70 120 C28 78 8 90 -4 52 C14 64 26 58 36 42 C44 66 58 66 68 54 C72 82 82 98 94 108Z"/>
-    <path d="M176 114 C210 66 234 76 246 40 C230 56 218 50 208 34 C200 58 188 56 178 44 C176 76 168 94 158 106Z"/>
-  </g>
-  <g fill="#f5f0e6" stroke="#44403c" stroke-width="2.5"><path d="M86 86 C62 72 58 44 72 28 C78 54 94 66 106 74Z"/><path d="M156 82 C178 64 180 38 166 22 C162 48 148 60 138 70Z"/></g>
-  <path d="M96 76 L98 38 L112 58 L124 28 L136 58 L150 38 L152 74Z" fill="#fbbf24" stroke="#b45309" stroke-width="2.5" stroke-linejoin="round"/>
-  <circle cx="124" cy="52" r="5" fill="#ef4444"/><circle cx="108" cy="60" r="3" fill="#38bdf8"/><circle cx="140" cy="60" r="3" fill="#38bdf8"/>
-  <path d="M178 198 Q230 192 238 140 Q224 152 216 138 Q212 170 170 174Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  ${omFeet(dk,'#f0e6ff',[90,158])}
-  <path d="M56 214 C38 156 54 90 118 76 C182 64 214 130 204 214 Q128 230 56 214Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <ellipse cx="120" cy="165" rx="44" ry="40" fill="${m.belly}"/>
-  <path d="M84 150 L118 198 L152 150" stroke="#fbbf24" stroke-width="4" fill="none" opacity=".75"/>
-  <circle cx="120" cy="158" r="14" fill="#ff4d6d" filter="url(#${p}gl)"/><circle cx="120" cy="158" r="8" fill="#fff"/><circle cx="120" cy="158" r="5" fill="#ff4d6d"/>
-  <ellipse cx="54" cy="148" rx="13" ry="24" transform="rotate(32 54 148)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g fill="#f0e6ff"><circle cx="40" cy="132" r="3.5"/><circle cx="46" cy="126" r="3.5"/></g>
-  <ellipse cx="190" cy="150" rx="12" ry="22" transform="rotate(-18 190 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M68 94 C62 54 90 34 120 38 C152 42 170 70 162 102 Q116 120 68 94Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g class="m-eyes">${omEye(98,74,13,dk,'#e11d48')}${omEye(134,72,12,dk,'#e11d48')}</g>
-  ${omOuch([[98,74,10],[134,72,9]])}
-  <path d="M82 56 L114 68" stroke="${dk}" stroke-width="8" stroke-linecap="round"/><path d="M126 64 L160 52" stroke="${dk}" stroke-width="8" stroke-linecap="round"/>
-  <ellipse cx="82" cy="102" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/><ellipse cx="152" cy="98" rx="9" ry="5" fill="#ff7a9a" opacity=".55"/>
-  <path d="M96 116 Q120 142 146 114 Q120 128 96 116Z" fill="#7f1d1d" stroke="${dk}" stroke-width="3"/><path d="M108 122 L112 134 L118 124Z" fill="#fff"/><path d="M128 122 L132 134 L138 120Z" fill="#fff"/>
-  <circle class="mk-core" cx="120" cy="158" r="1" fill="none"/><circle class="mk-mouth" cx="110" cy="124" r="1" fill="none"/>`;
-  return omSvg('boss',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>`); }
+function seakingSVG(p){ const m=MONS.seaking, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('seaking',p,m,`
+  <path d="M30 200 C50 160 90 170 120 130 C150 90 190 100 210 140 C200 200 60 220 30 200Z" fill="#60a5fa" opacity=".45"/>
+  <path d="M70 200 C85 140 110 100 150 90 C190 80 210 130 195 180 C170 210 90 215 70 200Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="165" cy="110" rx="34" ry="30" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M155 85 L160 55 L175 82" fill="${m.light}" stroke="${dk}" stroke-width="2"/>
+  ${chibiEyes(152,178,108,11,dk,'#1d4ed8')}
+  <path d="M155 125 Q165 135 178 122" stroke="${dk}" stroke-width="2.5" fill="none"/>
+  <circle class="mk-core" cx="165" cy="120" r="1" fill="none"/><circle class="mk-mouth" cx="165" cy="130" r="1" fill="none"/>`); }
 
+function deathscorpSVG(p){ const m=MONS.deathscorp, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('deathscorp',p,m,`
+  <ellipse cx="120" cy="170" rx="60" ry="40" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="175" rx="36" ry="24" fill="${m.belly}"/>
+  <ellipse cx="120" cy="115" rx="38" ry="34" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M95 95 L88 60 L110 90 M145 95 L152 60 L130 90" fill="${dk}"/>
+  <path d="M170 160 Q210 120 200 80 Q180 100 175 140Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M198 78 L210 50 L190 70" fill="#1f1a14" stroke="${dk}" stroke-width="2"/>
+  ${chibiEyes(105,135,110,12,dk,'#fbbf24')}${chibiBlush(92,148,128)}
+  <path d="M110 130 Q120 140 132 128" stroke="${dk}" stroke-width="2.5" fill="none"/>
+  ${mkPts()}`); }
 
-/* Fan-art 食錢怪 (coin-purse head with zipper-lip mouth on top, eyes on stalks, chest coin counter) */
-function kanegonSVG(p){
-  const m=MONS.kanegon, dk=m.dark, bd='url(#'+p+'bd)', pu='url(#'+p+'pu)';
-  let teeth=''; for(let x=62;x<=176;x+=7){ const y=66+Math.pow((x-120)/58,2)*-3; teeth+='<rect x="'+x+'" y="'+(y-3).toFixed(1)+'" width="4" height="6" rx="1" fill="#e9eef5" stroke="#8a93a3" stroke-width=".8"/>'; }
-  let freck=''; [[96,100],[104,106],[112,99],[122,105],[130,99],[138,105],[146,100],[118,112],[88,106],[152,108]].forEach(q=>{ freck+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="2.1" fill="#3b1a06"/>'; });
-  let thorns=''; [[48,86,-1],[46,102,-1],[192,86,1],[194,102,1]].forEach(t=>{ const x=t[0],y=t[1],d=t[2]; thorns+='<path d="M'+x+' '+(y-6)+' L'+(x+d*14)+' '+(y-2)+' L'+x+' '+(y+5)+'Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="2" stroke-linejoin="round"/>'; });
-  [[78,74],[100,70],[140,70],[162,74]].forEach(t=>{ thorns+='<path d="M'+(t[0]-5)+' '+(t[1]+6)+' L'+t[0]+' '+(t[1]-6)+' L'+(t[0]+5)+' '+(t[1]+6)+'Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="1.8" stroke-linejoin="round" opacity=".95"/>'; });
-  const coin=(x,y,r)=>'<g><ellipse cx="'+x+'" cy="'+y+'" rx="'+r+'" ry="'+r+'" fill="#ffd23f" stroke="#a87400" stroke-width="2"/><ellipse cx="'+x+'" cy="'+y+'" rx="'+(r*.6)+'" ry="'+(r*.6)+'" fill="none" stroke="#fff3a8" stroke-width="1.5"/><text x="'+x+'" y="'+(y+r*.38)+'" text-anchor="middle" font-size="'+(r*1.1)+'" font-weight="900" fill="#a87400">$</text></g>';
-  return '<svg class="mon mon-kanegon" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">'+
-    '<defs><radialGradient id="'+p+'bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="'+m.light+'"/><stop offset=".55" stop-color="'+m.body+'"/><stop offset="1" stop-color="'+dk+'"/></radialGradient>'+
-    '<radialGradient id="'+p+'pu" cx=".4" cy=".25" r=".85"><stop offset="0" stop-color="#ffd08a"/><stop offset=".5" stop-color="#d98f3f"/><stop offset="1" stop-color="#7a3f12"/></radialGradient></defs>'+
-    '<ellipse cx="122" cy="229" rx="78" ry="9" fill="#000" opacity=".28"/>'+
-    '<path d="M168 196 Q214 200 230 164 L221 167 L224 154 L213 160 L214 147 L203 157 Q198 180 166 180Z" fill="'+bd+'" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"/>'+
-    '<rect x="86" y="190" width="24" height="26" rx="8" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/><rect x="130" y="190" width="24" height="26" rx="8" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/>'+
-    '<ellipse cx="96" cy="219" rx="20" ry="9" fill="'+dk+'"/><ellipse cx="144" cy="219" rx="20" ry="9" fill="'+dk+'"/>'+
-    '<g fill="#ffd23f" stroke="#a87400" stroke-width="1.5"><circle cx="88" cy="213" r="5"/><circle cx="100" cy="213" r="5"/><circle cx="140" cy="213" r="5"/><circle cx="152" cy="213" r="5"/></g>'+
-    '<path d="M80 118 Q66 168 84 204 Q120 214 156 204 Q174 168 160 118 Z" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/>'+
-    '<g stroke="'+dk+'" stroke-width="2.5" fill="none" opacity=".35"><path d="M82 150 Q120 160 158 150"/><path d="M80 172 Q120 182 160 172"/><path d="M84 192 Q120 200 156 192"/></g>'+
-    '<g class="k-reg"><rect x="126" y="140" width="34" height="21" rx="3" fill="#1d1d1d" stroke="#c0c6d0" stroke-width="2"/><text class="k-count" x="143" y="155.5" text-anchor="middle" font-size="12" font-family="monospace" font-weight="900" fill="#7dff7d">088</text><circle cx="133" cy="166" r="2.5" fill="#ff5b5b"/><circle cx="141" cy="166" r="2.5" fill="#ffd23f"/><circle cx="149" cy="166" r="2.5" fill="#5bff8a"/></g>'+
-    '<ellipse cx="72" cy="140" rx="11" ry="20" transform="rotate(38 72 140)" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/><g fill="'+m.light+'" stroke="'+dk+'" stroke-width="1.5"><circle cx="58" cy="126" r="4"/><circle cx="64" cy="121" r="4"/></g>'+
-    '<ellipse cx="170" cy="150" rx="10" ry="19" transform="rotate(-18 170 150)" fill="'+bd+'" stroke="'+dk+'" stroke-width="3"/>'+
-    thorns+
-    '<path d="M46 112 Q38 72 62 62 L178 62 Q202 72 194 112 Q120 140 46 112 Z" fill="'+pu+'" stroke="'+dk+'" stroke-width="3"/>'+
-    freck+
-    '<ellipse cx="80" cy="116" rx="9" ry="5" fill="#ff7a9a" opacity=".5"/><ellipse cx="160" cy="116" rx="9" ry="5" fill="#ff7a9a" opacity=".5"/>'+
-    '<path d="M84 62 Q70 44 60 32" stroke="'+dk+'" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M84 62 Q70 44 60 32" stroke="'+m.light+'" stroke-width="7" stroke-linecap="round" fill="none"/>'+
-    '<path d="M156 62 Q170 44 180 32" stroke="'+dk+'" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M156 62 Q170 44 180 32" stroke="'+m.light+'" stroke-width="7" stroke-linecap="round" fill="none"/>'+
-    '<g class="m-eyes"><circle cx="58" cy="26" r="15" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/><circle cx="182" cy="26" r="15" fill="#fff" stroke="'+dk+'" stroke-width="2.5"/>'+
-    '<circle cx="55" cy="31" r="6.5" fill="#1f2937"/><circle cx="179" cy="31" r="6.5" fill="#1f2937"/><circle cx="53" cy="29" r="2.2" fill="#fff"/><circle cx="177" cy="29" r="2.2" fill="#fff"/>'+
-    '<path d="M42 24 Q56 8 74 20 L73 24 Q58 18 42 28Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="2"/><path d="M198 24 Q184 8 166 20 L167 24 Q182 18 198 28Z" fill="'+m.light+'" stroke="'+dk+'" stroke-width="2"/></g>'+
-    '<g class="m-ouch" stroke="#1f2937" stroke-width="4.5" stroke-linecap="round" fill="none"><path d="M48 18 L68 34M68 18 L48 34"/><path d="M172 18 L192 34M192 18 L172 34"/></g>'+
-    '<g class="k-closed"><path d="M54 67 Q120 92 186 67 Q120 78 54 67Z" fill="#f2b56a" stroke="'+dk+'" stroke-width="2.5"/><path d="M54 67 Q120 46 186 67 Q120 60 54 67Z" fill="#f7c98a" stroke="'+dk+'" stroke-width="2.5"/>'+teeth+'</g>'+
-    '<g class="k-open"><path d="M52 64 Q120 30 188 64 Q120 104 52 64Z" fill="#3b0d0d" stroke="'+dk+'" stroke-width="3"/><ellipse cx="120" cy="76" rx="32" ry="10" fill="#ff6f8e"/>'+
-    '<path d="M52 64 Q120 30 188 64 Q120 44 52 64Z" fill="#f7c98a" stroke="'+dk+'" stroke-width="2.5"/><path d="M52 64 Q120 104 188 64 Q120 90 52 64Z" fill="#f2b56a" stroke="'+dk+'" stroke-width="2.5"/></g>'+
-    '<path d="M116 52 L114 44 M124 52 L126 44" stroke="#a87400" stroke-width="3"/><circle cx="113" cy="40" r="6" fill="#ffd23f" stroke="#a87400" stroke-width="2"/><circle cx="127" cy="40" r="6" fill="#ffd23f" stroke="#a87400" stroke-width="2"/>'+
-    '<g class="m-float">'+coin(24,64,9)+'</g>'+
-    '<circle class="mk-core" cx="120" cy="140" r="1" fill="none"/><circle class="mk-mouth" cx="120" cy="64" r="1" fill="none"/>'+
-    '</svg>';
-}
+function nightmareSVG(p){ const m=MONS.nightmare, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('nightmare',p,m,`
+  <circle cx="120" cy="160" r="50" fill="#7c3aed" opacity=".35" filter="url(#${p}ngl)"/>
+  <ellipse cx="120" cy="130" rx="40" ry="28" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M80 130 Q50 100 70 80 Q90 110 95 125Z M160 130 Q190 100 170 80 Q150 110 145 125Z" fill="${bd}" stroke="${dk}" stroke-width="2.5"/>
+  ${chibiEyes(105,135,125,12,dk,'#f0abfc')}
+  <circle cx="120" cy="175" r="22" fill="#2e1065" stroke="#c084fc" stroke-width="3"/>
+  <circle cx="120" cy="175" r="10" fill="#f0abfc"/>
+  ${mkPts()}`,`<filter id="${p}ngl"><feGaussianBlur stdDeviation="4"/></filter>`); }
 
-/* Fan-art 三面怪人達達 (black/white geometric stripes; three swappable faces A/B/C) */
-function dadaSVG(p){
-  const st='url(#'+p+'st)', vs='url(#'+p+'vs)', ck='url(#'+p+'ck)', K='#111';
-  const mask='<path d="M120 26 C140 26 146 50 145 66 C144 88 134 102 120 102 C106 102 96 88 95 66 C94 50 100 26 120 26Z" stroke="'+K+'" stroke-width="3"';
-  const faceA='<g class="d-face d-fa">'+mask+' fill="#ffe3ec"/>'+
-    '<ellipse cx="110" cy="58" rx="8" ry="11" fill="#ff4f9a" stroke="'+K+'" stroke-width="2"/><ellipse cx="130" cy="58" rx="8" ry="11" fill="#ff4f9a" stroke="'+K+'" stroke-width="2"/>'+
-    '<circle cx="109" cy="61" r="4" fill="'+K+'"/><circle cx="129" cy="61" r="4" fill="'+K+'"/><circle cx="107.5" cy="58" r="1.8" fill="#fff"/><circle cx="127.5" cy="58" r="1.8" fill="#fff"/>'+
-    '<ellipse cx="120" cy="86" rx="11" ry="8" fill="#7a1030" stroke="'+K+'" stroke-width="2"/><ellipse cx="120" cy="90" rx="6" ry="3" fill="#ff8fb0"/>'+
-    '<ellipse cx="103" cy="75" rx="5" ry="3" fill="#ff8fb0" opacity=".7"/><ellipse cx="137" cy="75" rx="5" ry="3" fill="#ff8fb0" opacity=".7"/></g>';
-  const faceB='<g class="d-face d-fb">'+mask+' fill="#e3f0ff"/>'+
-    '<path d="M98 64 L110 72 L99 84Z" fill="'+K+'"/><path d="M142 64 L130 72 L141 84Z" fill="'+K+'"/>'+
-    '<ellipse cx="111" cy="57" rx="7" ry="9" fill="#2f7bff" stroke="'+K+'" stroke-width="2"/><ellipse cx="129" cy="57" rx="7" ry="9" fill="#2f7bff" stroke="'+K+'" stroke-width="2"/>'+
-    '<circle cx="110" cy="59" r="3.5" fill="'+K+'"/><circle cx="128" cy="59" r="3.5" fill="'+K+'"/><circle cx="109" cy="56" r="1.6" fill="#fff"/><circle cx="127" cy="56" r="1.6" fill="#fff"/>'+
-    '<path d="M113 86 Q120 92 127 86" stroke="'+K+'" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
-  const faceC='<g class="d-face d-fc">'+mask+' fill="#fff4bf"/>'+
-    '<path d="M104 48 Q111 44 116 48M124 48 Q129 44 136 48" stroke="'+K+'" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
-    '<ellipse cx="111" cy="58" rx="4.5" ry="5.5" fill="#f5b800" stroke="'+K+'" stroke-width="2"/><ellipse cx="129" cy="58" rx="4.5" ry="5.5" fill="#f5b800" stroke="'+K+'" stroke-width="2"/>'+
-    '<circle cx="111" cy="59" r="2" fill="'+K+'"/><circle cx="129" cy="59" r="2" fill="'+K+'"/>'+
-    '<ellipse cx="120" cy="87" rx="5.5" ry="3.5" fill="#e2556e" stroke="'+K+'" stroke-width="1.5"/>'+
-    '<ellipse cx="104" cy="74" rx="5" ry="3" fill="#ffb14d" opacity=".6"/><ellipse cx="136" cy="74" rx="5" ry="3" fill="#ffb14d" opacity=".6"/></g>';
-  return '<svg class="mon mon-dada face-a" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true">'+
-    '<defs><pattern id="'+p+'st" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="12" height="12" fill="#fff"/><rect width="6" height="12" fill="'+K+'"/></pattern>'+
-    '<pattern id="'+p+'vs" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fff"/><rect width="5" height="10" fill="'+K+'"/></pattern>'+
-    '<pattern id="'+p+'ck" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#fff"/><rect width="7" height="7" fill="'+K+'"/><rect x="7" y="7" width="7" height="7" fill="'+K+'"/></pattern></defs>'+
-    '<ellipse cx="120" cy="230" rx="62" ry="8" fill="#000" opacity=".28"/>'+
-    '<rect x="98" y="176" width="19" height="48" rx="6" fill="'+vs+'" stroke="'+K+'" stroke-width="3"/><rect x="123" y="176" width="19" height="48" rx="6" fill="'+vs+'" stroke="'+K+'" stroke-width="3"/>'+
-    '<ellipse cx="106" cy="226" rx="15" ry="7" fill="'+K+'"/><ellipse cx="134" cy="226" rx="15" ry="7" fill="'+K+'"/>'+
-    '<path d="M92 108 L60 128 L66 140 L98 124Z" fill="'+st+'" stroke="'+K+'" stroke-width="3" stroke-linejoin="round"/><circle cx="56" cy="130" r="10" fill="#fff" stroke="'+K+'" stroke-width="3"/><path d="M50 124 L44 118M52 136 L45 140" stroke="'+K+'" stroke-width="3" stroke-linecap="round"/>'+
-    '<path d="M148 108 L176 150 L166 156 L142 122Z" fill="'+st+'" stroke="'+K+'" stroke-width="3" stroke-linejoin="round"/><circle cx="174" cy="158" r="10" fill="#fff" stroke="'+K+'" stroke-width="3"/>'+
-    '<path d="M88 102 Q120 94 152 102 Q158 144 146 182 L94 182 Q82 144 88 102Z" fill="'+st+'" stroke="'+K+'" stroke-width="4"/>'+
-    '<path d="M120 116 L140 138 L120 160 L100 138Z" fill="'+ck+'" stroke="'+K+'" stroke-width="3"/>'+
-    '<path d="M90 112 Q104 126 100 150M150 112 Q136 126 140 150" stroke="'+K+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
-    '<rect x="92" y="166" width="56" height="10" fill="#fff" stroke="'+K+'" stroke-width="3"/><g fill="'+K+'"><rect x="98" y="168" width="6" height="6"/><rect x="110" y="168" width="6" height="6"/><rect x="122" y="168" width="6" height="6"/><rect x="134" y="168" width="6" height="6"/></g>'+
-    '<rect x="111" y="94" width="18" height="12" fill="'+vs+'" stroke="'+K+'" stroke-width="2.5"/>'+
-    '<g class="d-head"><ellipse cx="120" cy="60" rx="34" ry="46" fill="'+vs+'" stroke="'+K+'" stroke-width="4"/>'+
-    '<path d="M92 34 L100 16 L108 30Z M112 22 L120 6 L128 22Z M132 30 L140 16 L148 34Z" fill="'+K+'"/>'+
-    faceA+faceB+faceC+'</g>'+
-    '<circle class="mk-core" cx="120" cy="136" r="1" fill="none"/><circle class="mk-mouth" cx="54" cy="130" r="1" fill="none"/>'+
-    '</svg>';
-}
+function galmothSVG(p){ const m=MONS.galmoth, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('galmoth',p,m,`
+  <path d="M120 140 C40 80 20 160 90 170Z" fill="#e5e7eb" stroke="${dk}" stroke-width="2.5" opacity=".9"/>
+  <path d="M120 140 C200 80 220 160 150 170Z" fill="#e5e7eb" stroke="${dk}" stroke-width="2.5" opacity=".9"/>
+  <ellipse cx="120" cy="150" rx="28" ry="36" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="115" rx="24" ry="22" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M100 100 Q90 70 105 95 M140 100 Q150 70 135 95" stroke="${dk}" stroke-width="3" fill="none"/>
+  ${chibiEyes(110,130,112,9,dk,'#fde047')}
+  <g fill="#ffe066"><circle cx="60" cy="100" r="3"/><circle cx="180" cy="110" r="4"/><circle cx="90" cy="70" r="2.5"/><circle cx="160" cy="75" r="3"/></g>
+  ${mkPts()}`); }
+
+function flamecrabSVG(p){ const m=MONS.flamecrab, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('flamecrab',p,m,`
+  <ellipse cx="120" cy="155" rx="70" ry="48" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <g fill="#7f1d1d"><ellipse cx="55" cy="175" rx="10" ry="18"/><ellipse cx="85" cy="190" rx="10" ry="16"/><ellipse cx="155" cy="190" rx="10" ry="16"/><ellipse cx="185" cy="175" rx="10" ry="18"/></g>
+  <path d="M50 140 Q20 110 45 100 Q60 120 55 140Z M190 140 Q220 110 195 100 Q180 120 185 140Z" fill="${bd}" stroke="${dk}" stroke-width="2.5"/>
+  ${chibiEyes(100,140,145,13,dk,'#fdba74')}
+  <g class="m-flame" fill="#fb923c"><circle cx="90" cy="120" r="8"/><circle cx="150" cy="118" r="9"/><circle cx="120" cy="110" r="10"/></g>
+  ${mkPts()}`); }
+
+function starlordSVG(p){ const m=MONS.starlord, dk=m.dark, bd=`url(#${p}bd)`;
+  return omSvg('starlord',p,m,`
+  <g fill="#ffe066" opacity=".8"><circle cx="60" cy="60" r="3"/><circle cx="180" cy="50" r="4"/><circle cx="200" cy="100" r="2.5"/><circle cx="40" cy="120" r="3"/></g>
+  <path d="M70 70 L170 50 L200 160 L90 200 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
+  <path d="M90 90 L160 75 L175 145 L105 165 Z" fill="#27272a"/>
+  <g fill="#fb923c"><path d="M100 110 L130 100 L140 140 L110 150Z"/><path d="M120 130 L155 120 L160 155 L130 160Z"/></g>
+  ${chibiEyes(115,145,115,12,dk,'#fb923c')}
+  <path d="M80 180 Q120 230 170 170" stroke="#fb923c" stroke-width="8" fill="none" opacity=".7"/>
+  ${mkPts()}`); }
 
 function medalSVG(label, tier){
   const C = {0:['#4b5578','#2c3350','#7d87a8','#9aa3c0'],1:['#e39a5c','#7c3f12','#f8cda6','#7c3f12'],2:['#e8edf5','#56627c','#ffffff','#3d475e'],3:['#ffd84d','#a8640a','#fff6c4','#8a4b00']}[tier||0];
@@ -1104,249 +1024,6 @@ function buildSky(svg){
   s += '<rect y="'+(H-16)+'" width="'+W+'" height="16" fill="#070a1f"/>';
   svg.innerHTML = s;
 }
-
-/* ===== v3: 超人奧米加 series kaiju — original cute fan-art SVGs (240x240, facing left toward the hero) ===== */
-function omEye(x,y,r,dk,iris){ return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${dk}" stroke-width="2.5"/><circle cx="${x-r*.25}" cy="${y+r*.1}" r="${r*.6}" fill="${iris}"/><circle cx="${x-r*.3}" cy="${y+r*.12}" r="${r*.32}" fill="#111"/><circle cx="${x-r*.48}" cy="${y-r*.15}" r="${r*.22}" fill="#fff"/>`; }
-function omOuch(pts){ return '<g class="m-ouch" stroke="#1f2937" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none">'+pts.map((q,i)=>{ const [x,y,s]=q, d=i%2?-1:1; return `<path d="M${x-d*s} ${y-s*.7} L${x+d*s*.6} ${y} L${x-d*s} ${y+s*.7}"/>`; }).join('')+'</g>'; }
-function omSpike(x,y,ang,len,w,fill,dk){ const a=ang*Math.PI/180, tx=x+Math.sin(a)*len, ty=y-Math.cos(a)*len, bx=Math.cos(a)*w, by=Math.sin(a)*w; return `<path d="M${(x-bx).toFixed(1)} ${(y-by).toFixed(1)} L${tx.toFixed(1)} ${ty.toFixed(1)} L${(x+bx).toFixed(1)} ${(y+by).toFixed(1)} Z" fill="${fill}" stroke="${dk}" stroke-width="2.2" stroke-linejoin="round"/>`; }
-function omSvg(type,p,m,inner,defs){ return `<svg class="mon mon-${type}" viewBox="0 0 240 240" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><defs><radialGradient id="${p}bd" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${m.light}"/><stop offset=".55" stop-color="${m.body}"/><stop offset="1" stop-color="${m.dark}"/></radialGradient>${defs||''}</defs><ellipse cx="124" cy="229" rx="82" ry="9" fill="#000" opacity=".28"/>${inner}</svg>`; }
-function omFeet(dk,claw,xs){ return xs.map(x=>`<ellipse cx="${x}" cy="214" rx="25" ry="12" fill="${dk}"/><g fill="${claw}" stroke="${dk}" stroke-width="1.5"><path d="M${x-22} 214 l-7 6 l10 0z"/><path d="M${x-12} 219 l-5 7 l10 -2z"/></g>`).join(''); }
-
-/* 熱線怪獸 格萊姆: grey spiky mole, yellow belly, spinning drill-horn snout */
-function graimSVG(p){ const m=MONS.graim, dk=m.dark, bd=`url(#${p}bd)`;
-  let spikes=''; [[118,76,-12],[142,80,8],[164,94,28],[180,114,46],[191,138,62],[196,164,76]].forEach(s=>{ spikes+=omSpike(s[0],s[1],s[2],24,9,'#4a4e57',dk); });
-  let stripes=''; for(let x=-20;x<=80;x+=10) stripes+=`<path d="M${x} 70 L${x+10} 112" stroke="#6b707b" stroke-width="4"/>`;
-  const inner=`${spikes}
-  <path d="M168 196 Q222 198 232 152 L222 158 L224 142 L212 152 L208 138 L200 154 Q194 176 164 178 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  ${omFeet(dk,'#e8e2d0',[92,160])}
-  <path d="M66 212 C48 160 60 104 104 90 C150 78 198 124 192 212 Q128 226 66 212 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M84 206 C74 170 84 132 116 126 C150 122 166 160 160 206 Q122 216 84 206Z" fill="#f2c230" stroke="#b98a0e" stroke-width="2"/>
-  <g stroke="#c99a12" stroke-width="2.5" fill="none"><path d="M88 150 Q120 158 156 148"/><path d="M84 168 Q120 176 160 166"/><path d="M84 186 Q120 194 160 184"/></g>
-  <ellipse cx="180" cy="152" rx="11" ry="20" transform="rotate(-20 180 152)" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M84 136 Q56 138 42 158 L52 168 Q66 156 90 156 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  <g fill="#ece6d4" stroke="${dk}" stroke-width="2" stroke-linejoin="round"><path d="M46 154 L20 146 L42 164Z"/><path d="M44 162 L16 166 L46 170Z"/><path d="M48 168 L26 182 L52 172Z"/></g>
-  ${omSpike(98,56,-20,20,8,'#e9a13b',dk)}${omSpike(118,56,6,22,8,'#e9a13b',dk)}${omSpike(134,68,34,18,7,'#e9a13b',dk)}
-  <path d="M60 98 C56 64 84 48 108 52 C132 56 144 78 138 100 C130 120 96 126 76 118 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g class="gr-drill"><path d="M66 78 L66 110 L4 92 Z" fill="#c3c8d2" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
-  <g clip-path="url(#${p}dc)"><g>${stripes}<animateTransform attributeName="transform" type="translate" from="0 0" to="10 0" dur=".25s" repeatCount="indefinite"/></g></g>
-  <path d="M18 88 L18 96 L4 92 Z" fill="#e53935" stroke="${dk}" stroke-width="1.5"/>
-  <ellipse cx="67" cy="94" rx="6" ry="17" fill="#8b9099" stroke="${dk}" stroke-width="2.5"/></g>
-  <g class="m-eyes">${omEye(90,76,11,dk,'#f5b700')}${omEye(114,72,10,dk,'#f5b700')}</g>
-  ${omOuch([[90,76,9],[114,72,8]])}
-  <path d="M78 62 L100 68" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M106 64 L126 58" stroke="${dk}" stroke-width="5" stroke-linecap="round"/>
-  <ellipse cx="80" cy="100" rx="7" ry="4" fill="#ff7a9a" opacity=".55"/><ellipse cx="128" cy="92" rx="7" ry="4" fill="#ff7a9a" opacity=".55"/>
-  <path d="M84 108 Q102 118 122 104" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M90 111 L93 118 L96 112Z" fill="#fff"/><path d="M111 110 L113 117 L116 109Z" fill="#fff"/>
-  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="8" cy="92" r="1" fill="none"/>`;
-  return omSvg('graim',p,m,inner,`<clipPath id="${p}dc"><path d="M66 78 L66 110 L4 92 Z"/></clipPath>`); }
-
-/* 水棲毒獸 多格利德: brown lizard with a huge chomping mouth and a red frill collar */
-function dugridSVG(p){ const m=MONS.dugrid, dk=m.dark, bd=`url(#${p}bd)`;
-  let ut='', lt=''; for(let i=0;i<7;i++){ const x=44+i*11, y=79+i*1.9; ut+=`<path d="M${x} ${y} l4 8 l4 -7z" fill="#fff"/>`; lt+=`<path d="M${x+4} ${y+22-i*1.2} l4 -8 l4 7z" fill="#fff"/>`; }
-  const inner=`
-  <path d="M168 200 Q222 206 232 168 Q220 176 214 162 Q206 184 164 182Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  ${omFeet(dk,'#e8dcc0',[92,160])}
-  <path d="M62 212 C46 170 58 128 92 116 C140 100 196 136 192 212 Q126 226 62 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <ellipse cx="116" cy="180" rx="38" ry="30" fill="#b99474"/>
-  <g stroke="${dk}" stroke-width="2.5" fill="none" opacity=".3"><path d="M84 168 Q116 176 150 166"/><path d="M82 188 Q116 196 152 186"/></g>
-  <g fill="${m.belly}" stroke="#8a6410" stroke-width="1.5"><ellipse cx="164" cy="156" rx="13" ry="9" transform="rotate(-30 164 156)"/><ellipse cx="176" cy="186" rx="10" ry="7"/><ellipse cx="150" cy="200" rx="8" ry="5"/><ellipse cx="72" cy="186" rx="7" ry="10"/></g>
-  <ellipse cx="72" cy="150" rx="11" ry="20" transform="rotate(38 72 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/><g fill="#e8dcc0" stroke="${dk}" stroke-width="1.5"><circle cx="58" cy="136" r="4"/><circle cx="64" cy="131" r="4"/></g>
-  <path d="M46 156 Q34 132 52 114 Q60 94 84 98 Q102 80 124 92 Q148 86 154 108 Q174 118 166 142 Q156 156 136 150 Q114 162 92 152 Q68 166 46 156Z" fill="${m.frill}" stroke="#7a1016" stroke-width="3" stroke-linejoin="round"/>
-  <g stroke="#9c1a22" stroke-width="2" fill="none"><path d="M58 146 Q62 128 76 118"/><path d="M92 144 Q94 124 104 108"/><path d="M130 142 Q132 124 128 104"/><path d="M152 132 Q150 120 142 110"/></g>
-  <path d="M148 92 C152 56 126 32 96 34 C62 36 38 56 32 78 Q64 82 126 96 Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M34 80 Q80 86 128 96 Q92 128 42 106 Z" fill="#a8223a" stroke="${dk}" stroke-width="2.5"/>
-  <ellipse cx="74" cy="102" rx="16" ry="6" fill="#ff7a9a"/>
-  ${ut}
-  <g class="dg-jaw"><path d="M38 100 Q84 120 130 96 Q126 126 90 132 Q54 132 38 100Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>${lt}</g>
-  <circle cx="44" cy="66" r="2.5" fill="${dk}"/><circle cx="52" cy="62" r="2.5" fill="${dk}"/>
-  <g class="m-eyes">${omEye(94,52,11,dk,'#ffd23f')}${omEye(118,50,9,dk,'#ffd23f')}</g>
-  ${omOuch([[94,52,9],[118,50,7]])}
-  <path d="M82 38 L104 44" stroke="${dk}" stroke-width="5" stroke-linecap="round"/><path d="M110 40 L128 38" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
-  <g class="m-float" opacity=".85"><circle cx="18" cy="100" r="6" fill="#a3e635" stroke="#4d7c0f" stroke-width="1.5"/><circle cx="12" cy="122" r="4" fill="#c084fc" stroke="#6b21a8" stroke-width="1.5"/><circle cx="26" cy="84" r="3.5" fill="#a3e635" stroke="#4d7c0f" stroke-width="1.2"/></g>
-  <circle class="mk-core" cx="118" cy="160" r="1" fill="none"/><circle class="mk-mouth" cx="56" cy="98" r="1" fill="none"/>`;
-  return omSvg('dugrid',p,m,inner); }
-
-/* 無重力怪獸 佩古諾斯: floating navy penguin with a hooked yellow beak and big wing-arms */
-function pegunosSVG(p){ const m=MONS.pegunos, dk=m.dark, bd=`url(#${p}bd)`;
-  let crest=''; [[112,46,-10],[124,48,14],[134,54,36],[142,64,58],[146,76,78]].forEach(s=>{ crest+=omSpike(s[0],s[1],s[2],22,6,bd,dk); });
-  let fth=''; for(let y=132;y<=196;y+=16) for(let x=96;x<=144;x+=16) fth+=`<path d="M${x+((y/16)%2?8:0)} ${y} q5 6 10 0" stroke="#c3cee0" stroke-width="2" fill="none"/>`;
-  const inner=`<g class="pg-float">
-  <g class="pg-wingR"><path d="M160 116 Q212 122 238 150 Q204 154 168 152 Z" fill="#e8edf5" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/><path d="M160 116 Q212 122 238 150 Q206 134 164 132Z" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/></g>
-  <g class="m-float" fill="#eaf8ff" opacity=".9"><circle cx="84" cy="228" r="7"/><circle cx="96" cy="232" r="5"/><circle cx="152" cy="228" r="7"/><circle cx="164" cy="232" r="5"/></g>
-  <g fill="#8aa0c8" stroke="${dk}" stroke-width="2.5"><ellipse cx="92" cy="212" rx="20" ry="9"/><ellipse cx="156" cy="212" rx="20" ry="9"/></g>
-  <path d="M68 210 C52 160 64 98 118 94 C172 92 186 160 172 210 Q120 222 68 210Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M84 206 C72 166 84 118 118 114 C152 112 162 166 156 206 Q120 216 84 206Z" fill="#eef3fa" stroke="#b9c6dc" stroke-width="2"/>
-  ${fth}
-  <g class="pg-wingL"><path d="M82 120 Q40 136 6 170 Q46 164 84 150Z" fill="#e8edf5" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/><path d="M82 120 Q40 136 6 170 Q42 146 84 136Z" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/></g>
-  ${crest}
-  <path d="M70 94 C62 58 86 40 112 42 C140 44 152 66 146 92 Q110 110 70 94Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M80 96 Q110 110 140 94 Q128 118 108 120 Q90 118 80 96Z" fill="#eef3fa"/>
-  <path d="M80 70 C58 62 34 70 24 86 C22 96 30 102 36 96 C40 88 52 84 78 88 Z" fill="${m.beak}" stroke="#a36a00" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M78 88 Q56 88 42 96 Q58 102 80 96Z" fill="#f0b020" stroke="#a36a00" stroke-width="2"/>
-  <path d="M40 78 Q54 74 70 76" stroke="#fff3b0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <g class="m-eyes"><circle cx="96" cy="66" r="14" fill="#ffd23f" opacity=".9"/>${omEye(96,66,11,dk,'#3b82f6')}${omEye(122,62,9,dk,'#3b82f6')}</g>
-  ${omOuch([[96,66,9],[122,62,7]])}
-  <path d="M84 50 L106 54" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
-  <ellipse cx="112" cy="84" rx="7" ry="4" fill="#ff7a9a" opacity=".5"/>
-  <circle class="mk-core" cx="118" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="28" cy="90" r="1" fill="none"/></g>`;
-  return omSvg('pegunos',p,m,inner); }
-
-/* 流星怪獸 雷基尼斯: friendly blue dinosaur partner — crystal horn, red/white shoulder spikes, pentagon chest, floating rocks */
-function rekinessSVG(p){ const m=MONS.rekiness, dk=m.dark, bd=`url(#${p}bd)`;
-  let ws=''; [[62,194,-70],[64,180,-60],[66,166,-50],[178,194,70],[180,178,60],[184,164,50]].forEach(s=>{ ws+=omSpike(s[0],s[1],s[2],14,5,'#fff',dk); });
-  let sh=''; [[58,118,-60],[64,106,-30],[76,100,0],[166,110,20],[178,108,50],[186,118,80]].forEach(s=>{ sh+=omSpike(s[0],s[1],s[2],16,5.5,'#fff',dk); });
-  let tsp=''; [[196,176,20],[210,166,40],[222,152,60]].forEach(s=>{ tsp+=omSpike(s[0],s[1],s[2],14,5,'#fff',dk); });
-  const rock=(x,y,s)=>`<path d="M${x-s} ${y} L${x-s*.5} ${y-s*.8} L${x+s*.6} ${y-s*.7} L${x+s} ${y+s*.1} L${x+s*.3} ${y+s*.8} L${x-s*.7} ${y+s*.6}Z" fill="#9a7b5c" stroke="#c9a6ff" stroke-width="3" stroke-linejoin="round"/>`;
-  const inner=`
-  <g class="m-float">${rock(24,60,11)}${rock(212,36,9)}${rock(224,110,7)}</g>
-  ${tsp}<path d="M170 198 Q222 200 234 150 Q222 160 216 150 Q208 180 168 180Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  ${omFeet(dk,'#fff',[92,160])}
-  ${ws}
-  <path d="M68 212 C52 164 62 108 106 96 C152 86 192 132 188 212 Q128 226 68 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M88 206 C78 172 86 136 118 130 C150 128 160 170 154 206 Q120 214 88 206Z" fill="${m.belly}" stroke="#5a9ad8" stroke-width="2"/>
-  <g stroke="${dk}" stroke-width="2.5" fill="none" opacity=".45"><path d="M160 150 q10 8 4 18 q-6 8 4 16"/><path d="M76 160 q-8 8 -2 18"/><path d="M96 180 Q120 188 146 180"/><path d="M98 196 Q120 202 144 196"/></g>
-  ${sh}
-  <ellipse cx="70" cy="122" rx="16" ry="13" fill="#e8413a" stroke="${dk}" stroke-width="2.5"/><ellipse cx="176" cy="118" rx="15" ry="12" fill="#e8413a" stroke="${dk}" stroke-width="2.5"/>
-  <ellipse cx="66" cy="150" rx="10" ry="18" transform="rotate(34 66 150)" fill="${bd}" stroke="${dk}" stroke-width="3"/><g fill="#fff" stroke="${dk}" stroke-width="1.5"><circle cx="54" cy="137" r="3.5"/><circle cx="60" cy="132" r="3.5"/></g>
-  <polygon points="${pent(120,146,13)}" fill="#dfe8f2" stroke="${dk}" stroke-width="2" stroke-linejoin="round"/>
-  <polygon points="${pent(120,146,13)}" fill="#6ff6ff" filter="url(#${p}gl)" opacity=".9"/><polygon points="${pent(120,146,9)}" fill="#7af" stroke="#fff" stroke-width="1.2"/>
-  <path d="M100 52 L112 4 L126 52 Z" fill="#c8f3ff" stroke="#3a8fd0" stroke-width="2.5" stroke-linejoin="round"/><path d="M112 10 L114 50" stroke="#fff" stroke-width="2"/>
-  <path d="M90 56 L92 32 L102 54Z" fill="#c8f3ff" stroke="#3a8fd0" stroke-width="2"/><path d="M124 54 L136 36 L134 60Z" fill="#c8f3ff" stroke="#3a8fd0" stroke-width="2"/>
-  <path d="M60 92 C56 60 84 42 110 46 C138 50 150 74 144 96 Q104 114 60 92Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g class="m-eyes">${omEye(88,74,12,dk,'#1e6fd9')}${omEye(116,72,11,dk,'#1e6fd9')}</g>
-  ${omOuch([[88,74,9],[116,72,8]])}
-  <path d="M78 58 Q88 54 98 58" stroke="${dk}" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M106 56 Q116 52 126 56" stroke="${dk}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-  <ellipse cx="76" cy="92" rx="7" ry="4" fill="#ff7a9a" opacity=".6"/><ellipse cx="130" cy="90" rx="7" ry="4" fill="#ff7a9a" opacity=".6"/>
-  <path d="M86 96 Q102 106 118 96" stroke="${dk}" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <circle class="mk-core" cx="120" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="70" cy="96" r="1" fill="none"/>`;
-  return omSvg('rekiness',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>`); }
-
-/* 刃爪怪獸 特利吉拉斯: black feathered dino-bird, red belly & face, pink crest, long red claws (turns see-through sometimes) */
-function therizirusSVG(p){ const m=MONS.therizirus, dk=m.dark, bd=`url(#${p}bd)`;
-  let fth=''; for(let y=126;y<=196;y+=14) for(let x=134;x<=178;x+=14){ const xx=x+((y/14)%2?7:0); if((xx-156)*(xx-156)/900+(y-164)*(y-164)/1600<1) fth+=`<path d="M${xx-6} ${y} L${xx} ${y+7} L${xx+6} ${y}" stroke="${m.light}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`; }
-  let mane=''; [[122,64,40],[132,78,60],[140,94,80],[144,110,96]].forEach(s=>{ mane+=omSpike(s[0],s[1],s[2],20,7,bd,dk); });
-  const inner=`<g class="th-cloak">
-  <g fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"><path d="M176 190 Q218 186 234 160 Q214 168 206 160 Q214 176 180 176Z"/><path d="M178 176 Q214 164 226 138 Q208 148 200 142 Q204 160 176 164Z"/></g>
-  ${omFeet(dk,'#e0354f',[94,160])}
-  ${mane}
-  <path d="M60 212 C44 168 56 118 100 102 C150 86 200 130 194 212 Q126 226 60 212Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  ${fth}
-  <path d="M78 206 C68 176 76 140 104 128 C126 132 132 176 126 208 Q100 212 78 206Z" fill="${m.belly}" stroke="#7d1426" stroke-width="2"/>
-  <g stroke="#8f1b30" stroke-width="2" fill="none"><path d="M82 160 Q102 166 124 158"/><path d="M80 178 Q102 184 126 176"/><path d="M82 194 Q102 200 126 192"/></g>
-  <path d="M104 134 Q72 136 58 154 L68 164 Q80 152 106 152Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  <g fill="#e0354f" stroke="#7d1426" stroke-width="2" stroke-linejoin="round"><path d="M62 150 Q30 136 10 150 Q34 146 60 160Z"/><path d="M60 158 Q28 158 12 176 Q36 166 60 166Z"/><path d="M64 164 Q40 176 32 196 Q48 180 68 170Z"/></g>
-  <path d="M100 54 L94 22 L108 46 L114 16 L120 48 L132 28 L126 58Z" fill="#ff7ac8" stroke="#b0307a" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M62 90 C60 62 84 48 106 52 C128 56 136 78 128 96 Q98 110 62 90Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M62 90 Q90 106 126 98 Q114 114 88 112 Q70 106 62 90Z" fill="${m.belly}" stroke="#7d1426" stroke-width="2"/>
-  <path d="M68 74 C50 68 32 74 24 88 C38 86 52 88 66 94Z" fill="#3a3f48" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 80 Q48 76 62 78" stroke="#7b8494" stroke-width="2" fill="none"/>
-  <g class="m-eyes">${omEye(88,72,11,dk,'#22d3ee')}${omEye(110,70,9,dk,'#22d3ee')}</g>
-  ${omOuch([[88,72,9],[110,70,7]])}
-  <path d="M76 58 L98 64" stroke="${dk}" stroke-width="4.5" stroke-linecap="round"/><path d="M104 60 L120 56" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
-  <circle class="mk-core" cx="120" cy="160" r="1" fill="none"/><circle class="mk-mouth" cx="28" cy="86" r="1" fill="none"/></g>`;
-  return omSvg('therizirus',p,m,inner); }
-
-/* 傳說蛇獸 大蛇主命: very long serpent — coiled body, segmented neck, cream dragon head with swept-back mane (sways) */
-function ohebinushiSVG(p){ const m=MONS.ohebinushi, dk=m.dark, bd=`url(#${p}bd)`, cr=m.belly;
-  const neck='M150 190 C176 146 164 112 124 100 C90 90 84 66 98 44';
-  const inner=`
-  <path d="M84 214 Q52 218 38 204 Q32 196 40 192" stroke="${dk}" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M84 214 Q52 218 38 204 Q32 196 40 192" stroke="${m.body}" stroke-width="11" fill="none" stroke-linecap="round"/>
-  <ellipse cx="148" cy="206" rx="72" ry="19" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M82 212 Q148 234 214 210" stroke="${cr}" stroke-width="8" fill="none" stroke-dasharray="10 4"/>
-  <ellipse cx="148" cy="188" rx="54" ry="15" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M98 192 Q148 210 198 190" stroke="${cr}" stroke-width="7" fill="none" stroke-dasharray="9 4"/>
-  <g class="ob-neck">
-  <path d="${neck}" stroke="${dk}" stroke-width="34" fill="none" stroke-linecap="round"/><path d="${neck}" stroke="${m.body}" stroke-width="29" fill="none" stroke-linecap="round"/>
-  <path d="${neck}" stroke="${cr}" stroke-width="14" fill="none" stroke-dasharray="9 4" transform="translate(-7 2)"/>
-  <path d="${neck}" stroke="${m.light}" stroke-width="4" fill="none" transform="translate(8 -2)" opacity=".6"/>
-  <path d="M104 26 L142 10 L120 32 L150 30 L118 44 L142 56 L112 50Z" fill="#fff6dc" stroke="${dk}" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M118 42 C114 22 94 14 76 20 C58 26 42 34 30 44 C28 52 34 60 44 60 L72 62 C94 64 116 60 118 42Z" fill="${cr}" stroke="${dk}" stroke-width="3"/>
-  <path d="M40 60 Q62 76 94 66 Q70 64 44 56Z" fill="#d9ccaa" stroke="${dk}" stroke-width="2"/><path d="M52 60 l3 6 l3 -5z M66 62 l3 6 l3 -6z" fill="#fff"/>
-  <path d="M60 30 Q84 22 108 30" stroke="${m.accent}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M34 44 Q46 40 58 44" stroke="#b9ab86" stroke-width="2" fill="none"/>
-  <circle cx="36" cy="46" r="2.5" fill="${dk}"/>
-  <g class="m-eyes">${omEye(80,40,10,dk,'#f59e0b')}${omEye(100,38,8,dk,'#f59e0b')}</g>
-  ${omOuch([[80,40,8],[100,38,6]])}
-  <path d="M70 28 L90 32" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
-  <ellipse cx="66" cy="54" rx="6" ry="3.5" fill="#ff7a9a" opacity=".55"/>
-  <circle class="mk-mouth" cx="38" cy="56" r="1" fill="none"/><circle class="mk-core" cx="140" cy="128" r="1" fill="none"/></g>`;
-  return omSvg('ohebinushi',p,m,inner); }
-
-/* 猛突怪獸 蓋多拉哥: pink furry mole with a long snout and grey horn-helmet over its light-shy eyes */
-function gedragoSVG(p){ const m=MONS.gedrago, dk=m.dark, bd=`url(#${p}bd)`;
-  const fur=(cx,cy,rx,ry,n,a0,a1,bottom)=>{ let d=''; for(let i=0;i<=n;i++){ const a=(a0+(a1-a0)*i/n)*Math.PI/180, k=i%2?1.08:1; let x=cx+Math.cos(a)*rx*k, y=cy+Math.sin(a)*ry*k; if(bottom&&y>bottom) y=bottom; d+=(i?' L':'M')+x.toFixed(1)+' '+y.toFixed(1); } return d+' Z'; };
-  const inner=`
-  <path d="${fur(196,176,26,16,14,-60,150)}" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
-  ${omFeet('#6d7480','#d6dae0',[92,160])}
-  <g class="gd-fur"><path d="${fur(126,150,70,72,52,0,360,214)}" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M106 118 Q126 112 146 118 L142 208 Q124 213 110 208Z" fill="${m.belly}" stroke="#3b1e24" stroke-width="2"/>
-  <g stroke="#3b1e24" stroke-width="2" fill="none"><path d="M108 138 Q126 142 144 138"/><path d="M109 158 Q126 162 143 158"/><path d="M109 178 Q126 182 143 178"/><path d="M110 196 Q126 200 142 196"/></g>
-  <g stroke="${m.light}" stroke-width="2" fill="none" opacity=".8"><path d="M160 120 l6 8 l4 -9"/><path d="M170 160 l6 8 l4 -9"/><path d="M76 176 l6 8 l4 -9"/><path d="M150 196 l6 8 l4 -9"/></g></g>
-  <path d="M76 140 Q52 142 42 160 L54 168 Q64 156 84 156 Z" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  <g fill="#d6dae0" stroke="#4b5059" stroke-width="2" stroke-linejoin="round"><path d="M46 156 L24 152 L42 166Z"/><path d="M44 164 L22 170 L46 172Z"/><path d="M50 170 L34 184 L54 174Z"/></g>
-  <path d="${fur(92,86,38,34,30,0,360)}" fill="${bd}" stroke="${dk}" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M64 94 C44 96 28 106 22 118 C30 124 46 120 68 110Z" fill="${m.light}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
-  <ellipse cx="23" cy="117" rx="6" ry="5" fill="#ff4f97" stroke="${dk}" stroke-width="2"/>
-  <path d="M112 62 C128 44 146 42 158 50 C146 52 136 58 126 70Z" fill="${m.horn}" stroke="#4b5059" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M58 72 C72 50 112 48 126 66 L118 76 C104 64 80 64 66 80Z" fill="${m.horn}" stroke="#4b5059" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M68 66 Q92 54 116 62" stroke="#e4e7ec" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <g class="m-eyes">${omEye(80,84,9,dk,'#5b1234')}${omEye(102,82,8,dk,'#5b1234')}<path d="M71 83 A9 9 0 0 1 89 83 Z" fill="${m.light}" stroke="${dk}" stroke-width="2"/><path d="M94 81 A8 8 0 0 1 110 81 Z" fill="${m.light}" stroke="${dk}" stroke-width="2"/></g>
-  ${omOuch([[80,84,8],[102,82,7]])}
-  <path d="M46 116 Q58 122 70 114" stroke="${dk}" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M52 118 l2 5 l3 -4z M62 118 l2 5 l3 -5z" fill="#fff"/>
-  <ellipse cx="94" cy="104" rx="7" ry="4" fill="#ff4f97" opacity=".6"/>
-  <circle class="mk-core" cx="124" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="26" cy="116" r="1" fill="none"/>`;
-  return omSvg('gedrago',p,m,inner); }
-
-/* 宇宙甲獸 瓦古塞克特: dark space-insect mid-boss — glowing red eyes, scythe arms, mandibles */
-function vugsectSVG(p){ const m=MONS.vugsect, dk=m.dark, bd=`url(#${p}bd)`;
-  let sp=''; [[120,98,-10],[146,94,6],[172,100,24],[196,114,44],[210,136,64]].forEach(s=>{ sp+=omSpike(s[0],s[1],s[2],20,7,'#4b3d6e',dk); });
-  const leg=d=>`<path d="${d}" stroke="${dk}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="${d}" stroke="#4b3d6e" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
-  const inner=`
-  <g class="m-float" fill="#ff4fd8"><circle cx="20" cy="30" r="2.5"/><circle cx="220" cy="60" r="3"/><circle cx="200" cy="20" r="2"/><circle cx="30" cy="190" r="2.5"/><circle cx="230" cy="200" r="2"/></g>
-  ${leg('M160 180 L196 196 L208 224')}${leg('M186 168 L222 182 L232 214')}
-  <path d="M110 118 L128 66" stroke="${dk}" stroke-width="12" stroke-linecap="round"/><path d="M110 118 L128 66" stroke="#4b3d6e" stroke-width="7" stroke-linecap="round"/>
-  <path d="M128 66 C112 40 80 34 58 44 C80 46 104 54 122 78Z" fill="#8f7fc0" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
-  ${sp}
-  <path d="M70 190 C56 140 88 96 140 96 C196 96 224 140 214 180 C206 206 150 214 110 208 C90 206 76 200 70 190Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g stroke="${m.light}" stroke-width="2.5" fill="none" opacity=".7"><path d="M112 110 Q124 150 116 204"/><path d="M150 102 Q164 150 156 206"/><path d="M186 112 Q200 150 192 196"/></g>
-  <path d="M110 112 Q140 104 170 110" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".35"/>
-  ${leg('M96 190 L90 212 L76 226')}${leg('M124 200 L130 214 L122 228')}
-  <path d="M40 124 C38 94 62 76 90 80 C116 84 124 108 118 130 C110 150 80 156 60 148 C48 142 42 134 40 124Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M60 84 Q50 58 36 50" stroke="${dk}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M80 80 Q82 54 96 42" stroke="${dk}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="36" cy="50" r="5" fill="#ff4fd8" stroke="${dk}" stroke-width="2"/><circle cx="96" cy="42" r="5" fill="#ff4fd8" stroke="${dk}" stroke-width="2"/>
-  <g fill="#a99ad8" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"><path d="M52 138 Q26 140 20 158 Q34 150 56 148Z"/><path d="M66 146 Q50 166 60 178 Q62 162 74 152Z"/></g>
-  <path d="M98 120 L84 72" stroke="${dk}" stroke-width="12" stroke-linecap="round"/><path d="M98 120 L84 72" stroke="#5b4d80" stroke-width="7" stroke-linecap="round"/>
-  <path d="M84 72 C66 48 34 44 12 58 C36 56 60 62 80 86Z" fill="#b7a8e8" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/>
-  <g fill="#fff" opacity=".8"><path d="M22 58 l4 5 l3 -6z"/><path d="M36 54 l4 6 l3 -6z"/><path d="M50 54 l4 6 l3 -6z"/></g>
-  <g class="m-eyes"><g class="vg-glow" filter="url(#${p}gl)"><ellipse cx="64" cy="108" rx="14" ry="11" fill="#ff2d55"/><ellipse cx="94" cy="104" rx="15" ry="12" fill="#ff2d55"/></g>
-  <ellipse cx="64" cy="108" rx="11" ry="9" fill="#ff3b5c" stroke="#5a0016" stroke-width="2"/><ellipse cx="94" cy="104" rx="12" ry="10" fill="#ff3b5c" stroke="#5a0016" stroke-width="2"/>
-  <ellipse cx="60" cy="105" rx="4" ry="3" fill="#fff"/><ellipse cx="90" cy="100" rx="4.5" ry="3.2" fill="#fff"/><circle cx="68" cy="112" r="1.8" fill="#ffd1dc"/><circle cx="99" cy="108" r="2" fill="#ffd1dc"/>
-  <circle cx="72" cy="90" r="4" fill="#ff3b5c" stroke="#5a0016" stroke-width="1.5"/><circle cx="92" cy="88" r="4" fill="#ff3b5c" stroke="#5a0016" stroke-width="1.5"/></g>
-  ${omOuch([[64,108,9],[94,104,9]])}
-  <circle class="mk-core" cx="130" cy="150" r="1" fill="none"/><circle class="mk-mouth" cx="40" cy="148" r="1" fill="none"/>`;
-  return omSvg('vugsect',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4"/></filter>`); }
-
-/* 流星怪獸 特萊加隆: friendly black-and-gold mecha tiger partner with blade fins and a pentagon chest light */
-function trigaronSVG(p){ const m=MONS.trigaron, dk=m.dark, bd=`url(#${p}bd)`, G=m.gold, GD='#a87400';
-  const legP=(x)=>`<path d="M${x-12} 150 L${x-14} 204 L${x+10} 204 L${x+12} 150Z" fill="${bd}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><path d="M${x-10} 170 L${x+10} 170" stroke="${m.light}" stroke-width="2"/><path d="M${x-13} 162 L${x+13} 160 L${x+8} 176 L${x-9} 176Z" fill="${G}" stroke="${GD}" stroke-width="1.8" stroke-linejoin="round"/><path d="M${x-20} 204 L${x+14} 204 L${x+16} 218 L${x-24} 218Z" fill="#3a3f48" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><g fill="${G}" stroke="${GD}" stroke-width="1.5" stroke-linejoin="round"><path d="M${x-24} 218 l-6 4 l10 0z"/><path d="M${x-12} 218 l-5 5 l9 0z"/></g>`;
-  const inner=`
-  <g class="m-spark" stroke="#ffe14d" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M150 36 l6 8 l-5 3 l7 9"/><path d="M214 72 l-7 6 l5 4 l-8 6"/><path d="M104 40 l5 7 l-4 3 l6 8"/></g>
-  <path d="M204 132 Q226 124 230 100" stroke="${dk}" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M204 132 Q226 124 230 100" stroke="#4a505c" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="8 3"/>
-  <path d="M222 104 L238 70 L234 108Z" fill="${G}" stroke="${GD}" stroke-width="2" stroke-linejoin="round"/>
-  ${legP(186)}${legP(158)}
-  <path d="M110 94 L136 46 L142 96Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M142 96 L176 54 L172 102Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M172 104 L212 76 L198 118Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M52 122 C60 98 100 90 140 94 C176 96 204 106 210 128 C212 152 196 166 170 168 L84 168 C62 164 48 146 52 122Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <g stroke="${m.light}" stroke-width="2" fill="none"><path d="M96 104 L100 164"/><path d="M136 100 L138 166"/><path d="M172 104 L170 164"/><path d="M104 132 L166 132"/></g>
-  <path d="M100 100 Q140 94 184 104" stroke="#9aa2b0" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
-  ${legP(106)}${legP(74)}
-  <path d="M86 112 L126 78 L118 124Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/>
-  <polygon points="${pent(80,142,11)}" fill="#3a3f48" stroke="${dk}" stroke-width="2"/><polygon points="${pent(80,142,10)}" fill="#ffb000" filter="url(#${p}gl)"/><polygon points="${pent(80,142,7)}" fill="#ffd66b" stroke="#fff" stroke-width="1"/>
-  <path d="M52 76 L90 40 L76 80Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M68 74 L108 52 L88 84Z" fill="${G}" stroke="${GD}" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M20 110 C18 86 38 70 62 72 C86 74 96 92 92 112 C88 130 62 138 42 134 C28 130 20 122 20 110Z" fill="${bd}" stroke="${dk}" stroke-width="3"/>
-  <path d="M20 112 C26 104 46 104 60 110 C58 124 44 132 30 128 C22 124 20 118 20 112Z" fill="#dfe3ea" stroke="${dk}" stroke-width="2.5"/>
-  <path d="M24 122 L56 120" stroke="${dk}" stroke-width="2"/><path d="M28 120 l3 -5 l3 5z M38 120 l3 -5 l3 5z M48 119 l3 -5 l3 5z" fill="#fff"/>
-  <path d="M40 76 L60 78" stroke="${G}" stroke-width="3" stroke-linecap="round"/>
-  <g class="m-eyes">${omEye(46,94,10,dk,'#ff9d00')}${omEye(70,92,9,dk,'#ff9d00')}</g>
-  ${omOuch([[46,94,8],[70,92,7]])}
-  <path d="M34 80 L56 86" stroke="${dk}" stroke-width="4.5" stroke-linecap="round"/><path d="M62 82 L80 78" stroke="${dk}" stroke-width="4" stroke-linecap="round"/>
-  <circle class="mk-core" cx="130" cy="132" r="1" fill="none"/><circle class="mk-mouth" cx="24" cy="116" r="1" fill="none"/>`;
-  return omSvg('trigaron',p,m,inner,`<filter id="${p}gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>`); }
 
 /* ===== GAME LOGIC ===== */
 const $ = (s, r) => (r||document).querySelector(s);
@@ -1504,14 +1181,15 @@ function makeChoices(a,b){ const ans=a*b; const set=[ans];
   return shuffle(set); }
 
 /* ---------- HOME ---------- */
-const HOME_MONS=['dada','graim','pegunos','kanegon','gedrago','ohebinushi','therizirus','dugrid','rekiness','vugsect','trigaron','fire']; let homeMonIdx=0;
+const HOME_MONS=['starlord','heidragon','thundwolf','holyturt','phoenix','ninjacat','steeltiran','flamecrab','seaking','illusdemon']; let homeMonIdx=0;
 function setHomeMon(){ const t=HOME_MONS[homeMonIdx%HOME_MONS.length]; homeMonIdx++; $('#homeMon').innerHTML='<div class="mon-bob">'+monsterSVG(t,'hm'+homeMonIdx)+'</div><div class="hs-monname">'+MONS[t].name+'</div>'; }
-function setHomeHeroPose(){ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['','pose-punch','pose-win','pose-disc','pose-beam','pose-kick']); h.setAttribute('class', pose?('hero '+pose):'hero'); }
+function setHomeHeroPose(){ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['','pose-punch','pose-win','pose-disc','pose-beam','pose-kick']);
+  const keep=['hero','henshin-2']; if(pose) keep.push(pose); h.setAttribute('class', keep.join(' ')); }
 function initHome(){
   $('#homeHero').innerHTML = '<div class="hero-bob">'+heroSVG('hh')+'</div><div class="hs-name">超人奧米加</div>';
   setHomeMon(); setHomeHeroPose();
-  $('#homeHero').addEventListener('click', ()=>{ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['pose-punch','pose-win','pose-disc','pose-beam','pose-kick','pose-tuck']);
-    h.setAttribute('class','hero '+pose); Sfx.whoosh(); setTimeout(()=>setHomeHeroPose(), 700); });
+  $('#homeHero').addEventListener('click', ()=>{ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['pose-punch','pose-win','pose-disc','pose-beam','pose-kick']);
+    h.setAttribute('class','hero henshin-2 '+pose); Sfx.whoosh(); setTimeout(()=>setHomeHeroPose(), 700); });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
     else if(g==='setup-battle') openSetup('battle');
@@ -1598,8 +1276,9 @@ function initSetup(){
 }
 
 /* ---------- BATTLE ---------- */
-const NORMALS = ['fire','ice','thunder','rock','poison','sea'];
-const OMEGA_NORMALS = ['graim','dugrid','pegunos','therizirus','ohebinushi','gedrago','rekiness','trigaron'];
+const NORMALS = ['lavaover','holyturt','sandwyrm','thundwolf','ninjacat','icetiran','phoenix','mtngod','manflower','seaking','deathscorp','nightmare','galmoth','flamecrab'];
+const MID_BOSSES = ['steeltiran','illusdemon','heidragon'];
+const OMEGA_NORMALS = NORMALS.slice();
 function pickFresh(list, avoid){ const c=list.filter(t=>(avoid||[]).indexOf(t)<0); const fresh=c.filter(t=>!(DATA.dex&&DATA.dex[t])); return pick(fresh.length?fresh:c); }
 function dexAdd(t){ if(!DATA.dex) DATA.dex={}; const first=!DATA.dex[t]; DATA.dex[t]=(DATA.dex[t]||0)+1; save(); return first; }
 const MOVES = {
@@ -1612,7 +1291,7 @@ const TIMED_MOVES = ['beam','kick','disc','punch'];
 const B = {token:0, busy:true, input:'', recent:[]};
 let stageEl, heroWrap, monWrap, fxLayer, monCounter=0;
 const K = () => B._cine ? 2.1 : (B.mode==='timed' ? .65 : 1);
-const HEN_LABEL = ['','基本形態','流星護肩','流星軌跡','虹晶覺醒','奧米加翼光'];
+const HEN_LABEL = ['','銀光形態','紅銀覺醒','藍披流星','金焰超能','奧米加翼光'];
 function heroSvgEl(){ return $('#heroBob .hero'); }
 function monSvgEl(){ return $('#monBob .mon'); }
 function mk(sel, root){ return (root||stageEl).querySelector(sel); }
@@ -1632,11 +1311,9 @@ function syncHenshin(){
   B._hen=st; applyDisrupt();
 }
 function disruptKind(type){
-  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',graim:'rock',
-    boss:'shadow',dada:'shadow',poison:'shadow',dugrid:'shadow',vugsect:'shadow',
-    sea:'ice',pegunos:'ice',therizirus:'thunder',ohebinushi:'shadow',
-    gedrago:'shadow',rekiness:'thunder',trigaron:'thunder',kanegon:'rock'};
-  return map[type]||'shadow';
+  const m=MONS[type]; if(!m) return 'shadow';
+  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',poison:'shadow',shadow:'shadow'};
+  return map[m.elem]||'shadow';
 }
 function clearDisrupt(){ const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); } }
 function applyDisrupt(){
@@ -1678,7 +1355,7 @@ async function chargePose(pose, ms){
 }
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
   const hh = Math.min(h*.66, w*.38*1.5); heroWrap.style.height=hh+'px'; heroWrap.style.width=(hh/1.5)+'px';
-  const boss = !!(MONS[B.type]&&MONS[B.type].boss); const mh = (B.type==='dada'||B.type==='ohebinushi') ? Math.min(h*.82, w*.5) : Math.min(h*(boss?.72:.6), w*(boss?.5:.44)); monWrap.style.height=mh+'px'; monWrap.style.width=mh+'px'; }
+  const boss = !!(MONS[B.type]&&MONS[B.type].boss); const mh = Math.min(h*(boss?.72:.6), w*(boss?.5:.44)); monWrap.style.height=mh+'px'; monWrap.style.width=mh+'px'; }
 
 function fxEl(cls, html){ const e=document.createElement('div'); e.className=cls; if(html) e.innerHTML=html; fxLayer.appendChild(e); return e; }
 function shake(px){ const a=px||8; play(stageEl,[{transform:'translate(0,0)'},{transform:'translate('+(-a)+'px,'+(a*.5)+'px)'},{transform:'translate('+a+'px,'+(-a*.4)+'px)'},{transform:'translate('+(-a*.6)+'px,'+(-a*.3)+'px)'},{transform:'translate('+(a*.4)+'px,'+(a*.3)+'px)'},{transform:'translate(0,0)'}],{duration:420}); }
@@ -1826,18 +1503,11 @@ function chooseMove(first){
   const mv=B.deck.shift(); B.lastMove=mv; return mv; }
 
 function damageMonster(dmg){ B.hp=Math.max(0,B.hp-dmg); $('#hpFill').style.width=(100*B.hp/B.maxHp)+'%';
-  const ms=monSvgEl(); if(!ms) return; if(B.type!=='dada'){ ms.classList.add('ouch'); setTimeout(()=>{ if(B.hp>0) ms.classList.remove('ouch'); }, 650); }
+  const ms=monSvgEl(); if(!ms) return; ms.classList.add('ouch'); setTimeout(()=>{ if(B.hp>0) ms.classList.remove('ouch'); }, 650);
   play(ms,[{transform:'translateX(0) rotate(0)',filter:'brightness(1)'},{transform:'translateX(8%) rotate(7deg)',filter:'brightness(2.6)'},{transform:'translateX(-3%) rotate(-2deg)',filter:'brightness(1)'},{transform:'translateX(4%) rotate(3deg)',filter:'brightness(2)'},{transform:'translateX(0) rotate(0)',filter:'brightness(1)'}],{duration:560});
-  const t=relPos(monWrap); floatText('dmg','-'+dmg, t.x, t.t+t.h*.15);
-  if(B.type==='dada'){ ms.classList.remove('ouch'); dadaSwitch(true); }
-  if(B.type==='kanegon'){ kanegonCount(); const mo=relPos(mk('.mk-mouth',monWrap)); FX.burst(mo.x,mo.y,{n:3,angle:-Math.PI/2,spread:.8,speed:7,min:4,colors:['#ffd23f'],shape:'coin',size:9,life:60,gravity:.3,drag:.99}); Sfx.coin(); } }
-function kanegonCount(){ const c=$('#monBob .k-count'); if(c) c.textContent=String(Math.max(0,Math.round(B.hp))).padStart(3,'0'); }
-function dadaSwitch(announce){ const ms=monSvgEl(); if(!ms||B.type!=='dada') return; const faces=['face-a','face-b','face-c']; const cur=faces.findIndex(f=>ms.classList.contains(f)); const nx=faces[(cur+1)%3];
-  const hd=ms.querySelector('.d-head'); if(hd){ hd.classList.remove('flip'); void hd.getBoundingClientRect(); hd.classList.add('flip'); }
-  setTimeout(()=>{ faces.forEach(f=>ms.classList.remove(f)); ms.classList.add(nx); }, 170); Sfx.poof();
-  if(announce){ const p=relPos(mk('.d-head',monWrap)); setTimeout(()=>floatText('ouchtxt','變面！',p.x+p.w*.6,p.t-10),120); } }
+  const t=relPos(monWrap); floatText('dmg','-'+dmg, t.x, t.t+t.h*.15); }
 async function monsterAttack(){
-  const s=MONS[B.type], type=B.type, msv=monSvgEl(); Sfx.growl();
+  const s=MONS[B.type], elem=s.elem||'shadow', msv=monSvgEl(); Sfx.growl();
   const o=()=>relPos(mk('.mk-mouth',monWrap)||mk('.mk-core',monWrap));
   const tHero=()=>relPos(mk('.mk-chest',heroWrap));
   const lunge=()=>play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-14%) rotate(-7deg)',offset:.4},{transform:'translateX(0)'}],{duration:720*K()});
@@ -1846,220 +1516,77 @@ async function monsterAttack(){
     play(heroSvgEl(),[{transform:'rotate(0)',filter:'brightness(1)'},{transform:'rotate(-10deg) translateX(-8px)',filter:'brightness(2.2)'},{transform:'rotate(0)',filter:'brightness(1)'}],{duration:620});
     const hp=relPos(heroWrap); floatText('ouchtxt', label||pick(['哎呀！','好痛呀！','唔緊要！']), hp.x, hp.t+hp.h*.05);
   };
-  const shootOrb=(style, label)=>{
-    return (async()=>{
-      const L=lunge(); await sleep(240*K());
-      const oo=o(), th=tHero(); const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px'; Sfx.whoosh();
-      await play(orb,[{transform:'translate(0,0) scale(.5)'},{transform:'translate('+((th.x-oo.x)/2)+'px,'+((th.y-oo.y)/2-40)+'px) scale(1)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.35)'}],{duration:480*K(),easing:'ease-in',fill:'forwards'}); rm(orb);
-      hitHero(label); await L; await sleep(200*K());
-    })();
-  };
-
-  if(type==='dada'){
-    dadaSwitch(false); showMoveName('三面幻影・次元亂光！','banner',1200);
-    const L=lunge(); await sleep(200*K());
-    for(let i=0;i<3;i++){ dadaSwitch(false); const oo=o(), th=tHero();
-      const orb=fxEl('orb'); orb.style.background='repeating-radial-gradient(circle,#fff 0 4px,'+s.shot+' 4px 8px)'; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
-      play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:320*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
-      await sleep(140*K()); }
-    hitHero('三面同擊！',['#fff',s.shot,'#ff6fb0']); await L; await sleep(200*K()); return;
+  showMoveName(s.nick+'！','banner',1200);
+  const L=lunge(); await sleep(220*K());
+  const oo=o(), th=tHero();
+  const style = elem==='fire' ? 'radial-gradient(circle,#fff 0 20%,#ff6a00 50%,transparent 72%)'
+    : elem==='ice' ? 'radial-gradient(circle,#fff 0 20%,#7ff0ff 50%,transparent 72%)'
+    : elem==='thunder' ? 'radial-gradient(circle,#fff 0 20%,#fde047 50%,transparent 72%)'
+    : elem==='rock' ? 'radial-gradient(circle,#fff 0 20%,#a8a29e 50%,transparent 72%)'
+    : elem==='poison' ? 'radial-gradient(circle,#fff 0 20%,#a3e635 50%,transparent 72%)'
+    : 'radial-gradient(circle,#fff 0 20%,'+s.shot+' 50%,transparent 72%)';
+  if(elem==='shadow' && s.final){
+    for(let i=0;i<3;i++){ const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
+      play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:300*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
+      await sleep(120*K()); }
+    hitHero(s.nick+'！',[s.shot,'#fff','#ff7ad9']); await L; await sleep(180*K()); return;
   }
-  if(type==='kanegon'){
-    if(msv){ msv.classList.add('open'); setTimeout(()=>msv.classList.remove('open'),900); }
-    showMoveName('銅臭大爆發・偽幣彈幕！','banner',1200);
-    const L=lunge(); await sleep(220*K()); const oo=o(), th=tHero();
-    for(let i=0;i<8;i++){ FX.burst(oo.x,oo.y,{n:3,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.45,speed:10,min:5,colors:['#ffd23f','#fff3a8'],shape:'coin',size:11,life:55,gravity:.2,drag:.99}); if(i%2===0) Sfx.coin(); await sleep(55*K()); }
-    hitHero('金幣暴雨！',['#ffd23f','#fff']); await L; await sleep(200*K()); return;
+  if(elem==='thunder'){
+    for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
+      play(sl,[{transform:'rotate('+(-35+i*20)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-35+i*20)+'deg) scaleX(1)',opacity:0}],{duration:260}).then(()=>rm(sl)); Sfx.shing(); await sleep(45*K()); }
+    hitHero(s.nick+'！',[s.shot,'#fff','#fde047']); await L; await sleep(160*K()); return;
   }
-  if(type==='graim'){
-    showMoveName('地獄鑽頭・地脈貫通裂！','banner',1200); Sfx.whoosh();
-    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-24%) rotate(-14deg)',offset:.45},{transform:'translateX(0) rotate(0)'}],{duration:800*K()});
-    await sleep(300*K()); const th=tHero();
-    for(let i=0;i<3;i++){ FX.burst(th.x+rand(-20,20),th.y+rand(-10,10),{n:10,speed:9,colors:['#ff8a1c','#ffe066','#a8a29e'],shape:'star',size:8}); await sleep(60*K()); }
-    hitHero('貫通！',['#ff8a1c','#fff','#ffd84d']); shake(12); await L; await sleep(180*K()); return;
-  }
-  if(type==='dugrid'){
-    showMoveName('鈾金大口・毒瓣吞噬！','banner',1200);
-    if(msv){ msv.classList.add('ouch'); setTimeout(()=>msv.classList.remove('ouch'),500); }
-    const L=lunge(); await sleep(200*K()); const oo=o(), th=tHero();
-    for(let i=0;i<5;i++){ FX.burst(oo.x,oo.y,{n:4,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.5,speed:8,colors:['#a3e635','#c084fc','#d9f99d'],size:8,life:40}); await sleep(70*K()); }
-    hitHero('吞噬！',['#a3e635','#c084fc']); await L; await sleep(180*K()); return;
-  }
-  if(type==='pegunos'){
-    showMoveName('無重蒼穹・羽翼俯衝斬！','banner',1200);
-    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-6%,-32%)',offset:.3},{transform:'translate(-20%,-8%) rotate(-10deg)',offset:.55},{transform:'translate(0,0)'}],{duration:950*K()});
-    await sleep(420*K()); hitHero('俯衝斬！',['#bfefff','#fff','#7fe3ff']);
-    const th=tHero(); FX.spiral(th.x,th.y,{n:24,r:18,speed:6,colors:['#bfefff','#fff'],size:6}); 
-    await play(heroWrap,[{transform:'translateY(0)'},{transform:'translateY(-20%)',offset:.4},{transform:'translateY(0)'}],{duration:700*K()});
-    await L; await sleep(150*K()); return;
-  }
-  if(type==='therizirus'){
-    showMoveName('赤鐮隱形・千裂一閃！','banner',1200);
-    await play(monWrap,[{opacity:1},{opacity:.12}],{duration:260*K(),fill:'forwards'});
-    await sleep(180*K());
-    await play(monWrap,[{transform:'translateX(0)',opacity:.12},{transform:'translateX(-30%)',opacity:1,offset:.45},{transform:'translateX(0)',opacity:1}],{duration:720*K()});
-    const th=tHero(); for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
-      play(sl,[{transform:'rotate('+(-40+i*22)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-40+i*22)+'deg) scaleX(1)',opacity:0}],{duration:280}).then(()=>rm(sl)); Sfx.shing(); await sleep(50*K()); }
-    hitHero('千裂！',['#ff4d6d','#fff','#ff7ac8']); await sleep(200*K()); return;
-  }
-  if(type==='ohebinushi'){
-    showMoveName('神州長頸・九天一嘯掃！','banner',1200);
-    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(-22deg) translateX(-12%)',offset:.35},{transform:'rotate(12deg) translateX(-6%)',offset:.65},{transform:'rotate(0)'}],{duration:900*K()});
-    await sleep(320*K()); hitHero('九天掃！',['#ffd166','#fff','#efe4c4']); shake(14);
-    FX.burst(tHero().x,tHero().y,{n:28,speed:10,colors:['#ffd166','#fff'],shape:'star',size:9}); await L; await sleep(150*K()); return;
-  }
-  if(type==='gedrago'){
-    showMoveName('粉紅毛毛・友情爆走衝！','banner',1200);
-    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.2) translateX(-22%)',offset:.5},{transform:'scale(1) translateX(0)'}],{duration:800*K()});
-    await sleep(280*K()); hitHero('爆走！',['#ff8fc8','#fff','#ffd1e8']);
-    FX.burst(tHero().x,tHero().y,{n:36,speed:8,colors:['#ff8fc8','#fff','#ffd1e8'],size:8,shape:'star'}); await L; await sleep(150*K()); return;
-  }
-  if(type==='vugsect'){
-    showMoveName('甲殼雙鐮・破界破壞光！','banner',1200);
-    const L=lunge(); await sleep(220*K()); const oo=o(), th=tHero();
-    makeBeam(oo,th,28,'super',900); Sfx.beam();
-    await sleep(200*K()); hitHero('破界！',['#ff3b6b','#fff','#c4a0ff']); FX.ring(th.x,th.y,'#ff3b6b',36); await L; await sleep(180*K()); return;
-  }
-  if(type==='boss'){
-    showMoveName('千芒閃光・混沌吞噬！','banner',1300);
-    const L=lunge(); await sleep(200*K()); const oo=o(), th=tHero();
-    for(let i=0;i<5;i++){
-      const orb=fxEl('orb'); orb.style.background='radial-gradient(circle,#fff 0 15%,#ff4d6d 35%,#5b2aa8 55%,rgba(0,0,0,0) 70%)';
-      orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
-      const jx=rand(-30,30), jy=rand(-40,20);
-      play(orb,[{transform:'translate(0,0) scale(.3)'},{transform:'translate('+(th.x-oo.x+jx)+'px,'+(th.y-oo.y+jy)+'px) scale(1.1)'}],{duration:360*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
-      await sleep(90*K());
-    }
-    hitHero('混沌吞噬！',['#ff4d6d','#c4a0ff','#fff']); FX.spiral(th.x,th.y,{n:30,r:22,speed:7,colors:['#ff4d6d','#c4a0ff','#fff'],size:7}); await L; await sleep(200*K()); return;
-  }
-  if(type==='rekiness'){
-    showMoveName('流星守護・虹晶特訓彈！','banner',1200);
-    return shootOrb('radial-gradient(circle,#fff 0 18%,#b58cff 40%,#2f7fe0 60%,rgba(0,0,0,0) 72%)','虹晶特訓！');
-  }
-  if(type==='trigaron'){
-    showMoveName('黑金流星・翼刃特訓斬！','banner',1200);
-    const L=lunge(); await sleep(220*K()); const th=tHero();
-    for(let i=0;i<3;i++){ const len=Math.max(monWrap.clientWidth*1.1,150); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
-      play(sl,[{transform:'rotate('+(-28+i*28)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-28+i*28)+'deg) scaleX(1.1)',opacity:0}],{duration:320}).then(()=>rm(sl)); Sfx.shing(); await sleep(80*K()); }
-    hitHero('翼刃斬！',['#ffc21a','#fff','#6a7280']); FX.burst(th.x,th.y,{n:22,speed:9,colors:['#ffc21a','#fff'],shape:'star',size:8}); await L; await sleep(150*K()); return;
-  }
-  if(type==='fire'){
-    showMoveName('熔岩甲獸・地心噴火！','banner',1200);
-    const L=lunge(); await sleep(200*K()); const th=tHero(); const oo=o();
-    for(let i=0;i<6;i++){
-      FX.burst(oo.x+rand(-16,16),oo.y,{n:5,angle:Math.atan2(th.y-oo.y,th.x-oo.x),spread:.4,speed:9,colors:['#ff6a00','#ffb703','#fff3b0'],size:9,life:45,gravity:.15});
-      if(i%2===0) Sfx.whoosh(); await sleep(70*K());
-    }
-    hitHero('地心噴火！',['#ff6a00','#ffb703','#fff']); flash('#ff8a3d',.35); await L; await sleep(180*K()); return;
-  }
-  if(type==='ice'){
-    showMoveName('絕對零度・霜翼凍結！','banner',1200);
-    const L=play(monWrap,[{transform:'translate(0,0)'},{transform:'translate(-4%,-10%)',offset:.3},{transform:'translate(-12%,0)',offset:.55},{transform:'translate(0,0)'}],{duration:850*K()});
-    await sleep(280*K()); const oo=o(), th=tHero();
-    makeBeam(oo,th,22,'',900); Sfx.beam();
-    await sleep(200*K()); hitHero('凍結！',['#bae6fd','#fff','#7ec8f5']);
-    FX.burst(th.x,th.y,{n:30,speed:6,colors:['#e8f7ff','#bae6fd','#fff'],size:8,life:55,gravity:.05,shape:'star'}); FX.ring(th.x,th.y,'#bae6fd',40);
-    await L; await sleep(180*K()); return;
-  }
-  if(type==='thunder'){
-    showMoveName('十萬伏特・隱身雷鞭！','banner',1200);
-    await play(monWrap,[{opacity:1},{opacity:.18}],{duration:240*K(),fill:'forwards'});
-    await sleep(160*K());
-    const th=tHero(); const oo=(()=>{ const p=relPos(monWrap); return {x:p.x,y:p.y}; })();
-    for(let i=0;i<4;i++){
-      makeBeam({x:oo.x+rand(-20,20),y:oo.y+rand(-30,10)},{x:th.x+rand(-16,16),y:th.y+rand(-12,12)}, 10+i*3, '', 420);
-      Sfx.beam(); FX.burst(th.x,th.y,{n:8,speed:10,colors:['#fde047','#fff','#fff06a'],size:6,shape:'star'}); await sleep(90*K());
-    }
-    await play(monWrap,[{transform:'translateX(0)',opacity:.18},{transform:'translateX(-18%)',opacity:1,offset:.5},{transform:'translateX(0)',opacity:1}],{duration:600*K()});
-    hitHero('雷鞭！',['#fde047','#fff']); flash('#fff06a',.4); await sleep(180*K()); return;
-  }
-  if(type==='rock'){
-    showMoveName('超振動・斷空新月角！','banner',1200); Sfx.whoosh();
-    const L=play(monWrap,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(-20%) rotate(-16deg)',offset:.4},{transform:'translateX(0) rotate(0)'}],{duration:820*K()});
-    await sleep(300*K()); const th=tHero();
-    hitHero('新月角！',['#a8a29e','#fff','#d0d4dc']); shake(14);
-    FX.burst(th.x,th.y,{n:26,speed:11,colors:['#a8a29e','#57534e','#fff'],size:9,shape:'star',gravity:.2}); impactStar(th,'角！');
-    await L; await sleep(180*K()); return;
-  }
-  if(type==='poison'){
-    showMoveName('雙尾纏殺・地底暗殺！','banner',1200);
-    const L=play(monWrap,[{transform:'rotate(0)'},{transform:'rotate(12deg) translateX(-8%)',offset:.3},{transform:'rotate(-14deg) translateX(-14%)',offset:.55},{transform:'rotate(0)'}],{duration:900*K()});
-    await sleep(280*K()); const oo=o(), th=tHero();
-    for(let i=0;i<2;i++){
-      const whip=fxEl('beam'); whip.style.cssText='left:'+oo.x+'px;top:'+(oo.y-4)+'px;width:'+Math.hypot(th.x-oo.x,th.y-oo.y)+'px;height:8px;background:linear-gradient(90deg,#a3e635,#65a30d);transform-origin:0 50%;border-radius:4px';
-      const ang=Math.atan2(th.y-oo.y+(i?20:-20),th.x-oo.x)*180/Math.PI;
-      play(whip,[{transform:'rotate('+ang+'deg) scaleX(0)',opacity:1},{transform:'rotate('+ang+'deg) scaleX(1)',opacity:1,offset:.4},{transform:'rotate('+ang+'deg) scaleX(1)',opacity:0}],{duration:400*K()}).then(()=>rm(whip));
-      await sleep(120*K());
-    }
-    hitHero('纏殺！',['#a3e635','#c084fc','#fff']); FX.burst(th.x,th.y,{n:20,speed:7,colors:['#a3e635','#c084fc'],size:7}); await L; await sleep(180*K()); return;
-  }
-  if(type==='sea'){
-    showMoveName('深淵黑洞・撕空一咬！','banner',1200);
-    const L=play(monWrap,[{transform:'scale(1) translateX(0)'},{transform:'scale(1.12) translateX(-24%)',offset:.45},{transform:'scale(1) translateX(0)'}],{duration:820*K()});
-    await sleep(280*K()); const th=tHero();
-    FX.spiral(th.x,th.y,{n:28,r:16,speed:-8,colors:['#38bdf8','#0e7490','#fff'],size:7,life:40});
-    hitHero('撕空咬！',['#38bdf8','#fff','#9ff3ff']); shake(11); flash('#38bdf8',.3);
-    await L; await sleep(180*K()); return;
-  }
-  showMoveName(s.nick+'！','banner',1000);
-  return shootOrb('radial-gradient(circle,#fff 0 22%,'+s.shot+' 45%,rgba(255,255,255,0) 72%)','反擊！');
+  const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px'; Sfx.whoosh();
+  await play(orb,[{transform:'translate(0,0) scale(.5)'},{transform:'translate('+((th.x-oo.x)/2)+'px,'+((th.y-oo.y)/2-40)+'px) scale(1)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.35)'}],{duration:480*K(),easing:'ease-in',fill:'forwards'}); rm(orb);
+  hitHero(s.nick+'！',[s.shot,'#fff',s.light]); await L; await sleep(180*K());
 }
+
 async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
   FX.burst(t.x,t.y,{n:60,speed:9,shape:'star',colors:['#bff3ff','#fff','#ffe066','#9ad8ff'],size:11,life:80,gravity:.05}); FX.ring(t.x,t.y,'#bff3ff',36);
   showMoveName('特訓完成！','banner',1400);
   await play(monWrap,[{transform:'scale(1) translateY(0)',opacity:1,filter:'brightness(1)'},{transform:'scale(1.08) translateY(-4%)',opacity:1,filter:'brightness(1.8)',offset:.35},{transform:'scale(.18) translateY(60%)',opacity:0,filter:'brightness(3)'}],{duration:1100*K(),easing:'ease-in',fill:'forwards'});
   Sfx.star(2); await sleep(500*K()); }
-async function cinematicDadaFinish(){
+async function cinematicFinalFinish(){
   const cine=$('#cinema'), battle=$('#battle'), ms=monSvgEl();
   B._cine=true;
-  cine.innerHTML='<div class="cine-dim"></div><div class="cine-letter top"></div><div class="cine-letter bot"></div><div class="cine-cap">最終決戰・三面亂光粉碎！</div>';
+  cine.innerHTML='<div class="cine-dim"></div><div class="cine-letter top"></div><div class="cine-letter bot"></div><div class="cine-cap">最終決戰・流星天墜粉碎！</div>';
   cine.classList.add('on'); cine.setAttribute('aria-hidden','false');
   if(battle) battle.classList.add('battle-cine');
   Sfx.charge(); flash('#fff',.55);
   await sleep(420);
-  const fs=['face-a','face-b','face-c']; let k=0;
-  const fiv=setInterval(()=>{ if(!ms) return; fs.forEach(f=>ms.classList.remove(f)); ms.classList.add(fs[k++%3]); },150);
   Sfx.noise(.9,{vol:.25,type:'lowpass',f:350});
   await play(ms,[{transform:'translate(0,0) scale(1)',filter:'brightness(1)'},{transform:'translate(-3%,1%) scale(1.02)',filter:'brightness(2.2)'},{transform:'translate(3%,-1%) scale(1)',filter:'brightness(1.2)'},{transform:'translate(-2%,0) scale(1.04)',filter:'brightness(2.8)'},{transform:'translate(0,0) scale(1.06)',filter:'brightness(3.2)'}],{duration:1700});
-  clearInterval(fiv);
   Sfx.explode(); flash('#fff',.95); shake(28);
   const t=relPos(mk('.mk-core',monWrap));
-  FX.burst(t.x,t.y,{n:110,speed:16,shape:'star',colors:['#ffe066','#fff','#ff6bd6','#6bf0ff','#b58cff'],size:15,life:95,gravity:.06});
-  FX.ring(t.x,t.y,'#fff',40); FX.ring(t.x,t.y,'#ff7ad9',56); FX.ring(t.x,t.y,'#7ff0ff',72);
+  FX.burst(t.x,t.y,{n:110,speed:16,shape:'star',colors:['#ffe066','#fff','#ff6bd6','#6bf0ff','#fb923c'],size:15,life:95,gravity:.06});
+  FX.ring(t.x,t.y,'#fff',40); FX.ring(t.x,t.y,'#ff7ad9',56); FX.ring(t.x,t.y,'#fb923c',72);
   play(monWrap,[{transform:'scale(1) rotate(0)',opacity:1},{transform:'scale(1.7) rotate(24deg)',opacity:0}],{duration:980,fill:'forwards'});
-  showMoveName('奧米加・次元終焉！','banner',2200);
+  showMoveName('奧米加・星煌終焉！','banner',2200);
   await sleep(2000);
   clearCinema();
 }
 async function monsterExplode(){
   if(MONS[B.type].friend){ await friendRest(); return; }
-  if(B.type==='dada' && henshinStage()>=4 && B.mode!=='timed'){ await cinematicDadaFinish(); return; }
-  const ms=monSvgEl(); if(B.type!=='dada') ms.classList.add('ouch'); Sfx.noise(.8,{vol:.2,type:'lowpass',f:400});
-  let fiv=null; if(B.type==='dada'){ const fs=['face-a','face-b','face-c']; let k=0; fiv=setInterval(()=>{ fs.forEach(f=>ms.classList.remove(f)); ms.classList.add(fs[k++%3]); },90); }
-  if(B.type==='kanegon'){ await kanegonCoinSpit(); }
+  if(B.type==='starlord' && henshinStage()>=4 && B.mode!=='timed'){ await cinematicFinalFinish(); return; }
+  const ms=monSvgEl(); ms.classList.add('ouch'); Sfx.noise(.8,{vol:.2,type:'lowpass',f:400});
   await play(ms,[{transform:'translate(0,0)',filter:'brightness(1)'},{transform:'translate(-4%,1%)',filter:'brightness(2.5)'},{transform:'translate(4%,-1%)',filter:'brightness(1)'},{transform:'translate(-4%,0)',filter:'brightness(2.5)'},{transform:'translate(4%,1%)',filter:'brightness(1)'},{transform:'translate(-3%,0)',filter:'brightness(3)'},{transform:'translate(0,0)',filter:'brightness(3)'}],{duration:800*K()});
-  if(fiv) clearInterval(fiv);
   Sfx.explode(); flash('#fff',.85); shake(20); const t=relPos(mk('.mk-core',monWrap));
-  if(B.type==='kanegon') FX.burst(t.x,t.y,{n:30,speed:12,colors:['#ffd23f'],shape:'coin',size:11,life:80,gravity:.25,drag:.99});
   FX.burst(t.x,t.y,{n:80,speed:14,shape:'star',colors:['#ffe066','#fff','#ff6bd6','#6bf0ff','#9dff6b'],size:13,life:75,gravity:.08});
   FX.ring(t.x,t.y,'#fff',32); FX.ring(t.x,t.y,'#ffe066',44);
   play(monWrap,[{transform:'scale(1) rotate(0)',opacity:1},{transform:'scale(1.45) rotate(18deg)',opacity:0}],{duration:520*K(),fill:'forwards'});
-  showMoveName(B.mode==='timed'?'打低咗！':(B.type==='kanegon'?'金幣雨！':'打敗咗！'),'banner',1300);
+  showMoveName(B.mode==='timed'?'打低咗！':'打敗咗！','banner',1300);
   await sleep(1000*K());
 }
-async function kanegonCoinSpit(){ const ms=monSvgEl(); ms.classList.remove('ouch'); ms.classList.add('open'); const mo=relPos(mk('.mk-mouth',monWrap));
-  const tk=B.token; let n=0; const iv=setInterval(()=>{ FX.burst(mo.x,mo.y,{n:4,angle:-Math.PI/2,spread:.9,speed:11,min:6,colors:['#ffd23f'],shape:'coin',size:rand(8,12),life:85,gravity:.32,drag:.99}); if(n++%2===0) Sfx.coin(); },70);
-  floatText('coinfly', B.mode==='timed'?'金幣！':'+30 金幣！', mo.x, mo.y-30);
-  await sleep(1300*K()); clearInterval(iv); if(tk!==B.token) return; if(B.mode!=='timed'){ DATA.stats.coins=(DATA.stats.coins||0)+30; B.gotCoins=30; save(); } }
+
 async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); Sfx.appear();
-  const m=MONS[B.type]; showMoveName(B.type==='dada'?'三面怪人達達出現！':B.type==='boss'?'大魔王出現！':m.friend?(m.name+'嚟特訓！'):(m.name+'出現！'),'banner',1500);
+  const m=MONS[B.type]; showMoveName(m.final?'最終大頭目・'+m.name+'出現！':m.boss?(m.short||m.name)+'出現！':(m.name+'出現！'),'banner',1500);
   await play(monWrap,[{transform:'translateX(130%)',opacity:0},{transform:'translateX(-6%)',opacity:1,offset:.7},{transform:'translateX(0)',opacity:1}],{duration:950*K(),easing:'ease-out'});
   shake(5); Sfx.hit(); }
 
 function renderRoundHud(){
   if(B.mode==='timed'){ $('#roundLbl').innerHTML='<div class="heroname">超人奧米加</div><span class="timerbox" id="timerBox">'+Math.ceil(B.timeLeft)+'秒</span>'; $('#roundDots').innerHTML='<span>答啱：<b id="scoreLbl">'+B.score+'</b> 題</span>'; return; }
-  $('#roundLbl').innerHTML = '<div class="heroname">超人奧米加</div>'+(B.type==='dada' ? '最終關：達達！' : MONS[B.type].boss ? '第 '+(B.round+1)+' 關：'+(MONS[B.type].short||'頭目')+'！' : '第 '+(B.round+1)+' 關');
-  $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(MONS[t].boss&&t!=='dada'?'boss ':'')+(t==='dada'?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join(''); }
+  $('#roundLbl').innerHTML = '<div class="heroname">超人奧米加</div>'+(MONS[B.type].final ? '最終關：'+MONS[B.type].name+'！' : MONS[B.type].boss ? '第 '+(B.round+1)+' 關：'+(MONS[B.type].short||'頭目')+'！' : '第 '+(B.round+1)+' 關');
+  $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(MONS[t].boss&&!MONS[t].final?'boss ':'')+(MONS[t].final?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join(''); }
 function renderCombo(){ const c=$('#combo'); syncChestLight(); syncHenshin();
   if(B.combo>=2){ c.textContent=(B.combo>=8?'超必殺 ':'')+B.combo+' 連擊！'; c.classList.toggle('omega', B.combo>=8); c.classList.add('show'); play(c,[{transform:'translateX(-50%) scale(1.6)'},{transform:'translateX(-50%) scale(1)'}],{duration:300,easing:'ease-out'}); }
   else { c.classList.remove('show','omega'); } }
@@ -2072,17 +1599,17 @@ function startSession(mode, tables){
   if(!$('#heroBob .hero')) $('#heroBob').innerHTML=heroSVG('hb');
   heroWrap.getAnimations().forEach(a=>a.cancel());
   show('battle');
-  if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(OMEGA_NORMALS.concat(NORMALS,['kanegon'])); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
-  else { const x=pickFresh(OMEGA_NORMALS); const y=Math.random()<.7?pickFresh(OMEGA_NORMALS,[x]):pick(NORMALS); B.order=shuffle(['kanegon',x,y]).concat([pickFresh(['vugsect','boss']),'dada']); B.round=0; startRound(B.order[0]); }
+  if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(NORMALS.concat(MID_BOSSES)); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
+  else { const x=pickFresh(NORMALS); const y=pickFresh(NORMALS,[x]); const z=pickFresh(NORMALS,[x,y]); B.order=shuffle([x,y,z]).concat([pickFresh(MID_BOSSES),'starlord']); B.round=0; startRound(B.order[0]); }
 }
 async function startRound(type){
   const tk=B.token; B.type=type; const m=MONS[type];
-  B.maxHp = B.mode==='timed' ? 40 : (type==='dada'?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
+  B.maxHp = B.mode==='timed' ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
   if(B.mode!=='timed'){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; }
   else B.rwrong=0;
   monCounter++; $('#monBob').innerHTML = monsterSVG(type, 'mb'+monCounter);
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
-  B._hen=1; setChestTimer(0); heroPose('idle'); syncHenshin(); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage(); if(type==='kanegon') kanegonCount();
+  B._hen=1; setChestTimer(0); heroPose('idle'); syncHenshin(); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
   await monsterEnter(); if(tk!==B.token) return;
   B.busy=false; nextQuestion(); }
@@ -2132,7 +1659,7 @@ async function submit(){
   }
 }
 function roundWon(){
-  const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const boss=B.type==='dada'; const m=MONS[B.type];
+  const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const boss=!!MONS[B.type].final; const m=MONS[B.type];
   DATA.stats.monsters++; const newDex=dexAdd(B.type); if(m.boss) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
   const asked=Object.keys(B.rtables).map(Number); const upgraded=[];
   asked.forEach(t=>{ const n=B.rtables[t]||0; if(n<3) return; let tier=stars; if(n<5) tier=Math.min(tier,1); else if(n<8) tier=Math.min(tier,2);
@@ -2151,13 +1678,13 @@ function roundWon(){
   } else {
     medalBlock='<div class="rstat">混合練習要每個乘數表答夠幾題先攞勳章！</div>';
   }
-  const html = '<h3>'+(boss?'打敗咗三面怪人達達！':m.friend?'同'+m.name+'特訓完成！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+(m.friend?'<div class="rstat">'+m.name+'係超人奧米加嘅好夥伴！</div>':'')+
+  const html = '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
     medalBlock+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
     '<div class="rstat">最高連擊：<b>'+B.rMaxCombo+'</b></div>'+(B.gotCoins?'<div class="rstat">食錢怪吐出：<b style="color:#ffe14d">'+B.gotCoins+' 個金幣！</b></div>':'')+
     '<div class="rmsg">'+(boss?'超人奧米加大勝利！你係乘數表英雄！':msg)+'</div>'+
-    '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(next==='dada'?'最終關：挑戰三面怪人達達！':MONS[next].boss?'下一關：'+MONS[next].short+'出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
+    '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(MONS[next].final?'最終關：挑戰'+MONS[next].name+'！':MONS[next].boss?'下一關：'+(MONS[next].short||MONS[next].name)+'出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
     '<button class="btn blue small" id="rPick">揀過乘數表</button><button class="btn gray small" id="rHome">返主頁</button></div>';
   showResult(html, stars);
   const rn=$('#rNext'); if(rn) rn.addEventListener('click',()=>{ Sfx.click(); hideResult(); B.round++; startRound(B.order[B.round]); });
@@ -2207,7 +1734,7 @@ function initBattle(){
 /* ---------- PROGRESS ---------- */
 function renderProgress(){
   const s=DATA.stats; const facts=Object.keys(DATA.facts); const mastered=facts.filter(k=>mastery(k)===2).length;
-  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗達達',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
+  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸王',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
   let g='<tr><th>×</th>'+[1,2,3,4,5,6,7,8,9].map(b=>'<th>'+b+'</th>').join('')+'</tr>';
   [1,2,3,4,5,6,7,8,9,10].forEach(a=>{ g+='<tr><th>'+a+'</th>'; for(let b=1;b<=9;b++){ const m=mastery(a+'x'+b); g+='<td class="m'+m+'" title="'+a+'×'+b+'">'+(a*b)+'</td>'; } g+='</tr>'; });
   $('#mgrid').innerHTML=g;
@@ -2224,12 +1751,12 @@ function renderDex(){ const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[
   $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); openDexDetail(c.dataset.dex); })); }
 
 const DEX_BG = {
-  fire:['#5c1a08','#1a0804'], ice:['#1a5a8a','#061828'], thunder:['#8a6200','#1a1200'],
-  rock:['#3a3e46','#121418'], poison:['#2f3618','#0e1208'], sea:['#142430','#061018'],
-  boss:['#2a0f5c','#0a0418'], kanegon:['#6e3710','#1a0c04'], dada:['#222','#050505'],
-  graim:['#2f3238','#101214'], dugrid:['#2a1d14','#120c08'], pegunos:['#0e1f4a','#060c22'],
-  therizirus:['#12151b','#06070a'], ohebinushi:['#1f241d','#0a0c08'], gedrago:['#7d1b4f','#240814'],
-  rekiness:['#123a7a','#061428'], trigaron:['#101216','#060708'], vugsect:['#130d22','#080510']
+  heidragon:['#101014','#2a0a00'], lavaover:['#4a1508','#1a0600'], holyturt:['#14532d','#062418'],
+  sandwyrm:['#6b4e2e','#2a1a08'], thundwolf:['#1a4a7a','#061828'], ninjacat:['#0a0a10','#1a0828'],
+  steeltiran:['#1f2937','#0a0c10'], icetiran:['#1e3a8a','#061028'], phoenix:['#7c2d12','#2a0a00'],
+  mtngod:['#292524','#120e0c'], manflower:['#14532d','#0a1a08'], illusdemon:['#0f172a','#061018'],
+  seaking:['#1e3a8a','#061028'], deathscorp:['#6b4e1e','#2a1808'], nightmare:['#1e0a3c','#0a0418'],
+  galmoth:['#374151','#12141a'], flamecrab:['#7f1d1d','#2a0808'], starlord:['#18181b','#050508']
 };
 function openDexDetail(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
@@ -2287,7 +1814,7 @@ function init(){
   });
 }
 function pressKey(k){ const b=$('#keypad .key[data-k="'+k+'"]'); if(!b) return; b.classList.add('press'); setTimeout(()=>b.classList.remove('press'),110); }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, dadaSwitch:()=>dadaSwitch(true), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, applyDisrupt, cinematicDadaFinish };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, applyDisrupt, cinematicFinalFinish, DEX_ORDER };
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
 
 })();

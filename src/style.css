@@ -74,9 +74,12 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
-.hero .h-armL{transform-origin:52px 100px}
-.hero .h-armR{transform-origin:148px 100px}
-.hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
+.hero .h-armL{transform-origin:70px 130px}
+.hero .h-armR{transform-origin:150px 130px}
+.hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost,
+.hero .h-mark-red,.hero .h-mark-blue,.hero .h-collar,
+.hero .h-cape-red,.hero .h-cape-blue,.hero .h-cape-gold,
+.hero .h-gold-aura,.hero .h-halo,.hero .h-wings{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
 .hero.pose-beam{transform:rotate(-6deg) translateX(4px)}
@@ -96,21 +99,26 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .hero.pose-win{transform:translateY(-2px)}
 .hero.aura .h-aura{display:inline;animation:aura .25s ease-in-out infinite alternate}
 @keyframes aura{from{opacity:.45}to{opacity:.95}}
-/* Five-stage henshin overlays */
-.hero .h-pauldron,.hero .h-meteor,.hero .h-crystal,.hero .h-wings{display:none}
-.hero.henshin-2 .h-pauldron,.hero.henshin-3 .h-pauldron,.hero.henshin-4 .h-pauldron,.hero.henshin-5 .h-pauldron{display:inline}
-.hero.henshin-3 .h-meteor,.hero.henshin-4 .h-meteor,.hero.henshin-5 .h-meteor{display:inline}
-.hero.henshin-4 .h-crystal,.hero.henshin-5 .h-crystal{display:inline}
-.hero.henshin-5 .h-wings{display:inline}
-.hero.henshin-2 .h-aura{display:inline;opacity:.55;fill:#9ee7ff}
-.hero.henshin-3 .h-aura{display:inline;opacity:.7;fill:#7ff0ff}
-.hero.henshin-4 .h-aura{display:inline;opacity:.85;fill:#ff7ad9;animation:aura .2s ease-in-out infinite alternate,rbfill .8s linear infinite}
-.hero.henshin-5 .h-aura{display:inline;opacity:.95;fill:#ffe066;animation:aura .18s ease-in-out infinite alternate,rbfill .45s linear infinite}
-.hero.henshin-3 .h-meteor{animation:mfloat 1.1s ease-in-out infinite alternate}
+/* Five-stage henshin — final chibi cast */
+.hero.henshin-2 .h-mark-red,.hero.henshin-4 .h-mark-red,.hero.henshin-5 .h-mark-red{display:inline}
+.hero.henshin-2 .h-collar,.hero.henshin-3 .h-collar,.hero.henshin-4 .h-collar,.hero.henshin-5 .h-collar{display:inline}
+.hero.henshin-3 .h-mark-blue{display:inline}
+.hero.henshin-3 .h-mark-red{display:none}
+.hero.henshin-3 .h-cape-blue{display:inline}
+.hero.henshin-4 .h-cape-gold{display:inline}
+.hero.henshin-4 .h-gold-aura{display:inline}
+.hero.henshin-5 .h-wings,.hero.henshin-5 .h-halo{display:inline}
+.hero.henshin-2 .h-aura{display:inline;opacity:.45;fill:#9ee7ff}
+.hero.henshin-3 .h-aura{display:inline;opacity:.6;fill:#7ff0ff}
+.hero.henshin-4 .h-aura{display:inline;opacity:.8;fill:#ffe066;animation:aura .2s ease-in-out infinite alternate,rbfill .8s linear infinite}
+.hero.henshin-5 .h-aura{display:inline;opacity:.9;fill:#ffe066;animation:aura .18s ease-in-out infinite alternate,rbfill .45s linear infinite}
+.hero.henshin-4 .h-gold-aura{animation:mfloat 1s ease-in-out infinite alternate}
 .hero.henshin-5 .h-wings{animation:icflap 1.4s ease-in-out infinite alternate}
-.hero.henshin-4{filter:drop-shadow(0 0 10px rgba(255,180,255,.45))}
-.hero.henshin-5{filter:drop-shadow(0 0 14px rgba(255,224,100,.55))}
+.hero.henshin-5 .h-halo{animation:aura .8s ease-in-out infinite alternate}
+.hero.henshin-4{filter:drop-shadow(0 0 10px rgba(255,220,80,.45))}
+.hero.henshin-5{filter:drop-shadow(0 0 14px rgba(127,240,255,.55))}
 .hero.henshin-up{filter:brightness(1.55) drop-shadow(0 0 16px rgba(255,255,255,.9))}
+.hero.pose-kick .h-cape-red,.hero.pose-beam .h-cape-red,.hero.pose-punch .h-cape-red,.hero.pose-win .h-cape-red{display:inline;opacity:.9}
 .hero .h-eyeglow{animation:eyeglow 1.8s ease-in-out infinite alternate}
 @keyframes eyeglow{from{opacity:.45}to{opacity:1}}
 .hero .h-timer,.hero .h-tglow{fill:var(--tc,#5ee7ff);transition:fill .3s}
