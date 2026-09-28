@@ -74,8 +74,8 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
-.hero .h-armL{transform-origin:54px 104px}
-.hero .h-armR{transform-origin:146px 104px}
+.hero .h-armL{transform-origin:52px 100px}
+.hero .h-armR{transform-origin:148px 100px}
 .hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
@@ -418,14 +418,15 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* v3 怪獸圖鑑 */
 .section-t small{font-size:.75em;opacity:.8;margin-left:6px}
 .dex{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin:4px 0 18px}
-.dcard{position:relative;background:rgba(40,46,120,.88);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:6px 4px 8px;text-align:center}
+.dcard{position:relative;background:rgba(40,46,120,.88);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:6px 4px 8px;text-align:center;color:inherit;font:inherit;cursor:pointer;transition:transform .12s,outline-color .12s;outline:2px solid transparent;width:100%}
+.dcard:not(.locked):hover,.dcard:not(.locked):focus-visible{transform:translateY(-2px);outline-color:#ffe14d}
 .dcard .dimg{height:84px}
 .dcard .dimg svg{width:100%;height:100%}
 .dcard .dimg *{animation:none!important}
 .dcard .dname{font-weight:900;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dcard .dn{font-size:12px;opacity:.8}
 .dcard.locked .dimg svg{filter:brightness(0) opacity(.4)}
-.dcard.locked{border-style:dashed;background:rgba(14,18,56,.9)}
+.dcard.locked{border-style:dashed;background:rgba(14,18,56,.9);cursor:default}
 .dcard.locked .dname{opacity:.6}
 .dtag{position:absolute;top:4px;right:4px;font-style:normal;font-size:11px;font-weight:900;padding:1px 6px;border-radius:8px;background:#ef4444}
 .dtag.f{background:#2f7fe0}.dtag.b{background:#7c3aed}.dtag.o{background:#e8483e}
