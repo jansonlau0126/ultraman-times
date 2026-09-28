@@ -8,20 +8,21 @@
   <main>
     <!-- HOME -->
     <section id="home" class="screen active">
-      <div class="wrap">
-        <h1 class="title">超人乘數表</h1>
-        <div class="tagline">超人奧米加打怪獸・一齊學乘數表！</div>
-        <div class="homescene">
-          <div class="hs-hero" id="homeHero" title="撳我！"></div>
-          <div class="vs">VS</div>
-          <div class="hs-mon" id="homeMon"></div>
+      <div class="home-glow" aria-hidden="true"></div>
+      <div class="home-wrap">
+        <h1 class="home-title">超人乘數表</h1>
+        <div class="home-stage" id="homeStage">
+          <div class="home-sparkles" aria-hidden="true"></div>
+          <div class="home-hero" id="homeHero" title="撳我！"></div>
+          <div class="home-pet home-pet-l" id="homePetL"></div>
+          <div class="home-pet home-pet-r" id="homePetR"></div>
         </div>
-        <div class="menu">
-          <button class="btn blue" data-go="learnPick"><span data-icon="book"></span>學習模式<small>讀九因歌</small></button>
-          <button class="btn" data-go="setup-battle"><span data-icon="bolt"></span>打怪獸<small>答啱就出招！</small></button>
-          <button class="btn orange" data-go="setup-timed"><span data-icon="clock"></span>計時挑戰<small>60秒快答</small></button>
-          <button class="btn green" data-go="progress"><span data-icon="medal"></span>我的進度<small>睇勳章</small></button>
+        <div class="home-menu">
+          <button class="home-pill learn" data-go="learnPick">學乘數表</button>
+          <button class="home-pill battle" data-go="setup-battle">打怪獸</button>
+          <button class="home-pill timed" data-go="setup-timed">計時挑戰</button>
         </div>
+        <button class="home-progress" data-go="progress">我的進度</button>
       </div>
     </section>
 

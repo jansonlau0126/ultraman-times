@@ -19,7 +19,67 @@ const ICONS = {
 function icon(name){ return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEach(el=>{ el.innerHTML = icon(el.dataset.icon); }); }
 
-/* Fan-art chibi 超人奧米加 — 五段變身最終定稿 */
+/* Fan-art chibi 超人奧米加 — home splash (matches concept: big head, cape, palm strike) */
+function homeHeroSVG(p){
+  const ol='#1f2438', cy='#5ee7ff';
+  return '<svg class="hero home-hero-art henshin-2" viewBox="0 0 280 360" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
+    '<defs>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#eef3f9"/><stop offset="1" stop-color="#8fa0b8"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#ff7a72"/><stop offset="1" stop-color="#b71c1c"/></linearGradient>'+
+    '<linearGradient id="'+p+'gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff59d"/><stop offset="1" stop-color="#f9a825"/></linearGradient>'+
+    '<filter id="'+p+'gl" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="5"/></filter>'+
+    '<filter id="'+p+'gl2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2.2"/></filter>'+
+    '</defs>'+
+    '<ellipse cx="145" cy="190" rx="120" ry="155" fill="#4de2ff" filter="url(#'+p+'gl)" opacity=".42"/>'+
+    '<ellipse cx="145" cy="185" rx="78" ry="110" fill="#b8f4ff" filter="url(#'+p+'gl)" opacity=".38"/>'+
+    '<g stroke="#7ff0ff" stroke-width="3" fill="none" opacity=".7" filter="url(#'+p+'gl2)">'+
+    '<path d="M60 120 C40 90 55 60 80 85"/><path d="M230 110 C255 80 250 50 220 75"/><path d="M55 220 C30 200 35 250 60 245"/></g>'+
+    '<path d="M110 145 C10 155 -30 240 25 330 C55 280 85 220 115 175 Z" fill="url(#'+p+'rd)" stroke="'+ol+'" stroke-width="2.8" stroke-linejoin="round"/>'+
+    '<path d="M118 150 C55 175 25 250 55 310" stroke="#ffc1c1" stroke-width="4" fill="none" opacity=".5"/>'+
+    '<ellipse cx="145" cy="340" rx="72" ry="9" fill="#000" opacity=".3"/>'+
+    '<g transform="translate(10 0) rotate(-8 145 200)">'+
+    '<path d="M118 230 C100 275 88 310 80 335 L112 338 L128 255 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.6"/>'+
+    '<path d="M105 270 L115 325" stroke="url(#'+p+'rd)" stroke-width="13" stroke-linecap="round"/>'+
+    '<path d="M160 225 C190 255 215 285 235 310 L205 325 L155 250 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.6"/>'+
+    '<path d="M185 260 L215 305" stroke="url(#'+p+'rd)" stroke-width="13" stroke-linecap="round"/>'+
+    '<path d="M95 145 L190 140 Q198 195 185 240 L105 245 Q88 190 95 145 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="3" stroke-linejoin="round"/>'+
+    '<path d="M112 152 L112 230 M172 150 L172 228 M126 152 L136 230 M158 150 L148 228" stroke="url(#'+p+'rd)" stroke-width="14" stroke-linecap="round"/>'+
+    '<path d="M108 145 L145 185 L182 142 L165 140 L145 172 L125 140 Z" fill="url(#'+p+'gd)" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<path d="M128 152 L145 172 L162 150" fill="none" stroke="#fff8dc" stroke-width="2.4" opacity=".95"/>'+
+    '<circle cx="145" cy="205" r="22" fill="#d7dee8" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<circle cx="145" cy="205" r="18" fill="'+cy+'" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<circle cx="145" cy="205" r="15.5" fill="'+cy+'" stroke="#08384e" stroke-width="1.8"/>'+
+    '<circle cx="138" cy="198" r="4.5" fill="#fff" opacity=".75"/>'+
+    '<path d="M108 155 L70 130 L55 155" stroke="'+ol+'" stroke-width="24" fill="none" stroke-linecap="round"/>'+
+    '<path d="M108 155 L70 130 L55 155" stroke="url(#'+p+'sv)" stroke-width="16" fill="none" stroke-linecap="round"/>'+
+    '<path d="M95 148 L68 138" stroke="url(#'+p+'rd)" stroke-width="9"/>'+
+    '<circle cx="50" cy="162" r="15" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.4"/>'+
+    '<path d="M180 160 L230 155 L268 148" stroke="'+ol+'" stroke-width="24" fill="none" stroke-linecap="round"/>'+
+    '<path d="M180 160 L230 155 L268 148" stroke="url(#'+p+'sv)" stroke-width="16" fill="none" stroke-linecap="round"/>'+
+    '<path d="M195 158 L250 150" stroke="url(#'+p+'rd)" stroke-width="9"/>'+
+    '<circle cx="272" cy="146" r="18" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.4"/>'+
+    '<circle cx="272" cy="146" r="28" fill="#ff6ec7" filter="url(#'+p+'gl)" opacity=".5"/>'+
+    '<circle cx="272" cy="146" r="18" fill="#7ff0ff" filter="url(#'+p+'gl2)" opacity=".85"/>'+
+    '<circle cx="272" cy="146" r="7" fill="#fff"/>'+
+    '<g transform="translate(142 95) scale(1.22) translate(-142 -95)">'+
+    '<path d="M142 12 C185 12 208 48 208 90 C208 136 185 170 142 174 C99 170 76 136 76 90 C76 48 99 12 142 12 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="3.2"/>'+
+    '<path d="M133 16 L142 -20 L151 16 Q147 42 142 60 Q137 42 133 16 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2.5"/>'+
+    '<ellipse cx="142" cy="42" rx="8" ry="11" fill="'+cy+'" stroke="#fff" stroke-width="1.5" filter="url(#'+p+'gl2)"/>'+
+    '<ellipse cx="142" cy="64" rx="6.5" ry="9" fill="'+cy+'" stroke="#fff" stroke-width="1.3"/>'+
+    '<ellipse cx="142" cy="82" rx="5" ry="7" fill="'+cy+'" stroke="#fff" stroke-width="1.2"/>'+
+    '<ellipse cx="112" cy="100" rx="26" ry="32" fill="'+cy+'" filter="url(#'+p+'gl)" opacity=".8"/>'+
+    '<ellipse cx="172" cy="100" rx="26" ry="32" fill="'+cy+'" filter="url(#'+p+'gl)" opacity=".8"/>'+
+    '<ellipse cx="112" cy="100" rx="20" ry="26" fill="'+cy+'" stroke="#08384e" stroke-width="2.4"/>'+
+    '<ellipse cx="172" cy="100" rx="20" ry="26" fill="'+cy+'" stroke="#08384e" stroke-width="2.4"/>'+
+    '<ellipse cx="104" cy="92" rx="6" ry="8" fill="#fff" opacity=".9"/>'+
+    '<ellipse cx="164" cy="92" rx="6" ry="8" fill="#fff" opacity=".9"/>'+
+    '<path d="M122 132 L162 132 L158 146 L126 146 Z" fill="url(#'+p+'sv)" stroke="'+ol+'" stroke-width="2"/>'+
+    '</g></g>'+
+    '<g fill="#ffe66d"><path d="M42 80 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z"/><path d="M235 55 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/><path d="M35 210 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#7ff0ff"/><path d="M248 230 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4z" fill="#ff7ad9"/><path d="M70 50 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z" fill="#fff"/></g>'+
+    '</svg>';
+}
+
+/* Fan-art chibi 超人奧米加 — battle form with 5-stage henshin */
 function heroSVG(p){
   const ol='#2a2a40', sv='#e8edf5', cy='#5ee7ff';
   const eye=(x)=>'<ellipse class="h-eyeglow" cx="'+x+'" cy="78" rx="18" ry="22" fill="'+cy+'" filter="url(#'+p+'gl)" opacity=".85"/><ellipse cx="'+x+'" cy="78" rx="14" ry="18" fill="'+cy+'" stroke="#0a3a52" stroke-width="2"/><ellipse cx="'+(x-4)+'" cy="74" rx="4" ry="5" fill="#fff" opacity=".7"/>';
@@ -338,7 +398,7 @@ function buildSky(svg){
   let x=-10; while(x<W){ const w=I(50,120), h=I(200,430); s+='<rect x="'+x+'" y="'+(H-h)+'" width="'+w+'" height="'+h+'" fill="#261c63"/>'; if(Math.random()<.25) s+='<rect x="'+(x+w/2-2)+'" y="'+(H-h-30)+'" width="4" height="30" fill="#261c63"/>'; x+=w+I(-8,6); }
   x=-20; while(x<W){ const w=I(70,150), h=I(120,330); const y=H-h; s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#0e1336"/>';
     const cols=Math.floor((w-14)/18), rows=Math.floor((h-24)/26);
-    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(Math.random()<.33) s+='<rect x="'+(x+10+c*18)+'" y="'+(y+14+r*26)+'" width="9" height="13" fill="'+(Math.random()<.8?'#ffe28a':'#9be7ff')+'" opacity="'+R(.5,1).toFixed(2)+'"/>'; }
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(Math.random()<.33){ const col=Math.random()<.55?'#ffe28a':(Math.random()<.5?'#9be7ff':'#ff7ad9'); s+='<rect x="'+(x+10+c*18)+'" y="'+(y+14+r*26)+'" width="9" height="13" fill="'+col+'" opacity="'+R(.5,1).toFixed(2)+'"/>'; } }
     if(Math.random()<.3){ s+='<rect x="'+(x+w/2-2)+'" y="'+(y-26)+'" width="4" height="26" fill="#0e1336"/><circle class="blinkred" cx="'+(x+w/2)+'" cy="'+(y-28)+'" r="4" fill="#ff4d4d"/>'; }
     x+=w+I(2,14); }
   s += '<rect y="'+(H-16)+'" width="'+W+'" height="16" fill="#070a1f"/>';

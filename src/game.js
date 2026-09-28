@@ -154,15 +154,48 @@ function makeChoices(a,b){ const ans=a*b; const set=[ans];
   return shuffle(set); }
 
 /* ---------- HOME ---------- */
-const HOME_MONS=['starlord','heidragon','thundwolf','holyturt','phoenix','ninjacat','steeltiran','flamecrab','seaking','illusdemon']; let homeMonIdx=0;
-function setHomeMon(){ const t=HOME_MONS[homeMonIdx%HOME_MONS.length]; homeMonIdx++; $('#homeMon').innerHTML='<div class="mon-bob">'+monsterSVG(t,'hm'+homeMonIdx)+'</div><div class="hs-monname">'+MONS[t].name+'</div>'; }
-function setHomeHeroPose(){ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['','pose-punch','pose-win','pose-disc','pose-beam','pose-kick']);
-  const keep=['hero','henshin-2']; if(pose) keep.push(pose); h.setAttribute('class', keep.join(' ')); }
+const HOME_PETS=[['homeDragon','homePetL'],['homeTurtle','homePetR']];
+function setHomeMon(){ /* pets are static on home now */ }
+function setHomeHeroPose(){ /* home splash uses fixed action art */ }
+function homeDragonSVG(p){
+  const dk='#101014';
+  return `<svg class="mon" viewBox="0 0 240 240" aria-hidden="true"><ellipse cx="120" cy="220" rx="60" ry="8" fill="#000" opacity=".25"/>
+  <path d="M60 150 C30 110 50 70 90 95 C80 120 70 140 60 150Z" fill="#3a3a44" stroke="${dk}" stroke-width="3"/>
+  <path d="M180 150 C210 110 190 70 150 95 C160 120 170 140 180 150Z" fill="#3a3a44" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="155" rx="58" ry="52" fill="#2a2a32" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="168" rx="34" ry="28" fill="#c0c4ce"/>
+  <path d="M95 95 L110 55 L125 95 L140 60 L150 100" fill="#ff6a00" stroke="${dk}" stroke-width="2"/>
+  <ellipse cx="120" cy="115" rx="36" ry="32" fill="#2a2a32" stroke="${dk}" stroke-width="3"/>
+  ${chibiEyes(105,135,112,12,dk,'#ff6a00')}${chibiBlush(92,148,128)}
+  <path d="M108 132 Q120 144 134 130" stroke="${dk}" stroke-width="3" fill="none"/>
+  </svg>`;
+}
+function homeTurtleSVG(p){
+  const dk='#14532d';
+  return `<svg class="mon" viewBox="0 0 240 240" aria-hidden="true"><ellipse cx="120" cy="220" rx="60" ry="8" fill="#000" opacity=".25"/>
+  <ellipse cx="120" cy="165" rx="70" ry="48" fill="#3cb371" stroke="${dk}" stroke-width="3"/>
+  <ellipse cx="120" cy="160" rx="48" ry="34" fill="#2d6a4f"/>
+  <g fill="#7ff0ff" stroke="#fff" stroke-width="1.6">
+    <path d="M95 115 L105 75 L115 115Z"/><path d="M115 108 L125 65 L135 108Z"/><path d="M135 115 L145 80 L155 115Z"/>
+    <path d="M80 145 L88 120 L98 145Z"/><path d="M155 145 L165 122 L175 145Z"/>
+  </g>
+  <ellipse cx="120" cy="195" rx="34" ry="20" fill="#e8fff0" stroke="${dk}" stroke-width="2"/>
+  <circle cx="75" cy="185" r="14" fill="#3cb371" stroke="${dk}" stroke-width="2"/><circle cx="165" cy="185" r="14" fill="#3cb371" stroke="${dk}" stroke-width="2"/>
+  <ellipse cx="120" cy="120" rx="34" ry="30" fill="#3cb371" stroke="${dk}" stroke-width="3"/>
+  ${chibiEyes(108,132,115,11,dk,'#38bdf8')}${chibiBlush(96,144,128)}
+  <path d="M110 132 Q120 142 132 130" stroke="${dk}" stroke-width="2.5" fill="none"/>
+  </svg>`;
+}
 function initHome(){
-  $('#homeHero').innerHTML = '<div class="hero-bob">'+heroSVG('hh')+'</div><div class="hs-name">超人奧米加</div>';
-  setHomeMon(); setHomeHeroPose();
-  $('#homeHero').addEventListener('click', ()=>{ const h=$('#homeHero .hero'); if(!h) return; const pose=pick(['pose-punch','pose-win','pose-disc','pose-beam','pose-kick']);
-    h.setAttribute('class','hero henshin-2 '+pose); Sfx.whoosh(); setTimeout(()=>setHomeHeroPose(), 700); });
+  $('#homeHero').innerHTML = '<div class="hero-bob">'+homeHeroSVG('hh')+'</div>';
+  const spark=$('.home-sparkles'); if(spark) spark.innerHTML='<i></i><i></i><i></i><i></i><i></i>';
+  const petArt={homeDragon:homeDragonSVG, homeTurtle:homeTurtleSVG};
+  HOME_PETS.forEach(([t,id],i)=>{ const el=$('#'+id); if(el) el.innerHTML='<div class="mon-bob">'+petArt[t]('hp'+i)+'</div>'; });
+  $('#homeHero').addEventListener('click', ()=>{
+    const bob=$('#homeHero .hero-bob'); if(!bob) return;
+    Sfx.whoosh();
+    play(bob,[{transform:'translateY(0) scale(1)'},{transform:'translateY(-6%) scale(1.06)',offset:.4},{transform:'translateY(0) scale(1)'}],{duration:500,easing:'ease-out'});
+  });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
     else if(g==='setup-battle') openSetup('battle');
