@@ -19,152 +19,92 @@ const ICONS = {
 function icon(name){ return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">'+(ICONS[name]||'')+'</svg>'; }
 function fillIcons(root){ (root||document).querySelectorAll('[data-icon]').forEach(el=>{ el.innerHTML = icon(el.dataset.icon); }); }
 
-/* Fan-art hero: chibi SD 超人（銀紅配金線、黃眼、圓形計時器）. Drawn from scratch — not official art. p = unique id prefix */
+/* Fan-art hero: 有型超人奧米加（高挑戰鬥姿、銀紅甲、金 V、圓形計時器）. Drawn from scratch — not official art. */
 function pent(cx,cy,r){ const pts=[]; for(let i=0;i<5;i++){ const a=(-90+i*72)*Math.PI/180; pts.push((cx+Math.cos(a)*r).toFixed(1)+','+(cy+Math.sin(a)*r).toFixed(1)); } return pts.join(' '); }
 function heroSVG(p){
-  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', gd='url(#'+p+'gd)', ol='#2a2438', OL=ol, RC='#e53935';
-  const arm=(side)=>{
-    /* side L: shoulder 62,118 ; R: 138,118 — stubby chibi limbs */
-    if(side==='L') return '<g class="h-armL">'+
-      '<path d="M62 118 C48 132 42 150 44 168" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
-      '<path d="M62 118 C48 132 42 150 44 168" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-      '<path d="M62 118 C52 130 48 142 46 152" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-      '<circle cx="44" cy="172" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-      '<path d="M38 168 Q44 164 50 168" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/>'+
-      '</g>';
-    return '<g class="h-armR">'+
-      '<path d="M138 118 C152 132 158 150 156 168" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
-      '<path d="M138 118 C152 132 158 150 156 168" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-      '<path d="M138 118 C148 130 152 142 154 152" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-      '<circle cx="156" cy="172" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-      '<path d="M150 168 Q156 164 162 168" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/>'+
-      '<circle class="mk-hand" cx="156" cy="172" r="1" fill="none"/>'+
-      '</g>';
-  };
-  const legL = '<g class="h-legL">'+
-    '<path d="M82 178 C74 198 70 218 66 242" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/>'+
-    '<path d="M82 178 C74 198 70 218 66 242" stroke="'+sv+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
-    '<path d="M82 178 C76 196 72 210 70 224" stroke="'+RC+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
-    '<path d="M54 238 Q66 232 78 240 L76 252 Q64 258 52 250 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2" stroke-linejoin="round"/>'+
-    '<path d="M58 242 L74 246" stroke="#ff9a90" stroke-width="2" opacity=".7"/>'+
-    '</g>';
-  const legR = '<g class="h-legR">'+
-    '<path d="M118 178 C126 198 130 218 134 242" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/>'+
-    '<path d="M118 178 C126 198 130 218 134 242" stroke="'+sv+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
-    '<path d="M118 178 C124 196 128 210 130 224" stroke="'+RC+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
-    '<path d="M146 238 Q134 232 122 240 L124 252 Q136 258 148 250 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2" stroke-linejoin="round"/>'+
-    '<path d="M126 246 L142 242" stroke="#ff9a90" stroke-width="2" opacity=".7"/>'+
-    '</g>';
-  const kick = '<g class="h-kick">'+
-    '<path d="M118 178 C148 170 176 166 188 164" stroke="'+ol+'" stroke-width="22" fill="none" stroke-linecap="round"/>'+
-    '<path d="M118 178 C148 170 176 166 188 164" stroke="'+sv+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
-    '<path d="M118 178 C140 172 158 168 172 166" stroke="'+RC+'" stroke-width="15" fill="none" stroke-linecap="round"/>'+
-    '<path d="M180 152 Q200 150 202 166 Q200 182 178 178 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-    '<path d="M186 154 L186 176" stroke="#ff9a90" stroke-width="2"/>'+
-    '</g>';
-  /* compact chibi torso: silver mid, red sides, gold V + circular timer */
-  const torso =
-    '<path d="M68 112 Q100 104 132 112 L138 168 Q100 186 62 168 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
-    '<path d="M68 112 L78 168 Q70 172 62 168 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
-    '<path d="M132 112 L122 168 Q130 172 138 168 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
-    /* gold chest V ornaments — thick plates like reference */
-    '<path d="M72 116 L100 152 L128 116 L118 114 L100 138 L82 114 Z" fill="'+gd+'" stroke="'+ol+'" stroke-width="1.8" stroke-linejoin="round"/>'+
-    '<path d="M78 118 L100 144 L122 118" fill="none" stroke="#fff3b0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>'+
-    '<path d="M86 120 L100 140 L114 120" fill="none" stroke="#e53935" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
-    /* circular color timer */
-    '<circle cx="100" cy="138" r="15" fill="#cfd8e6" stroke="'+ol+'" stroke-width="2.2"/>'+
-    '<circle class="h-tglow" cx="100" cy="138" r="12.5" filter="url(#'+p+'gl)" opacity=".95"/>'+
-    '<circle class="h-timer" cx="100" cy="138" r="11" stroke="#1e3a5f" stroke-width="1.5"/>'+
-    '<circle cx="96" cy="134" r="3.5" fill="#fff" opacity=".6"/>'+
-    '<g class="h-spiral"><path d="M100 138 m0 -2.2 a2.2 2.2 0 1 1 -2.2 2.2 a4.5 4.5 0 0 1 4.5 -4.5" stroke="#fff" stroke-width="1.3" fill="none" opacity=".85"/></g>'+
-    '<circle class="mk-chest" cx="100" cy="138" r="1" fill="none"/>'+
-    /* neck */
-    '<path d="M88 98 L112 98 L114 114 L86 114 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>';
-  /* idle: one fist up, one guard — chibi heroic */
-  const guard = '<g class="h-guard">'+
-    '<path d="M62 118 C40 128 36 148 58 158" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
-    '<path d="M62 118 C40 128 36 148 58 158" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-    '<path d="M62 118 C46 126 42 140 50 150" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-    '<circle cx="62" cy="160" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-    '<path d="M138 118 C160 100 168 78 158 68" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
-    '<path d="M138 118 C160 100 168 78 158 68" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-    '<path d="M138 118 C154 104 160 88 158 78" stroke="'+RC+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-    '<circle cx="156" cy="64" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-    '</g>';
-  /* Specium-style cross beam pose */
-  const cross = '<g class="h-cross">'+
-    '<path d="M62 118 C90 128 130 124 168 120" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
-    '<path d="M62 118 C90 128 130 124 168 120" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-    '<path d="M138 118 C148 150 148 70 148 58" stroke="'+ol+'" stroke-width="20" fill="none" stroke-linecap="round"/>'+
-    '<path d="M138 118 C148 150 148 70 148 58" stroke="'+sv+'" stroke-width="14" fill="none" stroke-linecap="round"/>'+
-    '<circle cx="176" cy="120" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-    '<circle cx="148" cy="52" r="11" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.2"/>'+
-    '<circle cx="148" cy="120" r="12" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="148" cy="120" r="5" fill="#fff"/>'+
-    '</g>';
-  const slug = '<g class="h-slug">'+
-    '<path d="M90 34 L100 -4 L110 34 Q106 48 100 58 Q94 48 90 34 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
-    '<path d="M94 32 L100 4 L106 32" stroke="#fff" stroke-width="2.5" fill="none" opacity=".8"/>'+
-    '<circle class="mk-slug" cx="100" cy="20" r="1" fill="none"/>'+
-    '</g>';
-  const head = '<g class="h-head">'+
-    /* big silver dome head */
-    '<ellipse cx="100" cy="68" rx="50" ry="46" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.8"/>'+
-    '<ellipse cx="100" cy="68" rx="42" ry="38" fill="none" stroke="#fff" stroke-width="2" opacity=".25"/>'+
-    /* side panels */
-    '<path d="M58 58 Q54 78 66 100 L74 90 Q64 74 64 58 Z" fill="#a8b6c8" stroke="'+ol+'" stroke-width="1.5" opacity=".85"/>'+
-    '<path d="M142 58 Q146 78 134 100 L126 90 Q136 74 136 58 Z" fill="#a8b6c8" stroke="'+ol+'" stroke-width="1.5" opacity=".85"/>'+
-    /* ear fins */
-    '<rect x="44" y="52" width="14" height="22" rx="4" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
-    '<rect x="142" y="52" width="14" height="22" rx="4" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+  const sv='url(#'+p+'sv)', rd='url(#'+p+'rd)', gd='url(#'+p+'gd)', ol='#2a1018', RC='#e53935', sl='#eef2f7';
+  const limb=(d,w)=>'<path d="'+d+'" stroke="'+ol+'" stroke-width="'+(w+5)+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="'+RC+'" stroke-width="'+w+'" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" stroke="'+sl+'" stroke-width="'+(w*.28)+'" fill="none" stroke-linecap="round" opacity=".75" transform="translate(-'+(w*.18)+',-'+(w*.1)+')"/>';
+  const glove=(x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M'+(x-r*.5)+' '+(y-r*.25)+' q'+(r*.45)+' -'+(r*.35)+' '+(r*.95)+' -'+(r*.15)+'" stroke="#fff" stroke-width="1.8" fill="none" opacity=".7"/>';
+  const cuff=(x1,y1,x2,y2)=>'<path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+ol+'" stroke-width="13" stroke-linecap="butt"/><path d="M'+x1+' '+y1+' L'+x2+' '+y2+'" stroke="'+sl+'" stroke-width="9" stroke-linecap="butt"/>';
+  const slug = '<g class="h-slug"><path d="M93 22 L100 -14 L107 22 Q104 36 100 48 Q96 36 93 22 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2.4" stroke-linejoin="round"/>'+
+    '<path d="M95 20 L100 -4 L105 20" stroke="#fff" stroke-width="2.2" fill="none" opacity=".85"/><path d="M100 0 L100 42" stroke="#ff9d8f" stroke-width="1.5" opacity=".65"/>'+
+    '<circle class="mk-slug" cx="100" cy="12" r="1" fill="none"/></g>';
+  const head = '<g class="h-head" transform="translate(100 72) scale(.86) translate(-100 -72)">'+
+    '<path d="M100 14 C117 14 128 30 128 48 C128 64 119 78 110 84 L90 84 C81 78 72 64 72 48 C72 30 83 14 100 14 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6"/>'+
+    '<path d="M74 36 C72 54 78 70 90 82 L94 74 C86 66 82 54 84 40 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/><path d="M126 36 C128 54 122 70 110 82 L106 74 C114 66 118 54 116 40 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/>'+
     slug+
-    /* big yellow glowing eyes */
-    '<ellipse class="h-eyeglow" cx="76" cy="72" rx="18" ry="13" fill="#ffe566" filter="url(#'+p+'gl)" opacity=".95"/>'+
-    '<ellipse class="h-eyeglow" cx="124" cy="72" rx="18" ry="13" fill="#ffe566" filter="url(#'+p+'gl)" opacity=".95"/>'+
-    '<ellipse cx="76" cy="72" rx="15.5" ry="11.5" fill="url(#'+p+'ey)" stroke="#8a5a00" stroke-width="1.6"/>'+
-    '<ellipse cx="124" cy="72" rx="15.5" ry="11.5" fill="url(#'+p+'ey)" stroke="#8a5a00" stroke-width="1.6"/>'+
-    '<ellipse cx="70" cy="67" rx="4.5" ry="3" fill="#fff" opacity=".9"/>'+
-    '<ellipse cx="118" cy="67" rx="4.5" ry="3" fill="#fff" opacity=".9"/>'+
-    /* tiny mouth */
-    '<path d="M94 90 Q100 94 106 90" stroke="#5a4a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
-    /* cheek shine */
-    '<path d="M60 48 Q78 38 92 44" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".55"/>'+
+    '<path d="M68 44 L54 38 L56 58 L70 62 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/><path d="M132 44 L146 38 L144 58 L130 62 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+    '<path class="h-eyeglow" d="M96 54 L93 42 Q84 36 74 38 L70 44 Q78 58 96 54 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/><path class="h-eyeglow" d="M104 54 L107 42 Q116 36 126 38 L130 44 Q122 58 104 54 Z" fill="#7ff4ff" filter="url(#'+p+'gl)"/>'+
+    '<path d="M96 54 L93 42 Q84 36 74 38 L70 44 Q78 58 96 54 Z" fill="url(#'+p+'ey)" stroke="#0a3a52" stroke-width="1.5"/><path d="M104 54 L107 42 Q116 36 126 38 L130 44 Q122 58 104 54 Z" fill="url(#'+p+'ey)" stroke="#0a3a52" stroke-width="1.5"/>'+
+    '<g stroke="#fff" stroke-width=".75" opacity=".55" fill="none"><path d="M76 44 L94 50 M84 40 L82 52"/><path d="M124 44 L106 50 M116 40 L118 52"/></g>'+
+    '<path d="M90 66 L110 66 L108 76 L92 76 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.8"/><path d="M94 71 L106 71" stroke="#4a5263" stroke-width="1.5" stroke-linecap="round"/>'+
     '</g>';
-  return '<svg class="hero" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
+  const torso = '<path d="M46 92 L154 92 Q152 124 140 148 Q128 172 124 186 L130 202 Q108 214 100 218 Q92 214 70 202 L76 186 Q72 172 60 148 Q48 124 46 92 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+    '<path d="M60 108 Q74 154 88 182 Q96 202 99 214" stroke="'+sl+'" stroke-width="6.5" fill="none" stroke-linecap="round"/><path d="M140 108 Q126 154 112 182 Q104 202 101 214" stroke="'+sl+'" stroke-width="6.5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M90 74 L110 74 L112 94 L88 94 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="2"/>'+
+    '<path d="M56 98 L100 146 L144 98 L130 96 L100 130 L70 96 Z" fill="'+gd+'" stroke="'+ol+'" stroke-width="2" stroke-linejoin="round"/>'+
+    '<path d="M66 102 L100 138 L134 102" fill="none" stroke="#fff3b0" stroke-width="2.4" stroke-linecap="round" opacity=".95"/>'+
+    '<path d="M76 106 L100 134 L124 106" fill="none" stroke="#c62828" stroke-width="3.2" stroke-linecap="round"/>'+
+    '<circle cx="100" cy="158" r="16" fill="#cfd8e6" stroke="'+ol+'" stroke-width="2.4"/>'+
+    '<circle class="h-tglow" cx="100" cy="158" r="13.5" filter="url(#'+p+'gl)" opacity=".95"/>'+
+    '<circle class="h-timer" cx="100" cy="158" r="12" stroke="#1a2a4a" stroke-width="1.6"/>'+
+    '<circle cx="95" cy="153" r="3.2" fill="#fff" opacity=".65"/>'+
+    '<g class="h-spiral"><path d="M100 158 m0 -2 a2 2 0 1 1 -2 2 a4.2 4.2 0 0 1 4.2 -4.2" stroke="#fff" stroke-width="1.3" fill="none" opacity=".9"/></g>'+
+    '<circle class="mk-chest" cx="100" cy="158" r="1" fill="none"/>';
+  const legL = '<g class="h-legL"><path d="M78 168 C64 208 54 244 48 284 L36 310 L66 314 L78 276 C88 244 98 212 106 188 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+    '<path d="M82 176 C70 220 60 256 50 306" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M34 306 L68 312 Q70 322 68 330 L24 330 Q22 320 30 316 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M36 312 L66 316" stroke="'+sl+'" stroke-width="3"/></g>';
+  const legR = '<g class="h-legR"><path d="M122 168 C136 208 146 244 152 284 L164 310 L134 314 L122 276 C112 244 102 212 94 188 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+    '<path d="M118 176 C130 220 140 256 150 306" stroke="'+sl+'" stroke-width="5" fill="none" stroke-linecap="round"/>'+
+    '<path d="M166 306 L132 312 Q130 322 132 330 L176 330 Q178 320 170 316 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M164 312 L134 316" stroke="'+sl+'" stroke-width="3"/></g>';
+  const kick = '<g class="h-kick">'+limb('M112 190 L160 178 L196 168',24)+'<path d="M118 186 L190 166" stroke="'+sl+'" stroke-width="4" stroke-linecap="round"/>'+
+    '<path d="M190 154 Q214 152 216 170 Q214 190 188 184 Z" fill="'+rd+'" stroke="'+ol+'" stroke-width="2.4"/><path d="M198 156 L198 182" stroke="'+sl+'" stroke-width="3"/></g>';
+  const armL = '<g class="h-armL">'+limb('M52 100 L38 148 L36 190',20)+'<path d="M46 106 L34 148 L32 182" stroke="'+sl+'" stroke-width="3.2" fill="none" stroke-linecap="round"/>'+cuff(36,182,36,192)+glove(36,202,11)+'</g>';
+  const armR = '<g class="h-armR">'+limb('M148 100 L162 148 L164 190',20)+'<path d="M154 106 L166 148 L168 182" stroke="'+sl+'" stroke-width="3.2" fill="none" stroke-linecap="round"/>'+cuff(164,182,164,192)+glove(164,202,11)+'<circle class="mk-hand" cx="164" cy="202" r="1" fill="none"/></g>';
+  const guard = '<g class="h-guard">'+
+    limb('M52 100 L24 140 L60 156',20)+'<path d="M46 104 L24 136" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(54,152,64,156)+glove(72,158,11)+
+    limb('M148 100 L180 130 L176 84',20)+'<path d="M154 102 L178 126" stroke="'+sl+'" stroke-width="3" stroke-linecap="round"/>'+cuff(176,92,176,82)+glove(176,72,11.5)+
+    '</g>';
+  const cross = '<g class="h-cross">'+
+    limb('M52 100 L90 126 L172 116',20)+limb('M148 100 L160 172 L160 68',20)+
+    '<path d="M100 116 L186 114" stroke="'+sl+'" stroke-width="3.5" stroke-linecap="round"/>'+cuff(178,116,188,116)+glove(198,116,11)+
+    '<path d="M160 164 L160 74" stroke="'+sl+'" stroke-width="3.2" stroke-linecap="round"/>'+cuff(160,74,160,64)+glove(160,54,11)+
+    '<circle cx="160" cy="116" r="14" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="160" cy="116" r="5.5" fill="#fff"/></g>';
+  return '<svg class="hero" viewBox="0 0 200 340" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
     '<defs>'+
-    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#e8eef6"/><stop offset="1" stop-color="#9aabbc"/></linearGradient>'+
-    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b63"/><stop offset=".55" stop-color="#e53935"/><stop offset="1" stop-color="#b71c1c"/></linearGradient>'+
-    '<linearGradient id="'+p+'gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe566"/><stop offset=".5" stop-color="#f5c542"/><stop offset="1" stop-color="#e6a817"/></linearGradient>'+
-    '<radialGradient id="'+p+'ey" cx=".35" cy=".35" r=".7"><stop offset="0" stop-color="#fffde7"/><stop offset=".45" stop-color="#ffeb3b"/><stop offset="1" stop-color="#f9a825"/></radialGradient>'+
-    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.2"/></filter>'+
+    '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#e2e8f0"/><stop offset="1" stop-color="#8fa0b4"/></linearGradient>'+
+    '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a6e"/><stop offset=".5" stop-color="#e53935"/><stop offset="1" stop-color="#9e1c1c"/></linearGradient>'+
+    '<linearGradient id="'+p+'gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe566"/><stop offset=".55" stop-color="#f0b429"/><stop offset="1" stop-color="#c98a0a"/></linearGradient>'+
+    '<radialGradient id="'+p+'ey" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#9efbff"/><stop offset="1" stop-color="#1494b8"/></radialGradient>'+
+    '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.4"/></filter>'+
     '</defs>'+
-    '<ellipse class="h-aura" cx="100" cy="150" rx="92" ry="130" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".65"/>'+
-    '<ellipse cx="100" cy="268" rx="58" ry="8" fill="#000" opacity=".25"/>'+
-    legL + legR + kick + arm('L') + arm('R') + torso + head + guard + cross +
-    '<circle class="mk-beam" cx="148" cy="120" r="1" fill="none"/>'+
+    '<ellipse class="h-aura" cx="100" cy="170" rx="94" ry="155" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".55"/>'+
+    '<ellipse cx="100" cy="326" rx="72" ry="8" fill="#000" opacity=".28"/>'+
+    legL + legR + kick + armL + armR + torso + head + guard + cross +
+    '<circle class="mk-beam" cx="160" cy="116" r="1" fill="none"/>'+
     '</svg>';
 }
 
 const MONS = {
-  /* 列表靈感・卡通同人重畫（剪影要一眼分得開） */
-  fire:{name:'獄炎哥爾贊', nick:'熔岩甲獸・地心噴火', body:'#c4451a', light:'#ff8a3d', dark:'#5c1a08', belly:'#ffd28a', shot:'#ff6a00'},
-  ice:{name:'霜翼佩吉拉', nick:'絕對零度・霜翼凍結', body:'#7ec8f5', light:'#e8f7ff', dark:'#1a5a8a', belly:'#ffffff', shot:'#bae6fd'},
-  thunder:{name:'隱雷內隆嘎', nick:'十萬伏特・隱身雷鞭', body:'#f5d76e', light:'#fff6b0', dark:'#8a6200', belly:'#fffde7', shot:'#fde047'},
-  rock:{name:'哥莫拉', nick:'超振動・斷空新月角', body:'#8b8f98', light:'#d0d4dc', dark:'#3a3e46', belly:'#c8b89a', shot:'#a8a29e'},
-  poison:{name:'雙尾怪', nick:'雙尾纏殺・地底暗殺', body:'#6b7a3a', light:'#b8c878', dark:'#2f3618', belly:'#dfe8a8', shot:'#a3e635'},
-  sea:{name:'深淵鯊獸', nick:'深淵黑洞・撕空一咬', body:'#3a5a72', light:'#7aa0b8', dark:'#142430', belly:'#c5d8e4', shot:'#38bdf8'},
-  boss:{name:'災厄魔王', short:'災厄魔王', nick:'千芒閃光・混沌吞噬', body:'#5b2aa8', light:'#c4a0ff', dark:'#1a0838', belly:'#f0e6ff', shot:'#ff4d6d', boss:true},
-  kanegon:{name:'食錢怪', nick:'銅臭大爆發・偽幣彈幕', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
-  dada:{name:'三面怪人達達', nick:'三面幻影・次元亂光', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true},
-  /* 《超人奧米加》怪獸・剪影強化 */
-  graim:{name:'格萊姆', nick:'地獄鑽頭・地脈貫通裂', body:'#6b6f7a', light:'#b3b8c2', dark:'#2f3238', belly:'#f2c230', shot:'#ff8a1c', omega:true},
-  dugrid:{name:'多格利德', nick:'鈾金大口・毒瓣吞噬', body:'#5b4636', light:'#a0806a', dark:'#2a1d14', belly:'#e8b93a', frill:'#d8323a', shot:'#a3e635', omega:true},
-  pegunos:{name:'佩古諾斯', nick:'無重蒼穹・羽翼俯衝斬', body:'#1f3f86', light:'#5a84d8', dark:'#0e1f4a', belly:'#eef3fa', beak:'#ffcc33', shot:'#bfefff', omega:true},
-  therizirus:{name:'特利吉拉斯', nick:'赤鐮隱形・千裂一閃', body:'#2b3039', light:'#6a7486', dark:'#12151b', belly:'#c8324d', shot:'#ff4d6d', omega:true},
-  ohebinushi:{name:'大蛇主命', nick:'神州長頸・九天一嘯掃', body:'#4a5147', light:'#8e9a86', dark:'#1f241d', belly:'#efe4c4', accent:'#d84a3a', shot:'#ffd166', omega:true},
-  gedrago:{name:'蓋多拉哥', nick:'粉紅毛毛・友情爆走衝', body:'#d8418f', light:'#f59ac6', dark:'#7d1b4f', belly:'#6b3a44', horn:'#a7adb7', shot:'#ff8fc8', omega:true},
-  rekiness:{name:'雷基尼斯', nick:'流星守護・虹晶特訓彈', body:'#2f7fe0', light:'#9fd8ff', dark:'#123a7a', belly:'#bfe4ff', shot:'#b58cff', omega:true, friend:true},
-  trigaron:{name:'特萊加隆', nick:'黑金流星・翼刃特訓斬', body:'#2c3038', light:'#6a7280', dark:'#101216', belly:'#8a93a3', gold:'#ffc21a', shot:'#ffc21a', omega:true, friend:true},
-  vugsect:{name:'瓦古塞克特', short:'瓦古塞克特', nick:'甲殼雙鐮・破界破壞光', body:'#2c2342', light:'#7a68a8', dark:'#130d22', belly:'#4a3b6b', shot:'#ff3b6b', boss:true, omega:true}
+  /* 列表靈感・卡通同人重畫（剪影要一眼分得開）＋圖鑑資料 */
+  fire:{name:'獄炎哥爾贊', nick:'熔岩甲獸・地心噴火', kind:'熔岩甲獸', habitat:'地心火山帶', lore:'背脊噴出地心熔岩，甲殼一裂就會噴火柱。答錯乘數就會俾佢燒到腳底發熱！', body:'#c4451a', light:'#ff8a3d', dark:'#5c1a08', belly:'#ffd28a', shot:'#ff6a00'},
+  ice:{name:'霜翼佩吉拉', nick:'絕對零度・霜翼凍結', kind:'霜翼怪獸', habitat:'極地暴風雪', lore:'雙翼拍落就係絕對零度。城市會即刻結冰，連超人奧米加都要打震先頂得住。', body:'#7ec8f5', light:'#e8f7ff', dark:'#1a5a8a', belly:'#ffffff', shot:'#bae6fd'},
+  thunder:{name:'隱雷內隆嘎', nick:'十萬伏特・隱身雷鞭', kind:'隱雷怪獸', habitat:'雷暴雲層', lore:'會隱身嘅雷電怪獸，只剩下一對發光眼睛。雷鞭一抽，倍數表都要記清楚先避得開！', body:'#f5d76e', light:'#fff6b0', dark:'#8a6200', belly:'#fffde7', shot:'#fde047'},
+  rock:{name:'哥莫拉', nick:'超振動・斷空新月角', kind:'古代怪獸', habitat:'原始荒原', lore:'傳說中嘅古代怪獸，額上新月角可以震碎岩石。硬碰硬就靠光速飛踢同爆裂光拳！', body:'#8b8f98', light:'#d0d4dc', dark:'#3a3e46', belly:'#c8b89a', shot:'#a8a29e'},
+  poison:{name:'雙尾怪', nick:'雙尾纏殺・地底暗殺', kind:'雙尾毒獸', habitat:'地底毒沼', lore:'兩條毒尾可以分別攻擊。一見到綠光球就要小心——答啱題先斬斷佢嘅暗殺線！', body:'#6b7a3a', light:'#b8c878', dark:'#2f3618', belly:'#dfe8a8', shot:'#a3e635'},
+  sea:{name:'深淵鯊獸', nick:'深淵黑洞・撕空一咬', kind:'深淵鯊獸', habitat:'深海裂谷', lore:'鯊魚頭加雙足，一口可以撕開海面。深淵黑洞會吸走錯答案——要答啱先游得返上嚟！', body:'#3a5a72', light:'#7aa0b8', dark:'#142430', belly:'#c5d8e4', shot:'#38bdf8'},
+  boss:{name:'災厄魔王', short:'災厄魔王', nick:'千芒閃光・混沌吞噬', kind:'混沌魔王', habitat:'次元裂縫', lore:'雙翼展開就會放出千芒閃光。混沌核心一旦覺醒，成個城市都會陷入黑暗！', body:'#5b2aa8', light:'#c4a0ff', dark:'#1a0838', belly:'#f0e6ff', shot:'#ff4d6d', boss:true},
+  kanegon:{name:'食錢怪', nick:'銅臭大爆發・偽幣彈幕', kind:'金幣怪獸', habitat:'銀行金庫', lore:'最鍾意食金幣嘅錢包怪獸。打敗佢就會吐出金幣雨——記住乘數先搶得返啲錢！', body:'#c9793a', light:'#f3b872', dark:'#6e3710', belly:'#e0a050', shot:'#ffd23f'},
+  dada:{name:'三面怪人達達', nick:'三面幻影・次元亂光', kind:'三面怪人', habitat:'異次元基地', lore:'最終大頭目！每次被打中都會變面。三面亂光可以同時從三個方向襲擊——要連擊先拆穿幻影！', body:'#222', light:'#fff', dark:'#111', belly:'#fff', shot:'#ff6fb0', boss:true, final:true},
+  graim:{name:'格萊姆', nick:'地獄鑽頭・地脈貫通裂', kind:'熱線怪獸', habitat:'地底礦脈', lore:'《超人奧米加》登場嘅鑽頭角怪獸。鼻尖鑽頭可以貫通地脈，熱線一射就係熔岩！', body:'#6b6f7a', light:'#b3b8c2', dark:'#2f3238', belly:'#f2c230', shot:'#ff8a1c', omega:true},
+  dugrid:{name:'多格利德', nick:'鈾金大口・毒瓣吞噬', kind:'水棲毒獸', habitat:'毒沼濕地', lore:'大大嘅嘴巴同毒瓣襟。一口吞落去，連能量都消化——要快啲答啱先塞住佢張口！', body:'#5b4636', light:'#a0806a', dark:'#2a1d14', belly:'#e8b93a', frill:'#d8323a', shot:'#a3e635', omega:true},
+  pegunos:{name:'佩古諾斯', nick:'無重蒼穹・羽翼俯衝斬', kind:'無重力怪獸', habitat:'高空雲海', lore:'識飛嘅企鵝型怪獸，無重力狀態下俯衝極快。一浮起身就要準備十字死光迎接！', body:'#1f3f86', light:'#5a84d8', dark:'#0e1f4a', belly:'#eef3fa', beak:'#ffcc33', shot:'#bfefff', omega:true},
+  therizirus:{name:'特利吉拉斯', nick:'赤鐮隱形・千裂一閃', kind:'刃爪怪獸', habitat:'夜影森林', lore:'會隱形嘅刃爪怪獸。赤鐮一閃，影子先至見到傷口——專心答題先睇穿隱形！', body:'#2b3039', light:'#6a7486', dark:'#12151b', belly:'#c8324d', shot:'#ff4d6d', omega:true},
+  ohebinushi:{name:'大蛇主命', nick:'神州長頸・九天一嘯掃', kind:'傳說蛇獸', habitat:'神州山脈', lore:'超長身軀嘅傳說蛇獸。頸一掃就係九天，山都會震。長身對手要用螺旋旋風拳！', body:'#4a5147', light:'#8e9a86', dark:'#1f241d', belly:'#efe4c4', accent:'#d84a3a', shot:'#ffd166', omega:true},
+  gedrago:{name:'蓋多拉哥', nick:'粉紅毛毛・友情爆走衝', kind:'猛突怪獸', habitat:'粉紅草原', lore:'粉紅毛毛怪獸，睇落得意但其實衝力驚人。友情爆走衝——唔好俾外表呃到！', body:'#d8418f', light:'#f59ac6', dark:'#7d1b4f', belly:'#6b3a44', horn:'#a7adb7', shot:'#ff8fc8', omega:true},
+  rekiness:{name:'雷基尼斯', nick:'流星守護・虹晶特訓彈', kind:'流星怪獸', habitat:'流星軌道', lore:'超人奧米加嘅流星夥伴！特訓時會射出虹晶彈。答啱就係特訓成功，一齊變得更強！', body:'#2f7fe0', light:'#9fd8ff', dark:'#123a7a', belly:'#bfe4ff', shot:'#b58cff', omega:true, friend:true},
+  trigaron:{name:'特萊加隆', nick:'黑金流星・翼刃特訓斬', kind:'流星怪獸', habitat:'流星軌道', lore:'黑金配色嘅流星夥伴，翼刃鋒利。同雷基尼斯一齊特訓，鍛鍊超人嘅連擊技巧！', body:'#2c3038', light:'#6a7280', dark:'#101216', belly:'#8a93a3', gold:'#ffc21a', shot:'#ffc21a', omega:true, friend:true},
+  vugsect:{name:'瓦古塞克特', short:'瓦古塞克特', nick:'甲殼雙鐮・破界破壞光', kind:'宇宙甲獸', habitat:'宇宙空洞', lore:'宇宙甲獸中頭目。雙鐮可以切開空間，破界破壞光直轟能量核心——連擊必殺先打碎甲殼！', body:'#2c2342', light:'#7a68a8', dark:'#130d22', belly:'#4a3b6b', shot:'#ff3b6b', boss:true, omega:true}
 };
 const DEX_ORDER=['graim','dugrid','pegunos','therizirus','ohebinushi','gedrago','rekiness','trigaron','vugsect','kanegon','dada','boss','fire','ice','thunder','rock','poison','sea'];
 

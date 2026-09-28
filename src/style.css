@@ -74,8 +74,8 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
-.hero .h-armL{transform-origin:62px 118px}
-.hero .h-armR{transform-origin:138px 118px}
+.hero .h-armL{transform-origin:52px 100px}
+.hero .h-armR{transform-origin:148px 100px}
 .hero .h-cross,.hero .h-kick,.hero .h-aura,.hero .h-discghost{display:none}
 .hero.pose-beam .h-armL,.hero.pose-beam .h-armR{display:none}
 .hero.pose-beam .h-cross{display:inline}
@@ -315,6 +315,32 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 #modal .card{max-width:420px;width:100%;text-align:center}
 #modal p{font-size:22px;font-weight:900;margin:8px 0 18px;line-height:1.4}
 #modal .mb{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* Dex detail sheet */
+#dexSheet{position:fixed;inset:0;z-index:110;background:rgba(4,8,28,.78);display:none;align-items:center;justify-content:center;padding:14px;overflow-y:auto}
+#dexSheet.show{display:flex}
+.dsheet{position:relative;width:min(520px,100%);background:linear-gradient(165deg,rgba(28,34,92,.96),rgba(12,16,48,.98));border:3px solid rgba(255,255,255,.22);border-radius:24px;box-shadow:0 18px 50px rgba(0,0,0,.55);overflow:hidden}
+.ds-bg{position:absolute;inset:0;opacity:.55;pointer-events:none;background:
+  radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.12),transparent 55%),
+  linear-gradient(180deg,var(--ds1,#1a2458) 0%,var(--ds2,#0a1028) 55%,#060918 100%);
+}
+.ds-bg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:42%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 14px,transparent 14px 28px);opacity:.35;mask-image:linear-gradient(180deg,transparent,black)}
+.ds-close{position:absolute;right:10px;top:10px;z-index:3;width:42px;height:42px;border:0;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:22px;font-weight:900;cursor:pointer}
+.ds-art{position:relative;z-index:1;height:clamp(200px,42vh,320px);display:grid;place-items:center;padding:18px 12px 0}
+.ds-art svg{width:min(280px,72%);height:100%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
+.ds-body{position:relative;z-index:1;padding:4px 18px 18px;text-align:left}
+.ds-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ds-tags i{font-style:normal;font-size:12px;font-weight:900;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+.ds-tags .o{background:rgba(239,68,68,.25);color:#fecaca}
+.ds-tags .f{background:rgba(56,189,248,.22);color:#bae6fd}
+.ds-tags .b{background:rgba(168,85,247,.28);color:#e9d5ff}
+.ds-name{font-size:clamp(26px,6vw,36px);font-weight:900;margin:0;text-shadow:0 3px 0 rgba(0,0,0,.35)}
+.ds-nick{margin:4px 0 10px;font-weight:900;color:#ffe14d;font-size:clamp(15px,3.6vw,18px);text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.ds-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.ds-meta div{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:8px 10px}
+.ds-meta b{display:block;font-size:11px;opacity:.7;font-weight:700}
+.ds-meta span{font-weight:900;font-size:15px}
+.ds-lore{margin:0;line-height:1.55;font-size:clamp(14px,3.4vw,16px);color:#e8ecff;background:rgba(0,0,0,.22);border-radius:14px;padding:12px 14px;border:1px solid rgba(255,255,255,.1)}
 .voicenote{font-size:13px;opacity:.7;text-align:center;min-height:16px}
 
 .pcols{display:grid;grid-template-columns:1fr;gap:10px;width:100%;align-items:start}
@@ -392,14 +418,15 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 /* v3 怪獸圖鑑 */
 .section-t small{font-size:.75em;opacity:.8;margin-left:6px}
 .dex{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin:4px 0 18px}
-.dcard{position:relative;background:rgba(40,46,120,.88);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:6px 4px 8px;text-align:center}
+.dcard{position:relative;background:rgba(40,46,120,.88);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:6px 4px 8px;text-align:center;color:inherit;font:inherit;cursor:pointer;transition:transform .12s,outline-color .12s;outline:2px solid transparent;width:100%}
+.dcard:not(.locked):hover,.dcard:not(.locked):focus-visible{transform:translateY(-2px);outline-color:#ffe14d}
 .dcard .dimg{height:84px}
 .dcard .dimg svg{width:100%;height:100%}
 .dcard .dimg *{animation:none!important}
 .dcard .dname{font-weight:900;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dcard .dn{font-size:12px;opacity:.8}
 .dcard.locked .dimg svg{filter:brightness(0) opacity(.4)}
-.dcard.locked{border-style:dashed;background:rgba(14,18,56,.9)}
+.dcard.locked{border-style:dashed;background:rgba(14,18,56,.9);cursor:default}
 .dcard.locked .dname{opacity:.6}
 .dtag{position:absolute;top:4px;right:4px;font-style:normal;font-size:11px;font-weight:900;padding:1px 6px;border-radius:8px;background:#ef4444}
 .dtag.f{background:#2f7fe0}.dtag.b{background:#7c3aed}.dtag.o{background:#e8483e}

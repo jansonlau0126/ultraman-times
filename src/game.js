@@ -808,7 +808,33 @@ function renderProgress(){
 function renderDex(){ const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
   $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
   $('#dex').innerHTML=DEX_ORDER.map((t,i)=>{ const m=MONS[t], n=dex[t]||0; const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':m.omega?'<i class="dtag o">奧米加</i>':'';
-    return '<div class="dcard'+(n?'':' locked')+'"><div class="dimg">'+monsterSVG(t,'dx'+i)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</div>'; }).join(''); }
+    return '<button type="button" class="dcard'+(n?'':' locked')+'" data-dex="'+t+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monsterSVG(t,'dx'+i)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>'; }).join('');
+  $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); openDexDetail(c.dataset.dex); })); }
+
+const DEX_BG = {
+  fire:['#5c1a08','#1a0804'], ice:['#1a5a8a','#061828'], thunder:['#8a6200','#1a1200'],
+  rock:['#3a3e46','#121418'], poison:['#2f3618','#0e1208'], sea:['#142430','#061018'],
+  boss:['#2a0f5c','#0a0418'], kanegon:['#6e3710','#1a0c04'], dada:['#222','#050505'],
+  graim:['#2f3238','#101214'], dugrid:['#2a1d14','#120c08'], pegunos:['#0e1f4a','#060c22'],
+  therizirus:['#12151b','#06070a'], ohebinushi:['#1f241d','#0a0c08'], gedrago:['#7d1b4f','#240814'],
+  rekiness:['#123a7a','#061428'], trigaron:['#101216','#060708'], vugsect:['#130d22','#080510']
+};
+function openDexDetail(type){
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
+  const bg=DEX_BG[type]||[m.dark, '#060918'];
+  const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
+  $('#dsArt').innerHTML = '<div class="mon-bob">'+monsterSVG(type,'ds'+Date.now().toString(36))+'</div>';
+  const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
+  if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
+  if(!tags.length) tags.push('<i>圖鑑怪獸</i>');
+  $('#dsTags').innerHTML=tags.join('');
+  $('#dsName').textContent=m.name; $('#dsNick').textContent=m.nick;
+  $('#dsKind').textContent=m.kind||'未知怪獸'; $('#dsHabitat').textContent=m.habitat||'？？？';
+  $('#dsMove').textContent=m.nick; $('#dsRecord').textContent=(m.friend?'特訓':'打敗')+' ×'+n;
+  $('#dsLore').textContent=m.lore||'暫時未有資料。';
+  sheet.hidden=false; sheet.classList.add('show');
+}
+function closeDexDetail(){ const sheet=$('#dexSheet'); sheet.classList.remove('show'); sheet.hidden=true; $('#dsArt').innerHTML=''; }
 
 /* ---------- modal ---------- */
 let modalCb=null;
@@ -832,8 +858,11 @@ function init(){
     else if(current==='learn'){ stopAuto(); Speech.stop(); buildLearnTiles(); show('learnPick'); }
     else goHome(); });
   $('#mYes').addEventListener('click',()=>closeModal(true)); $('#mNo').addEventListener('click',()=>closeModal(false));
+  $('#dsClose').addEventListener('click',()=>{ Sfx.click(); closeDexDetail(); });
+  $('#dexSheet').addEventListener('click',e=>{ if(e.target===e.currentTarget){ Sfx.click(); closeDexDetail(); } });
   $('#resetBtn').addEventListener('click',()=>confirmBox('真係要清除晒所有進度同勳章？','清除','唔好',v=>{ if(v){ const st=DATA.settings; DATA=defaultData(); DATA.settings=st; save(); renderProgress(); } }));
   document.addEventListener('keydown', e=>{
+    if($('#dexSheet').classList.contains('show')){ if(e.key==='Escape'){ closeDexDetail(); e.preventDefault(); } return; }
     if($('#modal').classList.contains('show')){ if(e.key==='Escape') closeModal(false); if(e.key==='Enter'){ e.preventDefault(); closeModal(true);} return; }
     if(current==='battle'){
       if($('#result').classList.contains('show')){ if(e.key==='Enter'){ e.preventDefault(); const b=$('#resultCard .rbtns .btn'); if(b) b.click(); } return; }
