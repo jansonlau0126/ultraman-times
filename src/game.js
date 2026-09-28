@@ -154,75 +154,21 @@ function makeChoices(a,b){ const ans=a*b; const set=[ans];
   return shuffle(set); }
 
 /* ---------- HOME ---------- */
-const HOME_PETS=[['homeDragon','homePetL'],['homeTurtle','homePetR']];
-function setHomeMon(){ /* pets are static on home now */ }
-function setHomeHeroPose(){ /* home splash uses fixed action art */ }
-function homeDragonSVG(p){
-  const dk='#0a0a12', bd='#22222c', wing='#6b4cff', gold='#f0c14a';
-  return `<svg class="mon home-pet-art" viewBox="0 0 220 220" aria-hidden="true">
-  <ellipse cx="110" cy="210" rx="50" ry="7" fill="#000" opacity=".3"/>
-  <!-- purple leathery wings -->
-  <path d="M95 135 C40 115 5 70 35 48 C55 78 72 112 95 135Z" fill="${wing}" stroke="${dk}" stroke-width="3"/>
-  <path d="M125 135 C180 115 215 70 185 48 C165 78 148 112 125 135Z" fill="${wing}" stroke="${dk}" stroke-width="3"/>
-  <path d="M88 128 C48 105 30 72 52 62" stroke="#b39bff" stroke-width="2.4" fill="none"/>
-  <path d="M132 128 C172 105 190 72 168 62" stroke="#b39bff" stroke-width="2.4" fill="none"/>
-  <!-- body -->
-  <ellipse cx="110" cy="158" rx="40" ry="40" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  <!-- gold chest plate -->
-  <ellipse cx="110" cy="168" rx="24" ry="20" fill="${gold}" stroke="#8a6a18" stroke-width="2.2"/>
-  <path d="M98 160 L110 176 L122 160" fill="none" stroke="#fff3c4" stroke-width="2" opacity=".8"/>
-  <!-- back spikes -->
-  <path d="M92 135 L86 112 L102 132 M110 128 L110 100 L120 128 M128 135 L134 112 L118 132" fill="#ff8a3d" stroke="${dk}" stroke-width="2"/>
-  <!-- head -->
-  <ellipse cx="110" cy="104" rx="34" ry="30" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  <path d="M84 96 L70 76 L90 90 M136 96 L150 76 L130 90" fill="#ff8a3d" stroke="${dk}" stroke-width="2.2"/>
-  <path d="M98 76 L108 50 L114 76 L122 48 L130 78" fill="#ff8a3d" stroke="${dk}" stroke-width="2"/>
-  ${chibiEyes(96,124,102,12,dk,'#ff6a00')}${chibiBlush(84,138,116)}
-  <path d="M100 118 Q110 130 122 116" stroke="${dk}" stroke-width="2.8" fill="none"/>
-  <!-- legs + tiny arms -->
-  <ellipse cx="90" cy="192" rx="12" ry="14" fill="${bd}" stroke="${dk}" stroke-width="2.4"/>
-  <ellipse cx="130" cy="192" rx="12" ry="14" fill="${bd}" stroke="${dk}" stroke-width="2.4"/>
-  <circle cx="74" cy="158" r="9" fill="#353542" stroke="${dk}" stroke-width="2"/>
-  <circle cx="146" cy="158" r="9" fill="#353542" stroke="${dk}" stroke-width="2"/>
-  <!-- tail -->
-  <path d="M145 175 Q175 185 185 205" stroke="${dk}" stroke-width="10" fill="none" stroke-linecap="round"/>
-  <path d="M145 175 Q175 185 185 205" stroke="${bd}" stroke-width="6" fill="none" stroke-linecap="round"/>
-  </svg>`;
-}
-function homeTurtleSVG(p){
-  const dk='#0c3322', bd='#2f9e66', shell='#6b4423';
-  return `<svg class="mon home-pet-art" viewBox="0 0 220 220" aria-hidden="true">
-  <ellipse cx="110" cy="210" rx="54" ry="7" fill="#000" opacity=".3"/>
-  <ellipse cx="110" cy="160" rx="62" ry="48" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  <ellipse cx="110" cy="154" rx="46" ry="36" fill="${shell}" stroke="${dk}" stroke-width="2.8"/>
-  <path d="M78 150 Q110 124 142 150" stroke="#3a2410" stroke-width="2.4" fill="none"/>
-  <path d="M110 124 L110 172 M88 140 L132 164 M132 140 L88 164" stroke="#3a2410" stroke-width="1.9" fill="none" opacity=".75"/>
-  <!-- tall glowing crystals -->
-  <g fill="#5ee7ff" stroke="#fff" stroke-width="2">
-    <path d="M90 132 L102 40 L114 132Z"/>
-    <path d="M110 124 L122 28 L134 124Z"/>
-    <path d="M128 132 L140 45 L152 132Z"/>
-    <path d="M68 152 L78 105 L90 152Z"/>
-    <path d="M150 152 L162 108 L174 152Z"/>
-  </g>
-  <g fill="#d6fbff" opacity=".9">
-    <ellipse cx="102" cy="65" rx="6" ry="4"/>
-    <ellipse cx="122" cy="48" rx="8" ry="5"/>
-    <ellipse cx="140" cy="68" rx="5" ry="3"/>
-  </g>
-  <ellipse cx="110" cy="190" rx="34" ry="16" fill="#eafff2" stroke="${dk}" stroke-width="2.2"/>
-  <ellipse cx="70" cy="182" rx="14" ry="11" fill="${bd}" stroke="${dk}" stroke-width="2.3"/>
-  <ellipse cx="150" cy="182" rx="14" ry="11" fill="${bd}" stroke="${dk}" stroke-width="2.3"/>
-  <ellipse cx="110" cy="110" rx="32" ry="28" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  ${chibiEyes(96,124,110,11.5,dk,'#38bdf8')}${chibiBlush(84,138,124)}
-  <path d="M100 124 Q110 134 122 122" stroke="${dk}" stroke-width="2.5" fill="none"/>
-  </svg>`;
-}
+const HOME_ART = {
+  hero: 'assets/home/hero.png',
+  dragon: 'assets/home/pet_dragon.png',
+  turtle: 'assets/home/pet_turtle.png'
+};
+const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
+function setHomeMon(){ /* pets are static raster art on home */ }
+function setHomeHeroPose(){ /* home splash uses fixed painted art */ }
 function initHome(){
-  $('#homeHero').innerHTML = '<div class="hero-bob">'+homeHeroSVG('hh')+'</div>';
+  $('#homeHero').innerHTML = '<div class="hero-bob"><img class="home-hero-img" src="'+HOME_ART.hero+'" alt="" draggable="false"></div>';
   const spark=$('.home-sparkles'); if(spark) spark.innerHTML='<i></i><i></i><i></i><i></i><i></i>';
-  const petArt={homeDragon:homeDragonSVG, homeTurtle:homeTurtleSVG};
-  HOME_PETS.forEach(([t,id],i)=>{ const el=$('#'+id); if(el) el.innerHTML='<div class="mon-bob">'+petArt[t]('hp'+i)+'</div>'; });
+  HOME_PETS.forEach(([key,id])=>{
+    const el=$('#'+id); if(!el) return;
+    el.innerHTML='<div class="mon-bob"><img class="home-pet-img" src="'+HOME_ART[key]+'" alt="" draggable="false"></div>';
+  });
   $('#homeHero').addEventListener('click', ()=>{
     const bob=$('#homeHero .hero-bob'); if(!bob) return;
     Sfx.whoosh();

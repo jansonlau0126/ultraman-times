@@ -47,27 +47,25 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .btn.gray{--c1:#8b95b5;--c2:#56608a;--c3:#2f3656}
 .btn.small{font-size:18px;padding:10px 16px;min-height:46px;border-radius:16px}
 
-/* HOME — match final_01_home: hero-center, glass pills, grounded pets, neon city */
+/* HOME — raster concept-style art + glass pill UI */
 #home{overflow:hidden;padding:0}
-body[data-screen="home"] #bg .sky-moon,
-body[data-screen="home"] #bg .sky-sl{display:none}
+body[data-screen="home"] #bg{opacity:0;pointer-events:none}
 body[data-screen="home"] #topbar{position:absolute;inset:0 0 auto 0;z-index:5;background:transparent;pointer-events:none}
 body[data-screen="home"] #topbar .iconbtn{pointer-events:auto}
 body[data-screen="home"] main{padding-top:0}
-#home .home-glow{pointer-events:none;position:absolute;inset:0;background:
-  radial-gradient(ellipse at 50% 28%,rgba(90,140,255,.34),transparent 52%),
-  radial-gradient(ellipse at 12% 72%,rgba(40,200,255,.3),transparent 42%),
-  radial-gradient(ellipse at 88% 68%,rgba(255,50,170,.28),transparent 40%),
-  radial-gradient(ellipse at 50% 92%,rgba(20,10,40,.55),transparent 55%)}
-.home-wrap{position:relative;z-index:1;width:100%;max-width:1100px;margin:0 auto;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 4px) 10px 6px;box-sizing:border-box;gap:0}
+.home-city{position:absolute;inset:0;z-index:0;background:#0a0e2e center/cover no-repeat;background-image:url('assets/home/city_bg.jpg')}
+#home .home-glow{pointer-events:none;position:absolute;inset:0;z-index:1;background:
+  radial-gradient(ellipse at 50% 32%,rgba(60,160,255,.22),transparent 50%),
+  radial-gradient(ellipse at 50% 100%,rgba(5,8,24,.55),transparent 45%)}
+.home-wrap{position:relative;z-index:2;width:100%;max-width:1100px;margin:0 auto;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 4px) 10px 6px;box-sizing:border-box;gap:0}
 .home-title{flex:0 0 auto;font-size:clamp(38px,9.5vw,72px);font-weight:900;line-height:1.02;margin:0;letter-spacing:4px;text-align:center;
   background:linear-gradient(180deg,#ffb06a 0%,#ff5a3a 42%,#e01818 78%,#9a0c0c 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 3px 0 #4a0808) drop-shadow(0 5px 0 #2a0404) drop-shadow(0 0 14px rgba(255,70,40,.4))}
-.home-stage{position:relative;flex:1 1 auto;width:100%;max-width:680px;min-height:0;margin:0;display:flex;align-items:flex-end;justify-content:center}
-.home-hero{position:relative;height:min(100%,62vh);width:auto;aspect-ratio:16/21;cursor:pointer;z-index:3;margin-bottom:-6%;filter:drop-shadow(0 0 28px rgba(80,230,255,.7)) drop-shadow(0 12px 18px rgba(0,0,0,.35))}
-.home-hero .hero-bob{animation:homeFloat 2.8s ease-in-out infinite;width:100%;height:100%}
-.home-hero-art{width:100%;height:100%}
+.home-stage{position:relative;flex:1 1 auto;width:100%;max-width:720px;min-height:0;margin:0;display:flex;align-items:flex-end;justify-content:center}
+.home-hero{position:relative;height:min(100%,64vh);width:auto;aspect-ratio:15/16;cursor:pointer;z-index:3;margin-bottom:-8%;filter:drop-shadow(0 0 24px rgba(80,230,255,.55)) drop-shadow(0 14px 20px rgba(0,0,0,.4))}
+.home-hero .hero-bob{animation:homeFloat 2.8s ease-in-out infinite;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.home-hero-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
 @keyframes homeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3.5%)}}
 .home-sparkles{position:absolute;inset:6% 10% 18%;pointer-events:none;z-index:4}
 .home-sparkles i{position:absolute;width:12px;height:12px;background:#ffe66d;clip-path:polygon(50% 0,61% 35%,100% 50%,61% 65%,50% 100%,39% 65%,0 50%,39% 35%);animation:spark 1.6s ease-in-out infinite;opacity:.9}
@@ -78,12 +76,13 @@ body[data-screen="home"] main{padding-top:0}
 .home-sparkles i:nth-child(5){left:46%;top:4%;width:10px;height:10px;background:#fff;animation-delay:.2s}
 @keyframes spark{0%,100%{transform:scale(.7) rotate(0);opacity:.45}50%{transform:scale(1.3) rotate(18deg);opacity:1}}
 .home-dock{position:relative;flex:0 0 auto;width:100%;max-width:980px;display:grid;grid-template-columns:minmax(70px,1fr) auto minmax(70px,1fr);align-items:end;gap:2px 6px;padding:0 4px 0;z-index:4;margin-top:-2%}
-.home-dock::before{content:"";position:absolute;left:3%;right:3%;bottom:0;height:20px;border-radius:40% 40% 0 0;background:linear-gradient(180deg,rgba(8,10,28,.2),rgba(4,6,18,.6));pointer-events:none;z-index:0}
+.home-dock::before{content:"";position:absolute;left:3%;right:3%;bottom:0;height:20px;border-radius:40% 40% 0 0;background:linear-gradient(180deg,rgba(8,10,28,.15),rgba(4,6,18,.5));pointer-events:none;z-index:0}
 .home-menu{grid-column:2;display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(6px,1.5vw,14px);z-index:2;padding-bottom:8px}
-.home-pet{width:clamp(84px,15vw,136px);aspect-ratio:1;z-index:1;filter:drop-shadow(0 8px 10px rgba(0,0,0,.4));align-self:end;margin-bottom:0}
+.home-pet{width:clamp(92px,16vw,148px);aspect-ratio:1;z-index:1;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));align-self:end;margin-bottom:0}
 .home-pet-l{grid-column:1;justify-self:start;animation:bob 2.4s ease-in-out infinite}
 .home-pet-r{grid-column:3;justify-self:end;animation:bob 2.1s ease-in-out infinite alternate}
-.home-pet-art{width:100%;height:100%}
+.home-pet .mon-bob{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.home-pet-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
 .home-floor-stars{position:absolute;left:0;right:0;bottom:2px;height:28px;pointer-events:none;z-index:3}
 .home-floor-stars i{position:absolute;bottom:4px;width:10px;height:10px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:spark 1.8s ease-in-out infinite}
 .home-floor-stars i:nth-child(1){left:8%;background:#ffe66d}
@@ -101,19 +100,19 @@ body[data-screen="home"] main{padding-top:0}
 .home-pill.timed{background:linear-gradient(180deg,#ffa0c0 0%,#f43f5e 48%,#be123c 100%)}
 .home-progress{flex:0 0 auto;margin-top:0;border:0;background:transparent;color:rgba(199,210,254,.55);font-weight:700;font-size:clamp(12px,2.8vw,14px);text-decoration:underline;text-underline-offset:3px;padding:2px 8px;z-index:2}
 @media (max-width:640px){
-  .home-hero{height:min(100%,52vh);margin-bottom:-4%}
+  .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(56px,.7fr) auto minmax(56px,.7fr);gap:2px}
   .home-menu{flex-wrap:nowrap;gap:5px}
   .home-pill{min-width:0;flex:1 1 auto;padding:8px 10px;font-size:clamp(14px,3.8vw,18px);min-height:46px}
   .home-pill.battle{min-width:0;font-size:clamp(15px,4vw,19px);min-height:50px}
-  .home-pet{width:clamp(58px,16vw,88px)}
+  .home-pet{width:clamp(64px,18vw,96px)}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
-  .home-hero{height:min(100%,48vh)}
+  .home-hero{height:min(100%,50vh)}
   .home-pill{min-height:42px;font-size:clamp(15px,3.2vw,20px);min-width:110px;padding:8px 14px}
   .home-pill.battle{min-height:46px;min-width:120px}
-  .home-pet{width:clamp(52px,11vw,84px)}
+  .home-pet{width:clamp(56px,12vw,90px)}
   .home-progress{display:none}
 }
 /* legacy title/menu kept for other screens */ 

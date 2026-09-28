@@ -56,27 +56,25 @@ p.sub{margin:0 0 12px;font-size:clamp(16px,3.8vw,20px);opacity:.9;text-align:cen
 .btn.gray{--c1:#8b95b5;--c2:#56608a;--c3:#2f3656}
 .btn.small{font-size:18px;padding:10px 16px;min-height:46px;border-radius:16px}
 
-/* HOME — match final_01_home: hero-center, glass pills, grounded pets, neon city */
+/* HOME — raster concept-style art + glass pill UI */
 #home{overflow:hidden;padding:0}
-body[data-screen="home"] #bg .sky-moon,
-body[data-screen="home"] #bg .sky-sl{display:none}
+body[data-screen="home"] #bg{opacity:0;pointer-events:none}
 body[data-screen="home"] #topbar{position:absolute;inset:0 0 auto 0;z-index:5;background:transparent;pointer-events:none}
 body[data-screen="home"] #topbar .iconbtn{pointer-events:auto}
 body[data-screen="home"] main{padding-top:0}
-#home .home-glow{pointer-events:none;position:absolute;inset:0;background:
-  radial-gradient(ellipse at 50% 28%,rgba(90,140,255,.34),transparent 52%),
-  radial-gradient(ellipse at 12% 72%,rgba(40,200,255,.3),transparent 42%),
-  radial-gradient(ellipse at 88% 68%,rgba(255,50,170,.28),transparent 40%),
-  radial-gradient(ellipse at 50% 92%,rgba(20,10,40,.55),transparent 55%)}
-.home-wrap{position:relative;z-index:1;width:100%;max-width:1100px;margin:0 auto;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 4px) 10px 6px;box-sizing:border-box;gap:0}
+.home-city{position:absolute;inset:0;z-index:0;background:#0a0e2e center/cover no-repeat;background-image:url('assets/home/city_bg.jpg')}
+#home .home-glow{pointer-events:none;position:absolute;inset:0;z-index:1;background:
+  radial-gradient(ellipse at 50% 32%,rgba(60,160,255,.22),transparent 50%),
+  radial-gradient(ellipse at 50% 100%,rgba(5,8,24,.55),transparent 45%)}
+.home-wrap{position:relative;z-index:2;width:100%;max-width:1100px;margin:0 auto;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 4px) 10px 6px;box-sizing:border-box;gap:0}
 .home-title{flex:0 0 auto;font-size:clamp(38px,9.5vw,72px);font-weight:900;line-height:1.02;margin:0;letter-spacing:4px;text-align:center;
   background:linear-gradient(180deg,#ffb06a 0%,#ff5a3a 42%,#e01818 78%,#9a0c0c 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 3px 0 #4a0808) drop-shadow(0 5px 0 #2a0404) drop-shadow(0 0 14px rgba(255,70,40,.4))}
-.home-stage{position:relative;flex:1 1 auto;width:100%;max-width:680px;min-height:0;margin:0;display:flex;align-items:flex-end;justify-content:center}
-.home-hero{position:relative;height:min(100%,62vh);width:auto;aspect-ratio:16/21;cursor:pointer;z-index:3;margin-bottom:-6%;filter:drop-shadow(0 0 28px rgba(80,230,255,.7)) drop-shadow(0 12px 18px rgba(0,0,0,.35))}
-.home-hero .hero-bob{animation:homeFloat 2.8s ease-in-out infinite;width:100%;height:100%}
-.home-hero-art{width:100%;height:100%}
+.home-stage{position:relative;flex:1 1 auto;width:100%;max-width:720px;min-height:0;margin:0;display:flex;align-items:flex-end;justify-content:center}
+.home-hero{position:relative;height:min(100%,64vh);width:auto;aspect-ratio:15/16;cursor:pointer;z-index:3;margin-bottom:-8%;filter:drop-shadow(0 0 24px rgba(80,230,255,.55)) drop-shadow(0 14px 20px rgba(0,0,0,.4))}
+.home-hero .hero-bob{animation:homeFloat 2.8s ease-in-out infinite;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.home-hero-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
 @keyframes homeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3.5%)}}
 .home-sparkles{position:absolute;inset:6% 10% 18%;pointer-events:none;z-index:4}
 .home-sparkles i{position:absolute;width:12px;height:12px;background:#ffe66d;clip-path:polygon(50% 0,61% 35%,100% 50%,61% 65%,50% 100%,39% 65%,0 50%,39% 35%);animation:spark 1.6s ease-in-out infinite;opacity:.9}
@@ -87,12 +85,13 @@ body[data-screen="home"] main{padding-top:0}
 .home-sparkles i:nth-child(5){left:46%;top:4%;width:10px;height:10px;background:#fff;animation-delay:.2s}
 @keyframes spark{0%,100%{transform:scale(.7) rotate(0);opacity:.45}50%{transform:scale(1.3) rotate(18deg);opacity:1}}
 .home-dock{position:relative;flex:0 0 auto;width:100%;max-width:980px;display:grid;grid-template-columns:minmax(70px,1fr) auto minmax(70px,1fr);align-items:end;gap:2px 6px;padding:0 4px 0;z-index:4;margin-top:-2%}
-.home-dock::before{content:"";position:absolute;left:3%;right:3%;bottom:0;height:20px;border-radius:40% 40% 0 0;background:linear-gradient(180deg,rgba(8,10,28,.2),rgba(4,6,18,.6));pointer-events:none;z-index:0}
+.home-dock::before{content:"";position:absolute;left:3%;right:3%;bottom:0;height:20px;border-radius:40% 40% 0 0;background:linear-gradient(180deg,rgba(8,10,28,.15),rgba(4,6,18,.5));pointer-events:none;z-index:0}
 .home-menu{grid-column:2;display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:clamp(6px,1.5vw,14px);z-index:2;padding-bottom:8px}
-.home-pet{width:clamp(84px,15vw,136px);aspect-ratio:1;z-index:1;filter:drop-shadow(0 8px 10px rgba(0,0,0,.4));align-self:end;margin-bottom:0}
+.home-pet{width:clamp(92px,16vw,148px);aspect-ratio:1;z-index:1;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));align-self:end;margin-bottom:0}
 .home-pet-l{grid-column:1;justify-self:start;animation:bob 2.4s ease-in-out infinite}
 .home-pet-r{grid-column:3;justify-self:end;animation:bob 2.1s ease-in-out infinite alternate}
-.home-pet-art{width:100%;height:100%}
+.home-pet .mon-bob{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.home-pet-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
 .home-floor-stars{position:absolute;left:0;right:0;bottom:2px;height:28px;pointer-events:none;z-index:3}
 .home-floor-stars i{position:absolute;bottom:4px;width:10px;height:10px;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:spark 1.8s ease-in-out infinite}
 .home-floor-stars i:nth-child(1){left:8%;background:#ffe66d}
@@ -110,19 +109,19 @@ body[data-screen="home"] main{padding-top:0}
 .home-pill.timed{background:linear-gradient(180deg,#ffa0c0 0%,#f43f5e 48%,#be123c 100%)}
 .home-progress{flex:0 0 auto;margin-top:0;border:0;background:transparent;color:rgba(199,210,254,.55);font-weight:700;font-size:clamp(12px,2.8vw,14px);text-decoration:underline;text-underline-offset:3px;padding:2px 8px;z-index:2}
 @media (max-width:640px){
-  .home-hero{height:min(100%,52vh);margin-bottom:-4%}
+  .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(56px,.7fr) auto minmax(56px,.7fr);gap:2px}
   .home-menu{flex-wrap:nowrap;gap:5px}
   .home-pill{min-width:0;flex:1 1 auto;padding:8px 10px;font-size:clamp(14px,3.8vw,18px);min-height:46px}
   .home-pill.battle{min-width:0;font-size:clamp(15px,4vw,19px);min-height:50px}
-  .home-pet{width:clamp(58px,16vw,88px)}
+  .home-pet{width:clamp(64px,18vw,96px)}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
-  .home-hero{height:min(100%,48vh)}
+  .home-hero{height:min(100%,50vh)}
   .home-pill{min-height:42px;font-size:clamp(15px,3.2vw,20px);min-width:110px;padding:8px 14px}
   .home-pill.battle{min-height:46px;min-width:120px}
-  .home-pet{width:clamp(52px,11vw,84px)}
+  .home-pet{width:clamp(56px,12vw,90px)}
   .home-progress{display:none}
 }
 /* legacy title/menu kept for other screens */ 
@@ -577,6 +576,7 @@ body[data-screen="home"] main{padding-top:0}
   <main>
     <!-- HOME -->
     <section id="home" class="screen active">
+      <div class="home-city" aria-hidden="true"></div>
       <div class="home-glow" aria-hidden="true"></div>
       <div class="home-wrap">
         <h1 class="home-title">超人乘數表</h1>
@@ -1332,75 +1332,21 @@ function makeChoices(a,b){ const ans=a*b; const set=[ans];
   return shuffle(set); }
 
 /* ---------- HOME ---------- */
-const HOME_PETS=[['homeDragon','homePetL'],['homeTurtle','homePetR']];
-function setHomeMon(){ /* pets are static on home now */ }
-function setHomeHeroPose(){ /* home splash uses fixed action art */ }
-function homeDragonSVG(p){
-  const dk='#0a0a12', bd='#22222c', wing='#6b4cff', gold='#f0c14a';
-  return `<svg class="mon home-pet-art" viewBox="0 0 220 220" aria-hidden="true">
-  <ellipse cx="110" cy="210" rx="50" ry="7" fill="#000" opacity=".3"/>
-  <!-- purple leathery wings -->
-  <path d="M95 135 C40 115 5 70 35 48 C55 78 72 112 95 135Z" fill="${wing}" stroke="${dk}" stroke-width="3"/>
-  <path d="M125 135 C180 115 215 70 185 48 C165 78 148 112 125 135Z" fill="${wing}" stroke="${dk}" stroke-width="3"/>
-  <path d="M88 128 C48 105 30 72 52 62" stroke="#b39bff" stroke-width="2.4" fill="none"/>
-  <path d="M132 128 C172 105 190 72 168 62" stroke="#b39bff" stroke-width="2.4" fill="none"/>
-  <!-- body -->
-  <ellipse cx="110" cy="158" rx="40" ry="40" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  <!-- gold chest plate -->
-  <ellipse cx="110" cy="168" rx="24" ry="20" fill="${gold}" stroke="#8a6a18" stroke-width="2.2"/>
-  <path d="M98 160 L110 176 L122 160" fill="none" stroke="#fff3c4" stroke-width="2" opacity=".8"/>
-  <!-- back spikes -->
-  <path d="M92 135 L86 112 L102 132 M110 128 L110 100 L120 128 M128 135 L134 112 L118 132" fill="#ff8a3d" stroke="${dk}" stroke-width="2"/>
-  <!-- head -->
-  <ellipse cx="110" cy="104" rx="34" ry="30" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  <path d="M84 96 L70 76 L90 90 M136 96 L150 76 L130 90" fill="#ff8a3d" stroke="${dk}" stroke-width="2.2"/>
-  <path d="M98 76 L108 50 L114 76 L122 48 L130 78" fill="#ff8a3d" stroke="${dk}" stroke-width="2"/>
-  ${chibiEyes(96,124,102,12,dk,'#ff6a00')}${chibiBlush(84,138,116)}
-  <path d="M100 118 Q110 130 122 116" stroke="${dk}" stroke-width="2.8" fill="none"/>
-  <!-- legs + tiny arms -->
-  <ellipse cx="90" cy="192" rx="12" ry="14" fill="${bd}" stroke="${dk}" stroke-width="2.4"/>
-  <ellipse cx="130" cy="192" rx="12" ry="14" fill="${bd}" stroke="${dk}" stroke-width="2.4"/>
-  <circle cx="74" cy="158" r="9" fill="#353542" stroke="${dk}" stroke-width="2"/>
-  <circle cx="146" cy="158" r="9" fill="#353542" stroke="${dk}" stroke-width="2"/>
-  <!-- tail -->
-  <path d="M145 175 Q175 185 185 205" stroke="${dk}" stroke-width="10" fill="none" stroke-linecap="round"/>
-  <path d="M145 175 Q175 185 185 205" stroke="${bd}" stroke-width="6" fill="none" stroke-linecap="round"/>
-  </svg>`;
-}
-function homeTurtleSVG(p){
-  const dk='#0c3322', bd='#2f9e66', shell='#6b4423';
-  return `<svg class="mon home-pet-art" viewBox="0 0 220 220" aria-hidden="true">
-  <ellipse cx="110" cy="210" rx="54" ry="7" fill="#000" opacity=".3"/>
-  <ellipse cx="110" cy="160" rx="62" ry="48" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  <ellipse cx="110" cy="154" rx="46" ry="36" fill="${shell}" stroke="${dk}" stroke-width="2.8"/>
-  <path d="M78 150 Q110 124 142 150" stroke="#3a2410" stroke-width="2.4" fill="none"/>
-  <path d="M110 124 L110 172 M88 140 L132 164 M132 140 L88 164" stroke="#3a2410" stroke-width="1.9" fill="none" opacity=".75"/>
-  <!-- tall glowing crystals -->
-  <g fill="#5ee7ff" stroke="#fff" stroke-width="2">
-    <path d="M90 132 L102 40 L114 132Z"/>
-    <path d="M110 124 L122 28 L134 124Z"/>
-    <path d="M128 132 L140 45 L152 132Z"/>
-    <path d="M68 152 L78 105 L90 152Z"/>
-    <path d="M150 152 L162 108 L174 152Z"/>
-  </g>
-  <g fill="#d6fbff" opacity=".9">
-    <ellipse cx="102" cy="65" rx="6" ry="4"/>
-    <ellipse cx="122" cy="48" rx="8" ry="5"/>
-    <ellipse cx="140" cy="68" rx="5" ry="3"/>
-  </g>
-  <ellipse cx="110" cy="190" rx="34" ry="16" fill="#eafff2" stroke="${dk}" stroke-width="2.2"/>
-  <ellipse cx="70" cy="182" rx="14" ry="11" fill="${bd}" stroke="${dk}" stroke-width="2.3"/>
-  <ellipse cx="150" cy="182" rx="14" ry="11" fill="${bd}" stroke="${dk}" stroke-width="2.3"/>
-  <ellipse cx="110" cy="110" rx="32" ry="28" fill="${bd}" stroke="${dk}" stroke-width="3.2"/>
-  ${chibiEyes(96,124,110,11.5,dk,'#38bdf8')}${chibiBlush(84,138,124)}
-  <path d="M100 124 Q110 134 122 122" stroke="${dk}" stroke-width="2.5" fill="none"/>
-  </svg>`;
-}
+const HOME_ART = {
+  hero: 'assets/home/hero.png',
+  dragon: 'assets/home/pet_dragon.png',
+  turtle: 'assets/home/pet_turtle.png'
+};
+const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
+function setHomeMon(){ /* pets are static raster art on home */ }
+function setHomeHeroPose(){ /* home splash uses fixed painted art */ }
 function initHome(){
-  $('#homeHero').innerHTML = '<div class="hero-bob">'+homeHeroSVG('hh')+'</div>';
+  $('#homeHero').innerHTML = '<div class="hero-bob"><img class="home-hero-img" src="'+HOME_ART.hero+'" alt="" draggable="false"></div>';
   const spark=$('.home-sparkles'); if(spark) spark.innerHTML='<i></i><i></i><i></i><i></i><i></i>';
-  const petArt={homeDragon:homeDragonSVG, homeTurtle:homeTurtleSVG};
-  HOME_PETS.forEach(([t,id],i)=>{ const el=$('#'+id); if(el) el.innerHTML='<div class="mon-bob">'+petArt[t]('hp'+i)+'</div>'; });
+  HOME_PETS.forEach(([key,id])=>{
+    const el=$('#'+id); if(!el) return;
+    el.innerHTML='<div class="mon-bob"><img class="home-pet-img" src="'+HOME_ART[key]+'" alt="" draggable="false"></div>';
+  });
   $('#homeHero').addEventListener('click', ()=>{
     const bob=$('#homeHero .hero-bob'); if(!bob) return;
     Sfx.whoosh();
