@@ -1,0 +1,5 @@
+Raster assets APPROVED by user (全部用):
+- home: city_bg, hero, pet_dragon, pet_turtle
+- battle henshin: hero_h1..h5
+- battle monsters: mon_* (18)
+- poses: kick, beam, punch, omega, win, guard

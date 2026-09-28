@@ -8,20 +8,25 @@
   <main>
     <!-- HOME -->
     <section id="home" class="screen active">
-      <div class="wrap">
-        <h1 class="title">超人乘數表</h1>
-        <div class="tagline">超人奧米加打怪獸・一齊學乘數表！</div>
-        <div class="homescene">
-          <div class="hs-hero" id="homeHero" title="撳我！"></div>
-          <div class="vs">VS</div>
-          <div class="hs-mon" id="homeMon"></div>
+      <div class="home-city" aria-hidden="true"></div>
+      <div class="home-glow" aria-hidden="true"></div>
+      <div class="home-wrap">
+        <h1 class="home-title">超人乘數表</h1>
+        <div class="home-stage" id="homeStage">
+          <div class="home-sparkles" aria-hidden="true"></div>
+          <div class="home-hero" id="homeHero" title="撳我！"></div>
         </div>
-        <div class="menu">
-          <button class="btn blue" data-go="learnPick"><span data-icon="book"></span>學習模式<small>讀九因歌</small></button>
-          <button class="btn" data-go="setup-battle"><span data-icon="bolt"></span>打怪獸<small>答啱就出招！</small></button>
-          <button class="btn orange" data-go="setup-timed"><span data-icon="clock"></span>計時挑戰<small>60秒快答</small></button>
-          <button class="btn green" data-go="progress"><span data-icon="medal"></span>我的進度<small>睇勳章</small></button>
+        <div class="home-dock">
+          <div class="home-pet home-pet-l" id="homePetL"></div>
+          <div class="home-menu">
+            <button class="home-pill learn" data-go="learnPick">學乘數表</button>
+            <button class="home-pill battle" data-go="setup-battle">打怪獸</button>
+            <button class="home-pill timed" data-go="setup-timed">計時挑戰</button>
+          </div>
+          <div class="home-pet home-pet-r" id="homePetR"></div>
+          <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
+        <button class="home-progress" data-go="progress">我的進度</button>
       </div>
     </section>
 
@@ -93,6 +98,7 @@
     <!-- BATTLE -->
     <section id="battle" class="screen">
       <div class="stage" id="stage">
+        <div class="battle-city" aria-hidden="true"></div>
         <div class="ground"></div>
         <div class="stagehud">
           <div class="hudbox herohud" id="heroHud"><div id="roundLbl">第 1 關</div><div class="dots" id="roundDots"></div></div>
@@ -133,8 +139,24 @@
         <div class="badges" id="badges"></div>
         </div>
         </div>
-        <div class="section-t">怪獸圖鑑 <small id="dexCount"></small></div>
-        <div class="dex" id="dex"></div>
+        <div class="dex-stage">
+          <h2 class="dex-title">怪獸圖鑑 <span id="dexCount"></span></h2>
+          <div class="dex-layout">
+            <div class="dex" id="dex"></div>
+            <aside class="dex-panel" id="dexPanel" aria-live="polite">
+              <div class="dex-panel-empty" id="dexPanelEmpty">撳左邊怪獸睇詳情</div>
+              <div class="dex-panel-body" id="dexPanelBody" hidden>
+                <div class="dex-panel-art" id="dexPanelArt"></div>
+                <div class="dex-panel-tags" id="dexPanelTags"></div>
+                <h3 class="dex-panel-name" id="dexPanelName"></h3>
+                <div class="dex-panel-nick" id="dexPanelNick"></div>
+                <div class="dex-bars" id="dexBars"></div>
+                <p class="dex-panel-lore" id="dexPanelLore"></p>
+                <button type="button" class="btn small blue" id="dexPanelMore">睇完整資料</button>
+              </div>
+            </aside>
+          </div>
+        </div>
         <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
       </div>
     </section>
