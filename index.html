@@ -279,10 +279,19 @@ body[data-screen="home"] main{padding-top:0}
   #battle.active{grid-template-columns:minmax(0,1.45fr) minmax(300px,1fr);grid-template-rows:minmax(0,1fr)}
 }
 .stage{position:relative;border-radius:24px;overflow:hidden;min-height:210px;border:3px solid var(--line);background:linear-gradient(180deg,rgba(20,20,80,.05) 0%,rgba(40,20,90,.25) 70%,rgba(0,0,0,0) 100%)}
-.ground{position:absolute;left:0;right:0;bottom:0;height:13%;background:linear-gradient(180deg,#3a4468,#1a2040);border-top:3px solid #5d6aa0}
-.ground::after{content:"";position:absolute;left:0;right:0;top:45%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.6}
+.battle-city{position:absolute;inset:0;z-index:0;background:#0a0e2e center/cover no-repeat;background-image:url('assets/home/city_bg.jpg');opacity:.92}
+.ground{position:absolute;left:0;right:0;bottom:0;height:13%;background:linear-gradient(180deg,rgba(20,24,48,.75),rgba(8,10,24,.9));border-top:3px solid rgba(93,106,160,.55);z-index:1}
+.ground::after{content:"";position:absolute;left:0;right:0;top:45%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.45}
 .hero-wrap{position:absolute;left:5%;bottom:7%;z-index:3}
 .mon-wrap{position:absolute;right:4%;bottom:7%;z-index:2}
+.hero.raster{position:relative;width:100%;height:100%;display:block}
+.hero-raster,.mon-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
+.hero-anchors,.mon-anchors{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+.mon.mon-raster{position:relative;width:100%;height:100%;display:block}
+.hero.henshin-up .hero-raster{filter:brightness(1.45) drop-shadow(0 0 16px rgba(255,255,255,.9))}
+.mon.ouch .mon-img{filter:brightness(1.6) saturate(1.3) hue-rotate(-10deg)}
+.dimg .mon-raster,.dimg .mon-img{width:100%;height:100%}
+#dsArt .mon-raster,#dsArt .mon-img{width:100%;height:100%}
 #fxLayer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 #fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
 .stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px;z-index:7;gap:8px;pointer-events:none}
@@ -666,6 +675,7 @@ body[data-screen="home"] main{padding-top:0}
     <!-- BATTLE -->
     <section id="battle" class="screen">
       <div class="stage" id="stage">
+        <div class="battle-city" aria-hidden="true"></div>
         <div class="ground"></div>
         <div class="stagehud">
           <div class="hudbox herohud" id="heroHud"><div id="roundLbl">第 1 關</div><div class="dots" id="roundDots"></div></div>
@@ -1337,6 +1347,38 @@ const HOME_ART = {
   dragon: 'assets/home/pet_dragon.png',
   turtle: 'assets/home/pet_turtle.png'
 };
+const BATTLE_HERO = [null,
+  'assets/battle/hero_h1.png','assets/battle/hero_h2.png','assets/battle/hero_h3.png',
+  'assets/battle/hero_h4.png','assets/battle/hero_h5.png'];
+const BATTLE_MON = {
+  heidragon:'assets/battle/mon_heidragon.png', lavaover:'assets/battle/mon_lavaover.png',
+  holyturt:'assets/battle/mon_holyturt.png', sandwyrm:'assets/battle/mon_sandwyrm.png',
+  thundwolf:'assets/battle/mon_thundwolf.png', ninjacat:'assets/battle/mon_ninjacat.png',
+  steeltiran:'assets/battle/mon_steeltiran.png', icetiran:'assets/battle/mon_icetiran.png',
+  phoenix:'assets/battle/mon_phoenix.png', mtngod:'assets/battle/mon_mtngod.png',
+  manflower:'assets/battle/mon_manflower.png', illusdemon:'assets/battle/mon_illusdemon.png',
+  seaking:'assets/battle/mon_seaking.png', deathscorp:'assets/battle/mon_deathscorp.png',
+  nightmare:'assets/battle/mon_nightmare.png', galmoth:'assets/battle/mon_galmoth.png',
+  flamecrab:'assets/battle/mon_flamecrab.png', starlord:'assets/battle/mon_starlord.png'
+};
+function heroRasterHTML(stage){
+  const st = Math.max(1, Math.min(5, stage|0 || 1));
+  return '<div class="hero henshin-'+st+' raster" style="--tc:#5ee7ff">'+
+    '<img class="hero-raster" src="'+BATTLE_HERO[st]+'" alt="" draggable="false">'+
+    '<svg class="hero-anchors" viewBox="0 0 220 320" aria-hidden="true">'+
+    '<circle class="mk-chest" cx="110" cy="170" r="1"/><circle class="mk-hand" cx="175" cy="210" r="1"/>'+
+    '<circle class="mk-beam" cx="190" cy="150" r="1"/><circle class="mk-slug" cx="110" cy="24" r="1"/>'+
+    '</svg></div>';
+}
+function monRasterHTML(type){
+  const src = BATTLE_MON[type];
+  if(!src) return monsterSVG(type, 'fb');
+  return '<div class="mon mon-raster mon-'+type+'">'+
+    '<img class="mon-img" src="'+src+'" alt="" draggable="false">'+
+    '<svg class="mon-anchors" viewBox="0 0 240 240" aria-hidden="true">'+
+    '<circle class="mk-core" cx="120" cy="130" r="1"/><circle class="mk-mouth" cx="120" cy="150" r="1"/>'+
+    '</svg></div>';
+}
 const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
 function setHomeMon(){ /* pets are static raster art on home */ }
 function setHomeHeroPose(){ /* home splash uses fixed painted art */ }
@@ -1464,6 +1506,8 @@ function syncHenshin(){
   const h=heroSvgEl(); if(!h) return;
   const st=henshinStage(), prev=B._hen||1;
   for(let i=1;i<=5;i++) h.classList.toggle('henshin-'+i, i===st);
+  const img = h.querySelector('.hero-raster');
+  if(img && BATTLE_HERO[st] && img.getAttribute('src')!==BATTLE_HERO[st]) img.setAttribute('src', BATTLE_HERO[st]);
   if(st>prev){
     h.classList.add('henshin-up'); Sfx.charge();
     try{ const hp=relPos(mk('.mk-chest',heroWrap)); floatText('yell', HEN_LABEL[st]+'！', hp.x, hp.t-8);
@@ -1758,7 +1802,7 @@ function startSession(mode, tables){
   B.mode=mode; B.tables=tables.slice().sort((a,b)=>a-b); B.choice=!!DATA.settings.choice;
   B.combo=0; B.maxCombo=0; B.recent=[]; B.lastMove=null; B.busy=true; B.input='';
   $('#battle').classList.toggle('mode-choice', B.choice); hideResult(); FX.clear(); fxLayer.innerHTML='';
-  if(!$('#heroBob .hero')) $('#heroBob').innerHTML=heroSVG('hb');
+  if(!$('#heroBob .hero')) $('#heroBob').innerHTML=heroRasterHTML(1);
   heroWrap.getAnimations().forEach(a=>a.cancel());
   show('battle');
   if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(NORMALS.concat(MID_BOSSES)); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
@@ -1769,7 +1813,7 @@ async function startRound(type){
   B.maxHp = B.mode==='timed' ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
   if(B.mode!=='timed'){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; }
   else B.rwrong=0;
-  monCounter++; $('#monBob').innerHTML = monsterSVG(type, 'mb'+monCounter);
+  monCounter++; $('#monBob').innerHTML = monRasterHTML(type);
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
   B._hen=1; setChestTimer(0); heroPose('idle'); syncHenshin(); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
@@ -1883,7 +1927,7 @@ function timedEnd(){ stopTimer(); B.token++; B.busy=true; const key='t:'+B.table
   $('#rAgain').addEventListener('click',()=>{ Sfx.click(); startSession('timed', B.tables); });
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup('timed'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); }); }
-function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg').forEach(e=>e.remove()); clearDisrupt(); clearCinema(); B._hen=1; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); } }
+function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg').forEach(e=>e.remove()); clearDisrupt(); clearCinema(); B._hen=1; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', BATTLE_HERO[1]); } }
 
 function initBattle(){
   stageEl=$('#stage'); heroWrap=$('#heroWrap'); monWrap=$('#monWrap'); fxLayer=$('#fxLayer'); FX.attach($('#fxCanvas'));
@@ -1909,7 +1953,7 @@ function renderProgress(){
 function renderDex(){ const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
   $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
   $('#dex').innerHTML=DEX_ORDER.map((t,i)=>{ const m=MONS[t], n=dex[t]||0; const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':m.omega?'<i class="dtag o">奧米加</i>':'';
-    return '<button type="button" class="dcard'+(n?'':' locked')+'" data-dex="'+t+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monsterSVG(t,'dx'+i)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>'; }).join('');
+    return '<button type="button" class="dcard'+(n?'':' locked')+'" data-dex="'+t+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>'; }).join('');
   $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); openDexDetail(c.dataset.dex); })); }
 
 const DEX_BG = {
@@ -1924,7 +1968,7 @@ function openDexDetail(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
-  $('#dsArt').innerHTML = '<div class="mon-bob">'+monsterSVG(type,'ds'+Date.now().toString(36))+'</div>';
+  $('#dsArt').innerHTML = '<div class="mon-bob">'+monRasterHTML(type)+'</div>';
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
   if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   if(!tags.length) tags.push('<i>圖鑑怪獸</i>');

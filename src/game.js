@@ -159,6 +159,38 @@ const HOME_ART = {
   dragon: 'assets/home/pet_dragon.png',
   turtle: 'assets/home/pet_turtle.png'
 };
+const BATTLE_HERO = [null,
+  'assets/battle/hero_h1.png','assets/battle/hero_h2.png','assets/battle/hero_h3.png',
+  'assets/battle/hero_h4.png','assets/battle/hero_h5.png'];
+const BATTLE_MON = {
+  heidragon:'assets/battle/mon_heidragon.png', lavaover:'assets/battle/mon_lavaover.png',
+  holyturt:'assets/battle/mon_holyturt.png', sandwyrm:'assets/battle/mon_sandwyrm.png',
+  thundwolf:'assets/battle/mon_thundwolf.png', ninjacat:'assets/battle/mon_ninjacat.png',
+  steeltiran:'assets/battle/mon_steeltiran.png', icetiran:'assets/battle/mon_icetiran.png',
+  phoenix:'assets/battle/mon_phoenix.png', mtngod:'assets/battle/mon_mtngod.png',
+  manflower:'assets/battle/mon_manflower.png', illusdemon:'assets/battle/mon_illusdemon.png',
+  seaking:'assets/battle/mon_seaking.png', deathscorp:'assets/battle/mon_deathscorp.png',
+  nightmare:'assets/battle/mon_nightmare.png', galmoth:'assets/battle/mon_galmoth.png',
+  flamecrab:'assets/battle/mon_flamecrab.png', starlord:'assets/battle/mon_starlord.png'
+};
+function heroRasterHTML(stage){
+  const st = Math.max(1, Math.min(5, stage|0 || 1));
+  return '<div class="hero henshin-'+st+' raster" style="--tc:#5ee7ff">'+
+    '<img class="hero-raster" src="'+BATTLE_HERO[st]+'" alt="" draggable="false">'+
+    '<svg class="hero-anchors" viewBox="0 0 220 320" aria-hidden="true">'+
+    '<circle class="mk-chest" cx="110" cy="170" r="1"/><circle class="mk-hand" cx="175" cy="210" r="1"/>'+
+    '<circle class="mk-beam" cx="190" cy="150" r="1"/><circle class="mk-slug" cx="110" cy="24" r="1"/>'+
+    '</svg></div>';
+}
+function monRasterHTML(type){
+  const src = BATTLE_MON[type];
+  if(!src) return monsterSVG(type, 'fb');
+  return '<div class="mon mon-raster mon-'+type+'">'+
+    '<img class="mon-img" src="'+src+'" alt="" draggable="false">'+
+    '<svg class="mon-anchors" viewBox="0 0 240 240" aria-hidden="true">'+
+    '<circle class="mk-core" cx="120" cy="130" r="1"/><circle class="mk-mouth" cx="120" cy="150" r="1"/>'+
+    '</svg></div>';
+}
 const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
 function setHomeMon(){ /* pets are static raster art on home */ }
 function setHomeHeroPose(){ /* home splash uses fixed painted art */ }
@@ -286,6 +318,8 @@ function syncHenshin(){
   const h=heroSvgEl(); if(!h) return;
   const st=henshinStage(), prev=B._hen||1;
   for(let i=1;i<=5;i++) h.classList.toggle('henshin-'+i, i===st);
+  const img = h.querySelector('.hero-raster');
+  if(img && BATTLE_HERO[st] && img.getAttribute('src')!==BATTLE_HERO[st]) img.setAttribute('src', BATTLE_HERO[st]);
   if(st>prev){
     h.classList.add('henshin-up'); Sfx.charge();
     try{ const hp=relPos(mk('.mk-chest',heroWrap)); floatText('yell', HEN_LABEL[st]+'！', hp.x, hp.t-8);
@@ -580,7 +614,7 @@ function startSession(mode, tables){
   B.mode=mode; B.tables=tables.slice().sort((a,b)=>a-b); B.choice=!!DATA.settings.choice;
   B.combo=0; B.maxCombo=0; B.recent=[]; B.lastMove=null; B.busy=true; B.input='';
   $('#battle').classList.toggle('mode-choice', B.choice); hideResult(); FX.clear(); fxLayer.innerHTML='';
-  if(!$('#heroBob .hero')) $('#heroBob').innerHTML=heroSVG('hb');
+  if(!$('#heroBob .hero')) $('#heroBob').innerHTML=heroRasterHTML(1);
   heroWrap.getAnimations().forEach(a=>a.cancel());
   show('battle');
   if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(NORMALS.concat(MID_BOSSES)); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
@@ -591,7 +625,7 @@ async function startRound(type){
   B.maxHp = B.mode==='timed' ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
   if(B.mode!=='timed'){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; }
   else B.rwrong=0;
-  monCounter++; $('#monBob').innerHTML = monsterSVG(type, 'mb'+monCounter);
+  monCounter++; $('#monBob').innerHTML = monRasterHTML(type);
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
   B._hen=1; setChestTimer(0); heroPose('idle'); syncHenshin(); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
@@ -705,7 +739,7 @@ function timedEnd(){ stopTimer(); B.token++; B.busy=true; const key='t:'+B.table
   $('#rAgain').addEventListener('click',()=>{ Sfx.click(); startSession('timed', B.tables); });
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup('timed'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); }); }
-function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg').forEach(e=>e.remove()); clearDisrupt(); clearCinema(); B._hen=1; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); } }
+function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg').forEach(e=>e.remove()); clearDisrupt(); clearCinema(); B._hen=1; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', BATTLE_HERO[1]); } }
 
 function initBattle(){
   stageEl=$('#stage'); heroWrap=$('#heroWrap'); monWrap=$('#monWrap'); fxLayer=$('#fxLayer'); FX.attach($('#fxCanvas'));
@@ -731,7 +765,7 @@ function renderProgress(){
 function renderDex(){ const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
   $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
   $('#dex').innerHTML=DEX_ORDER.map((t,i)=>{ const m=MONS[t], n=dex[t]||0; const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':m.omega?'<i class="dtag o">奧米加</i>':'';
-    return '<button type="button" class="dcard'+(n?'':' locked')+'" data-dex="'+t+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monsterSVG(t,'dx'+i)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>'; }).join('');
+    return '<button type="button" class="dcard'+(n?'':' locked')+'" data-dex="'+t+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>'; }).join('');
   $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); openDexDetail(c.dataset.dex); })); }
 
 const DEX_BG = {
@@ -746,7 +780,7 @@ function openDexDetail(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
-  $('#dsArt').innerHTML = '<div class="mon-bob">'+monsterSVG(type,'ds'+Date.now().toString(36))+'</div>';
+  $('#dsArt').innerHTML = '<div class="mon-bob">'+monRasterHTML(type)+'</div>';
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
   if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   if(!tags.length) tags.push('<i>圖鑑怪獸</i>');
