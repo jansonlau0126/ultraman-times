@@ -70,7 +70,25 @@ function heroSVG(p){
     '<path d="M100 116 L186 114" stroke="'+sl+'" stroke-width="3.5" stroke-linecap="round"/>'+cuff(178,116,188,116)+glove(198,116,11)+
     '<path d="M160 164 L160 74" stroke="'+sl+'" stroke-width="3.2" stroke-linecap="round"/>'+cuff(160,74,160,64)+glove(160,54,11)+
     '<circle cx="160" cy="116" r="14" fill="#bff3ff" filter="url(#'+p+'gl)"/><circle cx="160" cy="116" r="5.5" fill="#fff"/></g>';
-  return '<svg class="hero" viewBox="0 0 200 340" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
+  /* henshin overlays — shown by .henshin-N classes */
+  const hen = '<g class="h-pauldron" opacity=".95">'+
+    '<ellipse cx="48" cy="100" rx="16" ry="12" fill="#bff3ff" filter="url(#'+p+'gl)" opacity=".85"/><ellipse cx="152" cy="100" rx="16" ry="12" fill="#bff3ff" filter="url(#'+p+'gl)" opacity=".85"/>'+
+    '<path d="M34 96 L48 88 L62 98 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.6"/><path d="M138 98 L152 88 L166 96 Z" fill="'+sv+'" stroke="'+ol+'" stroke-width="1.6"/>'+
+    '</g>'+
+    '<g class="h-meteor" stroke="#7ff0ff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".9">'+
+    '<path d="M108 8 L128 -18"/><path d="M118 20 L142 -6"/><path d="M40 120 L18 96"/><path d="M160 120 L186 92"/>'+
+    '<circle cx="132" cy="-10" r="3" fill="#fff"/><circle cx="22" cy="100" r="2.5" fill="#fff"/>'+
+    '</g>'+
+    '<g class="h-crystal" opacity=".95">'+
+    '<path d="M72 86 L80 70 L88 86 Z" fill="#b58cff" stroke="#fff" stroke-width="1.2"/><path d="M112 86 L120 68 L128 86 Z" fill="#7ff0ff" stroke="#fff" stroke-width="1.2"/>'+
+    '<path d="M40 130 L48 112 L56 130 Z" fill="#ff7ad9" stroke="#fff" stroke-width="1.2"/><path d="M144 130 L152 112 L160 130 Z" fill="#ffe066" stroke="#fff" stroke-width="1.2"/>'+
+    '</g>'+
+    '<g class="h-wings" opacity=".92">'+
+    '<path d="M70 120 C20 90 -10 110 8 150 C30 130 50 140 70 150 Z" fill="#ff7ad9" filter="url(#'+p+'gl)" opacity=".75"/>'+
+    '<path d="M130 120 C180 90 210 110 192 150 C170 130 150 140 130 150 Z" fill="#7ff0ff" filter="url(#'+p+'gl)" opacity=".75"/>'+
+    '<path d="M70 120 C30 100 10 120 28 148" stroke="#ffe066" stroke-width="2.5" fill="none"/><path d="M130 120 C170 100 190 120 172 148" stroke="#ffe066" stroke-width="2.5" fill="none"/>'+
+    '</g>';
+  return '<svg class="hero henshin-1" viewBox="0 0 200 340" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="--tc:#5ee7ff">'+
     '<defs>'+
     '<linearGradient id="'+p+'sv" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#e2e8f0"/><stop offset="1" stop-color="#8fa0b4"/></linearGradient>'+
     '<linearGradient id="'+p+'rd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a6e"/><stop offset=".5" stop-color="#e53935"/><stop offset="1" stop-color="#9e1c1c"/></linearGradient>'+
@@ -79,6 +97,7 @@ function heroSVG(p){
     '<filter id="'+p+'gl" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.4"/></filter>'+
     '</defs>'+
     '<ellipse class="h-aura" cx="100" cy="170" rx="94" ry="155" fill="#a8f0ff" filter="url(#'+p+'gl)" opacity=".55"/>'+
+    hen+
     '<ellipse cx="100" cy="326" rx="72" ry="8" fill="#000" opacity=".28"/>'+
     legL + legR + kick + armL + armR + torso + head + guard + cross +
     '<circle class="mk-beam" cx="160" cy="116" r="1" fill="none"/>'+
