@@ -170,6 +170,7 @@ const BATTLE_POSE = {
   whirl:'assets/battle/hero_pose_punch.png',
   flip:'assets/battle/hero_pose_kick.png',
   tuck:'assets/battle/hero_pose_kick.png',
+  guard:'assets/battle/hero_pose_guard.png',
   win:'assets/battle/hero_pose_win.png',
   omega:'assets/battle/hero_pose_omega.png',
   rainbow:'assets/battle/hero_pose_omega.png',
@@ -550,6 +551,7 @@ function damageMonster(dmg){ B.hp=Math.max(0,B.hp-dmg); $('#hpFill').style.width
   const t=relPos(monWrap); floatText('dmg','-'+dmg, t.x, t.t+t.h*.15); }
 async function monsterAttack(){
   const s=MONS[B.type], elem=s.elem||'shadow', msv=monSvgEl(); Sfx.growl();
+  heroPose('guard');
   const o=()=>relPos(mk('.mk-mouth',monWrap)||mk('.mk-core',monWrap));
   const tHero=()=>relPos(mk('.mk-chest',heroWrap));
   const lunge=()=>play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-14%) rotate(-7deg)',offset:.4},{transform:'translateX(0)'}],{duration:720*K()});
@@ -571,16 +573,17 @@ async function monsterAttack(){
     for(let i=0;i<3;i++){ const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
       play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:300*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
       await sleep(120*K()); }
-    hitHero(s.nick+'！',[s.shot,'#fff','#ff7ad9']); await L; await sleep(180*K()); return;
+    hitHero(s.nick+'！',[s.shot,'#fff','#ff7ad9']); await L; await sleep(180*K()); heroPose('idle'); return;
   }
   if(elem==='thunder'){
     for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
       play(sl,[{transform:'rotate('+(-35+i*20)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-35+i*20)+'deg) scaleX(1)',opacity:0}],{duration:260}).then(()=>rm(sl)); Sfx.shing(); await sleep(45*K()); }
-    hitHero(s.nick+'！',[s.shot,'#fff','#fde047']); await L; await sleep(160*K()); return;
+    hitHero(s.nick+'！',[s.shot,'#fff','#fde047']); await L; await sleep(160*K()); heroPose('idle'); return;
   }
   const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px'; Sfx.whoosh();
   await play(orb,[{transform:'translate(0,0) scale(.5)'},{transform:'translate('+((th.x-oo.x)/2)+'px,'+((th.y-oo.y)/2-40)+'px) scale(1)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.35)'}],{duration:480*K(),easing:'ease-in',fill:'forwards'}); rm(orb);
   hitHero(s.nick+'！',[s.shot,'#fff',s.light]); await L; await sleep(180*K());
+  heroPose('idle');
 }
 
 async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
