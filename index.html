@@ -107,7 +107,9 @@ body[data-screen="home"] main{padding-top:0}
 .home-pill.learn{background:linear-gradient(180deg,#9ad4ff 0%,#3b82f6 48%,#1d4ed8 100%)}
 .home-pill.battle{background:linear-gradient(180deg,#8dffb8 0%,#22c55e 48%,#15803d 100%);min-width:clamp(140px,26vw,230px);min-height:clamp(54px,8vh,70px);font-size:clamp(20px,4.5vw,28px)}
 .home-pill.timed{background:linear-gradient(180deg,#ffa0c0 0%,#f43f5e 48%,#be123c 100%)}
-.home-progress{flex:0 0 auto;margin-top:0;border:0;background:transparent;color:rgba(199,210,254,.55);font-weight:700;font-size:clamp(12px,2.8vw,14px);text-decoration:underline;text-underline-offset:3px;padding:2px 8px;z-index:2}
+.home-record{flex:0 0 auto;margin:2px 0 4px;min-width:min(92vw,460px);min-height:clamp(56px,8.4vh,72px);padding:8px 28px 10px;border-radius:999px;border:3.5px solid rgba(255,255,255,.95);background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;font-weight:900;font-size:clamp(24px,5.2vw,32px);letter-spacing:3px;text-shadow:0 1px 0 rgba(255,255,255,.5);box-shadow:0 6px 0 #92400e,0 12px 22px rgba(0,0,0,.32),inset 0 3px 0 rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;z-index:3;cursor:pointer}
+.home-record small{display:block;font-size:.4em;font-weight:800;letter-spacing:1px;opacity:.82;margin-top:2px}
+.home-record:active{transform:translateY(4px);box-shadow:0 2px 0 #92400e,inset 0 2px 0 rgba(255,255,255,.5)}
 @media (max-width:640px){
   .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(56px,.7fr) auto minmax(56px,.7fr);gap:2px}
@@ -115,6 +117,8 @@ body[data-screen="home"] main{padding-top:0}
   .home-pill{min-width:0;flex:1 1 auto;padding:8px 10px;font-size:clamp(14px,3.8vw,18px);min-height:46px}
   .home-pill.battle{min-width:0;font-size:clamp(15px,4vw,19px);min-height:50px}
   .home-pet{width:clamp(64px,18vw,96px)}
+  .home-wrap{padding-bottom:20px}
+  .home-record{min-height:54px;margin:0;font-size:clamp(22px,6vw,28px);padding:6px 18px 8px}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
@@ -122,7 +126,7 @@ body[data-screen="home"] main{padding-top:0}
   .home-pill{min-height:42px;font-size:clamp(15px,3.2vw,20px);min-width:110px;padding:8px 14px}
   .home-pill.battle{min-height:46px;min-width:120px}
   .home-pet{width:clamp(56px,12vw,90px)}
-  .home-progress{display:none}
+  .home-record{min-height:46px;font-size:clamp(18px,3.4vw,24px);padding:4px 18px 6px;letter-spacing:2px}
 }
 /* legacy title/menu kept for other screens */ 
 .title{font-size:clamp(48px,13vw,96px);font-weight:900;line-height:1.05;margin:4px 0 0;letter-spacing:4px;background:linear-gradient(180deg,#fffbd1 0%,#ffe14d 45%,#ff9d00 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(3px 0 0 #c01616) drop-shadow(-3px 0 0 #c01616) drop-shadow(0 3px 0 #c01616) drop-shadow(0 -3px 0 #c01616) drop-shadow(0 7px 0 #6b0909) drop-shadow(0 0 22px rgba(255,210,80,.55));text-align:center}
@@ -359,8 +363,18 @@ body[data-screen="home"] main{padding-top:0}
 .speedline{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,#fff);opacity:.8}
 
 .panel{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:10px;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0;position:relative;overflow:hidden}
+.panel.elem-live{box-shadow:inset 0 0 0 3px var(--elem,rgba(255,255,255,.28))}
+.panel.elem-fire{--elem:#ff7a3d}.panel.elem-ice{--elem:#7dd3fc}.panel.elem-thunder{--elem:#fde047}.panel.elem-rock{--elem:#a8a29e}.panel.elem-poison{--elem:#a3e635}.panel.elem-shadow{--elem:#c084fc}
+@keyframes elemShake{0%,100%{transform:translateX(0)}18%{transform:translateX(-7px) rotate(-1.4deg)}36%{transform:translateX(7px) rotate(1.4deg)}54%{transform:translateX(-5px)}72%{transform:translateX(4px)}86%{transform:translateX(-2px)}}
+.ansbox.elem-hit,.key.elem-hit,.choice.elem-hit{animation:elemShake .62s ease-in-out;position:relative;z-index:2}
+.ansbox.elem-hit.elem-fire,.key.elem-hit.elem-fire,.choice.elem-hit.elem-fire{background:linear-gradient(180deg,#ffd7a8,#ff5a1f);color:#3b0a00;box-shadow:0 0 0 3px #ff6a00,0 0 18px 4px rgba(255,90,0,.8),inset 0 -10px 16px rgba(180,30,0,.35)}
+.ansbox.elem-hit.elem-ice,.key.elem-hit.elem-ice,.choice.elem-hit.elem-ice{background:linear-gradient(180deg,#f0f9ff,#38bdf8);color:#082f49;box-shadow:0 0 0 3px #e0f2fe,0 0 16px 4px rgba(186,230,253,.85),inset 0 0 12px #fff}
+.ansbox.elem-hit.elem-thunder,.key.elem-hit.elem-thunder,.choice.elem-hit.elem-thunder{background:linear-gradient(180deg,#fff7ad,#facc15);color:#422006;box-shadow:0 0 0 3px #fde047,0 0 20px 6px rgba(250,204,21,.9)}
+.ansbox.elem-hit.elem-rock,.key.elem-hit.elem-rock,.choice.elem-hit.elem-rock{background:linear-gradient(180deg,#e7e5e4,#78716c);color:#1c1917;box-shadow:0 0 0 3px #a8a29e,0 0 14px 3px rgba(120,113,108,.7)}
+.ansbox.elem-hit.elem-poison,.key.elem-hit.elem-poison,.choice.elem-hit.elem-poison{background:linear-gradient(180deg,#d9f99d,#65a30d);color:#142006;box-shadow:0 0 0 3px #84cc16,0 0 18px 4px rgba(132,204,22,.75)}
+.ansbox.elem-hit.elem-shadow,.key.elem-hit.elem-shadow,.choice.elem-hit.elem-shadow{background:linear-gradient(180deg,#6b21a8,#1e1b4b);color:#f5e8ff;box-shadow:0 0 0 3px #c084fc,0 0 18px 4px rgba(192,132,252,.7)}
 .disrupt{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;transition:opacity .35s}
-.disrupt.on{opacity:1}
+.disrupt.on{opacity:0}
 .disrupt.fire{background:
   radial-gradient(ellipse at 12% 88%,rgba(255,100,20,.72),transparent 42%),
   radial-gradient(ellipse at 88% 92%,rgba(255,60,0,.6),transparent 40%),
@@ -459,6 +473,13 @@ body[data-screen="home"] main{padding-top:0}
 .stat{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:8px 12px;text-align:center;min-width:92px}
 .stat b{display:block;font-size:26px;color:#ffe14d}
 .stat span{font-size:14px;opacity:.9}
+.stats-primary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;max-width:760px;margin:8px auto 18px}
+.stats-primary .stat{min-width:0;padding:14px 8px 12px;border-width:3px;border-color:rgba(255,225,77,.55);background:linear-gradient(180deg,rgba(56,44,110,.96),rgba(18,16,52,.98));box-shadow:0 5px 0 rgba(0,0,0,.28),0 0 18px rgba(255,225,77,.14)}
+.stats-primary .stat b{font-size:clamp(30px,6.2vw,42px);line-height:1}
+.stats-primary .stat span{display:block;margin-top:4px;font-size:clamp(13px,3vw,16px);font-weight:800;opacity:1}
+@media (max-width:520px){
+  .stats-primary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 .mgrid{border-collapse:separate;border-spacing:4px;margin:0 auto}
 .mgrid th{font-size:clamp(14px,3.6vw,18px);color:#ffd84d;font-weight:900;width:clamp(28px,8.5vw,52px);height:clamp(26px,7vw,40px)}
 .mgrid td{width:clamp(28px,8.5vw,52px);height:clamp(30px,8.5vw,48px);border-radius:10px;text-align:center;font-weight:900;font-size:clamp(12px,3.4vw,18px);background:#4b5578;color:#cfd6ea}
@@ -504,6 +525,8 @@ body[data-screen="home"] main{padding-top:0}
 .ds-meta div{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:8px 10px}
 .ds-meta b{display:block;font-size:11px;opacity:.7;font-weight:700}
 .ds-meta span{font-weight:900;font-size:15px}
+.ds-kid{margin:0 0 8px;line-height:1.5;font-size:clamp(16px,3.8vw,18px);font-weight:800;color:#fff7c2;background:rgba(255,225,77,.12);border-radius:14px;padding:10px 14px;border:1px solid rgba(255,225,77,.28)}
+.ds-kid:empty{display:none}
 .ds-lore{margin:0;line-height:1.55;font-size:clamp(14px,3.4vw,16px);color:#e8ecff;background:rgba(0,0,0,.22);border-radius:14px;padding:12px 14px;border:1px solid rgba(255,255,255,.1)}
 .voicenote{font-size:13px;opacity:.7;text-align:center;min-height:16px}
 
@@ -671,7 +694,7 @@ body[data-screen="home"] main{padding-top:0}
           <div class="home-pet home-pet-r" id="homePetR"></div>
           <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
-        <button class="home-progress" data-go="progress">我的進度</button>
+        <button class="home-record" data-go="progress">戰績<small>勳章 · 圖鑑 · 分數</small></button>
       </div>
     </section>
 
@@ -769,8 +792,9 @@ body[data-screen="home"] main{padding-top:0}
     <!-- PROGRESS -->
     <section id="progress" class="screen">
       <div class="wrap">
-        <h2 class="h">我的進度</h2>
-        <div class="stats" id="stats"></div>
+        <h2 class="h">戰績</h2>
+        <p class="sub">打低幾多隻、連擊有幾高，一目瞭然</p>
+        <div class="stats stats-primary" id="stats"></div>
         <div class="pcols">
         <div class="pcol">
         <div class="section-t">乘數表地圖</div>
@@ -825,6 +849,7 @@ body[data-screen="home"] main{padding-top:0}
         <div><b>必殺反擊</b><span id="dsMove"></span></div>
         <div><b>紀錄</b><span id="dsRecord"></span></div>
       </div>
+      <p class="ds-kid" id="dsKid"></p>
       <p class="ds-lore" id="dsLore"></p>
     </div>
   </div>
@@ -992,24 +1017,24 @@ const MONS = {
   heidragon:{name:'滅世黑龍', nick:'黑炎龍息', kind:'黑炎龍', habitat:'熔岩裂谷', lore:'全身黑甲嘅滅世黑龍。黑炎龍息一噴，連乘數表都燒焦！', body:'#2a2a32', light:'#6a6a78', dark:'#101014', belly:'#c0c4ce', shot:'#ff6a00', elem:'fire'},
   lavaover:{name:'炎獄霸王', nick:'爆裂地獄擊', kind:'熔岩霸王', habitat:'地獄火口', lore:'滾熱岩漿組成嘅圓滾霸王。爆裂地獄擊會砸出火拳！', body:'#c4451a', light:'#ff8a3d', dark:'#4a1508', belly:'#2a1010', shot:'#ff6a00', elem:'fire'},
   holyturt:{name:'天輝聖龜', nick:'絕對零度光線', kind:'聖晶龜', habitat:'極地聖湖', lore:'背殼長滿藍水晶嘅聖龜。絕對零度光線會凍結錯答案！', body:'#3cb371', light:'#8ef0b0', dark:'#14532d', belly:'#e8fff0', shot:'#7ff0ff', elem:'ice'},
-  sandwyrm:{name:'黃泉魔龍', nick:'萬毒蝕骨霧', kind:'黃砂魔龍', habitat:'黃泉沙漠', lore:'從黃沙爬出嘅魔龍。萬毒蝕骨霧會令你頭暈眼花！', body:'#c4a574', light:'#e8d4a8', dark:'#6b4e2e', belly:'#f5e6c8', shot:'#a3e635', elem:'poison'},
+  sandwyrm:{name:'黃泉魔龍', nick:'黃沙萬丈', kind:'沙龍', habitat:'黃沙死海', lore:'金黃沙龍！黃沙萬丈一揚，錯誤答案即刻被沙子埋到只剩尾巴！', body:'#c4a574', light:'#e8d4a8', dark:'#6b4e2e', belly:'#f5e6c8', shot:'#e8d4a8', elem:'rock'},
   thundwolf:{name:'雷神戰狼', nick:'天雷神滅抓', kind:'雷狼', habitat:'雷雲高原', lore:'毛茸茸嘅雷神戰狼。天雷神滅抓閃電一閃就到！', body:'#7ec8f5', light:'#e8f7ff', dark:'#1a4a7a', belly:'#ffffff', shot:'#fde047', elem:'thunder'},
   ninjacat:{name:'幻影鬼貓', nick:'永暗影遁', kind:'影忍貓', habitat:'暗影屋簷', lore:'忍者裝束嘅幻影鬼貓。永暗影遁會突然消失再偷襲！', body:'#2b2b32', light:'#6a6a78', dark:'#0a0a10', belly:'#ffd54f', shot:'#c4a0ff', elem:'shadow'},
   steeltiran:{name:'鋼鐵暴君', short:'鋼鐵暴君', nick:'無限絞肉風暴', kind:'鋼鐵暴君', habitat:'廢鐵要塞', lore:'全身鋸齒鋼鐵嘅暴君。無限絞肉風暴會捲走答錯嘅題！', body:'#6b7280', light:'#d1d5db', dark:'#1f2937', belly:'#9ca3af', shot:'#ef4444', elem:'rock', boss:true},
-  icetiran:{name:'極冰暴君', nick:'絕對零度', kind:'極冰暴君', habitat:'永凍冰原', lore:'圓滾滾嘅極冰暴君。絕對零度一呼，成個畫面結冰！', body:'#93c5fd', light:'#e0f2fe', dark:'#1e3a8a', belly:'#ffffff', shot:'#bae6fd', elem:'ice'},
+  icetiran:{name:'極冰暴君', nick:'零度絕對零度', kind:'冰晶龍', habitat:'絕對零度冰原', lore:'全身冰晶嘅暴君！零度絕對零度一放，錯誤答案瞬間凍到連分子都停下來！', body:'#93c5fd', light:'#e0f2fe', dark:'#1e3a8a', belly:'#ffffff', shot:'#bae6fd', elem:'ice'},
   phoenix:{name:'不死鳥', nick:'涅槃天火', kind:'不死鳥', habitat:'太陽火山', lore:'浴火重生嘅不死鳥。涅槃天火從天傾瀉而下！', body:'#f97316', light:'#fdba74', dark:'#7c2d12', belly:'#fde68a', shot:'#ff6a00', elem:'fire'},
   mtngod:{name:'山岳魔神', nick:'崩天裂地', kind:'山岳魔神', habitat:'崩裂群山', lore:'獨眼岩石魔神。崩天裂地一砸，路面都裂開！', body:'#78716c', light:'#d6d3d1', dark:'#292524', belly:'#ea580c', shot:'#a8a29e', elem:'rock'},
   manflower:{name:'食人魔花', nick:'絞殺劇毒藤', kind:'魔花', habitat:'毒藤雨林', lore:'巨口魔花伸出劇毒藤蔓。絞殺劇毒藤會纏住你嘅答案！', body:'#4ade80', light:'#bbf7d0', dark:'#14532d', belly:'#fef08a', shot:'#a3e635', elem:'poison'},
   illusdemon:{name:'虛幻魔', short:'虛幻魔', nick:'真限幻滅光', kind:'虛幻魔', habitat:'鏡像次元', lore:'金屬軀殼嘅虛幻魔。真限幻滅光會從四面八方射出！', body:'#64748b', light:'#cbd5e1', dark:'#0f172a', belly:'#38bdf8', shot:'#38bdf8', elem:'shadow', boss:true},
   seaking:{name:'深淵海王', nick:'滅世大海嘯', kind:'深淵海王', habitat:'深海裂谷', lore:'海中之王掀起滅世大海嘯，答錯就會被浪捲走！', body:'#2563eb', light:'#93c5fd', dark:'#1e3a8a', belly:'#dbeafe', shot:'#38bdf8', elem:'ice'},
-  deathscorp:{name:'死神蠍', nick:'黃沙萬丈', kind:'黃沙蠍獸', habitat:'萬丈沙海', lore:'沙漠死神蠍一甩尾就揚起黃沙萬丈！', body:'#d6a85c', light:'#f5e0b0', dark:'#6b4e1e', belly:'#1f1a14', shot:'#fbbf24', elem:'rock'},
+  deathscorp:{name:'死神蠍', nick:'萬毒蝕骨霧', kind:'毒骨蠍', habitat:'黃泉毒沼', lore:'從黃泉爬出嚟嘅腐蝕毒蠍！萬毒蝕骨霧一噴，錯誤答案即刻被毒霧侵蝕！', body:'#d6a85c', light:'#f5e0b0', dark:'#6b4e1e', belly:'#1f1a14', shot:'#a3e635', elem:'poison'},
   nightmare:{name:'夢魔', nick:'永眠幻視', kind:'夢魔', habitat:'噩夢迷宮', lore:'小小夢魔張開催眠之眼。永眠幻視會令你答錯題！', body:'#4c1d95', light:'#c4b5fd', dark:'#1e0a3c', belly:'#2e1065', shot:'#c084fc', elem:'shadow'},
   galmoth:{name:'銀河飛蛾', nick:'星塵暴', kind:'銀河飛蛾', habitat:'星塵軌道', lore:'銀河飛蛾拍翼散出星塵暴，閃到你睇唔清題目！', body:'#9ca3af', light:'#f3f4f6', dark:'#374151', belly:'#fde68a', shot:'#ffe066', elem:'thunder'},
   flamecrab:{name:'爆炎蟹', nick:'地獄爆炎彈', kind:'爆炎蟹', habitat:'岩漿海岸', lore:'滾燙爆炎蟹會發射地獄爆炎彈——答啱先避得開！', body:'#dc2626', light:'#fca5a5', dark:'#7f1d1d', belly:'#fb923c', shot:'#ff6a00', elem:'fire'},
-  starlord:{name:'星辰霸王', short:'星辰霸王', nick:'流星天墜', kind:'星辰霸王', habitat:'流星雨夜空', lore:'最終大頭目！化作流星天墜轟落地球——要連擊變身先擋得住！', body:'#3f3f46', light:'#a1a1aa', dark:'#18181b', belly:'#fb923c', shot:'#ff7ad9', elem:'shadow', boss:true, final:true}
+  starlord:{name:'星辰霸主', short:'星辰霸主', nick:'流星天墜', kind:'隕星魔', habitat:'星辰墜落點', lore:'最罕見嘅終極星辰霸主！流星天墜一落，錯誤答案直接被隕石砸成粉塵！', body:'#3f3f46', light:'#a1a1aa', dark:'#18181b', belly:'#fb923c', shot:'#ff7ad9', elem:'shadow', boss:true, final:true}
 };
 
-const DEX_ORDER=['heidragon','lavaover','holyturt','sandwyrm','thundwolf','ninjacat','steeltiran','icetiran','phoenix','mtngod','manflower','illusdemon','seaking','deathscorp','nightmare','galmoth','flamecrab','starlord'];
+const DEX_ORDER=['heidragon','lavaover','holyturt','deathscorp','thundwolf','ninjacat','steeltiran','icetiran','phoenix','mtngod','manflower','illusdemon','seaking','sandwyrm','nightmare','galmoth','flamecrab','starlord'];
 
 function omEye(x,y,r,dk,iris){ return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${dk}" stroke-width="2.4"/><circle cx="${x-r*.2}" cy="${y+r*.08}" r="${r*.55}" fill="${iris}"/><circle cx="${x-r*.25}" cy="${y+r*.1}" r="${r*.28}" fill="#111"/><circle cx="${x-r*.45}" cy="${y-r*.2}" r="${r*.2}" fill="#fff"/>`; }
 function omOuch(pts){ return '<g class="m-ouch" stroke="#1f2937" stroke-width="4" stroke-linecap="round" fill="none">'+pts.map((q,i)=>{ const [x,y,s]=q, d=i%2?-1:1; return `<path d="M${x-d*s} ${y-s*.7} L${x+d*s*.6} ${y} L${x-d*s} ${y+s*.7}"/>`; }).join('')+'</g>'; }
@@ -1515,14 +1540,47 @@ function crossfadeHero(img, src){
   }
   img.setAttribute('src', src);
 }
+function monIdleSrc(type){ return 'assets/monsters/mon_'+type+'.png'; }
+function monAttackSrc(type){ return 'assets/monsters/mon_'+type+'_attack.png'; }
 function monRasterHTML(type){
-  const src = BATTLE_MON[type];
-  if(!src) return monsterSVG(type, 'fb');
+  const src = monIdleSrc(type);
+  const fb = BATTLE_MON[type] || '';
+  if(!MONS[type] && !fb) return monsterSVG(type, 'fb');
   return '<div class="mon mon-raster mon-'+type+'">'+
-    '<img class="mon-img" src="'+src+'" alt="" draggable="false">'+
+    '<img class="mon-img" src="'+src+'" alt="" draggable="false" data-fb="'+fb+'">'+
     '<svg class="mon-anchors" viewBox="0 0 240 240" aria-hidden="true">'+
     '<circle class="mk-core" cx="120" cy="130" r="1"/><circle class="mk-mouth" cx="120" cy="150" r="1"/>'+
     '</svg></div>';
+}
+function bindMonImg(img){
+  if(!img || img.dataset.bound) return;
+  img.dataset.bound='1';
+  img.addEventListener('error', function(){
+    const fb=img.dataset.fb;
+    if(fb && img.getAttribute('src')!==fb){ img.setAttribute('src', fb); return; }
+    const host=img.closest('.mon');
+    if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
+  });
+}
+function setMonAttack(on){
+  const img=$('#monBob .mon-img'); if(!img) return;
+  bindMonImg(img);
+  const next = on ? monAttackSrc(B.type) : monIdleSrc(B.type);
+  if(img.getAttribute('src')!==next) img.setAttribute('src', next);
+}
+function applyDexPack(pack){
+  if(!pack || !pack.monsters) return;
+  const order=[];
+  pack.monsters.forEach(function(row){
+    const id=row.asset, m=MONS[id]; if(!m) return;
+    m.name=row.name; m.short=row.name; m.nick=row.move; m.kind=row.kind; m.habitat=row.place;
+    m.lore=row.desc_mid; m.kid=row.desc_kid;
+    m.spawn=row.spawn; m.power=row.power; m.rare=row.rare;
+    order.push(id);
+  });
+  if(MONS.deathscorp) MONS.deathscorp.elem='poison';
+  if(MONS.sandwyrm) MONS.sandwyrm.elem='rock';
+  if(order.length) DEX_ORDER.splice(0, DEX_ORDER.length, ...order);
 }
 const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
 function setHomeMon(){ /* pets are static raster art on home */ }
@@ -1687,18 +1745,34 @@ async function playHenshinFanfare(){
 }
 function disruptKind(type){
   const m=MONS[type]; if(!m) return 'shadow';
-  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',poison:'shadow',shadow:'shadow'};
+  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',poison:'poison',shadow:'shadow'};
   return map[m.elem]||'shadow';
 }
-function clearDisrupt(){ const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); } }
+function isHardFight(){
+  if(B.mode==='timed' || !B.type || !MONS[B.type]) return false;
+  /* Boss, fight 4+, or streak ≥7. Do not follow the new form index. */
+  return !!(MONS[B.type].boss) || (B.round|0)>=3 || (B.combo||0)>=7;
+}
+function clearDisrupt(){
+  const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); }
+  const panel=$('#panel');
+  if(panel) panel.classList.remove('elem-live','elem-fire','elem-ice','elem-thunder','elem-rock','elem-poison','elem-shadow');
+}
 function applyDisrupt(){
-  const el=$('#disrupt'); if(!el) return;
-  if(B.mode==='timed' || !B.type){ clearDisrupt(); return; }
-  /* Keep the old disrupt gate (boss / round 4+ / streak ≥7). Do not follow the new form index. */
-  const hard = !!(MONS[B.type]&&MONS[B.type].boss) || (B.round|0)>=3 || (B.combo||0)>=7;
-  if(!hard){ clearDisrupt(); return; }
-  el.className='disrupt '+disruptKind(B.type)+' on';
-  el.setAttribute('aria-hidden','false');
+  clearDisrupt();
+  if(!isHardFight()) return;
+  const panel=$('#panel'); if(!panel) return;
+  panel.classList.add('elem-live','elem-'+disruptKind(B.type));
+}
+function burstAnswerFX(){
+  if(!isHardFight()) return;
+  const kind=disruptKind(B.type);
+  const nodes=[$('#qAns')].concat($$('#keypad .key'), $$('#choices .choice'));
+  nodes.forEach(function(el){
+    if(!el) return;
+    el.classList.add('elem-hit','elem-'+kind);
+    setTimeout(function(){ el.classList.remove('elem-hit','elem-'+kind); }, 680);
+  });
 }
 function clearCinema(){
   const cine=$('#cinema'), battle=$('#battle');
@@ -1888,40 +1962,21 @@ function damageMonster(dmg){ B.hp=Math.max(0,B.hp-dmg); $('#hpFill').style.width
   play(ms,[{transform:'translateX(0) rotate(0)',filter:'brightness(1)'},{transform:'translateX(8%) rotate(7deg)',filter:'brightness(2.6)'},{transform:'translateX(-3%) rotate(-2deg)',filter:'brightness(1)'},{transform:'translateX(4%) rotate(3deg)',filter:'brightness(2)'},{transform:'translateX(0) rotate(0)',filter:'brightness(1)'}],{duration:560});
   const t=relPos(monWrap); floatText('dmg','-'+dmg, t.x, t.t+t.h*.15); }
 async function monsterAttack(){
-  const s=MONS[B.type], elem=s.elem||'shadow', msv=monSvgEl(); Sfx.growl();
-  heroPose('guard');
-  const o=()=>relPos(mk('.mk-mouth',monWrap)||mk('.mk-core',monWrap));
-  const tHero=()=>relPos(mk('.mk-chest',heroWrap));
-  const lunge=()=>play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-14%) rotate(-7deg)',offset:.4},{transform:'translateX(0)'}],{duration:720*K()});
-  const hitHero=(label, colors)=>{
-    const t=tHero(); Sfx.bonk(); FX.burst(t.x,t.y,{n:18,colors:colors||[s.shot,'#fff'],speed:6,size:7}); shake(7);
-    play(heroSvgEl(),[{transform:'rotate(0)',filter:'brightness(1)'},{transform:'rotate(-10deg) translateX(-8px)',filter:'brightness(2.2)'},{transform:'rotate(0)',filter:'brightness(1)'}],{duration:620});
-    const hp=relPos(heroWrap); floatText('ouchtxt', label||pick(['哎呀！','好痛呀！','唔緊要！']), hp.x, hp.t+hp.h*.05);
-  };
-  showMoveName(s.nick+'！','banner',1200);
-  const L=lunge(); await sleep(220*K());
-  const oo=o(), th=tHero();
-  const style = elem==='fire' ? 'radial-gradient(circle,#fff 0 20%,#ff6a00 50%,transparent 72%)'
-    : elem==='ice' ? 'radial-gradient(circle,#fff 0 20%,#7ff0ff 50%,transparent 72%)'
-    : elem==='thunder' ? 'radial-gradient(circle,#fff 0 20%,#fde047 50%,transparent 72%)'
-    : elem==='rock' ? 'radial-gradient(circle,#fff 0 20%,#a8a29e 50%,transparent 72%)'
-    : elem==='poison' ? 'radial-gradient(circle,#fff 0 20%,#a3e635 50%,transparent 72%)'
-    : 'radial-gradient(circle,#fff 0 20%,'+s.shot+' 50%,transparent 72%)';
-  if(elem==='shadow' && s.final){
-    for(let i=0;i<3;i++){ const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
-      play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:300*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
-      await sleep(120*K()); }
-    hitHero(s.nick+'！',[s.shot,'#fff','#ff7ad9']); await L; await sleep(180*K()); heroPose('idle'); return;
+  const s=MONS[B.type]; if(!s) return;
+  Sfx.growl(); heroPose('guard'); setMonAttack(true); burstAnswerFX();
+  showMoveName((s.nick||s.name)+'！','banner',1200);
+  const L=play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-10%) rotate(-4deg)',offset:.42},{transform:'translateX(0)'}],{duration:780*K()});
+  await sleep(240*K());
+  const chest=mk('.mk-chest', heroWrap);
+  Sfx.bonk(); shake(7);
+  if(chest){
+    const t=relPos(chest);
+    FX.burst(t.x,t.y,{n:16,colors:[s.shot,'#fff'],speed:6,size:7});
+    const hs=heroSvgEl(); if(hs) play(hs,[{transform:'rotate(0)',filter:'brightness(1)'},{transform:'rotate(-8deg) translateX(-6px)',filter:'brightness(2)'},{transform:'rotate(0)',filter:'brightness(1)'}],{duration:520});
   }
-  if(elem==='thunder'){
-    for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
-      play(sl,[{transform:'rotate('+(-35+i*20)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-35+i*20)+'deg) scaleX(1)',opacity:0}],{duration:260}).then(()=>rm(sl)); Sfx.shing(); await sleep(45*K()); }
-    hitHero(s.nick+'！',[s.shot,'#fff','#fde047']); await L; await sleep(160*K()); heroPose('idle'); return;
-  }
-  const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px'; Sfx.whoosh();
-  await play(orb,[{transform:'translate(0,0) scale(.5)'},{transform:'translate('+((th.x-oo.x)/2)+'px,'+((th.y-oo.y)/2-40)+'px) scale(1)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.35)'}],{duration:480*K(),easing:'ease-in',fill:'forwards'}); rm(orb);
-  hitHero(s.nick+'！',[s.shot,'#fff',s.light]); await L; await sleep(180*K());
-  heroPose('idle');
+  if(heroWrap){ const hp=relPos(heroWrap); floatText('ouchtxt', pick(['哎呀！','好痛呀！','唔緊要！']), hp.x, hp.t+hp.h*.05); }
+  await L; await sleep(180*K());
+  setMonAttack(false); heroPose('idle');
 }
 
 async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
@@ -1991,7 +2046,7 @@ async function startRound(type){
   if(B.mode!=='timed'){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; }
   else B.rwrong=0;
   B.combo=0;
-  monCounter++; $('#monBob').innerHTML = monRasterHTML(type);
+  monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img'));
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
   B._hen=1; B._henLabel=null; setChestTimer(0); syncHenshin(); heroPose('idle'); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
@@ -2120,7 +2175,7 @@ function initBattle(){
 /* ---------- PROGRESS ---------- */
 function renderProgress(){
   const s=DATA.stats; const facts=Object.keys(DATA.facts); const mastered=facts.filter(k=>mastery(k)===2).length;
-  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸王',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
+  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸主',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
   let g='<tr><th>×</th>'+[1,2,3,4,5,6,7,8,9].map(b=>'<th>'+b+'</th>').join('')+'</tr>';
   [1,2,3,4,5,6,7,8,9,10].forEach(a=>{ g+='<tr><th>'+a+'</th>'; for(let b=1;b<=9;b++){ const m=mastery(a+'x'+b); g+='<td class="m'+m+'" title="'+a+'×'+b+'">'+(a*b)+'</td>'; } g+='</tr>'; });
   $('#mgrid').innerHTML=g;
@@ -2141,6 +2196,7 @@ function renderDex(){
     const border=elemBorder[m.elem]||'#7c8cff';
     return '<button type="button" class="dcard'+(n?'':' locked')+(sel===t?' on':'')+'" data-dex="'+t+'" style="--db:'+border+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>';
   }).join('');
+  $$('#dex .mon-img').forEach(bindMonImg);
   $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); selectDex(c.dataset.dex); }));
   if(sel && dex[sel]) fillDexPanel(sel);
   else if(got){ const first=DEX_ORDER.find(t=>dex[t]); if(first) selectDex(first, true); else clearDexPanel(); }
@@ -2161,19 +2217,16 @@ function selectDex(type, quiet){
 function fillDexPanel(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0;
   $('#dexPanelEmpty').hidden=true; $('#dexPanelBody').hidden=false;
-  $('#dexPanelArt').innerHTML=monRasterHTML(type);
+  $('#dexPanelArt').innerHTML=monRasterHTML(type); bindMonImg($('#dexPanelArt .mon-img'));
   const tags=[]; if(m.friend) tags.push('<i class="f">夥伴</i>'); if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   tags.push('<i>'+(m.kind||'怪獸')+'</i>');
   $('#dexPanelTags').innerHTML=tags.join('');
   $('#dexPanelName').textContent=m.name;
   $('#dexPanelNick').textContent=m.nick;
-  // soft “stats” from encounter count + elem flavor (concept-like bars)
-  const p1=Math.min(96, 12+n*11), p2=Math.min(88, 8+n*7), p3=Math.min(92, 10+n*9);
-  $('#dexBars').innerHTML=
-    '<div class="dex-bar"><span>出沒</span><i class="g"><b style="--p:'+p1+'%"></b></i><span>'+p1+'%</span></div>'+
-    '<div class="dex-bar"><span>威力</span><i class="r"><b style="--p:'+p2+'%"></b></i><span>'+p2+'%</span></div>'+
-    '<div class="dex-bar"><span>稀有</span><i class="o"><b style="--p:'+p3+'%"></b></i><span>'+p3+'%</span></div>';
-  $('#dexPanelLore').textContent=m.lore||'暫時未有資料。';
+  const bar=(label, cls, val)=>{ const v=val|0; const p=Math.max(8, Math.min(100, Math.round(v/50*100))); return '<div class="dex-bar"><span>'+label+'</span><i class="'+cls+'"><b style="--p:'+p+'%"></b></i><span>'+v+'</span></div>'; };
+  const p1=m.spawn!=null?m.spawn:Math.min(50,12+n*4), p2=m.power!=null?m.power:Math.min(50,10+n*3), p3=m.rare!=null?m.rare:Math.min(50,8+n*3);
+  $('#dexBars').innerHTML=bar('出沒','g',p1)+bar('威力','r',p2)+bar('稀有','o',p3);
+  $('#dexPanelLore').textContent=m.kid||m.lore||'暫時未有資料。';
   const more=$('#dexPanelMore');
   more.onclick=()=>{ Sfx.click(); openDexDetail(type); };
 }
@@ -2191,6 +2244,7 @@ function openDexDetail(type){
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
   $('#dsArt').innerHTML = '<div class="mon-bob">'+monRasterHTML(type)+'</div>';
+  bindMonImg($('#dsArt .mon-img'));
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
   if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   if(!tags.length) tags.push('<i>圖鑑怪獸</i>');
@@ -2198,6 +2252,7 @@ function openDexDetail(type){
   $('#dsName').textContent=m.name; $('#dsNick').textContent=m.nick;
   $('#dsKind').textContent=m.kind||'未知怪獸'; $('#dsHabitat').textContent=m.habitat||'？？？';
   $('#dsMove').textContent=m.nick; $('#dsRecord').textContent=(m.friend?'特訓':'打敗')+' ×'+n;
+  const kid=$('#dsKid'); if(kid) kid.textContent=m.kid||'';
   $('#dsLore').textContent=m.lore||'暫時未有資料。';
   sheet.hidden=false; sheet.classList.add('show');
 }
@@ -2242,8 +2297,12 @@ function init(){
   });
 }
 function pressKey(k){ const b=$('#keypad .key[data-k="'+k+'"]'); if(!b) return; b.classList.add('press'); setTimeout(()=>b.classList.remove('press'),110); }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, cinematicFinalFinish, heroSrc, poseFile, heroPose, DEX_ORDER };
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, burstAnswerFX, isHardFight, setMonAttack, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS };
+function startApp(){
+  const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
+  fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
+}
+startApp();
 
 })();
 </script>
