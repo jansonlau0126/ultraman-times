@@ -21,6 +21,7 @@
           <div class="home-menu">
             <button class="home-pill learn" data-go="learnPick">學乘數表</button>
             <button class="home-pill battle" data-go="setup-battle">打怪獸</button>
+            <button class="home-pill divide" data-go="divide">除法戰鬥</button>
             <button class="home-pill timed" data-go="setup-timed">計時挑戰</button>
           </div>
           <div class="home-pet home-pet-r" id="homePetR"></div>
@@ -95,6 +96,19 @@
       </div>
     </section>
 
+    <!-- DIVISION star pick -->
+    <section id="divide" class="screen">
+      <div class="wrap">
+        <h2 class="h">除法戰鬥</h2>
+        <p class="sub">除得盡先出招！揀一粒星開始。</p>
+        <div class="star-picks" id="starPicks">
+          <button class="star-pick" data-star="1"><b>★ 一星</b><span>除以 2、5、10</span></button>
+          <button class="star-pick" data-star="2"><b>★★ 二星</b><span>再加 3 同 4</span></button>
+          <button class="star-pick" data-star="3"><b>★★★ 三星</b><span>除以 6 至 9</span></button>
+        </div>
+      </div>
+    </section>
+
     <!-- BATTLE -->
     <section id="battle" class="screen">
       <div class="stage" id="stage">
@@ -104,15 +118,18 @@
           <div class="hudbox herohud" id="heroHud"><i class="chest-lamp" id="chestLamp" aria-hidden="true"></i><div id="roundLbl">第 1 關</div><div class="dots" id="roundDots"></div></div>
           <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
         </div>
-        <div class="combo" id="combo">2 連擊！</div>
-        <div class="hero-wrap" id="heroWrap"><div class="hero-bob" id="heroBob"></div></div>
+        <div class="combo" id="combo">2 連擊</div>
+        <div class="hero-wrap" id="heroWrap"><div class="hero-bob" id="heroBob"></div><div class="form-name" id="formName">銀光形態</div></div>
         <div class="mon-wrap" id="monWrap"><div class="mon-bob" id="monBob"></div></div>
         <div id="fxLayer"></div>
         <canvas id="fxCanvas"></canvas>
       </div>
       <div class="panel" id="panel">
         <div id="disrupt" class="disrupt" aria-hidden="true"></div>
-        <div class="qrow"><span id="qA">2</span><span class="x">×</span><span id="qB">3</span><span>=</span><span class="ansbox empty" id="qAns">?</span></div>
+        <div class="qcard" id="qCard">
+          <div class="qrow"><span id="qA">2</span><span class="x" id="qOp">×</span><span id="qB">3</span><span>=</span><span class="ansbox empty" id="qAns">?</span></div>
+          <div class="elem-pop" id="elemPop" aria-hidden="true"></div>
+        </div>
         <div class="hint idle" id="hint"><div>答啱就可以出招打怪獸！</div></div>
         <div class="keypad" id="keypad"></div>
         <div class="choices" id="choices"></div>
@@ -180,6 +197,7 @@
         <div><b>出沒地</b><span id="dsHabitat"></span></div>
         <div><b>必殺反擊</b><span id="dsMove"></span></div>
         <div><b>紀錄</b><span id="dsRecord"></span></div>
+        <div><b>屬性</b><span id="dsElem"></span></div>
       </div>
       <p class="ds-kid" id="dsKid"></p>
       <p class="ds-lore" id="dsLore"></p>

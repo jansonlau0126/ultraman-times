@@ -25,6 +25,7 @@ function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); }ca
 const DIG = '零一二三四五六七八九';
 function cnNum(n){
   if(n<10) return DIG[n]; if(n===100) return '一百';
+  if(n>100){ const h=Math.floor(n/100), rest=n%100; return DIG[h]+'百'+(rest?(rest<10?'零'+DIG[rest]:cnNum(rest)):''); }
   const t=Math.floor(n/10), u=n%10;
   /* 九因歌讀法：10–19 用「一十／一十二」，唔好讀「十二」 */
   if(t===1) return '一十'+(u?DIG[u]:'');
@@ -265,11 +266,56 @@ function bindMonImg(img){
     if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
   });
 }
+/* Attack frames that face image-right. Hero is on the left, so mirror them in battle only.
+   Already looking left (face on the left, trail behind): ninjacat, galmoth, nightmare, holyturt, flamecrab. */
+const ATTACK_MIRROR = {
+  heidragon:1, lavaover:1, phoenix:1, icetiran:1,
+  thundwolf:1, deathscorp:1, manflower:1, mtngod:1, sandwyrm:1, steeltiran:1,
+  seaking:1, illusdemon:1, starlord:1
+};
+/* Empty canvas under the attack-frame feet, as a percent of the image. Drops them onto the ground line. */
+const ATTACK_FOOT = {
+  heidragon:16, lavaover:9, phoenix:8, flamecrab:19, holyturt:28, icetiran:21,
+  thundwolf:11, deathscorp:16, manflower:15, mtngod:13, sandwyrm:23, steeltiran:12,
+  seaking:25, ninjacat:23, nightmare:16, illusdemon:24, galmoth:23, starlord:10
+};
+const ELEM_KIND = {'火':'fire','冰':'ice','雷':'thunder','毒':'poison','岩':'rock','沙':'sand','鋼':'steel','水':'water','暗':'dark','光':'light','星':'star'};
+const ELEM_PRESET = {
+  heidragon:['火','black'], lavaover:['火','lava'], phoenix:['火','gold'], flamecrab:['火','ball'],
+  holyturt:['冰','light'], icetiran:['冰','heavy'], thundwolf:['雷','zap'],
+  deathscorp:['毒','bubble'], manflower:['毒','vine'], mtngod:['岩','grit'], sandwyrm:['沙','dust'],
+  steeltiran:['鋼','spark'], seaking:['水','wave'], ninjacat:['暗','shadow'], nightmare:['暗','mist'],
+  illusdemon:['光','flash'], galmoth:['星','dust'], starlord:['星','meteor']
+};
+function applyMonsterElement(id, word, shade){
+  const m=MONS[id]; if(!m||!word) return;
+  m.elemWord=word; m.shade=shade||m.shade||'base'; m.elem=ELEM_KIND[word]||'dark';
+}
+Object.keys(ELEM_PRESET).forEach(function(id){ applyMonsterElement(id, ELEM_PRESET[id][0], ELEM_PRESET[id][1]); });
 function setMonAttack(on){
   const img=$('#monBob .mon-img'); if(!img) return;
   bindMonImg(img);
+  const host=img.closest('.mon');
+  if(host){
+    host.classList.toggle('atk-flip', !!(on && ATTACK_MIRROR[B.type]));
+    host.classList.toggle('atk-drop', !!on);
+    if(on) host.style.setProperty('--foot', (ATTACK_FOOT[B.type]||0)+'%');
+    else host.style.removeProperty('--foot');
+  }
   const next = on ? monAttackSrc(B.type) : monIdleSrc(B.type);
   if(img.getAttribute('src')!==next) img.setAttribute('src', next);
+}
+function monAttackHTML(type){
+  return '<div class="mon mon-raster mon-'+type+'">'+
+    '<img class="mon-img" src="'+monAttackSrc(type)+'" alt="" draggable="false" data-fb="'+monIdleSrc(type)+'">'+
+    '</div>';
+}
+function dexPairHTML(type){
+  const word=(MONS[type]&&MONS[type].elemWord)||'';
+  return '<div class="dex-pair">'+
+    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div><figcaption>立繪</figcaption></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div><figcaption>出招</figcaption></figure>'+
+    '</div>'+(word?'<div class="dex-elem">屬性・'+word+'</div>':'');
 }
 function applyDexPack(pack){
   if(!pack || !pack.monsters) return;
@@ -279,10 +325,9 @@ function applyDexPack(pack){
     m.name=row.name; m.short=row.name; m.nick=row.move; m.kind=row.kind; m.habitat=row.place;
     m.lore=row.desc_mid; m.kid=row.desc_kid;
     m.spawn=row.spawn; m.power=row.power; m.rare=row.rare;
+    if(row.elem) applyMonsterElement(id, row.elem, row.shade);
     order.push(id);
   });
-  if(MONS.deathscorp) MONS.deathscorp.elem='poison';
-  if(MONS.sandwyrm) MONS.sandwyrm.elem='rock';
   if(order.length) DEX_ORDER.splice(0, DEX_ORDER.length, ...order);
 }
 const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
@@ -304,6 +349,7 @@ function initHome(){
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
     else if(g==='setup-battle') openSetup('battle');
     else if(g==='setup-timed') openSetup('timed');
+    else if(g==='divide') show('divide');
     else if(g==='progress'){ renderProgress(); show('progress'); } }));
 }
 
@@ -429,6 +475,11 @@ function syncHenshin(){
     if(st>prev) crossfadeHero(img, next);
     else if(img.getAttribute('src')!==next) img.setAttribute('src', next);
   }
+  const nameEl=$('#formName');
+  if(nameEl){
+    nameEl.textContent=HEN_LABEL[st]||HEN_LABEL[1];
+    if(st>prev){ nameEl.classList.remove('flash'); void nameEl.offsetWidth; nameEl.classList.add('flash'); }
+  }
   if(st>prev){
     B._henLabel=HEN_LABEL[st];
     h.classList.add('henshin-up');
@@ -436,7 +487,8 @@ function syncHenshin(){
     try{ const hp=relPos(mk('.mk-chest',heroWrap));
       FX.burst(hp.x,hp.y,{n:22,speed:7,shape:'star',colors:['#fff','#bff3ff','#ffe066','#ff7ad9'],size:8,life:50,gravity:.05}); }catch(e){}
   }
-  B._hen=st; applyDisrupt();
+  if(st!==prev) layoutStage();
+  B._hen=st;
 }
 async function playHenshinFanfare(){
   const label=B._henLabel; if(!label) return;
@@ -446,36 +498,47 @@ async function playHenshinFanfare(){
   await showMoveName(label+'！','henshin', 720);
   if(h) h.classList.remove('henshin-up');
 }
-function disruptKind(type){
-  const m=MONS[type]; if(!m) return 'shadow';
-  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',poison:'poison',shadow:'shadow'};
-  return map[m.elem]||'shadow';
+function elemOf(type){
+  const m=MONS[type]||{};
+  return {kind:m.elem||'dark', word:m.elemWord||'暗', shade:m.shade||'base'};
 }
 function isHardFight(){
   if(B.mode==='timed' || !B.type || !MONS[B.type]) return false;
-  /* Boss, fight 4+, or streak ≥7. Do not follow the new form index. */
+  /* Kept for the old boss gate. Element hits no longer use it. */
   return !!(MONS[B.type].boss) || (B.round|0)>=3 || (B.combo||0)>=7;
 }
-function clearDisrupt(){
-  const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); }
-  const panel=$('#panel');
-  if(panel) panel.classList.remove('elem-live','elem-fire','elem-ice','elem-thunder','elem-rock','elem-poison','elem-shadow');
+function clearElementHit(){
+  const card=$('#qCard'), choices=$('#choices'), pop=$('#elemPop');
+  if(card) card.className='qcard';
+  if(choices){ choices.className='choices'; $$('.choice', choices).forEach(function(b){ b.classList.remove('eh-wrong','eh-ok','shade-ball','shade-meteor'); }); }
+  if(pop){ pop.classList.remove('show'); pop.textContent=''; pop.setAttribute('aria-hidden','true'); }
+  $$('#qCard .ebit').forEach(rm);
 }
-function applyDisrupt(){
-  clearDisrupt();
-  if(!isHardFight()) return;
-  const panel=$('#panel'); if(!panel) return;
-  panel.classList.add('elem-live','elem-'+disruptKind(B.type));
-}
-function burstAnswerFX(){
-  if(!isHardFight()) return;
-  const kind=disruptKind(B.type);
-  const nodes=[$('#qAns')].concat($$('#keypad .key'), $$('#choices .choice'));
-  nodes.forEach(function(el){
-    if(!el) return;
-    el.classList.add('elem-hit','elem-'+kind);
-    setTimeout(function(){ el.classList.remove('elem-hit','elem-'+kind); }, 680);
-  });
+function clearDisrupt(){ clearElementHit(); const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); } }
+function applyDisrupt(){ /* Persistent whole-panel scramble is gone. Wrong answers hit the card only. */ }
+function playElementHit(wrongBtn){
+  clearElementHit();
+  const info=elemOf(B.type);
+  const card=$('#qCard'); if(!card) return;
+  card.classList.add('eh','eh-'+info.kind,'shade-'+info.shade);
+  const choices=$('#choices');
+  if(choices && $$('.choice', choices).length){
+    choices.classList.add('eh','eh-'+info.kind,'eh-'+info.shade,'shade-'+info.shade);
+    $$('.choice', choices).forEach(function(b){
+      if(B.q && String(b.dataset.v)===String(B.q.ans)) b.classList.add('eh-ok');
+    });
+    if(wrongBtn){
+      wrongBtn.classList.add('eh-wrong','shade-'+info.shade);
+    }
+  }
+  const pop=$('#elemPop');
+  if(pop){ pop.textContent=info.word+'！'; pop.classList.add('show'); pop.setAttribute('aria-hidden','false'); }
+  if(info.kind==='fire' || info.kind==='star') Sfx.hit();
+  else if(info.kind==='thunder') Sfx.shing();
+  else if(info.kind==='ice') Sfx.whoosh();
+  else Sfx.bonk();
+  clearTimeout(B._elemT);
+  B._elemT=setTimeout(clearElementHit, 1100);
 }
 function clearCinema(){
   const cine=$('#cinema'), battle=$('#battle');
@@ -510,9 +573,18 @@ async function chargePose(pose, ms){
   await sleep((ms||280)*K());
   if(h) h.classList.remove('charging');
 }
+/* Standing omega body, as a fraction of the square pose canvas. */
+const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  const hh = Math.min(h*.66, w*.38*1.5); heroWrap.style.height=hh+'px'; heroWrap.style.width=(hh/1.5)+'px';
-  const boss = !!(MONS[B.type]&&MONS[B.type].boss); const mh = Math.min(h*(boss?.72:.6), w*(boss?.5:.44)); monWrap.style.height=mh+'px'; monWrap.style.width=mh+'px'; }
+  /* Size the hero box so the painted body matches heroVis. Monster idle art fills its
+     frame, so its box is the visible height — about 1.15× the hero. Both wraps sit on bottom:8%. */
+  const frac=HERO_STAND[henshinStage()]||0.54;
+  let heroVis=Math.min(h*0.42, w*0.26);
+  let monVis=heroVis*1.15;
+  let heroBox=heroVis/frac;
+  if(heroBox+monVis>w*0.92){ const s=(w*0.92)/(heroBox+monVis); heroVis*=s; monVis=heroVis*1.15; heroBox=heroVis/frac; }
+  heroWrap.style.height=heroBox+'px'; heroWrap.style.width=heroBox+'px';
+  monWrap.style.height=monVis+'px'; monWrap.style.width=monVis+'px'; }
 
 function fxEl(cls, html){ const e=document.createElement('div'); e.className=cls; if(html) e.innerHTML=html; fxLayer.appendChild(e); return e; }
 function shake(px){ const a=px||8; play(stageEl,[{transform:'translate(0,0)'},{transform:'translate('+(-a)+'px,'+(a*.5)+'px)'},{transform:'translate('+a+'px,'+(-a*.4)+'px)'},{transform:'translate('+(-a*.6)+'px,'+(-a*.3)+'px)'},{transform:'translate('+(a*.4)+'px,'+(a*.3)+'px)'},{transform:'translate(0,0)'}],{duration:420}); }
@@ -666,12 +738,12 @@ function damageMonster(dmg){ B.hp=Math.max(0,B.hp-dmg); $('#hpFill').style.width
   const t=relPos(monWrap); floatText('dmg','-'+dmg, t.x, t.t+t.h*.15); }
 async function monsterAttack(){
   const s=MONS[B.type]; if(!s) return;
-  Sfx.growl(); heroPose('guard'); setMonAttack(true); burstAnswerFX();
+  Sfx.growl(); heroPose('guard'); setMonAttack(true); playElementHit(B.lastChoiceBtn);
   showMoveName((s.nick||s.name)+'！','banner',1200);
   const L=play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-10%) rotate(-4deg)',offset:.42},{transform:'translateX(0)'}],{duration:780*K()});
   await sleep(240*K());
   const chest=mk('.mk-chest', heroWrap);
-  Sfx.bonk(); shake(7);
+  Sfx.bonk();
   if(chest){
     const t=relPos(chest);
     FX.burst(t.x,t.y,{n:16,colors:[s.shot,'#fff'],speed:6,size:7});
@@ -726,21 +798,68 @@ async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); S
 
 function renderRoundHud(){
   if(B.mode==='timed'){ $('#roundLbl').innerHTML='<div class="heroname">超人奧米加</div><span class="timerbox" id="timerBox">'+Math.ceil(B.timeLeft)+'秒</span>'; $('#roundDots').innerHTML='<span>答啱：<b id="scoreLbl">'+B.score+'</b> 題</span>'; return; }
+  if(B.mode==='divide'){
+    const star='★'.repeat(B.star||1);
+    $('#roundLbl').innerHTML = '<div class="heroname">除法戰鬥 '+star+'</div>'+(MONS[B.type].final ? '最終關：'+MONS[B.type].name+'！' : '第 '+(B.round+1)+' 關');
+    $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(MONS[t].final?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join('');
+    return;
+  }
   $('#roundLbl').innerHTML = '<div class="heroname">超人奧米加</div>'+(MONS[B.type].final ? '最終關：'+MONS[B.type].name+'！' : MONS[B.type].boss ? '第 '+(B.round+1)+' 關：'+(MONS[B.type].short||'頭目')+'！' : '第 '+(B.round+1)+' 關');
   $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(MONS[t].boss&&!MONS[t].final?'boss ':'')+(MONS[t].final?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join(''); }
 function renderCombo(){ const c=$('#combo'); syncChestLight(); syncHenshin();
-  if(B.combo>=2){ c.textContent=(B.combo>=6?'超必殺 ':'')+B.combo+' 連擊！'; c.classList.toggle('omega', B.combo>=6); c.classList.add('show'); play(c,[{transform:'translateX(-50%) scale(1.6)'},{transform:'translateX(-50%) scale(1)'}],{duration:300,easing:'ease-out'}); }
+  if(B.combo>=2){ c.textContent=B.combo+' 連擊'; c.classList.toggle('omega', B.combo>=6); c.classList.add('show'); play(c,[{transform:'scale(1.35)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'}); }
   else { c.classList.remove('show','omega'); } }
 
-function startSession(mode, tables){
+const DIV_WEAK=['holyturt','ninjacat','galmoth','nightmare','sandwyrm','manflower'];
+const DIV_MID=['flamecrab','thundwolf','icetiran','lavaover','phoenix','illusdemon','manflower'];
+const DIV_STRONG=['deathscorp','seaking','steeltiran','mtngod','phoenix','lavaover'];
+function divisionDivisors(star){ if(star>=3) return [6,7,8,9]; if(star===2) return [2,3,4,5,10]; return [2,5,10]; }
+function divisionOrder(star){
+  if(star>=3) return shuffle(DIV_STRONG.slice()).slice(0,3).concat(['heidragon','starlord']);
+  if(star===2) return shuffle(DIV_MID.slice()).slice(0,5);
+  return shuffle(DIV_WEAK.slice()).slice(0,5);
+}
+function pickDivision(divisors, qMax, recent){
+  const items=[]; let total=0;
+  divisors.forEach(function(d){ for(let q=1;q<=qMax;q++){ const k='div:'+d+'x'+q; const f=DATA.facts[k];
+    let w=f?1+(f.p||0)*1.5:1.2; if(f&&f.s>=3) w*=.5; if(recent.indexOf(k)>=0) w*=.02;
+    items.push([d,q,w,k]); total+=w; } });
+  let r=Math.random()*total;
+  for(const it of items){ r-=it[2]; if(r<=0) return {d:it[0],q:it[1],dividend:it[0]*it[1],key:it[3]}; }
+  const it=items[items.length-1]; return {d:it[0],q:it[1],dividend:it[0]*it[1],key:it[3]};
+}
+function makeDivChoices(quot){
+  const set=[quot];
+  const cands=shuffle([quot+1,quot-1,quot+2,quot-2,quot+3,quot-3,quot+4,quot-4]);
+  for(const v of cands){ if(set.length>=4) break; if(v>=1 && set.indexOf(v)<0) set.push(v); }
+  let guard=0;
+  while(set.length<4 && guard++<40){ const v=randi(1, Math.max(12, quot+3)); if(v>=1 && set.indexOf(v)<0) set.push(v); }
+  return shuffle(set);
+}
+function qOpText(){ return B.mode==='divide' ? '÷' : '×'; }
+function factLine(q){
+  if(B.mode==='divide') return q.a+' ÷ '+q.b+' = '+q.ans+'　'+chant(q.b, q.ans);
+  return q.a+' × '+q.b+' = '+q.ans+'　'+chant(q.a, q.b);
+}
+function factSpeak(q){
+  if(B.mode==='divide') return cnNum(q.a)+'除以'+cnNum(q.b)+'等於'+cnNum(q.ans);
+  return chant(q.a, q.b);
+}
+function startSession(mode, tables, opt){
   endBattle(); B.token++;
-  B.mode=mode; B.tables=tables.slice().sort((a,b)=>a-b); B.choice=!!DATA.settings.choice;
+  opt=opt||{};
+  B.mode=mode; B.star=opt.star||0; B.qMax = B.star>=3 ? 12 : 9;
+  B.tables=(tables||[]).slice().sort((a,b)=>a-b);
+  B.choice = mode==='divide' ? true : !!DATA.settings.choice;
   B.combo=0; B.maxCombo=0; B.recent=[]; B.lastMove=null; B.busy=true; B.input='';
-  $('#battle').classList.toggle('mode-choice', B.choice); hideResult(); FX.clear(); fxLayer.innerHTML='';
+  $('#battle').classList.toggle('mode-choice', B.choice);
+  $('#battle').classList.toggle('mode-divide', mode==='divide');
+  hideResult(); FX.clear(); fxLayer.innerHTML='';
   ensureHero(); preloadForm(1); preloadForm(2);
   heroWrap.getAnimations().forEach(a=>a.cancel());
   show('battle');
   if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(NORMALS.concat(MID_BOSSES)); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
+  else if(mode==='divide'){ B.order=divisionOrder(B.star||1); B.round=0; if(!B.tables.length) B.tables=divisionDivisors(B.star||1); startRound(B.order[0]); }
   else { const x=pickFresh(NORMALS); const y=pickFresh(NORMALS,[x]); const z=pickFresh(NORMALS,[x,y]); B.order=shuffle([x,y,z]).concat([pickFresh(MID_BOSSES),'starlord']); B.round=0; startRound(B.order[0]); }
 }
 async function startRound(type){
@@ -755,13 +874,25 @@ async function startRound(type){
   B.busy=true; B.q=null; renderQuestionBlank();
   await monsterEnter(); if(tk!==B.token) return;
   B.busy=false; nextQuestion(); }
-function renderQuestionBlank(){ $('#qA').textContent='?'; $('#qB').textContent='?'; const a=$('#qAns'); a.textContent='?'; a.className='ansbox empty'; setHint('idle', B.mode==='timed'?'準備…':'怪獸嚟緊！準備出招！'); $('#choices').innerHTML=''; }
-function nextQuestion(){ const f=pickFact(B.tables, B.recent); B.q={a:f.a,b:f.b,ans:f.a*f.b,key:f.a+'x'+f.b,tries:0};
-  B.recent.push(B.q.key); if(B.recent.length>Math.min(4, B.tables.length*9-2)) B.recent.shift();
-  B.input=''; $('#qA').textContent=f.a; $('#qB').textContent=f.b; renderAns();
-  if(B.choice){ $('#choices').innerHTML = makeChoices(f.a,f.b).map(v=>'<button class="choice" data-v="'+v+'">'+v+'</button>').join('');
+function renderQuestionBlank(){ $('#qA').textContent='?'; $('#qB').textContent='?'; const op=$('#qOp'); if(op) op.textContent=qOpText(); const a=$('#qAns'); a.textContent='?'; a.className='ansbox empty'; setHint('idle', B.mode==='timed'?'準備…':B.mode==='divide'?'除得盡先出招！':'怪獸嚟緊！準備出招！'); $('#choices').innerHTML=''; }
+function nextQuestion(){
+  let f;
+  if(B.mode==='divide'){
+    const divs=B.tables.length?B.tables:divisionDivisors(B.star||1);
+    const d=pickDivision(divs, B.qMax||9, B.recent);
+    f={a:d.dividend,b:d.d,ans:d.q,key:d.key,divisor:d.d};
+  } else {
+    const p=pickFact(B.tables, B.recent);
+    f={a:p.a,b:p.b,ans:p.a*p.b,key:p.a+'x'+p.b,divisor:p.a};
+  }
+  B.q={a:f.a,b:f.b,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
+  B.recent.push(B.q.key); if(B.recent.length>Math.min(4, (B.mode==='divide'?B.tables.length*(B.qMax||9):B.tables.length*9)-2)) B.recent.shift();
+  B.input=''; const op=$('#qOp'); if(op) op.textContent=qOpText(); $('#qA').textContent=f.a; $('#qB').textContent=f.b; renderAns();
+  if(B.choice){
+    const opts=B.mode==='divide'?makeDivChoices(f.ans):makeChoices(f.a,f.b);
+    $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'">'+v+'</button>').join('');
     $$('#choices .choice').forEach(b=>b.addEventListener('click',()=>{ if(B.busy||b.classList.contains('x')) return; B.input=b.dataset.v; B.lastChoiceBtn=b; renderAns(); submit(); })); }
-  setHint('idle', B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！');
+  setHint('idle', B.mode==='divide' ? '揀啱個商就出招！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！');
   play($('.qrow'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)'}],{duration:320,easing:'ease-out'}); }
 function renderAns(state){ const a=$('#qAns'); a.textContent = B.input || '?'; a.className='ansbox'+(B.input?'':' empty')+(state?' '+state:''); }
 function setHint(kind, l1, l2){ const h=$('#hint'); h.className='hint '+kind; h.innerHTML='<div>'+l1+'</div>'+(l2?'<div class="c">'+l2+'</div>':''); }
@@ -772,12 +903,12 @@ function keyIn(k){ if(current!=='battle'||B.busy||!B.q||$('#result').classList.c
 async function submit(){
   if(B.busy||!B.q||B.input==='') return; const q=B.q, n=parseInt(B.input,10), tk=B.token; const first=q.tries===0;
   B.busy=true;
-  if(first && B.mode!=='timed'){ B.rq++; B.rtables[q.a]=(B.rtables[q.a]||0)+1; }
+  if(first && B.mode!=='timed'){ B.rq++; const tk=(B.mode==='divide'?(q.divisor||q.b):q.a); B.rtables[tk]=(B.rtables[tk]||0)+1; }
   if(n===q.ans){
     Sfx.correct(); renderAns('good');
     if(first){ recordFact(q.key,true); B.combo++; if(B.mode!=='timed'){ B.rfirst++; B.rMaxCombo=Math.max(B.rMaxCombo,B.combo); } B.maxCombo=Math.max(B.maxCombo,B.combo); if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); } }
     if(B.mode==='timed'){ B.score++; const s=$('#scoreLbl'); if(s) s.textContent=B.score; }
-    setHint('good', pick(['答啱喇！','好叻呀！','勁呀！','冇錯！','正！']), q.a+' × '+q.b+' = '+q.ans+'　'+chant(q.a,q.b));
+    setHint('good', pick(['答啱喇！','好叻呀！','勁呀！','冇錯！','正！']), factLine(q));
     if(B.choice && B.lastChoiceBtn) B.lastChoiceBtn.classList.add('right');
     renderCombo();
     let dmg = first ? (B.combo>=6?28:B.combo>=5?20:B.combo>=3?15:10) : 6; if(B.mode==='timed') dmg=10;
@@ -795,9 +926,9 @@ async function submit(){
     if(brokeCombo){ await showMoveName('連擊斷咗！','break', 680); if(tk!==B.token) return; }
     await monsterAttack(); if(tk!==B.token) return;
     setChestTimer(B.rwrong);
-    const c=chant(q.a,q.b);
-    setHint('bad', B.mode==='timed' ? '唔緊要！記住：' : '唔緊要！記住，再試下！', q.a+' × '+q.b+' = '+q.ans+'　'+c);
-    if(DATA.settings.autoSpeak && !DATA.settings.muted) Speech.speak(c);
+    const spoken=factSpeak(q);
+    setHint('bad', B.mode==='timed' ? '唔緊要！記住：' : '唔緊要！記住，再試下！', factLine(q));
+    if(DATA.settings.autoSpeak && !DATA.settings.muted) Speech.speak(spoken);
     if(B.mode==='timed'){ await sleep(1500); if(tk!==B.token) return; B.busy=false; nextQuestion(); return; }
     B.input=''; renderAns(); B.busy=false;
   }
@@ -813,14 +944,15 @@ function roundWon(){
   const msg = stars===3 ? '超勁！你係乘數表英雄！' : stars===2 ? '好叻呀！繼續加油！' : '做得好！多啲練習會更叻！';
   const next = B.round < B.order.length-1 ? B.order[B.round+1] : null;
   let medalBlock='';
+  const practiceWord = B.mode==='divide' ? '除法' : '乘數表';
   if(B.tables.length===1){
     const t=B.tables[0], n=B.rtables[t]||0, tier=DATA.badges[t]||0;
-    if(n>=3 && tier){ const tn=['','銅','銀','金'][tier]; medalBlock='<div class="rmedal">'+medalSVG(t,tier)+'<div class="mt">'+t+' 乘數表<br>'+tn+'勳章！</div></div>'; }
-    else medalBlock='<div class="rstat">再答多幾題 '+t+' 乘數表，就可以攞勳章啦！</div>';
+    if(n>=3 && tier){ const tn=['','銅','銀','金'][tier]; medalBlock='<div class="rmedal">'+medalSVG(t,tier)+'<div class="mt">'+t+' '+practiceWord+'<br>'+tn+'勳章！</div></div>'; }
+    else medalBlock='<div class="rstat">再答多幾題 '+t+' '+practiceWord+'，就可以攞勳章啦！</div>';
   } else if(upgraded.length){
-    medalBlock='<div class="rstat">勳章升級：'+upgraded.map(t=>t+' 乘數表'+['','銅','銀','金'][DATA.badges[t]]).join('、')+'</div>';
+    medalBlock='<div class="rstat">勳章升級：'+upgraded.map(t=>t+' '+practiceWord+['','銅','銀','金'][DATA.badges[t]]).join('、')+'</div>';
   } else {
-    medalBlock='<div class="rstat">混合練習要每個乘數表答夠幾題先攞勳章！</div>';
+    medalBlock='<div class="rstat">'+(B.mode==='divide'?'每個除數答夠幾題先攞勳章！':'混合練習要每個乘數表答夠幾題先攞勳章！')+'</div>';
   }
   const html = '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
@@ -829,11 +961,11 @@ function roundWon(){
     '<div class="rstat">最高連擊：<b>'+B.rMaxCombo+'</b></div>'+(B.gotCoins?'<div class="rstat">食錢怪吐出：<b style="color:#ffe14d">'+B.gotCoins+' 個金幣！</b></div>':'')+
     '<div class="rmsg">'+(boss?'超人奧米加大勝利！你係乘數表英雄！':msg)+'</div>'+
     '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(MONS[next].final?'最終關：挑戰'+MONS[next].name+'！':MONS[next].boss?'下一關：'+(MONS[next].short||MONS[next].name)+'出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
-    '<button class="btn blue small" id="rPick">揀過乘數表</button><button class="btn gray small" id="rHome">返主頁</button></div>';
+    '<button class="btn blue small" id="rPick">'+(B.mode==='divide'?'揀過星級':'揀過乘數表')+'</button><button class="btn gray small" id="rHome">返主頁</button></div>';
   showResult(html, stars);
   const rn=$('#rNext'); if(rn) rn.addEventListener('click',()=>{ Sfx.click(); hideResult(); B.round++; startRound(B.order[B.round]); });
-  const ra=$('#rAgain'); if(ra) ra.addEventListener('click',()=>{ Sfx.click(); startSession('battle', B.tables); });
-  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup('battle'); });
+  const ra=$('#rAgain'); if(ra) ra.addEventListener('click',()=>{ Sfx.click(); if(B.mode==='divide') startSession('divide', B.tables, {star:B.star}); else startSession('battle', B.tables); });
+  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else openSetup('battle'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
 function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.add('show');
@@ -891,7 +1023,7 @@ function renderProgress(){
 function renderDex(){
   const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
   $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
-  const elemBorder={fire:'#ff7a3d',ice:'#5ee7ff',thunder:'#fde047',rock:'#9ca3af',poison:'#a3e635',shadow:'#c4a0ff'};
+  const elemBorder={fire:'#ff7a3d',ice:'#7dd3fc',thunder:'#fde047',rock:'#a8a29e',poison:'#c084fc',sand:'#eab308',steel:'#e5e7eb',water:'#38bdf8',dark:'#6b21a8',light:'#fff',star:'#fde68a'};
   const sel=window.__dexSel;
   $('#dex').innerHTML=DEX_ORDER.map((t)=>{
     const m=MONS[t], n=dex[t]||0;
@@ -920,9 +1052,9 @@ function selectDex(type, quiet){
 function fillDexPanel(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0;
   $('#dexPanelEmpty').hidden=true; $('#dexPanelBody').hidden=false;
-  $('#dexPanelArt').innerHTML=monRasterHTML(type); bindMonImg($('#dexPanelArt .mon-img'));
+  $('#dexPanelArt').innerHTML=dexPairHTML(type); $$('#dexPanelArt .mon-img').forEach(bindMonImg);
   const tags=[]; if(m.friend) tags.push('<i class="f">夥伴</i>'); if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
-  tags.push('<i>'+(m.kind||'怪獸')+'</i>');
+  tags.push('<i>'+(m.kind||'怪獸')+'</i>'); if(m.elemWord) tags.push('<i>'+m.elemWord+'</i>');
   $('#dexPanelTags').innerHTML=tags.join('');
   $('#dexPanelName').textContent=m.name;
   $('#dexPanelNick').textContent=m.nick;
@@ -946,8 +1078,8 @@ function openDexDetail(type){
   selectDex(type, true);
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
-  $('#dsArt').innerHTML = '<div class="mon-bob">'+monRasterHTML(type)+'</div>';
-  bindMonImg($('#dsArt .mon-img'));
+  $('#dsArt').innerHTML = dexPairHTML(type);
+  $$('#dsArt .mon-img').forEach(bindMonImg);
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
   if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   if(!tags.length) tags.push('<i>圖鑑怪獸</i>');
@@ -955,6 +1087,7 @@ function openDexDetail(type){
   $('#dsName').textContent=m.name; $('#dsNick').textContent=m.nick;
   $('#dsKind').textContent=m.kind||'未知怪獸'; $('#dsHabitat').textContent=m.habitat||'？？？';
   $('#dsMove').textContent=m.nick; $('#dsRecord').textContent=(m.friend?'特訓':'打敗')+' ×'+n;
+  const dsElem=$('#dsElem'); if(dsElem) dsElem.textContent=m.elemWord||'？';
   const kid=$('#dsKid'); if(kid) kid.textContent=m.kid||'';
   $('#dsLore').textContent=m.lore||'暫時未有資料。';
   sheet.hidden=false; sheet.classList.add('show');
@@ -986,6 +1119,11 @@ function init(){
   $('#dsClose').addEventListener('click',()=>{ Sfx.click(); closeDexDetail(); });
   $('#dexSheet').addEventListener('click',e=>{ if(e.target===e.currentTarget){ Sfx.click(); closeDexDetail(); } });
   $('#resetBtn').addEventListener('click',()=>confirmBox('真係要清除晒所有進度同勳章？','清除','唔好',v=>{ if(v){ const st=DATA.settings; DATA=defaultData(); DATA.settings=st; save(); renderProgress(); } }));
+  $$('#starPicks .star-pick').forEach(b=>b.addEventListener('click', ()=>{
+    Sfx.click();
+    const star=+b.dataset.star;
+    startSession('divide', divisionDivisors(star), {star:star});
+  }));
   document.addEventListener('keydown', e=>{
     if($('#dexSheet').classList.contains('show')){ if(e.key==='Escape'){ closeDexDetail(); e.preventDefault(); } return; }
     if($('#modal').classList.contains('show')){ if(e.key==='Escape') closeModal(false); if(e.key==='Enter'){ e.preventDefault(); closeModal(true);} return; }
@@ -995,12 +1133,52 @@ function init(){
       if(/^[0-9]$/.test(e.key)){ keyIn(e.key); pressKey(e.key); e.preventDefault(); }
       else if(e.key==='Backspace'){ keyIn('del'); pressKey('del'); e.preventDefault(); }
       else if(e.key==='Enter'){ keyIn('ok'); pressKey('ok'); e.preventDefault(); }
-    } else if(current==='learn'){
+    }     else if(current==='learn'){
       if(e.key==='ArrowRight'){ stopAuto(); learnNext(); } else if(e.key==='ArrowLeft'){ stopAuto(); learnPrev(); } else if(e.key===' '){ e.preventDefault(); Speech.speak(chant(L.t,L.i)); } }
   });
+  if(/[?&]selftest=1/.test(location.search)) runSelfTest();
 }
 function pressKey(k){ const b=$('#keypad .key[data-k="'+k+'"]'); if(!b) return; b.classList.add('press'); setTimeout(()=>b.classList.remove('press'),110); }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, burstAnswerFX, isHardFight, setMonAttack, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS };
+function runSelfTest(){
+  const fails=[];
+  const saved=B.combo;
+  [[0,1],[1,2],[2,2],[3,3],[4,3],[5,4],[6,5],[9,5]].forEach(function(pair){
+    B.combo=pair[0]; if(henshinStage()!==pair[1]) fails.push('hen '+pair[0]+'→'+henshinStage());
+  });
+  B.combo=saved;
+  const words={heidragon:'火',lavaover:'火',phoenix:'火',flamecrab:'火',holyturt:'冰',icetiran:'冰',thundwolf:'雷',deathscorp:'毒',manflower:'毒',mtngod:'岩',sandwyrm:'沙',steeltiran:'鋼',seaking:'水',ninjacat:'暗',nightmare:'暗',illusdemon:'光',galmoth:'星',starlord:'星'};
+  Object.keys(words).forEach(function(id){
+    const m=MONS[id];
+    if(!m) fails.push('missing '+id);
+    else if(m.elemWord!==words[id]) fails.push(id+' elem '+(m.elemWord||''));
+    if(m && m.name!==({'deathscorp':'死神蠍','sandwyrm':'黃泉魔龍'}[id]||m.name)) fails.push(id+' name');
+  });
+  if(MONS.deathscorp.name!=='死神蠍') fails.push('deathscorp name');
+  if(MONS.sandwyrm.name!=='黃泉魔龍') fails.push('sandwyrm name');
+  ['ninjacat','galmoth','nightmare','holyturt','flamecrab'].forEach(function(id){ if(ATTACK_MIRROR[id]) fails.push('double flip '+id); });
+  ['heidragon','thundwolf','starlord','sandwyrm','deathscorp','seaking','steeltiran'].forEach(function(id){ if(!ATTACK_MIRROR[id]) fails.push('need mirror '+id); });
+  [1,2,3].forEach(function(star){
+    const divs=divisionDivisors(star);
+    if(star===1 && divs.join(',')!=='2,5,10') fails.push('star1');
+    if(star===2 && divs.join(',')!=='2,3,4,5,10') fails.push('star2');
+    if(star===3 && divs.join(',')!=='6,7,8,9') fails.push('star3');
+    const qMax=star>=3?12:9;
+    for(let n=0;n<12;n++){
+      const order=divisionOrder(star);
+      if(order.length!==5) fails.push('order '+star);
+      if(star>=3 && (order.indexOf('heidragon')<0 || order.indexOf('starlord')<0)) fails.push('bosses');
+      const picked=pickDivision(divs, qMax, []);
+      if(!picked || picked.dividend!==picked.d*picked.q || picked.q<1 || picked.q>qMax || divs.indexOf(picked.d)<0) fails.push('fact '+star);
+      const ch=makeDivChoices(picked.q);
+      if(ch.length!==4 || ch.indexOf(picked.q)<0 || ch.some(function(v){ return v<1 || v!==(v|0); })) fails.push('choices '+star);
+    }
+  });
+  const pre=document.createElement('pre');
+  pre.id='selftest';
+  pre.textContent=fails.length?fails.join('\n'):'OK';
+  document.body.appendChild(pre);
+}
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_MIRROR, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
