@@ -135,6 +135,12 @@ body[data-screen="home"] main{padding-top:0}
 .hero,.mon{width:100%;height:100%;display:block;overflow:visible}
 .hero-bob,.mon-bob{width:100%;height:100%;animation:bob 2.4s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
+/* Battle sprites were drawing at the layout-box size and looked small on the tall stage.
+   Grow both ~1.5× from the shared ground line. The monster scales from its inner foot
+   (up and outward). The hero scale is on .hero-art so the foot-drop stays on that line. */
+#battle{--pop:1.5}
+#battle .mon-bob{transform-origin:0% 100%;animation:battlePop 2.4s ease-in-out infinite}
+@keyframes battlePop{0%,100%{transform:translateY(0) scale(var(--pop,1.5))}50%{transform:translateY(-3%) scale(var(--pop,1.5))}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
 .hero .h-armL{transform-origin:70px 130px}
@@ -305,13 +311,14 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.pose-whirl,
 .hero.raster.pose-super,
 .hero.raster.pose-rainbow{transform:none}
-/* Hero canvas has empty space under the feet. Drop each form/pose so the feet meet the monster on the ground line. */
-.hero.raster .hero-art{transform:translateY(22%)}
-.hero.raster.henshin-1 .hero-art,.hero.raster.henshin-4 .hero-art{transform:translateY(23%)}
+/* Hero canvas has empty space under the feet. Drop each form/pose so the feet meet the monster on the ground line.
+   --pop scales the pose from that same foot line (translate grows with the scale). */
+.hero.raster .hero-art{transform-origin:100% 100%;transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.henshin-1 .hero-art,.hero.raster.henshin-4 .hero-art{transform:translateY(calc(23% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.pose-punch .hero-art,
 .hero.raster.pose-disc .hero-art,
 .hero.raster.pose-whirl .hero-art,
-.hero.raster.pose-rainbow .hero-art{transform:translateY(22%)}
+.hero.raster.pose-rainbow .hero-art{transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-1.pose-punch .hero-art,
 .hero.raster.henshin-1.pose-disc .hero-art,
 .hero.raster.henshin-1.pose-whirl .hero-art,
@@ -319,27 +326,27 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.henshin-2.pose-punch .hero-art,
 .hero.raster.henshin-2.pose-disc .hero-art,
 .hero.raster.henshin-2.pose-whirl .hero-art,
-.hero.raster.henshin-2.pose-rainbow .hero-art{transform:translateY(21%)}
+.hero.raster.henshin-2.pose-rainbow .hero-art{transform:translateY(calc(21% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.pose-kick .hero-art,
-.hero.raster.pose-flip .hero-art{transform:translateY(23%)}
+.hero.raster.pose-flip .hero-art{transform:translateY(calc(23% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-1.pose-kick .hero-art,
-.hero.raster.henshin-1.pose-flip .hero-art{transform:translateY(24%)}
+.hero.raster.henshin-1.pose-flip .hero-art{transform:translateY(calc(24% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-4.pose-kick .hero-art,
-.hero.raster.henshin-4.pose-flip .hero-art{transform:translateY(15%)}
-.hero.raster.pose-guard .hero-art{transform:translateY(22%)}
-.hero.raster.henshin-3.pose-guard .hero-art{transform:translateY(10%)}
-.hero.raster.henshin-5.pose-guard .hero-art{transform:translateY(12%)}
+.hero.raster.henshin-4.pose-flip .hero-art{transform:translateY(calc(15% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.pose-guard .hero-art{transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.henshin-3.pose-guard .hero-art{transform:translateY(calc(10% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.henshin-5.pose-guard .hero-art{transform:translateY(calc(12% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.pose-beam .hero-art,
-.hero.raster.pose-super .hero-art{transform:translateY(17%)}
+.hero.raster.pose-super .hero-art{transform:translateY(calc(17% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-2.pose-beam .hero-art,
-.hero.raster.henshin-2.pose-super .hero-art{transform:translateY(22%)}
+.hero.raster.henshin-2.pose-super .hero-art{transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-3.pose-beam .hero-art,
-.hero.raster.henshin-3.pose-super .hero-art{transform:translateY(9%)}
+.hero.raster.henshin-3.pose-super .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-4.pose-beam .hero-art,
-.hero.raster.henshin-4.pose-super .hero-art{transform:translateY(10%)}
-.hero.raster.pose-win .hero-art{transform:translateY(9%)}
-.hero.raster.henshin-3.pose-win .hero-art{transform:translateY(8%)}
-.hero.raster.henshin-5.pose-win .hero-art{transform:translateY(7%)}
+.hero.raster.henshin-4.pose-super .hero-art{transform:translateY(calc(10% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.pose-win .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.henshin-3.pose-win .hero-art{transform:translateY(calc(8% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster.henshin-5.pose-win .hero-art{transform:translateY(calc(7% * var(--pop, 1))) scale(var(--pop, 1))}
 .form-name{position:absolute;left:50%;top:100%;margin-top:1px;transform:translateX(-50%);z-index:9;pointer-events:none;white-space:nowrap;font-weight:900;font-size:clamp(13px,3.1vw,18px);line-height:1.15;letter-spacing:1px;color:#fff;background:linear-gradient(180deg,#38bdf8,#0369a1);border:2px solid #fff;border-radius:999px;padding:2px 10px;box-shadow:0 3px 0 #082f49,0 0 10px rgba(56,189,248,.65);text-shadow:0 1px 0 #082f49}
 .form-name.flash{animation:formFlash 1s ease-out}
 @keyframes formFlash{0%{transform:translateX(-50%) scale(.6);filter:brightness(2.4);box-shadow:0 0 18px #fff}40%{transform:translateX(-50%) scale(1.16);filter:brightness(1.6)}100%{transform:translateX(-50%) scale(1);filter:none}}
@@ -353,6 +360,7 @@ body[data-screen="home"] main{padding-top:0}
    Flip once, around the same origin — never a second mirror. */
 .mon.atk-drop .mon-img{transform-origin:50% 100%;transform:translateY(calc(var(--foot-n, 0) * var(--atk, 1) * 1%)) scale(var(--atk, 1))}
 .mon.atk-flip.atk-drop .mon-img{transform-origin:50% 100%;transform:translateY(calc(var(--foot-n, 0) * var(--atk, 1) * 1%)) scale(var(--atk, 1)) scaleX(-1)}
+.mon.idle-flip:not(.atk-drop) .mon-img{transform-origin:50% 100%;transform:scaleX(-1)}
 .hero.henshin-up .hero-raster{filter:brightness(1.45) drop-shadow(0 0 16px rgba(255,255,255,.9))}
 .mon.ouch .mon-img{filter:brightness(1.6) saturate(1.3) hue-rotate(-10deg)}
 .dimg .mon-raster,.dimg .mon-img{width:100%;height:100%}
@@ -399,11 +407,11 @@ body[data-screen="home"] main{padding-top:0}
 .flash{position:absolute;inset:0;background:#fff;opacity:0}
 .speedline{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,#fff);opacity:.8}
 
-.panel{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:10px;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0;position:relative;overflow:hidden}
+.panel{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:10px;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0;position:relative;overflow:visible;z-index:2}
 .qcard{position:relative;border-radius:18px;padding:4px 6px;overflow:hidden;z-index:1}
 .qcard.eh .qrow{text-shadow:0 2px 0 #0b1033,0 0 8px rgba(0,0,0,.7)}
 .qcard .qrow{position:relative;z-index:3}
-.elem-pop{position:absolute;left:50%;top:42%;z-index:6;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;font-weight:900;font-size:clamp(64px,16vw,104px);letter-spacing:2px;-webkit-text-stroke:6px #1a0a00;paint-order:stroke fill;text-shadow:0 6px 0 rgba(0,0,0,.45),0 0 22px currentColor;white-space:nowrap;color:#fff}
+.elem-pop{position:absolute;left:50%;top:18%;z-index:40;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;font-weight:900;font-size:clamp(64px,16vw,104px);line-height:1.15;letter-spacing:2px;padding:.12em .28em .18em;-webkit-text-stroke:6px #1a0a00;paint-order:stroke fill;text-shadow:0 6px 0 rgba(0,0,0,.45),0 0 22px currentColor;white-space:nowrap;color:#fff;overflow:visible}
 .elem-pop.pop-fire{color:#ffeb3b}
 .elem-pop.pop-ice{color:#e0f7ff;-webkit-text-stroke-color:#0c4a6e}
 .elem-pop.pop-thunder{color:#fff36a;-webkit-text-stroke-color:#713f12}
@@ -416,7 +424,7 @@ body[data-screen="home"] main{padding-top:0}
 .elem-pop.pop-light{color:#fff;-webkit-text-stroke-color:#b45309}
 .elem-pop.pop-star{color:#fde68a;-webkit-text-stroke-color:#4c1d95}
 .elem-pop.show{animation:elemPop 1.05s ease-out}
-@keyframes elemPop{0%{opacity:0;transform:translate(-50%,-20%) scale(.15) rotate(-8deg)}18%{opacity:1;transform:translate(-50%,-70%) scale(1.28) rotate(4deg)}55%{opacity:1;transform:translate(-50%,-88%) scale(1.05) rotate(0)}100%{opacity:0;transform:translate(-50%,-120%) scale(1.15)}}
+@keyframes elemPop{0%{opacity:0;transform:translate(-50%,-8%) scale(.18) rotate(-8deg)}20%{opacity:1;transform:translate(-50%,-42%) scale(1.12) rotate(3deg)}58%{opacity:1;transform:translate(-50%,-42%) scale(1) rotate(0)}100%{opacity:0;transform:translate(-50%,-58%) scale(1.06)}}
 .ebit{position:absolute;pointer-events:none;z-index:4;border-radius:50%}
 .ebit-fire{width:16px;height:16px;background:radial-gradient(circle,#fff 0 20%,#ffb020 40%,#ff3b00 70%,transparent 72%);box-shadow:0 0 10px #ff6a00;animation:bitUp .9s ease-out forwards}
 .ebit-ice{width:12px;height:12px;background:#fff;box-shadow:0 0 8px #bae6fd;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:bitFall 1s linear forwards}
@@ -756,8 +764,9 @@ body[data-screen="home"] main{padding-top:0}
 .dcard{position:relative;background:linear-gradient(180deg,rgba(48,56,140,.92),rgba(22,28,78,.94));border:2.5px solid var(--db,rgba(255,255,255,.22));border-radius:16px;padding:6px 4px 8px;text-align:center;color:inherit;font:inherit;cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s;outline:none;width:100%;box-shadow:0 4px 0 rgba(0,0,0,.25)}
 .dcard:not(.locked):hover,.dcard:not(.locked):focus-visible{transform:translateY(-3px);box-shadow:0 7px 0 rgba(0,0,0,.28),0 0 0 2px rgba(255,225,77,.55)}
 .dcard.on{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.28),0 0 0 3px #ffe14d,0 0 18px rgba(255,225,77,.35);border-color:#ffe14d}
-.dcard .dimg{height:84px;display:grid;place-items:center}
-.dcard .dimg svg,.dcard .dimg .mon-raster{width:100%;height:100%}
+.dcard .dimg{height:84px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.dcard .dimg svg,.dcard .dimg .mon-raster{width:auto;height:100%;max-width:100%}
+.dcard .dimg .mon-img{width:auto;height:100%;max-width:100%;object-fit:contain;object-position:center bottom}
 .dcard .dimg *{animation:none!important}
 .dcard .dname{font-weight:900;font-size:14px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dcard .dn{font-size:11px;opacity:.8}
@@ -775,12 +784,17 @@ body[data-screen="home"] main{padding-top:0}
 @keyframes dexPanelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .dex-panel-art{width:100%;display:flex;flex-direction:column;align-items:center;margin:0 auto 4px}
 .dex-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.dex-shot{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
-.dex-shot .dimg,.dex-shot .mon-raster{width:100%;height:92px}
+.dex-shot{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px;overflow:visible;min-width:0}
+.dex-shot .dimg{width:100%;height:clamp(150px,34vh,220px);display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.dex-shot .mon-raster{width:auto;height:100%;max-width:100%;display:flex;align-items:flex-end;justify-content:center}
+.dex-shot .mon-img{width:auto!important;height:auto!important;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center bottom}
 .dex-shot figcaption{font-size:12px;font-weight:900;opacity:.85}
 .dex-elem{margin-top:4px;font-weight:900;font-size:15px;color:#ffe14d;background:rgba(0,0,0,.28);border-radius:999px;padding:2px 12px;border:1px solid rgba(255,255,255,.2)}
 .ds-art .dex-pair{width:min(100%,420px);margin:0 auto}
-.ds-art .dex-shot .dimg,.ds-art .dex-shot .mon-raster{height:clamp(120px,28vh,180px)}
+.ds-art{overflow:visible}
+.ds-art .dex-shot .dimg{height:clamp(180px,36vh,260px)}
+/* 虛幻魔 idle is 144×360 and the attack plate is 360×360. width/height auto plus
+   object-fit contain keeps both aspects — do not force the narrow plate into a wide box. */
 .star-picks{display:flex;flex-direction:column;gap:12px;width:min(100%,420px);margin-top:8px}
 .star-pick{border:3px solid rgba(255,255,255,.85);border-radius:22px;padding:14px 16px;background:linear-gradient(180deg,#fde68a,#f59e0b);color:#3b2300;font-weight:900;box-shadow:0 6px 0 #92400e;display:flex;flex-direction:column;gap:2px;min-height:72px}
 .star-pick b{font-size:clamp(22px,5vw,30px)}
@@ -788,7 +802,8 @@ body[data-screen="home"] main{padding-top:0}
 .star-pick:nth-child(2){background:linear-gradient(180deg,#fdba74,#ea580c)}
 .star-pick:nth-child(3){background:linear-gradient(180deg,#fca5a5,#dc2626);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 .star-pick:active{transform:translateY(4px);box-shadow:0 2px 0 #92400e}
-.dex-panel-art .mon-raster,.dex-panel-art .mon-img,.dex-panel-art svg{width:100%;height:100%}
+.dex-panel-art .mon-raster,.dex-panel-art svg{max-width:100%}
+.dex-panel-art .mon-img{object-fit:contain;object-position:center bottom}
 .dex-panel-art *{animation:none!important}
 .dex-panel-tags{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:2px 0 4px}
 .dex-panel-tags i{font-style:normal;font-size:11px;font-weight:900;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
@@ -812,8 +827,9 @@ body[data-screen="home"] main{padding-top:0}
   .dex-panel{position:static;min-height:0;order:-1}
   .dex-panel-art{width:100%}
 }
-#dsArt .mon-raster,#dsArt .mon-img{width:100%;height:100%;object-fit:contain;object-position:center bottom}
+#dsArt .mon-raster,#dsArt .mon-img{max-width:100%;object-fit:contain;object-position:center bottom}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-  .hero-bob,.mon-bob{animation:none}
+  .hero-bob,.mon-bob,#battle .mon-bob{animation:none}
+  #battle .mon-bob{transform:scale(var(--pop,1.5))}
 }

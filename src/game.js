@@ -266,12 +266,19 @@ function bindMonImg(img){
     if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
   });
 }
-/* Attack frames that face image-right. Hero is on the left, so mirror them in battle only.
-   Already looking left (face on the left, trail behind): ninjacat, galmoth, nightmare, holyturt, flamecrab. */
+/* Battle facing: hero stands on the left, so every monster must look LEFT.
+   Mirror a frame only when the source art faces right. Do not mirror art that
+   already faces left (that would turn it away from the hero).
+   Attack, faces right: lavaover, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
+   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
 const ATTACK_MIRROR = {
-  heidragon:1, lavaover:1, phoenix:1, icetiran:1,
-  thundwolf:1, deathscorp:1, manflower:1, mtngod:1, sandwyrm:1, steeltiran:1,
-  seaking:1, illusdemon:1, starlord:1
+  lavaover:1, thundwolf:1, mtngod:1, manflower:1,
+  illusdemon:1, seaking:1, sandwyrm:1, starlord:1
+};
+/* Idle portraits that face image-right. Same rule: one flip in battle, never in the dex. */
+const IDLE_MIRROR = {
+  deathscorp:1, thundwolf:1, mtngod:1, manflower:1,
+  illusdemon:1, seaking:1, sandwyrm:1, starlord:1
 };
 /* Empty canvas under the attack-frame feet, as a percent of the image. Drops them onto the ground line. */
 const ATTACK_FOOT = {
@@ -306,6 +313,7 @@ function setMonAttack(on){
   const host=img.closest('.mon');
   if(host){
     host.classList.toggle('atk-flip', !!(on && ATTACK_MIRROR[B.type]));
+    host.classList.toggle('idle-flip', !!(!on && IDLE_MIRROR[B.type]));
     host.classList.toggle('atk-drop', !!on);
     if(on){
       host.style.setProperty('--foot-n', String(ATTACK_FOOT[B.type]||0));
@@ -319,7 +327,7 @@ function setMonAttack(on){
   if(img.getAttribute('src')!==next) img.setAttribute('src', next);
 }
 function monAttackHTML(type){
-  return '<div class="mon mon-raster mon-'+type+'">'+
+  return '<div class="mon mon-raster dex-atk mon-'+type+'">'+
     '<img class="mon-img" src="'+monAttackSrc(type)+'" alt="" draggable="false" data-fb="'+monIdleSrc(type)+'">'+
     '</div>';
 }
@@ -1039,7 +1047,7 @@ async function startRound(type){
   B.maxHp = isClockMode() ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
   if(!isClockMode()){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; B._hen=1; B._henLabel=null; }
   else B.rwrong=0;
-  monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img'));
+  monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img')); setMonAttack(false);
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
   setChestTimer(0); syncHenshin(); heroPose('idle'); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
@@ -1434,8 +1442,10 @@ function runSelfTest(){
   });
   if(MONS.deathscorp.name!=='死神蠍') fails.push('deathscorp name');
   if(MONS.sandwyrm.name!=='黃泉魔龍') fails.push('sandwyrm name');
-  ['ninjacat','galmoth','nightmare','holyturt','flamecrab'].forEach(function(id){ if(ATTACK_MIRROR[id]) fails.push('double flip '+id); });
-  ['heidragon','thundwolf','starlord','sandwyrm','deathscorp','seaking','steeltiran'].forEach(function(id){ if(!ATTACK_MIRROR[id]) fails.push('need mirror '+id); });
+  ['heidragon','holyturt','deathscorp','ninjacat','steeltiran','icetiran','phoenix','nightmare','galmoth','flamecrab'].forEach(function(id){ if(ATTACK_MIRROR[id]) fails.push('double flip atk '+id); });
+  ['lavaover','thundwolf','mtngod','manflower','illusdemon','seaking','sandwyrm','starlord'].forEach(function(id){ if(!ATTACK_MIRROR[id]) fails.push('need mirror atk '+id); });
+  ['heidragon','lavaover','holyturt','ninjacat','steeltiran','icetiran','phoenix','nightmare','galmoth','flamecrab'].forEach(function(id){ if(IDLE_MIRROR[id]) fails.push('double flip idle '+id); });
+  ['deathscorp','thundwolf','mtngod','manflower','illusdemon','seaking','sandwyrm','starlord'].forEach(function(id){ if(!IDLE_MIRROR[id]) fails.push('need mirror idle '+id); });
   [1,2,3].forEach(function(star){
     const divs=divisionDivisors(star);
     if(star===1 && divs.join(',')!=='2,5,10') fails.push('star1');
@@ -1484,13 +1494,14 @@ function runSelfTest(){
     const sc=ATTACK_SCALE[id];
     if(!(sc>=1 && sc<=1.65)) fails.push('scale '+id);
   });
-  if(ATTACK_MIRROR.ninjacat||ATTACK_MIRROR.galmoth||ATTACK_MIRROR.flamecrab||ATTACK_MIRROR.holyturt||ATTACK_MIRROR.nightmare) fails.push('double flip');
+  if(ATTACK_MIRROR.heidragon||ATTACK_MIRROR.phoenix||ATTACK_MIRROR.icetiran||ATTACK_MIRROR.steeltiran||ATTACK_MIRROR.deathscorp) fails.push('double flip');
+  if(IDLE_MIRROR.heidragon||IDLE_MIRROR.lavaover||IDLE_MIRROR.phoenix) fails.push('double flip idle');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_MIRROR, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_MIRROR, IDLE_MIRROR, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
