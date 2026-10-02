@@ -273,8 +273,8 @@ function bindMonImg(img){
    in battle only — never in the dex, and never a second flip.
    Attack, faces right: lavaover, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
    Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab.
-   Idle, faces right: deathscorp, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
-   Idle, already left: heidragon, lavaover, holyturt, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
+   Idle, faces right: deathscorp, thundwolf, mtngod, manflower, seaking, sandwyrm, starlord.
+   Idle, already left: heidragon, lavaover, holyturt, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab, illusdemon. */
 const ATTACK_MIRROR = {
   lavaover:1, thundwolf:1, mtngod:1, manflower:1,
   illusdemon:1, seaking:1, sandwyrm:1, starlord:1
@@ -282,7 +282,7 @@ const ATTACK_MIRROR = {
 /* Idle portraits that face image-right. Same rule: one flip in battle, never in the dex. */
 const IDLE_MIRROR = {
   deathscorp:1, thundwolf:1, mtngod:1, manflower:1,
-  illusdemon:1, seaking:1, sandwyrm:1, starlord:1
+  seaking:1, sandwyrm:1, starlord:1
 };
 /* Empty canvas under the attack-frame feet, as a percent of the image. Drops them onto the ground line. */
 const ATTACK_FOOT = {
@@ -1449,8 +1449,8 @@ function runSelfTest(){
   if(MONS.sandwyrm.name!=='黃泉魔龍') fails.push('sandwyrm name');
   ['heidragon','holyturt','deathscorp','ninjacat','steeltiran','icetiran','phoenix','nightmare','galmoth','flamecrab'].forEach(function(id){ if(ATTACK_MIRROR[id]) fails.push('double flip atk '+id); });
   ['lavaover','thundwolf','mtngod','manflower','illusdemon','seaking','sandwyrm','starlord'].forEach(function(id){ if(!ATTACK_MIRROR[id]) fails.push('need mirror atk '+id); });
-  ['heidragon','lavaover','holyturt','ninjacat','steeltiran','icetiran','phoenix','nightmare','galmoth','flamecrab'].forEach(function(id){ if(IDLE_MIRROR[id]) fails.push('double flip idle '+id); });
-  ['deathscorp','thundwolf','mtngod','manflower','illusdemon','seaking','sandwyrm','starlord'].forEach(function(id){ if(!IDLE_MIRROR[id]) fails.push('need mirror idle '+id); });
+  ['heidragon','lavaover','holyturt','ninjacat','steeltiran','icetiran','phoenix','nightmare','galmoth','flamecrab','illusdemon'].forEach(function(id){ if(IDLE_MIRROR[id]) fails.push('double flip idle '+id); });
+  ['deathscorp','thundwolf','mtngod','manflower','seaking','sandwyrm','starlord'].forEach(function(id){ if(!IDLE_MIRROR[id]) fails.push('need mirror idle '+id); });
   [1,2,3].forEach(function(star){
     const divs=divisionDivisors(star);
     if(star===1 && divs.join(',')!=='2,5,10') fails.push('star1');
