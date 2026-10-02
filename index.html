@@ -371,10 +371,8 @@ body[data-screen="home"] main{padding-top:0}
 .mon.mon-raster{position:relative;width:100%;height:100%;display:block}
 /* Attack canvas is 360 and shorter than the idle body. Scale from the feet so the
    painted monster matches the idle height, then drop the empty foot gap onto the ground.
-   Flip once, around the same origin — never a second mirror. */
+   Art is not mirrored; the PNG facing is the facing on screen. */
 .mon.atk-drop .mon-img{transform-origin:50% 100%;transform:translateY(calc(var(--foot-n, 0) * var(--atk, 1) * 1%)) scale(var(--atk, 1))}
-.mon.atk-flip.atk-drop .mon-img{transform-origin:50% 100%;transform:translateY(calc(var(--foot-n, 0) * var(--atk, 1) * 1%)) scale(var(--atk, 1)) scaleX(-1)}
-.mon.idle-flip:not(.atk-drop) .mon-img{transform-origin:50% 100%;transform:scaleX(-1)}
 .hero.henshin-up .hero-raster{filter:brightness(1.45) drop-shadow(0 0 16px rgba(255,255,255,.9))}
 .mon.ouch .mon-img{filter:brightness(1.6) saturate(1.3) hue-rotate(-10deg)}
 .dimg .mon-raster,.dimg .mon-img{width:100%;height:100%}
@@ -1783,25 +1781,8 @@ function bindMonImg(img){
     if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
   });
 }
-/* Battle facing: hero stands on the left and looks RIGHT; every monster looks LEFT.
-   Hero poses hero_h1–h5 (omega, punch, kick, beam, guard, win) and assets/home/hero.png
-   already face image-right, so they are not mirrored.
-   Mirror a monster frame only when the source art faces right. One scaleX(-1)
-   in battle only — never in the dex, and never a second flip.
-   Attack, faces right: lavaover, thundwolf, mtngod, starlord, deathscorp, flamecrab, galmoth, holyturt, icetiran, nightmare, ninjacat.
-   Attack, already left: manflower, illusdemon, seaking, sandwyrm.
-   Idle, faces right: deathscorp, thundwolf, mtngod, manflower, seaking, sandwyrm, starlord.
-   Idle, already left: heidragon, lavaover, holyturt, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab, illusdemon. */
-const ATTACK_MIRROR = {
-  lavaover:1, thundwolf:1, mtngod:1, starlord:1,
-  deathscorp:1, flamecrab:1, galmoth:1, holyturt:1,
-  icetiran:1, nightmare:1, ninjacat:1
-};
-/* Idle portraits that face image-right. Same rule: one flip in battle, never in the dex. */
-const IDLE_MIRROR = {
-  deathscorp:1, thundwolf:1, mtngod:1, manflower:1,
-  seaking:1, sandwyrm:1, starlord:1
-};
+/* Sprites are stored already facing the fight. Battle and the dex draw them
+   as-is: no scaleX(-1) on monsters or heroes. */
 /* Empty canvas under the attack-frame feet, as a percent of the image. Drops them onto the ground line. */
 const ATTACK_FOOT = {
   heidragon:16, lavaover:9, phoenix:8, flamecrab:19, holyturt:27, icetiran:21,
@@ -1836,8 +1817,7 @@ function setMonAttack(on){
   bindMonImg(img);
   const host=img.closest('.mon');
   if(host){
-    host.classList.toggle('atk-flip', !!(on && ATTACK_MIRROR[B.type]));
-    host.classList.toggle('idle-flip', !!(!on && IDLE_MIRROR[B.type]));
+    host.classList.remove('atk-flip', 'idle-flip');
     host.classList.toggle('atk-drop', !!on);
     if(on){
       host.style.setProperty('--foot-n', String(ATTACK_FOOT[B.type]||0));
@@ -2236,7 +2216,7 @@ async function mvWhirl(hit){ const h=relPos(heroWrap), m=relPos(monWrap); const 
   const sz=h.h*1.0; const sw=fxEl('swirl',swirlSVG()); sw.style.cssText='left:'+(h.x-sz/2)+'px;top:'+(h.y-sz/2)+'px;width:'+sz+'px;height:'+sz+'px';
   const D=750*K();
   play(sw,[{transform:'translateX(0) scale(.3)',opacity:0},{transform:'translateX('+(dx*.3)+'px) scale(1)',opacity:1,offset:.25},{transform:'translateX('+dx+'px) scale(1.1)',opacity:1}],{duration:D,fill:'forwards',easing:'ease-in'});
-  const spin=play(heroWrap,[{transform:'translateX(0) scaleX(1)'},{transform:'translateX('+(dx*.2)+'px) scaleX(-1)'},{transform:'translateX('+(dx*.45)+'px) scaleX(1)'},{transform:'translateX('+(dx*.7)+'px) scaleX(-1)'},{transform:'translateX('+dx+'px) scaleX(1)'}],{duration:D,fill:'forwards',easing:'ease-in'});
+  const spin=play(heroWrap,[{transform:'translateX(0)'},{transform:'translateX('+(dx*.2)+'px)'},{transform:'translateX('+(dx*.45)+'px)'},{transform:'translateX('+(dx*.7)+'px)'},{transform:'translateX('+dx+'px)'}],{duration:D,fill:'forwards',easing:'ease-in'});
   const iv=setInterval(()=>{ const q=relPos(heroWrap); FX.burst(q.x,q.y,{n:4,speed:4,colors:['#bff6ff','#fff'],gravity:0,life:20,size:4}); },60);
   await spin; clearInterval(iv); const t=relPos(mk('.mk-core',monWrap));
   hit(); Sfx.bigHit(); shake(13); impactStar(t,'呼呼！'); FX.spiral(t.x,t.y,{n:36,r:24,speed:7,colors:['#bff6ff','#fff','#7fe3ff'],size:7,life:45});
@@ -2966,10 +2946,30 @@ function runSelfTest(){
   });
   if(MONS.deathscorp.name!=='死神蠍') fails.push('deathscorp name');
   if(MONS.sandwyrm.name!=='黃泉魔龍') fails.push('sandwyrm name');
-  ['heidragon','steeltiran','phoenix'].forEach(function(id){ if(ATTACK_MIRROR[id]) fails.push('double flip atk '+id); });
-  ['lavaover','thundwolf','mtngod','starlord','deathscorp','flamecrab','galmoth','holyturt','icetiran','nightmare','ninjacat'].forEach(function(id){ if(!ATTACK_MIRROR[id]) fails.push('need mirror atk '+id); });
-  ['heidragon','lavaover','holyturt','ninjacat','steeltiran','icetiran','phoenix','nightmare','galmoth','flamecrab','illusdemon'].forEach(function(id){ if(IDLE_MIRROR[id]) fails.push('double flip idle '+id); });
-  ['deathscorp','thundwolf','mtngod','manflower','seaking','sandwyrm','starlord'].forEach(function(id){ if(!IDLE_MIRROR[id]) fails.push('need mirror idle '+id); });
+  const bob=$('#monBob');
+  Object.keys(words).forEach(function(id){
+    bob.innerHTML=monRasterHTML(id);
+    B.type=id;
+    setMonAttack(false);
+    let host=$('#monBob .mon');
+    if(!host || host.classList.contains('idle-flip') || host.classList.contains('atk-flip')) fails.push('idle flip '+id);
+    setMonAttack(true);
+    host=$('#monBob .mon');
+    const img=$('#monBob .mon-img');
+    if(!host || host.classList.contains('atk-flip') || host.classList.contains('idle-flip')) fails.push('atk flip '+id);
+    if(!img || img.getAttribute('src')!==monAttackSrc(id)) fails.push('atk src '+id);
+    const tr=getComputedStyle(img).transform||'';
+    if(/matrix\(\s*-/.test(tr)) fails.push('atk mirror '+id);
+  });
+  bob.innerHTML='';
+  if(/scaleX\(\s*-1/.test(setMonAttack.toString()+mvWhirl.toString())) fails.push('runtime scaleX(-1)');
+  Array.from(document.styleSheets).forEach(function(sheet){
+    let rules; try{ rules=sheet.cssRules; }catch(e){ return; }
+    Array.from(rules).forEach(function(rule){
+      const t=rule.cssText||'';
+      if(/scaleX\(\s*-1/.test(t) && /\.(mon|hero)/.test(t)) fails.push('css flip');
+    });
+  });
   [1,2,3].forEach(function(star){
     const divs=divisionDivisors(star);
     if(star===1 && divs.join(',')!=='2,5,10') fails.push('star1');
@@ -3018,8 +3018,6 @@ function runSelfTest(){
     const sc=ATTACK_SCALE[id];
     if(!(sc>=1 && sc<=1.65)) fails.push('scale '+id);
   });
-  if(ATTACK_MIRROR.heidragon||ATTACK_MIRROR.phoenix||ATTACK_MIRROR.steeltiran) fails.push('double flip');
-  if(IDLE_MIRROR.heidragon||IDLE_MIRROR.lavaover||IDLE_MIRROR.phoenix) fails.push('double flip idle');
   const pair=dexPairHTML('heidragon');
   if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   ensureHero();
@@ -3047,7 +3045,7 @@ function runSelfTest(){
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_MIRROR, IDLE_MIRROR, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
