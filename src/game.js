@@ -275,9 +275,17 @@ const ATTACK_MIRROR = {
 };
 /* Empty canvas under the attack-frame feet, as a percent of the image. Drops them onto the ground line. */
 const ATTACK_FOOT = {
-  heidragon:16, lavaover:9, phoenix:8, flamecrab:19, holyturt:28, icetiran:21,
-  thundwolf:11, deathscorp:16, manflower:15, mtngod:13, sandwyrm:23, steeltiran:12,
+  heidragon:16, lavaover:9, phoenix:8, flamecrab:19, holyturt:27, icetiran:21,
+  thundwolf:11, deathscorp:16, manflower:15, mtngod:13, sandwyrm:23, steeltiran:13,
   seaking:25, ninjacat:23, nightmare:16, illusdemon:24, galmoth:23, starlord:10
+};
+/* How much to enlarge a 360 attack frame so its painted body matches the idle height.
+   Wide beams are capped at 1.65 so they still read as the same monster, not a full-screen wipe. */
+const ATTACK_SCALE = {
+  deathscorp:1.45, flamecrab:1.61, galmoth:1.65, heidragon:1.39, holyturt:1.65,
+  icetiran:1.65, illusdemon:1.65, lavaover:1.19, manflower:1.42, mtngod:1.33,
+  nightmare:1.47, ninjacat:1.65, phoenix:1.16, sandwyrm:1.65, seaking:1.65,
+  starlord:1.23, steeltiran:1.44, thundwolf:1.21
 };
 const ELEM_KIND = {'火':'fire','冰':'ice','雷':'thunder','毒':'poison','岩':'rock','沙':'sand','鋼':'steel','水':'water','暗':'dark','光':'light','星':'star'};
 const ELEM_PRESET = {
@@ -299,8 +307,13 @@ function setMonAttack(on){
   if(host){
     host.classList.toggle('atk-flip', !!(on && ATTACK_MIRROR[B.type]));
     host.classList.toggle('atk-drop', !!on);
-    if(on) host.style.setProperty('--foot', (ATTACK_FOOT[B.type]||0)+'%');
-    else host.style.removeProperty('--foot');
+    if(on){
+      host.style.setProperty('--foot-n', String(ATTACK_FOOT[B.type]||0));
+      host.style.setProperty('--atk', String(ATTACK_SCALE[B.type]||1));
+    } else {
+      host.style.removeProperty('--foot-n');
+      host.style.removeProperty('--atk');
+    }
   }
   const next = on ? monAttackSrc(B.type) : monIdleSrc(B.type);
   if(img.getAttribute('src')!==next) img.setAttribute('src', next);
@@ -348,8 +361,10 @@ function initHome(){
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
     else if(g==='setup-battle') openSetup('battle');
-    else if(g==='setup-timed') openSetup('timed');
+    else if(g==='setup-survive' || g==='setup-timed') openSetup('survive');
+    else if(g==='setup-combo') openSetup('combo');
     else if(g==='divide') show('divide');
+    else if(g==='mixed') show('mixed');
     else if(g==='progress'){ renderProgress(); show('progress'); } }));
 }
 
@@ -410,17 +425,37 @@ function initLearn(){
 /* ---------- SETUP ---------- */
 let setupMode='battle';
 function openSetup(mode){ setupMode=mode;
-  $('#setupTitle').textContent = mode==='timed' ? '60秒計時挑戰' : '打怪獸';
-  $('#setupSub').textContent = mode==='timed' ? '60秒內答啱越多題越好！揀乘數表：' : '揀你想練習嘅乘數表（可以揀幾個）';
-  $('#startBtn .lbl').textContent = mode==='timed' ? '開始60秒挑戰！' : '開始打怪獸！';
-  $('#startBtn').className = 'btn'+(mode==='timed'?' orange':'');
+  const clock = mode==='survive' || mode==='combo' || mode==='timed';
+  if(mode==='timed') setupMode='survive';
+  const titles = {battle:'打怪獸', survive:'限時生存', combo:'連擊挑戰'};
+  const subs = {
+    battle:'揀你想練習嘅乘數表（可以揀幾個）',
+    survive:'60 秒。答錯扣 5 秒，打低一隻怪獸加 8 秒。',
+    combo:'90 秒。連對 6 題就變奧米加翼光，斷咗會跌返形態。'
+  };
+  const rules = {
+    battle:'',
+    survive:'稱號跟你衝到嘅形態，例如銀光戰士。',
+    combo:'衝到連擊 6 就有稱號「翼光奧米加」，同圖鑑印章。'
+  };
+  $('#setupTitle').textContent = titles[setupMode]||'打怪獸';
+  $('#setupSub').textContent = subs[setupMode]||subs.battle;
+  const rulesEl=$('#setupRules'); if(rulesEl) rulesEl.textContent=rules[setupMode]||'';
+  $('#startBtn .lbl').textContent = setupMode==='survive' ? '開始 60 秒！' : setupMode==='combo' ? '開始 90 秒！' : '開始打怪獸！';
+  $('#startBtn').className = 'btn'+(clock?' orange':'');
+  const modeRow=$('#modeRow'); if(modeRow) modeRow.hidden = clock;
   const el=$('#setupTiles'); el.innerHTML=[2,3,4,5,6,7,8,9,1,10].map(t=>tileHTML(t,'<span class="chk">'+icon('check')+'</span>')).join('');
   $$('.tile',el).forEach(b=>b.addEventListener('click',()=>{ Sfx.click(); b.classList.toggle('on'); syncSetup(); }));
   applySel(DATA.settings.tables||[2]); syncSeg(); syncSpeakSeg(); show('setup'); }
 function selTables(){ return $$('#setupTiles .tile.on').map(b=>+b.dataset.t).sort((a,b)=>a-b); }
 function applySel(arr){ $$('#setupTiles .tile').forEach(b=>b.classList.toggle('on', arr.indexOf(+b.dataset.t)>=0)); syncSetup(); }
 function syncSetup(){ const t=selTables(); DATA.settings.tables=t; save(); $('#startBtn').disabled = t.length===0; $('#setupWarn').textContent = t.length? '' : '請揀最少一個乘數表呀！';
-  if(setupMode==='timed'){ const best=DATA.best['t:'+t.join(',')]||0; $('#bestTxt').textContent = t.length ? ('呢個組合最佳紀錄：'+best+' 題'+(DATA.best.all?('　｜　總最佳：'+DATA.best.all+' 題'):'')) : ''; } else $('#bestTxt').textContent=''; }
+  if(setupMode==='survive'||setupMode==='combo'){
+    const key=(setupMode==='combo'?'cb:':'sv:')+t.join(',');
+    const best=DATA.best[key]||0;
+    const word=setupMode==='combo'?'最高連擊':'答啱題數';
+    $('#bestTxt').textContent = t.length ? ('呢個組合最佳'+word+'：'+best+(DATA.best[setupMode==='combo'?'comboAll':'surviveAll']?('　｜　總最佳：'+DATA.best[setupMode==='combo'?'comboAll':'surviveAll']):'')) : '';
+  } else $('#bestTxt').textContent=''; }
 function syncSeg(){ $$('#modeSeg button').forEach(b=>{ const on=(+b.dataset.choice===1)===!!DATA.settings.choice; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); }); }
 function syncSpeakSeg(){ $$('#speakSeg button').forEach(b=>{ const on=(b.dataset.speak==='1')===!!DATA.settings.autoSpeak; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); }); }
 function initSetup(){
@@ -446,7 +481,11 @@ const NORMAL_MOVES = ['beam','kick','disc','punch','whirl','flip'];
 const TIMED_MOVES = ['beam','kick','disc','punch'];
 const B = {token:0, busy:true, input:'', recent:[]};
 let stageEl, heroWrap, monWrap, fxLayer, monCounter=0;
-const K = () => B._cine ? 2.1 : (B.mode==='timed' ? .65 : 1);
+const K = () => B._cine ? 2.1 : (isClockMode() ? .65 : 1);
+function isClockMode(){ return B.mode==='survive' || B.mode==='combo' || B.mode==='timed'; }
+const FORM_TITLE = {1:'銀光戰士', 2:'紅銀戰士', 3:'流星戰士', 4:'金焰戰士', 5:'翼光戰士'};
+const CLEAR_BONUS = 8;
+const WRONG_PENALTY = 5;
 const HEN_LABEL = ['','銀光形態','紅銀覺醒','藍披流星','金焰超能','奧米加翼光'];
 function heroSvgEl(){ return $('#heroBob .hero'); }
 function monSvgEl(){ return $('#monBob .mon'); }
@@ -475,9 +514,11 @@ function syncHenshin(){
     if(st>prev) crossfadeHero(img, next);
     else if(img.getAttribute('src')!==next) img.setAttribute('src', next);
   }
+  if(isClockMode()) B.maxHen=Math.max(B.maxHen||1, st);
   const nameEl=$('#formName');
   if(nameEl){
     nameEl.textContent=HEN_LABEL[st]||HEN_LABEL[1];
+    nameEl.hidden=false;
     if(st>prev){ nameEl.classList.remove('flash'); void nameEl.offsetWidth; nameEl.classList.add('flash'); }
   }
   if(st>prev){
@@ -503,7 +544,7 @@ function elemOf(type){
   return {kind:m.elem||'dark', word:m.elemWord||'暗', shade:m.shade||'base'};
 }
 function isHardFight(){
-  if(B.mode==='timed' || !B.type || !MONS[B.type]) return false;
+  if(isClockMode() || !B.type || !MONS[B.type]) return false;
   /* Kept for the old boss gate. Element hits no longer use it. */
   return !!(MONS[B.type].boss) || (B.round|0)>=3 || (B.combo||0)>=7;
 }
@@ -511,34 +552,51 @@ function clearElementHit(){
   const card=$('#qCard'), choices=$('#choices'), pop=$('#elemPop');
   if(card) card.className='qcard';
   if(choices){ choices.className='choices'; $$('.choice', choices).forEach(function(b){ b.classList.remove('eh-wrong','eh-ok','shade-ball','shade-meteor'); }); }
-  if(pop){ pop.classList.remove('show'); pop.textContent=''; pop.setAttribute('aria-hidden','true'); }
-  $$('#qCard .ebit').forEach(rm);
+  if(pop){ pop.className='elem-pop'; pop.textContent=''; pop.setAttribute('aria-hidden','true'); }
+  $$('#panel .ebit').forEach(rm);
 }
 function clearDisrupt(){ clearElementHit(); const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); } }
 function applyDisrupt(){ /* Persistent whole-panel scramble is gone. Wrong answers hit the card only. */ }
+function paintElemBits(host, kind){
+  if(!host) return;
+  const n = (kind==='fire'||kind==='star'||kind==='ice'||kind==='sand') ? 12 : 8;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('i');
+    s.className='ebit ebit-'+kind;
+    s.style.left=(6+Math.random()*88)+'%';
+    s.style.top=(8+Math.random()*78)+'%';
+    s.style.animationDelay=(Math.random()*0.28)+'s';
+    host.appendChild(s);
+  }
+}
 function playElementHit(wrongBtn){
   clearElementHit();
   const info=elemOf(B.type);
   const card=$('#qCard'); if(!card) return;
   card.classList.add('eh','eh-'+info.kind,'shade-'+info.shade);
+  paintElemBits(card, info.kind);
   const choices=$('#choices');
   if(choices && $$('.choice', choices).length){
     choices.classList.add('eh','eh-'+info.kind,'eh-'+info.shade,'shade-'+info.shade);
     $$('.choice', choices).forEach(function(b){
-      if(B.q && String(b.dataset.v)===String(B.q.ans)) b.classList.add('eh-ok');
+      const correct=B.q && String(b.dataset.v)===String(B.q.ans);
+      if(correct) b.classList.add('eh-ok');
+      else paintElemBits(b, info.kind);
     });
-    if(wrongBtn){
-      wrongBtn.classList.add('eh-wrong','shade-'+info.shade);
-    }
+    if(wrongBtn) wrongBtn.classList.add('eh-wrong','shade-'+info.shade);
   }
   const pop=$('#elemPop');
-  if(pop){ pop.textContent=info.word+'！'; pop.classList.add('show'); pop.setAttribute('aria-hidden','false'); }
+  if(pop){
+    pop.textContent=info.word+'！';
+    pop.className='elem-pop show pop-'+info.kind;
+    pop.setAttribute('aria-hidden','false');
+  }
   if(info.kind==='fire' || info.kind==='star') Sfx.hit();
   else if(info.kind==='thunder') Sfx.shing();
   else if(info.kind==='ice') Sfx.whoosh();
   else Sfx.bonk();
   clearTimeout(B._elemT);
-  B._elemT=setTimeout(clearElementHit, 1100);
+  B._elemT=setTimeout(clearElementHit, 1050);
 }
 function clearCinema(){
   const cine=$('#cinema'), battle=$('#battle');
@@ -576,15 +634,22 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Size the hero box so the painted body matches heroVis. Monster idle art fills its
-     frame, so its box is the visible height — about 1.15× the hero. Both wraps sit on bottom:8%. */
+  /* Design pack: hero body 140–160px, monster ≈1.15× on the same ground line.
+     The pose canvas is a square with empty space, so the box is taller than the body.
+     A little box overlap is allowed on a phone so the bodies can still hit that range. */
   const frac=HERO_STAND[henshinStage()]||0.54;
-  let heroVis=Math.min(h*0.42, w*0.26);
+  let heroVis=Math.min(160, Math.max(140, h*0.34));
   let monVis=heroVis*1.15;
   let heroBox=heroVis/frac;
-  if(heroBox+monVis>w*0.92){ const s=(w*0.92)/(heroBox+monVis); heroVis*=s; monVis=heroVis*1.15; heroBox=heroVis/frac; }
-  heroWrap.style.height=heroBox+'px'; heroWrap.style.width=heroBox+'px';
-  monWrap.style.height=monVis+'px'; monWrap.style.width=monVis+'px'; }
+  const need=heroBox+monVis;
+  const room=w*0.96+Math.min(64, w*0.16);
+  const maxH=h*0.74;
+  let s=1;
+  if(need>room) s=Math.min(s, room/need);
+  if(heroBox>maxH) s=Math.min(s, maxH/heroBox);
+  if(s<1){ heroVis*=s; monVis=heroVis*1.15; heroBox=heroVis/frac; }
+  heroWrap.style.height=Math.round(heroBox)+'px'; heroWrap.style.width=Math.round(heroBox)+'px';
+  monWrap.style.height=Math.round(monVis)+'px'; monWrap.style.width=Math.round(monVis)+'px'; }
 
 function fxEl(cls, html){ const e=document.createElement('div'); e.className=cls; if(html) e.innerHTML=html; fxLayer.appendChild(e); return e; }
 function shake(px){ const a=px||8; play(stageEl,[{transform:'translate(0,0)'},{transform:'translate('+(-a)+'px,'+(a*.5)+'px)'},{transform:'translate('+a+'px,'+(-a*.4)+'px)'},{transform:'translate('+(-a*.6)+'px,'+(-a*.3)+'px)'},{transform:'translate('+(a*.4)+'px,'+(a*.3)+'px)'},{transform:'translate(0,0)'}],{duration:420}); }
@@ -727,8 +792,8 @@ async function performMove(kind, hit){
 }
 function chooseMove(first){
   if(B.forceMove){ const f=B.forceMove; B.forceMove=null; return f; }
-  if(first && B.mode!=='timed'){ if(B.combo>=6) return 'omega'; if(B.combo>=5) return 'rainbow'; if(B.combo>=3) return 'super'; }
-  const pool = B.mode==='timed' ? TIMED_MOVES : NORMAL_MOVES;
+  if(first && !isClockMode()){ if(B.combo>=6) return 'omega'; if(B.combo>=5) return 'rainbow'; if(B.combo>=3) return 'super'; }
+  const pool = isClockMode() ? TIMED_MOVES : NORMAL_MOVES;
   if(!B.deck || !B.deck.length){ const d=shuffle(pool.slice()); if(d[0]===B.lastMove) d.push(d.shift()); B.deck=d; }
   const mv=B.deck.shift(); B.lastMove=mv; return mv; }
 
@@ -780,14 +845,14 @@ async function cinematicFinalFinish(){
 }
 async function monsterExplode(){
   if(MONS[B.type].friend){ await friendRest(); return; }
-  if(B.type==='starlord' && (B.combo||0)>=6 && B.mode!=='timed'){ await cinematicFinalFinish(); return; }
+  if(B.type==='starlord' && (B.combo||0)>=6 && !isClockMode()){ await cinematicFinalFinish(); return; }
   const ms=monSvgEl(); ms.classList.add('ouch'); Sfx.noise(.8,{vol:.2,type:'lowpass',f:400});
   await play(ms,[{transform:'translate(0,0)',filter:'brightness(1)'},{transform:'translate(-4%,1%)',filter:'brightness(2.5)'},{transform:'translate(4%,-1%)',filter:'brightness(1)'},{transform:'translate(-4%,0)',filter:'brightness(2.5)'},{transform:'translate(4%,1%)',filter:'brightness(1)'},{transform:'translate(-3%,0)',filter:'brightness(3)'},{transform:'translate(0,0)',filter:'brightness(3)'}],{duration:800*K()});
   Sfx.explode(); flash('#fff',.85); shake(20); const t=relPos(mk('.mk-core',monWrap));
   FX.burst(t.x,t.y,{n:80,speed:14,shape:'star',colors:['#ffe066','#fff','#ff6bd6','#6bf0ff','#9dff6b'],size:13,life:75,gravity:.08});
   FX.ring(t.x,t.y,'#fff',32); FX.ring(t.x,t.y,'#ffe066',44);
   play(monWrap,[{transform:'scale(1) rotate(0)',opacity:1},{transform:'scale(1.45) rotate(18deg)',opacity:0}],{duration:520*K(),fill:'forwards'});
-  showMoveName(B.mode==='timed'?'打低咗！':'打敗咗！','banner',1300);
+  showMoveName(isClockMode()?'打低咗！':'打敗咗！','banner',1300);
   await sleep(1000*K());
 }
 
@@ -797,7 +862,15 @@ async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); S
   shake(5); Sfx.hit(); }
 
 function renderRoundHud(){
-  if(B.mode==='timed'){ $('#roundLbl').innerHTML='<div class="heroname">超人奧米加</div><span class="timerbox" id="timerBox">'+Math.ceil(B.timeLeft)+'秒</span>'; $('#roundDots').innerHTML='<span>答啱：<b id="scoreLbl">'+B.score+'</b> 題</span>'; return; }
+  if(isClockMode()){
+    const label=B.mode==='combo'?'連擊挑戰':'限時生存';
+    const sec=Math.max(0, Math.ceil(B.timeLeft||0));
+    $('#roundLbl').innerHTML='<div class="heroname">'+label+'</div><span class="timerbox" id="timerBox"><b id="timerNum">'+sec+'</b>秒</span>';
+    $('#roundDots').innerHTML = B.mode==='combo'
+      ? '<span>連擊 <b id="scoreLbl">'+(B.combo||0)+'</b> / 6</span>'
+      : '<span>答啱：<b id="scoreLbl">'+(B.score||0)+'</b> 題</span>';
+    return;
+  }
   if(B.mode==='divide'){
     const star='★'.repeat(B.star||1);
     $('#roundLbl').innerHTML = '<div class="heroname">除法戰鬥 '+star+'</div>'+(MONS[B.type].final ? '最終關：'+MONS[B.type].name+'！' : '第 '+(B.round+1)+' 關');
@@ -807,6 +880,7 @@ function renderRoundHud(){
   $('#roundLbl').innerHTML = '<div class="heroname">超人奧米加</div>'+(MONS[B.type].final ? '最終關：'+MONS[B.type].name+'！' : MONS[B.type].boss ? '第 '+(B.round+1)+' 關：'+(MONS[B.type].short||'頭目')+'！' : '第 '+(B.round+1)+' 關');
   $('#roundDots').innerHTML = B.order.map((t,i)=>'<i class="'+(i<B.round?'done ':'')+(MONS[t].boss&&!MONS[t].final?'boss ':'')+(MONS[t].final?'dada ':'')+(i===B.round?'cur':'')+'"></i>').join(''); }
 function renderCombo(){ const c=$('#combo'); syncChestLight(); syncHenshin();
+  if(B.mode==='combo'){ const scoreEl=$('#scoreLbl'); if(scoreEl) scoreEl.textContent=B.combo||0; }
   if(B.combo>=2){ c.textContent=B.combo+' 連擊'; c.classList.toggle('omega', B.combo>=6); c.classList.add('show'); play(c,[{transform:'scale(1.35)'},{transform:'scale(1)'}],{duration:300,easing:'ease-out'}); }
   else { c.classList.remove('show','omega'); } }
 
@@ -838,61 +912,167 @@ function makeDivChoices(quot){
 }
 function qOpText(){ return B.mode==='divide' ? '÷' : '×'; }
 function factLine(q){
+  if(B.mode==='mixed') return q.a+' × '+q.b+' '+q.op2+' '+q.c+' = '+q.ans;
   if(B.mode==='divide') return q.a+' ÷ '+q.b+' = '+q.ans+'　'+chant(q.b, q.ans);
   return q.a+' × '+q.b+' = '+q.ans+'　'+chant(q.a, q.b);
 }
 function factSpeak(q){
+  if(B.mode==='mixed'){
+    const opWord={'+':'加','−':'減','×':'乘','÷':'除以'};
+    return cnNum(q.a)+'乘'+cnNum(q.b)+(opWord[q.op2]||'')+cnNum(q.c)+'等於'+cnNum(q.ans);
+  }
   if(B.mode==='divide') return cnNum(q.a)+'除以'+cnNum(q.b)+'等於'+cnNum(q.ans);
   return chant(q.a, q.b);
+}
+function factorPair(prod){
+  const pairs=[];
+  for(let a=2;a<=10;a++){
+    if(prod%a===0){ const b=prod/a; if(b>=1 && b<=10 && b=== (b|0)) pairs.push([a,b]); }
+  }
+  return pairs.length ? pick(pairs) : null;
+}
+function pickMixed(star){
+  for(let guard=0; guard<80; guard++){
+    if(star<=1){
+      const a=randi(2,5), b=randi(2,5), c=randi(1,6);
+      const ans=a*b+c;
+      if(ans>=1 && ans<=20) return {a:a,b:b,c:c,op2:'+',ans:ans};
+    } else if(star===2){
+      const a=randi(2,6), b=randi(2,6), prod=a*b, minus=Math.random()<0.5;
+      if(minus){
+        if(prod<2) continue;
+        const c=randi(1, Math.min(9, prod-1));
+        const ans=prod-c;
+        if(ans>=1 && ans<=30) return {a:a,b:b,c:c,op2:'−',ans:ans};
+      } else {
+        const c=randi(1,9), ans=prod+c;
+        if(ans>=1 && ans<=30) return {a:a,b:b,c:c,op2:'+',ans:ans};
+      }
+    } else {
+      const kind=pick(['+','−','×','÷','+','÷']);
+      if(kind==='÷'){
+        const c=pick([2,3,4,5,6,8,9,10]);
+        const quot=randi(1,12);
+        const prod=quot*c;
+        if(prod>50) continue;
+        const pair=factorPair(prod);
+        if(!pair) continue;
+        return {a:pair[0],b:pair[1],c:c,op2:'÷',ans:quot};
+      }
+      if(kind==='×'){
+        const a=randi(2,5), b=randi(2,5), c=randi(2,4);
+        const ans=a*b*c;
+        if(ans>=1 && ans<=50) return {a:a,b:b,c:c,op2:'×',ans:ans};
+      } else if(kind==='−'){
+        const a=randi(2,9), b=randi(2,6), prod=a*b;
+        if(prod<2 || prod>50) continue;
+        const c=randi(1, Math.min(9, prod-1));
+        return {a:a,b:b,c:c,op2:'−',ans:prod-c};
+      } else {
+        const a=randi(2,8), b=randi(2,6), c=randi(1,9);
+        const ans=a*b+c;
+        if(ans>=1 && ans<=50) return {a:a,b:b,c:c,op2:'+',ans:ans};
+      }
+    }
+  }
+  return {a:2,b:3,c:4,op2:'+',ans:10};
+}
+function makeMixedChoices(q){
+  const ans=q.ans, prod=q.a*q.b;
+  const set=[ans];
+  const cands=[ans+1,ans-1,ans+2,ans-2,prod,ans+3,ans-3,q.a+q.b+q.c];
+  if(q.op2==='+') cands.push(prod-q.c, q.a*q.b*q.c);
+  if(q.op2==='−') cands.push(prod+q.c);
+  if(q.op2==='×') cands.push(prod+q.c, prod*q.c+1);
+  if(q.op2==='÷') cands.push(prod, ans+q.c, q.a+q.b);
+  shuffle(cands).forEach(function(v){
+    if(set.length>=4) return;
+    if(v>=0 && v===(v|0) && set.indexOf(v)<0) set.push(v);
+  });
+  let guard=0;
+  while(set.length<4 && guard++<40){
+    const v=Math.max(0, ans+randi(-6,6));
+    if(set.indexOf(v)<0) set.push(v);
+  }
+  return shuffle(set);
+}
+function showExpr(q){
+  const op2=$('#qOp2'), c=$('#qC');
+  $('#qA').textContent=q.a;
+  const op=$('#qOp'); if(op) op.textContent=q.op||qOpText();
+  $('#qB').textContent=q.b;
+  if(q.op2!=null && q.c!=null){
+    if(op2){ op2.hidden=false; op2.textContent=q.op2; }
+    if(c){ c.hidden=false; c.textContent=q.c; }
+  } else {
+    if(op2) op2.hidden=true;
+    if(c) c.hidden=true;
+  }
 }
 function startSession(mode, tables, opt){
   endBattle(); B.token++;
   opt=opt||{};
+  if(mode==='timed') mode='survive';
   B.mode=mode; B.star=opt.star||0; B.qMax = B.star>=3 ? 12 : 9;
   B.tables=(tables||[]).slice().sort((a,b)=>a-b);
-  B.choice = mode==='divide' ? true : !!DATA.settings.choice;
-  B.combo=0; B.maxCombo=0; B.recent=[]; B.lastMove=null; B.busy=true; B.input='';
+  B.choice = (mode==='divide' || mode==='mixed' || isClockMode()) ? true : !!DATA.settings.choice;
+  B.combo=0; B.maxCombo=0; B.maxHen=1; B.recent=[]; B.lastMove=null; B.busy=true; B.input=''; B._timeUp=false; B._ended=false;
   $('#battle').classList.toggle('mode-choice', B.choice);
   $('#battle').classList.toggle('mode-divide', mode==='divide');
+  $('#battle').classList.toggle('mode-mixed', mode==='mixed');
   hideResult(); FX.clear(); fxLayer.innerHTML='';
   ensureHero(); preloadForm(1); preloadForm(2);
   heroWrap.getAnimations().forEach(a=>a.cancel());
   show('battle');
-  if(mode==='timed'){ B.timeLeft=60; B.score=0; B.tq=0; B.monIdx=0; B.timedOrder=shuffle(NORMALS.concat(MID_BOSSES)); B.order=[]; startRound(B.timedOrder[0]); startTimer(); }
+  if(isClockMode()){
+    const secs=mode==='combo'?90:60;
+    B.timeLeft=secs; B.score=0; B.tq=0; B.monIdx=0;
+    B.timedOrder=shuffle(NORMALS.concat(MID_BOSSES)); B.order=[];
+    startRound(B.timedOrder[0]); startTimer(secs);
+  }
   else if(mode==='divide'){ B.order=divisionOrder(B.star||1); B.round=0; if(!B.tables.length) B.tables=divisionDivisors(B.star||1); startRound(B.order[0]); }
+  else if(mode==='mixed'){ B.order=divisionOrder(B.star||1); B.round=0; startRound(B.order[0]); }
   else { const x=pickFresh(NORMALS); const y=pickFresh(NORMALS,[x]); const z=pickFresh(NORMALS,[x,y]); B.order=shuffle([x,y,z]).concat([pickFresh(MID_BOSSES),'starlord']); B.round=0; startRound(B.order[0]); }
 }
 async function startRound(type){
   const tk=B.token; B.type=type; const m=MONS[type];
-  B.maxHp = B.mode==='timed' ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
-  if(B.mode!=='timed'){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; }
+  B.maxHp = isClockMode() ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
+  if(!isClockMode()){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; B._hen=1; B._henLabel=null; }
   else B.rwrong=0;
-  B.combo=0;
   monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img'));
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
-  B._hen=1; B._henLabel=null; setChestTimer(0); syncHenshin(); heroPose('idle'); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
+  setChestTimer(0); syncHenshin(); heroPose('idle'); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
   await monsterEnter(); if(tk!==B.token) return;
   B.busy=false; nextQuestion(); }
-function renderQuestionBlank(){ $('#qA').textContent='?'; $('#qB').textContent='?'; const op=$('#qOp'); if(op) op.textContent=qOpText(); const a=$('#qAns'); a.textContent='?'; a.className='ansbox empty'; setHint('idle', B.mode==='timed'?'準備…':B.mode==='divide'?'除得盡先出招！':'怪獸嚟緊！準備出招！'); $('#choices').innerHTML=''; }
+function renderQuestionBlank(){
+  showExpr({a:'?',b:'?'});
+  const a=$('#qAns'); a.textContent='?'; a.className='ansbox empty';
+  const idle = isClockMode()?'準備…':B.mode==='divide'?'除得盡先出招！':B.mode==='mixed'?'由左到右計！':'怪獸嚟緊！準備出招！';
+  setHint('idle', idle); $('#choices').innerHTML='';
+}
 function nextQuestion(){
   let f;
   if(B.mode==='divide'){
     const divs=B.tables.length?B.tables:divisionDivisors(B.star||1);
     const d=pickDivision(divs, B.qMax||9, B.recent);
     f={a:d.dividend,b:d.d,ans:d.q,key:d.key,divisor:d.d};
+  } else if(B.mode==='mixed'){
+    const m=pickMixed(B.star||1);
+    f={a:m.a,b:m.b,c:m.c,op2:m.op2,ans:m.ans,key:'mix:'+m.a+'x'+m.b+m.op2+m.c,divisor:m.a};
   } else {
     const p=pickFact(B.tables, B.recent);
     f={a:p.a,b:p.b,ans:p.a*p.b,key:p.a+'x'+p.b,divisor:p.a};
   }
-  B.q={a:f.a,b:f.b,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
-  B.recent.push(B.q.key); if(B.recent.length>Math.min(4, (B.mode==='divide'?B.tables.length*(B.qMax||9):B.tables.length*9)-2)) B.recent.shift();
-  B.input=''; const op=$('#qOp'); if(op) op.textContent=qOpText(); $('#qA').textContent=f.a; $('#qB').textContent=f.b; renderAns();
+  B.q={a:f.a,b:f.b,c:f.c,op2:f.op2,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
+  B.recent.push(B.q.key); if(B.recent.length>6) B.recent.shift();
+  B.input=''; showExpr(B.q); renderAns();
   if(B.choice){
-    const opts=B.mode==='divide'?makeDivChoices(f.ans):makeChoices(f.a,f.b);
-    $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'">'+v+'</button>').join('');
+    const opts=B.mode==='divide'?makeDivChoices(f.ans):B.mode==='mixed'?makeMixedChoices(B.q):makeChoices(f.a,f.b);
+    $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'"><span class="chnum">'+v+'</span></button>').join('');
     $$('#choices .choice').forEach(b=>b.addEventListener('click',()=>{ if(B.busy||b.classList.contains('x')) return; B.input=b.dataset.v; B.lastChoiceBtn=b; renderAns(); submit(); })); }
-  setHint('idle', B.mode==='divide' ? '揀啱個商就出招！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！');
+  const hint = B.mode==='divide' ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
+  setHint('idle', hint);
   play($('.qrow'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)'}],{duration:320,easing:'ease-out'}); }
 function renderAns(state){ const a=$('#qAns'); a.textContent = B.input || '?'; a.className='ansbox'+(B.input?'':' empty')+(state?' '+state:''); }
 function setHint(kind, l1, l2){ const h=$('#hint'); h.className='hint '+kind; h.innerHTML='<div>'+l1+'</div>'+(l2?'<div class="c">'+l2+'</div>':''); }
@@ -903,33 +1083,56 @@ function keyIn(k){ if(current!=='battle'||B.busy||!B.q||$('#result').classList.c
 async function submit(){
   if(B.busy||!B.q||B.input==='') return; const q=B.q, n=parseInt(B.input,10), tk=B.token; const first=q.tries===0;
   B.busy=true;
-  if(first && B.mode!=='timed'){ B.rq++; const tk=(B.mode==='divide'?(q.divisor||q.b):q.a); B.rtables[tk]=(B.rtables[tk]||0)+1; }
+  if(first && !isClockMode()){
+    B.rq++;
+    if(B.mode!=='mixed'){ const tableKey=(B.mode==='divide'?(q.divisor||q.b):q.a); B.rtables[tableKey]=(B.rtables[tableKey]||0)+1; }
+  }
   if(n===q.ans){
     Sfx.correct(); renderAns('good');
-    if(first){ recordFact(q.key,true); B.combo++; if(B.mode!=='timed'){ B.rfirst++; B.rMaxCombo=Math.max(B.rMaxCombo,B.combo); } B.maxCombo=Math.max(B.maxCombo,B.combo); if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); } }
-    if(B.mode==='timed'){ B.score++; const s=$('#scoreLbl'); if(s) s.textContent=B.score; }
+    if(first){
+      if(B.mode!=='mixed') recordFact(q.key,true);
+      B.combo++;
+      if(!isClockMode()){ B.rfirst++; B.rMaxCombo=Math.max(B.rMaxCombo,B.combo); }
+      B.maxCombo=Math.max(B.maxCombo,B.combo);
+      if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); }
+    }
+    if(isClockMode() && B.mode!=='combo') B.score++;
+    const scoreEl=$('#scoreLbl');
+    if(scoreEl) scoreEl.textContent = B.mode==='combo' ? B.combo : (B.score||0);
     setHint('good', pick(['答啱喇！','好叻呀！','勁呀！','冇錯！','正！']), factLine(q));
     if(B.choice && B.lastChoiceBtn) B.lastChoiceBtn.classList.add('right');
     renderCombo();
-    let dmg = first ? (B.combo>=6?28:B.combo>=5?20:B.combo>=3?15:10) : 6; if(B.mode==='timed') dmg=10;
+    let dmg = first ? (B.combo>=6?28:B.combo>=5?20:B.combo>=3?15:10) : 6; if(isClockMode()) dmg=10;
     const kind=chooseMove(first);
     await performMove(kind, ()=>damageMonster(dmg)); if(tk!==B.token) return;
-    if(B.hp<=0){ await monsterExplode(); if(tk!==B.token) return;
-      if(B.mode==='timed'){ dexAdd(B.type); B.monIdx++; startRound(B.timedOrder[B.monIdx%B.timedOrder.length]); return; }
-      roundWon(); return; }
+    if(B.hp<=0){
+      if(B.mode==='survive'){ addTime(CLEAR_BONUS); flashTimer('+'+CLEAR_BONUS+'秒','up'); }
+      await monsterExplode(); if(tk!==B.token) return;
+      if(isClockMode()){
+        if(B._timeUp || B.timeLeft<=0){ timedEnd(); return; }
+        dexAdd(B.type); B.monIdx++; startRound(B.timedOrder[B.monIdx%B.timedOrder.length]); return;
+      }
+      roundWon(); return;
+    }
     B.busy=false; nextQuestion();
   } else {
-    Sfx.wrong(); renderAns('bad'); if(first) recordFact(q.key,false); q.tries++; B.rwrong=(B.rwrong||0)+1;
+    Sfx.wrong(); renderAns('bad'); if(first && B.mode!=='mixed') recordFact(q.key,false); q.tries++; B.rwrong=(B.rwrong||0)+1;
     const brokeCombo=B.combo>0; B.combo=0; renderCombo();
+    if(B.mode==='combo'){ const scoreEl=$('#scoreLbl'); if(scoreEl) scoreEl.textContent='0'; }
+    if(B.mode==='survive'){ addTime(-WRONG_PENALTY); flashTimer('−'+WRONG_PENALTY+'秒','down'); }
     if(B.choice && B.lastChoiceBtn) B.lastChoiceBtn.classList.add('x');
     setHint('bad','唔啱呀…怪獸反擊！');
     if(brokeCombo){ await showMoveName('連擊斷咗！','break', 680); if(tk!==B.token) return; }
     await monsterAttack(); if(tk!==B.token) return;
     setChestTimer(B.rwrong);
     const spoken=factSpeak(q);
-    setHint('bad', B.mode==='timed' ? '唔緊要！記住：' : '唔緊要！記住，再試下！', factLine(q));
+    setHint('bad', isClockMode() ? '唔緊要！記住：' : '唔緊要！記住，再試下！', factLine(q));
     if(DATA.settings.autoSpeak && !DATA.settings.muted) Speech.speak(spoken);
-    if(B.mode==='timed'){ await sleep(1500); if(tk!==B.token) return; B.busy=false; nextQuestion(); return; }
+    if(isClockMode()){
+      await sleep(900); if(tk!==B.token) return;
+      if(B._timeUp || B.timeLeft<=0){ timedEnd(); return; }
+      B.busy=false; nextQuestion(); return;
+    }
     B.input=''; renderAns(); B.busy=false;
   }
 }
@@ -945,7 +1148,9 @@ function roundWon(){
   const next = B.round < B.order.length-1 ? B.order[B.round+1] : null;
   let medalBlock='';
   const practiceWord = B.mode==='divide' ? '除法' : '乘數表';
-  if(B.tables.length===1){
+  if(B.mode==='mixed'){
+    medalBlock='<div class="rstat">兩步算式，由左到右計，暫時冇括號。</div>';
+  } else if(B.tables.length===1){
     const t=B.tables[0], n=B.rtables[t]||0, tier=DATA.badges[t]||0;
     if(n>=3 && tier){ const tn=['','銅','銀','金'][tier]; medalBlock='<div class="rmedal">'+medalSVG(t,tier)+'<div class="mt">'+t+' '+practiceWord+'<br>'+tn+'勳章！</div></div>'; }
     else medalBlock='<div class="rstat">再答多幾題 '+t+' '+practiceWord+'，就可以攞勳章啦！</div>';
@@ -961,11 +1166,11 @@ function roundWon(){
     '<div class="rstat">最高連擊：<b>'+B.rMaxCombo+'</b></div>'+(B.gotCoins?'<div class="rstat">食錢怪吐出：<b style="color:#ffe14d">'+B.gotCoins+' 個金幣！</b></div>':'')+
     '<div class="rmsg">'+(boss?'超人奧米加大勝利！你係乘數表英雄！':msg)+'</div>'+
     '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(MONS[next].final?'最終關：挑戰'+MONS[next].name+'！':MONS[next].boss?'下一關：'+(MONS[next].short||MONS[next].name)+'出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
-    '<button class="btn blue small" id="rPick">'+(B.mode==='divide'?'揀過星級':'揀過乘數表')+'</button><button class="btn gray small" id="rHome">返主頁</button></div>';
+    '<button class="btn blue small" id="rPick">'+(B.mode==='divide'||B.mode==='mixed'?'揀過星級':'揀過乘數表')+'</button><button class="btn gray small" id="rHome">返主頁</button></div>';
   showResult(html, stars);
   const rn=$('#rNext'); if(rn) rn.addEventListener('click',()=>{ Sfx.click(); hideResult(); B.round++; startRound(B.order[B.round]); });
-  const ra=$('#rAgain'); if(ra) ra.addEventListener('click',()=>{ Sfx.click(); if(B.mode==='divide') startSession('divide', B.tables, {star:B.star}); else startSession('battle', B.tables); });
-  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else openSetup('battle'); });
+  const ra=$('#rAgain'); if(ra) ra.addEventListener('click',()=>{ Sfx.click(); if(B.mode==='divide') startSession('divide', B.tables, {star:B.star}); else if(B.mode==='mixed') startSession('mixed', [], {star:B.star}); else startSession('battle', B.tables); });
+  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else if(B.mode==='mixed') show('mixed'); else openSetup('battle'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
 function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.add('show');
@@ -974,29 +1179,90 @@ function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHT
 function confetti(){ const w=stageEl.clientWidth, h=stageEl.clientHeight; for(let i=0;i<5;i++) setTimeout(()=>FX.burst(rand(w*.15,w*.85), rand(h*.1,h*.5), {n:26,speed:8,shape:'star',colors:['#ffe066','#ff7ad9','#7ff0ff','#9dff6b','#fff'],size:10,life:80,gravity:.1}), i*220); }
 function hideResult(){ $('#result').classList.remove('show'); }
 
-/* timed */
-function startTimer(){ stopTimer(); B.endAt=Date.now()+60000; B.paused=false; B._freezeAt=0; let lastSec=60;
+/* timed survival (60s) and combo challenge (90s) */
+function paintTimer(){
+  const num=$('#timerNum'), box=$('#timerBox');
+  const s=Math.max(0, Math.ceil(B.timeLeft||0));
+  if(num) num.textContent=s;
+  else if(box) box.textContent=s+'秒';
+  if(box) box.classList.toggle('low', s<=10);
+}
+function addTime(sec){
+  B.endAt=(B.endAt||Date.now())+sec*1000;
+  const frozen=B._freezeAt?(Date.now()-B._freezeAt):0;
+  B.timeLeft=Math.max(0,(B.endAt+frozen-Date.now())/1000);
+  B._timeUp=B.timeLeft<=0;
+  paintTimer();
+}
+function flashTimer(text, cls){
+  const box=$('#timerBox'); if(!box) return;
+  const n=document.createElement('i');
+  n.className='tnote '+(cls||'');
+  n.textContent=text;
+  box.appendChild(n);
+  setTimeout(function(){ if(n.parentNode) n.parentNode.removeChild(n); }, 900);
+}
+function startTimer(seconds){
+  stopTimer();
+  const secs=seconds||60;
+  B.endAt=Date.now()+secs*1000; B.paused=false; B._freezeAt=0; B._timeUp=false; B.timeLeft=secs;
+  let lastSec=secs;
   B.timer=setInterval(()=>{
     if(B.paused || B.busy){ if(!B._freezeAt) B._freezeAt=Date.now(); return; }
     if(B._freezeAt){ B.endAt+=Date.now()-B._freezeAt; B._freezeAt=0; }
-    B.timeLeft=Math.max(0,(B.endAt-Date.now())/1000); const s=Math.ceil(B.timeLeft); const tb=$('#timerBox');
-    if(tb){ tb.textContent=s+'秒'; tb.classList.toggle('low', s<=10); }
+    B.timeLeft=Math.max(0,(B.endAt-Date.now())/1000);
+    const s=Math.ceil(B.timeLeft);
+    paintTimer();
     if(s!==lastSec){ lastSec=s; if(s<=10 && s>0) Sfx.tick(); }
-    if(B.timeLeft<=0) timedEnd(); }, 100); }
+    if(B.timeLeft<=0){ B._timeUp=true; timedEnd(); }
+  }, 100);
+}
 function stopTimer(){ clearInterval(B.timer); B.timer=null; B._freezeAt=0; }
-function timedEnd(){ stopTimer(); B.token++; B.busy=true; const key='t:'+B.tables.join(','); const prev=DATA.best[key]||0; const isNew=B.score>prev;
-  if(isNew) DATA.best[key]=B.score; DATA.best.all=Math.max(DATA.best.all||0,B.score); save();
-  heroPose('win'); Sfx.victory(); const stars = B.score>=20?3:B.score>=10?2:1;
-  const html='<h3>時間到！</h3><div class="rstat">60秒內答啱咗</div><div class="bigscore">'+B.score+'</div><div class="rstat">題</div>'+
-    (isNew&&B.score>0?'<div><span class="newrec">新紀錄！</span></div>':'')+
+function awardWingStamp(){
+  if(!DATA.stamps) DATA.stamps={};
+  DATA.stamps.wing=(DATA.stamps.wing||0)+1;
+  if(!DATA.titles) DATA.titles={};
+  DATA.titles.combo='翼光奧米加';
+}
+function timedEnd(){
+  if(B._ended) return;
+  B._ended=true;
+  stopTimer(); B.token++; B.busy=true;
+  const comboMode=B.mode==='combo';
+  const metric=comboMode?(B.maxCombo||0):(B.score||0);
+  const key=(comboMode?'cb:':'sv:')+B.tables.join(',');
+  const prev=DATA.best[key]||0;
+  const isNew=metric>prev;
+  if(isNew) DATA.best[key]=metric;
+  if(comboMode) DATA.best.comboAll=Math.max(DATA.best.comboAll||0, metric);
+  else DATA.best.surviveAll=Math.max(DATA.best.surviveAll||0, metric);
+  const hen=B.maxHen||henshinStage()||1;
+  const title=FORM_TITLE[hen]||FORM_TITLE[1];
+  if(!DATA.titles) DATA.titles={};
+  const rank={'銀光戰士':1,'紅銀戰士':2,'流星戰士':3,'金焰戰士':4,'翼光戰士':5};
+  if(!comboMode && (rank[title]||0)>=(rank[DATA.titles.survive]||0)) DATA.titles.survive=title;
+  const winged=comboMode && (B.maxCombo||0)>=6;
+  if(winged) awardWingStamp();
+  save();
+  heroPose('win'); Sfx.victory();
+  const stars=comboMode ? ((B.maxCombo||0)>=6?3:(B.maxCombo||0)>=3?2:1) : (metric>=16?3:metric>=8?2:1);
+  const headline=comboMode
+    ? '<h3>時間到！</h3><div class="rstat">90 秒最高連擊</div><div class="bigscore">'+(B.maxCombo||0)+'</div>'
+    : '<h3>時間到！</h3><div class="rstat">60 秒答啱咗</div><div class="bigscore">'+(B.score||0)+'</div><div class="rstat">題</div>';
+  const titleBlock=comboMode
+    ? (winged?'<div class="rseal">翼光<br>奧米加</div><div class="rmsg">稱號：翼光奧米加</div><div class="rstat">圖鑑蓋咗翼光印章！</div>':'<div class="rstat">連對 6 題就有稱號「翼光奧米加」。</div><div class="rstat">今次衝到 <b>'+(HEN_LABEL[hen]||'')+'</b></div>')
+    : '<div class="rmsg">稱號：'+title+'</div><div class="rstat">最高形態：<b>'+(HEN_LABEL[hen]||'')+'</b></div>';
+  const html=headline+
+    (isNew&&metric>0?'<div><span class="newrec">新紀錄！</span></div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
-    '<div class="rstat">呢個組合最佳紀錄：<b>'+Math.max(prev,B.score)+'</b> 題</div>'+
-    '<div class="rmsg">'+(stars===3?'快過光速！':stars===2?'好快手呀！':'再挑戰一次，一定更快！')+'</div>'+
+    titleBlock+
     '<div class="rbtns"><button class="btn orange" id="rAgain">'+icon('clock')+'再挑戰</button><button class="btn blue small" id="rPick">揀過乘數表</button><button class="btn gray small" id="rHome">返主頁</button></div>';
   showResult(html, stars);
-  $('#rAgain').addEventListener('click',()=>{ Sfx.click(); startSession('timed', B.tables); });
-  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup('timed'); });
-  $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); }); }
+  const againMode=comboMode?'combo':'survive';
+  $('#rAgain').addEventListener('click',()=>{ Sfx.click(); B._ended=false; startSession(againMode, B.tables); });
+  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup(againMode); });
+  $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
+}
 function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg').forEach(e=>e.remove()); clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
 
 function initBattle(){
@@ -1010,11 +1276,14 @@ function initBattle(){
 /* ---------- PROGRESS ---------- */
 function renderProgress(){
   const s=DATA.stats; const facts=Object.keys(DATA.facts); const mastered=facts.filter(k=>mastery(k)===2).length;
-  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸主',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
+  const titleBits=[];
+  if(DATA.titles&&DATA.titles.survive) titleBits.push(DATA.titles.survive);
+  if(DATA.titles&&DATA.titles.combo) titleBits.push(DATA.titles.combo);
+  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸主',s.dada||0],['最高連擊',s.maxCombo],['限時最佳',DATA.best.surviveAll||0],['連擊最佳',DATA.best.comboAll||0],['識晒題數',mastered]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('')+(titleBits.length?'<div class="stat"><b>'+titleBits[0]+'</b><span>'+(titleBits[1]||'稱號')+'</span></div>':'');
   let g='<tr><th>×</th>'+[1,2,3,4,5,6,7,8,9].map(b=>'<th>'+b+'</th>').join('')+'</tr>';
   [1,2,3,4,5,6,7,8,9,10].forEach(a=>{ g+='<tr><th>'+a+'</th>'; for(let b=1;b<=9;b++){ const m=mastery(a+'x'+b); g+='<td class="m'+m+'" title="'+a+'×'+b+'">'+(a*b)+'</td>'; } g+='</tr>'; });
   $('#mgrid').innerHTML=g;
-  const weak=facts.filter(k=>(DATA.facts[k].p||0)>0).sort((x,y)=>DATA.facts[y].p-DATA.facts[x].p).slice(0,10);
+  const weak=facts.filter(k=>/^\d+x\d+$/.test(k)&&(DATA.facts[k].p||0)>0).sort((x,y)=>DATA.facts[y].p-DATA.facts[x].p).slice(0,10);
   $('#weak').innerHTML = weak.length ? weak.map(k=>{ const [a,b]=k.split('x').map(Number); return '<span>'+a+' × '+b+' = '+(a*b)+'</span>'; }).join('') : '<div style="opacity:.8">暫時冇！繼續保持 👍</div>'.replace(' 👍','');
   renderDex();
   $('#badges').innerHTML = [1,2,3,4,5,6,7,8,9,10].map(t=>{ const tier=DATA.badges[t]||0; return '<div class="badge">'+medalSVG(t,tier)+'<div>'+(tier?['','銅','銀','金'][tier]+'勳章':'未有')+'</div></div>'; }).join('');
@@ -1023,6 +1292,12 @@ function renderProgress(){
 function renderDex(){
   const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
   $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
+  const stamp=$('#dexStamp');
+  if(stamp){
+    const on=!!(DATA.stamps&&DATA.stamps.wing);
+    stamp.hidden=!on;
+    stamp.textContent=on?'翼光奧米加':'';
+  }
   const elemBorder={fire:'#ff7a3d',ice:'#7dd3fc',thunder:'#fde047',rock:'#a8a29e',poison:'#c084fc',sand:'#eab308',steel:'#e5e7eb',water:'#38bdf8',dark:'#6b21a8',light:'#fff',star:'#fde68a'};
   const sel=window.__dexSel;
   $('#dex').innerHTML=DEX_ORDER.map((t)=>{
@@ -1124,6 +1399,10 @@ function init(){
     const star=+b.dataset.star;
     startSession('divide', divisionDivisors(star), {star:star});
   }));
+  $$('#mixPicks .star-pick').forEach(b=>b.addEventListener('click', ()=>{
+    Sfx.click();
+    startSession('mixed', [], {star:+b.dataset.star});
+  }));
   document.addEventListener('keydown', e=>{
     if($('#dexSheet').classList.contains('show')){ if(e.key==='Escape'){ closeDexDetail(); e.preventDefault(); } return; }
     if($('#modal').classList.contains('show')){ if(e.key==='Escape') closeModal(false); if(e.key==='Enter'){ e.preventDefault(); closeModal(true);} return; }
@@ -1173,12 +1452,45 @@ function runSelfTest(){
       if(ch.length!==4 || ch.indexOf(picked.q)<0 || ch.some(function(v){ return v<1 || v!==(v|0); })) fails.push('choices '+star);
     }
   });
+  [1,2,3].forEach(function(star){
+    let sawDiv=false, sawMul=false, sawMinus=false;
+    for(let n=0;n<40;n++){
+      const q=pickMixed(star);
+      const prod=q.a*q.b;
+      let ans=prod;
+      if(q.op2==='+') ans=prod+q.c;
+      else if(q.op2==='−') ans=prod-q.c;
+      else if(q.op2==='×') ans=prod*q.c;
+      else if(q.op2==='÷') ans=prod/q.c;
+      if(ans!==q.ans || q.ans!==(q.ans|0) || q.ans<0) fails.push('mix eval '+star+' '+q.a+q.op2+q.c);
+      const cap=star<=1?20:star===2?30:50;
+      if(q.ans>cap) fails.push('mix cap '+star+' '+q.ans);
+      if(star<=1 && q.op2!=='+') fails.push('star1 op');
+      if(star===2 && q.op2!=='+' && q.op2!=='−') fails.push('star2 op');
+      if(q.op2==='÷'){ sawDiv=true; if(prod%q.c!==0) fails.push('mix div'); }
+      if(q.op2==='×') sawMul=true;
+      if(q.op2==='−') sawMinus=true;
+      const ch=makeMixedChoices(q);
+      if(ch.length!==4 || ch.indexOf(q.ans)<0) fails.push('mix choices');
+      const order=divisionOrder(star);
+      if(order.length!==5) fails.push('mix order');
+      if(star>=3 && (order.indexOf('heidragon')<0||order.indexOf('starlord')<0)) fails.push('mix bosses');
+      if(star<3 && (order.indexOf('starlord')>=0)) fails.push('mix early boss');
+    }
+    if(star>=3 && (!sawDiv || !sawMul)) fails.push('star3 kinds');
+    if(star===2 && !sawMinus) fails.push('star2 minus');
+  });
+  Object.keys(ATTACK_SCALE).forEach(function(id){
+    const sc=ATTACK_SCALE[id];
+    if(!(sc>=1 && sc<=1.65)) fails.push('scale '+id);
+  });
+  if(ATTACK_MIRROR.ninjacat||ATTACK_MIRROR.galmoth||ATTACK_MIRROR.flamecrab||ATTACK_MIRROR.holyturt||ATTACK_MIRROR.nightmare) fails.push('double flip');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_MIRROR, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_MIRROR, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);

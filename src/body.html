@@ -22,7 +22,9 @@
             <button class="home-pill learn" data-go="learnPick">學乘數表</button>
             <button class="home-pill battle" data-go="setup-battle">打怪獸</button>
             <button class="home-pill divide" data-go="divide">除法戰鬥</button>
-            <button class="home-pill timed" data-go="setup-timed">計時挑戰</button>
+            <button class="home-pill mixed" data-go="mixed">兩步混合</button>
+            <button class="home-pill timed" data-go="setup-survive">限時挑戰</button>
+            <button class="home-pill combo" data-go="setup-combo">連擊挑戰</button>
           </div>
           <div class="home-pet home-pet-r" id="homePetR"></div>
           <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -73,12 +75,13 @@
       <div class="wrap">
         <h2 class="h" id="setupTitle">打怪獸</h2>
         <p class="sub" id="setupSub">揀你想練習嘅乘數表（可以揀幾個）</p>
+        <p class="setup-rules" id="setupRules"></p>
         <div class="tiles" id="setupTiles"></div>
         <div class="row">
           <button class="btn small purple" id="selMix">2至9 混合</button>
           <button class="btn small gray" id="selNone">全部清除</button>
         </div>
-        <div class="row">
+        <div class="row" id="modeRow">
           <div class="seg" id="modeSeg">
             <button data-choice="0" aria-pressed="true">自己打答案</button>
             <button data-choice="1" aria-pressed="false">揀答案（易啲）</button>
@@ -93,6 +96,19 @@
         <div class="besttxt" id="bestTxt"></div>
         <div class="warn" id="setupWarn"></div>
         <button class="btn" id="startBtn"><span data-icon="bolt"></span><span class="lbl">開始打怪獸！</span></button>
+      </div>
+    </section>
+
+    <!-- MIXED two-step star pick -->
+    <section id="mixed" class="screen">
+      <div class="wrap">
+        <h2 class="h">兩步混合</h2>
+        <p class="sub">由左到右計，暫時冇括號。揀一粒星開始。</p>
+        <div class="star-picks" id="mixPicks">
+          <button class="star-pick" data-star="1"><b>★ 一星</b><span>乘加，答案 ≤ 20</span></button>
+          <button class="star-pick" data-star="2"><b>★★ 二星</b><span>乘之後加或者減，≤ 30</span></button>
+          <button class="star-pick" data-star="3"><b>★★★ 三星</b><span>再乘或者除得盡，≤ 50</span></button>
+        </div>
       </div>
     </section>
 
@@ -127,7 +143,7 @@
       <div class="panel" id="panel">
         <div id="disrupt" class="disrupt" aria-hidden="true"></div>
         <div class="qcard" id="qCard">
-          <div class="qrow"><span id="qA">2</span><span class="x" id="qOp">×</span><span id="qB">3</span><span>=</span><span class="ansbox empty" id="qAns">?</span></div>
+          <div class="qrow" id="qRow"><span id="qA">2</span><span class="x" id="qOp">×</span><span id="qB">3</span><span class="x q-extra" id="qOp2" hidden>+</span><span class="q-extra" id="qC" hidden>4</span><span class="eq">=</span><span class="ansbox empty" id="qAns">?</span></div>
           <div class="elem-pop" id="elemPop" aria-hidden="true"></div>
         </div>
         <div class="hint idle" id="hint"><div>答啱就可以出招打怪獸！</div></div>
@@ -158,7 +174,7 @@
         </div>
         </div>
         <div class="dex-stage">
-          <h2 class="dex-title">怪獸圖鑑 <span id="dexCount"></span></h2>
+          <h2 class="dex-title">怪獸圖鑑 <span id="dexCount"></span><span id="dexStamp" class="dex-stamp" hidden>翼光奧米加</span></h2>
           <div class="dex-layout">
             <div class="dex" id="dex"></div>
             <aside class="dex-panel" id="dexPanel" aria-live="polite">
