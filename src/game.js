@@ -492,8 +492,11 @@ function heroPose(p){
   const h=heroSvgEl(); if(!h) return;
   const keep=[]; h.classList.forEach(c=>{ if(c==='raster'||c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug'||c==='charging'||c.indexOf('combo-')===0||c.indexOf('henshin-')===0) keep.push(c); });
   h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' '));
-  /* pose_beam / pose_omega art (every form) goes under the monster so the beam does not cover it. */
-  if(heroWrap) heroWrap.classList.toggle('under-mon', p==='beam' || p==='omega');
+  /* Beam and omega art cross the monster. Fade the hero so the monster shows through. */
+  if(heroWrap){
+    heroWrap.classList.remove('under-mon');
+    heroWrap.classList.toggle('soft-beam', p==='beam' || p==='omega');
+  }
   const bob=$('#heroBob');
   if(bob && bob.dataset.svgFallback) return;
   const img=h.querySelector('.hero-raster'); if(!img) return;
@@ -661,7 +664,8 @@ function impactStar(t, text){ const e=fxEl('impact','<svg viewBox="0 0 100 100">
 function makeBeam(o,t,thick,cls,dur){ const dx=t.x-o.x, dy=t.y-o.y, len=Math.hypot(dx,dy), ang=Math.atan2(dy,dx)*180/Math.PI; const e=document.createElement('div'); e.className='beam '+(cls||''); (stageEl||fxLayer).appendChild(e);
   e.style.left=o.x+'px'; e.style.top=(o.y-thick/2)+'px'; e.style.width=len+'px'; e.style.height=thick+'px'; e.style.transformOrigin='0 50%';
   const R='rotate('+ang+'deg)';
-  play(e,[{transform:R+' scaleX(0)',opacity:1},{transform:R+' scaleX(1)',opacity:1,offset:.22},{transform:R+' scaleX(1) scaleY(1.25)',opacity:1,offset:.5},{transform:R+' scaleX(1) scaleY(.9)',opacity:1,offset:.8},{transform:R+' scaleX(1) scaleY(0)',opacity:0}],{duration:dur*K(),easing:'ease-out'}).then(()=>rm(e)); return e; }
+  const op=.62;
+  play(e,[{transform:R+' scaleX(0)',opacity:op},{transform:R+' scaleX(1)',opacity:op,offset:.22},{transform:R+' scaleX(1) scaleY(1.25)',opacity:op,offset:.5},{transform:R+' scaleX(1) scaleY(.9)',opacity:op,offset:.8},{transform:R+' scaleX(1) scaleY(0)',opacity:0}],{duration:dur*K(),easing:'ease-out'}).then(()=>rm(e)); return e; }
 function speedLines(){ const h=stageEl.clientHeight, w=stageEl.clientWidth; for(let i=0;i<7;i++){ const e=fxEl('speedline'); e.style.top=rand(h*.2,h*.85)+'px'; e.style.left=rand(0,w*.3)+'px'; e.style.width=rand(60,160)+'px';
   play(e,[{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.3},{transform:'translateX('+(w*.5)+'px)',opacity:0}],{duration:380,delay:i*30}).then(()=>rm(e)); } }
 const RAINBOW=['#ff7ad9','#ffe066','#7ff0ff','#b58cff','#9dff6b','#fff'];
@@ -1261,7 +1265,7 @@ function timedEnd(){
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup(againMode); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
-function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg, #stage > .beam').forEach(e=>e.remove()); if(heroWrap) heroWrap.classList.remove('under-mon'); clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
+function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg, #stage > .beam').forEach(e=>e.remove()); if(heroWrap){ heroWrap.classList.remove('under-mon'); heroWrap.classList.remove('soft-beam'); } clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
 
 function initBattle(){
   stageEl=$('#stage'); heroWrap=$('#heroWrap'); monWrap=$('#monWrap'); fxLayer=$('#fxLayer'); FX.attach($('#fxCanvas'));
@@ -1531,21 +1535,25 @@ function runSelfTest(){
     heroPose(p);
     const hs=heroSvgEl();
     if(!hs || !hs.classList.contains('pose-'+p)) fails.push('pose '+p);
-    if(!heroWrap || !heroWrap.classList.contains('under-mon')) fails.push('under '+p);
+    if(!heroWrap || !heroWrap.classList.contains('soft-beam')) fails.push('soft '+p);
+    const op=parseFloat(getComputedStyle(heroWrap).opacity);
+    if(!(op>=0.55 && op<=0.7)) fails.push('op '+p+' '+op);
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
-    if(!(hz<mz)) fails.push('z '+p+' '+hz+'/'+mz);
+    if(!(hz>mz)) fails.push('z '+p+' '+hz+'/'+mz);
     for(let st=1;st<=5;st++){
       if(heroSrc(st,p)!=='assets/battle/hero_h'+st+'_pose_'+p+'.png') fails.push('src '+p+' '+st);
     }
   });
   heroPose('kick');
-  if(!heroWrap || heroWrap.classList.contains('under-mon')) fails.push('kick under');
+  if(!heroWrap || heroWrap.classList.contains('soft-beam')) fails.push('kick soft');
+  if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('kick op');
   if(heroWrap && monWrap){
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
     if(!(hz>mz)) fails.push('kick z '+hz+'/'+mz);
   }
   heroPose('idle');
-  if(heroWrap && heroWrap.classList.contains('under-mon')) fails.push('idle under');
+  if(heroWrap && heroWrap.classList.contains('soft-beam')) fails.push('idle soft');
+  if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('idle op');
   const stageNow=currentStageSize();
   if(!$('#battle').classList.contains('stage-'+stageNow)) fails.push('stage '+stageNow);
   const monHud=$('.monhud'), right=$('.hud-right');

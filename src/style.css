@@ -306,12 +306,11 @@ body[data-screen="home"] main{padding-top:0}
 .battle-city{position:absolute;inset:0;z-index:0;background:#0a0e2e center/cover no-repeat;background-image:url('assets/home/city_bg.jpg');opacity:.92}
 .ground{position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(180deg,rgba(20,24,48,.75),rgba(8,10,24,.9));border-top:3px solid rgba(93,106,160,.55);z-index:1}
 .ground::after{content:"";position:absolute;left:0;right:0;top:38%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.55}
-.hero-wrap{position:absolute;left:2%;bottom:12%;z-index:3;overflow:visible}
+.hero-wrap{position:absolute;left:2%;bottom:12%;z-index:3;overflow:visible;opacity:1}
 .mon-wrap{position:absolute;right:2%;bottom:12%;z-index:2;overflow:visible}
-/* pose_beam and pose_omega (h1–h5) include a light that reaches the monster.
-   Drop that hero under the monster. Other poses stay in front. */
-.hero-wrap.under-mon{z-index:2}
-.hero-wrap.under-mon ~ .mon-wrap{z-index:4}
+/* pose_beam and pose_omega paint a light across the monster. Keep the hero in
+   front, but fade it so the monster stays readable through the beam. */
+.hero-wrap.soft-beam{opacity:.62}
 .hero.raster{position:relative;width:100%;height:100%;display:block}
 .hero-art{position:absolute;inset:0}
 .hero-raster,.mon-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
