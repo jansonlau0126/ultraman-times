@@ -362,10 +362,8 @@ body[data-screen="home"] main{padding-top:0}
 .mon.mon-raster{position:relative;width:100%;height:100%;display:block}
 /* Attack canvas is 360 and shorter than the idle body. Scale from the feet so the
    painted monster matches the idle height, then drop the empty foot gap onto the ground.
-   Flip once, around the same origin — never a second mirror. */
+   Art is not mirrored; the PNG facing is the facing on screen. */
 .mon.atk-drop .mon-img{transform-origin:50% 100%;transform:translateY(calc(var(--foot-n, 0) * var(--atk, 1) * 1%)) scale(var(--atk, 1))}
-.mon.atk-flip.atk-drop .mon-img{transform-origin:50% 100%;transform:translateY(calc(var(--foot-n, 0) * var(--atk, 1) * 1%)) scale(var(--atk, 1)) scaleX(-1)}
-.mon.idle-flip:not(.atk-drop) .mon-img{transform-origin:50% 100%;transform:scaleX(-1)}
 .hero.henshin-up .hero-raster{filter:brightness(1.45) drop-shadow(0 0 16px rgba(255,255,255,.9))}
 .mon.ouch .mon-img{filter:brightness(1.6) saturate(1.3) hue-rotate(-10deg)}
 .dimg .mon-raster,.dimg .mon-img{width:100%;height:100%}
