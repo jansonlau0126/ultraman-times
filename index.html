@@ -114,6 +114,12 @@ body[data-screen="home"] main{padding-top:0}
 .home-record{flex:0 0 auto;margin:2px 0 4px;min-width:min(92vw,460px);min-height:clamp(56px,8.4vh,72px);padding:8px 28px 10px;border-radius:999px;border:3.5px solid rgba(255,255,255,.95);background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;font-weight:900;font-size:clamp(24px,5.2vw,32px);letter-spacing:3px;text-shadow:0 1px 0 rgba(255,255,255,.5);box-shadow:0 6px 0 #92400e,0 12px 22px rgba(0,0,0,.32),inset 0 3px 0 rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;z-index:3;cursor:pointer}
 .home-record small{display:block;font-size:.4em;font-weight:800;letter-spacing:1px;opacity:.82;margin-top:2px}
 .home-record:active{transform:translateY(4px);box-shadow:0 2px 0 #92400e,inset 0 2px 0 rgba(255,255,255,.5)}
+.stage-chip{display:flex;align-items:center;justify-content:center;gap:4px;flex:0 0 auto;margin:4px 0 0;z-index:4}
+.stage-chip span{font-size:12px;font-weight:900;letter-spacing:1px;color:#e8ecff}
+.stage-chip button{border:2px solid rgba(255,255,255,.55);background:rgba(8,12,40,.62);color:#fff;border-radius:999px;padding:2px 9px;font-weight:900;font-size:12px;line-height:1.2;min-height:28px}
+.stage-chip button.on{background:#ffd84d;color:#3b2300;border-color:#fff}
+.stage-chip.setup-stage{margin:4px 0 8px}
+#home .stage-chip{margin-top:2px}
 @media (max-width:640px){
   .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(48px,.55fr) minmax(0,1fr) minmax(48px,.55fr);gap:2px}
@@ -121,8 +127,10 @@ body[data-screen="home"] main{padding-top:0}
   .home-pill{padding:7px 6px;font-size:clamp(13px,3.4vw,16px);min-height:40px}
   .home-pill.battle{font-size:clamp(14px,3.6vw,17px);min-height:42px}
   .home-pet{width:clamp(64px,18vw,96px)}
-  .home-wrap{padding-bottom:20px}
-  .home-record{min-height:54px;margin:0;font-size:clamp(22px,6vw,28px);padding:6px 18px 8px}
+  .home-wrap{padding-bottom:8px}
+  .home-record{min-height:50px;margin:0;font-size:clamp(20px,5.6vw,28px);padding:4px 18px 6px}
+  #home .stage-chip{margin-top:2px}
+  #home .stage-chip button{min-height:24px;font-size:11px;padding:1px 8px}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
@@ -283,14 +291,22 @@ body[data-screen="home"] main{padding-top:0}
 .litem.on span{color:#9a3412}
 .litem.seen{border-color:rgba(125,255,178,.6)}
 
-/* BATTLE — short stage, tall question. The equation and answer buttons own a phone screen. */
-#battle{padding:2px 8px 6px}
-#battle.active{display:grid;grid-template-rows:minmax(108px,32dvh) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
+/* BATTLE stage height is a playtest choice. Question stays in the panel below the stage.
+   A 緊湊 ~32dvh (most room for the sum), B 適中 ~41dvh (default), C 大戰鬥 ~49dvh. */
+#battle{padding:2px 8px 6px;--stage-row:minmax(128px,41dvh)}
+#battle.stage-a{--stage-row:minmax(108px,32dvh)}
+#battle.stage-b{--stage-row:minmax(128px,41dvh)}
+#battle.stage-c{--stage-row:minmax(148px,49dvh)}
+#battle.active{display:grid;grid-template-rows:var(--stage-row) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
 @media (max-height:700px){
-  #battle.active{grid-template-rows:minmax(96px,28dvh) minmax(0,1fr)}
+  #battle.stage-a{--stage-row:minmax(96px,28dvh)}
+  #battle.stage-b{--stage-row:minmax(108px,34dvh)}
+  #battle.stage-c{--stage-row:minmax(120px,40dvh)}
 }
 @media (max-height:620px){
-  #battle.active{grid-template-rows:minmax(88px,24dvh) minmax(0,1fr)}
+  #battle.stage-a{--stage-row:minmax(88px,24dvh)}
+  #battle.stage-b{--stage-row:minmax(96px,30dvh)}
+  #battle.stage-c{--stage-row:minmax(104px,34dvh)}
 }
 @media (orientation:landscape) and (min-width:700px){
   #battle.active{grid-template-columns:minmax(0,1.05fr) minmax(300px,1fr);grid-template-rows:minmax(0,1fr)}
@@ -301,8 +317,8 @@ body[data-screen="home"] main{padding-top:0}
 .ground::after{content:"";position:absolute;left:0;right:0;top:38%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.55}
 .hero-wrap{position:absolute;left:2%;bottom:12%;z-index:3;overflow:visible}
 .mon-wrap{position:absolute;right:2%;bottom:12%;z-index:2;overflow:visible}
-/* pose_beam and pose_omega (h1–h5) include a light that reaches the monster.
-   Drop that hero under the monster. Other poses stay in front. */
+/* Beam pose art and the omega move reach across the monster. Drop that hero
+   under the monster. Other poses stay in front. Full opacity either way. */
 .hero-wrap.under-mon{z-index:2}
 .hero-wrap.under-mon ~ .mon-wrap{z-index:4}
 .hero.raster{position:relative;width:100%;height:100%;display:block}
@@ -361,6 +377,16 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.pose-win .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-3.pose-win .hero-art{transform:translateY(calc(8% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-5.pose-win .hero-art{transform:translateY(calc(7% * var(--pop, 1))) scale(var(--pop, 1))}
+/* hero_h{N}.png is a tight portrait, not the padded 520 square. Scale it so the
+   standing body stays the same height inside the pose box, feet on the ground. */
+.hero.raster.henshin-1{--body:.50}
+.hero.raster.henshin-2{--body:.56}
+.hero.raster.henshin-3{--body:.54}
+.hero.raster.henshin-4{--body:.55}
+.hero.raster.henshin-5{--body:.56}
+.hero.raster.stand .hero-art,
+.hero.raster.henshin-1.stand .hero-art,
+.hero.raster.henshin-4.stand .hero-art{transform:scale(var(--body,.52));transform-origin:50% 100%}
 .form-name{position:absolute;left:50%;top:100%;margin-top:1px;transform:translateX(-50%);z-index:9;pointer-events:none;white-space:nowrap;font-weight:900;font-size:clamp(13px,3.1vw,18px);line-height:1.15;letter-spacing:1px;color:#fff;background:linear-gradient(180deg,#38bdf8,#0369a1);border:2px solid #fff;border-radius:999px;padding:2px 10px;box-shadow:0 3px 0 #082f49,0 0 10px rgba(56,189,248,.65);text-shadow:0 1px 0 #082f49}
 .form-name.flash{animation:formFlash 1s ease-out}
 @keyframes formFlash{0%{transform:translateX(-50%) scale(.6);filter:brightness(2.4);box-shadow:0 0 18px #fff}40%{transform:translateX(-50%) scale(1.16);filter:brightness(1.6)}100%{transform:translateX(-50%) scale(1);filter:none}}
@@ -379,12 +405,14 @@ body[data-screen="home"] main{padding-top:0}
 #dsArt .mon-raster,#dsArt .mon-img{width:100%;height:100%}
 #fxLayer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 #fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
-.stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 92px 8px 10px;z-index:7;gap:8px;pointer-events:none}
+.stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:6px 6px 6px 8px;z-index:9;gap:6px;pointer-events:none}
 .hudbox{background:rgba(0,0,0,.4);border-radius:14px;padding:5px 10px;font-weight:900;font-size:clamp(13px,3.2vw,17px);border:2px solid rgba(255,255,255,.18)}
-.herohud{position:relative;padding-left:34px}
+.herohud{position:relative;padding-left:34px;flex:0 1 auto;max-width:46%}
+.hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:auto;max-width:min(68%,calc(100% - 112px));min-width:0}
 .chest-lamp{position:absolute;left:8px;top:9px;width:16px;height:16px;border-radius:50%;background:var(--tc,#38d6cf);box-shadow:0 0 8px var(--tc,#38d6cf),inset 0 0 4px rgba(255,255,255,.9);border:2px solid #fff}
 .chest-lamp.blink{animation:tblink .7s steps(2,jump-none) infinite}
-.monhud{min-width:44%;max-width:60%;text-align:right}
+.monhud{width:100%;max-width:100%;text-align:right}
+#monName{line-height:1.15}
 .hpbar{height:14px;border-radius:8px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:4px;border:2px solid rgba(0,0,0,.4)}
 .hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff4d4d,#ffb347);border-radius:6px;transition:width .45s cubic-bezier(.3,1.3,.5,1);float:right}
 .herohud .dots{display:flex;gap:4px;margin-top:4px}
@@ -395,7 +423,7 @@ body[data-screen="home"] main{padding-top:0}
 .timerbox{font-size:clamp(20px,5vw,30px);color:#fff}
 .timerbox.low{color:#ff6b6b;animation:pulse .5s ease-in-out infinite alternate}
 @keyframes pulse{to{transform:scale(1.1)}}
-.combo{position:absolute;right:8px;top:8px;left:auto;bottom:auto;transform:none;z-index:9;font-weight:900;font-size:clamp(13px,3.2vw,18px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:3px 10px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none;max-width:42%}
+.combo{position:static;z-index:1;font-weight:900;font-size:clamp(13px,3.2vw,18px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:3px 10px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none;max-width:100%}
 .combo.omega{background:linear-gradient(180deg,#ffe14d,#ff5bd1,#7ff0ff);color:#1a1040;box-shadow:0 4px 0 #7c3aed,0 0 20px rgba(255,225,77,.8);border-color:#fff}
 .combo.show{display:block}
 .movename{position:absolute;left:50%;top:42%;z-index:8;font-weight:900;font-size:clamp(26px,6.4vw,56px);color:#fff35c;white-space:nowrap;letter-spacing:2px;max-width:78%;text-align:center;text-shadow:3px 3px 0 #d10000,-3px -3px 0 #d10000,3px -3px 0 #d10000,-3px 3px 0 #d10000,0 3px 0 #d10000,0 -3px 0 #d10000,3px 0 0 #d10000,-3px 0 0 #d10000,0 8px 0 #6b0000,0 0 26px rgba(255,255,255,.9);pointer-events:none}
@@ -589,6 +617,17 @@ body[data-screen="home"] main{padding-top:0}
 .choice:active{transform:translateY(4px)}
 .choice.x{opacity:.3;filter:grayscale(1)}
 .choice.right{outline:5px solid #fff;animation:pulse .4s ease-in-out 3 alternate}
+/* Option C gives the arena more height. Answers shrink a little so the sum stays fully on screen. */
+#battle.stage-c .panel{gap:6px;padding:6px 8px 8px}
+#battle.stage-c .qcard{padding:6px 6px 8px}
+#battle.stage-c .qrow,
+#battle.stage-c.mode-mixed .qrow{font-size:clamp(40px,11.2vw,68px)}
+#battle.stage-c .hint{padding:2px 6px;font-size:clamp(13px,3.2vw,18px)}
+#battle.stage-c .keypad{gap:6px;grid-template-rows:repeat(4,minmax(38px,1fr))}
+#battle.stage-c .key{min-height:38px;font-size:clamp(22px,6.2vw,36px)}
+#battle.stage-c .key.ok{font-size:clamp(18px,4.6vw,26px)}
+#battle.stage-c .choices{gap:8px;grid-template-rows:repeat(2,minmax(42px,1fr))}
+#battle.stage-c .choice{min-height:42px;font-size:clamp(26px,7.2vw,44px)}
 @media (orientation:landscape) and (min-width:700px){
   .qrow{font-size:clamp(40px,5.4vw,72px)}
   #battle.mode-mixed .qrow{font-size:clamp(28px,3.8vw,48px)}
@@ -604,6 +643,9 @@ body[data-screen="home"] main{padding-top:0}
 .overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(5,8,30,.62);padding:12px;overflow-y:auto}
 .overlay.show{display:flex;animation:screenIn .35s ease-out}
 .rcard{width:100%;max-width:520px;text-align:center;position:relative;margin:auto}
+.overlay.has-hero{align-items:flex-start;padding-top:8px}
+.overlay.has-hero .rcard{margin:0 auto}
+.rhero{display:block;width:min(200px,52vw);height:min(188px,40vw);margin:0 auto 2px;object-fit:contain;object-position:center bottom;pointer-events:none;filter:drop-shadow(0 10px 16px rgba(0,0,0,.5))}
 .rcard h3{margin:4px 0;font-size:clamp(28px,7vw,44px);font-weight:900;color:#ffe14d;text-shadow:0 4px 0 #b45309}
 .rstars{display:flex;justify-content:center;gap:10px;margin:6px 0}
 .rstars svg{width:clamp(56px,15vw,84px);height:clamp(56px,15vw,84px);fill:#3a4270;stroke:#1b2150;stroke-width:1}
@@ -882,6 +924,12 @@ body[data-screen="home"] main{padding-top:0}
           <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
         <button class="home-record" data-go="progress">戰績<small>勳章 · 圖鑑 · 分數</small></button>
+        <div class="stage-chip" role="group" aria-label="戰鬥畫面大小">
+          <span>畫面</span>
+          <button type="button" data-stage-size="a">A 緊湊</button>
+          <button type="button" data-stage-size="b">B 適中</button>
+          <button type="button" data-stage-size="c">C 大戰鬥</button>
+        </div>
       </div>
     </section>
 
@@ -945,6 +993,12 @@ body[data-screen="home"] main{padding-top:0}
             <button data-speak="0" aria-pressed="false">唔讀</button>
           </div>
         </div>
+        <div class="stage-chip setup-stage" role="group" aria-label="戰鬥畫面大小">
+          <span>畫面</span>
+          <button type="button" data-stage-size="a">A 緊湊</button>
+          <button type="button" data-stage-size="b">B 適中</button>
+          <button type="button" data-stage-size="c">C 大戰鬥</button>
+        </div>
         <div class="besttxt" id="bestTxt"></div>
         <div class="warn" id="setupWarn"></div>
         <button class="btn" id="startBtn"><span data-icon="bolt"></span><span class="lbl">開始打怪獸！</span></button>
@@ -978,15 +1032,17 @@ body[data-screen="home"] main{padding-top:0}
     </section>
 
     <!-- BATTLE -->
-    <section id="battle" class="screen">
+    <section id="battle" class="screen stage-b">
       <div class="stage" id="stage">
         <div class="battle-city" aria-hidden="true"></div>
         <div class="ground"></div>
         <div class="stagehud">
           <div class="hudbox herohud" id="heroHud"><i class="chest-lamp" id="chestLamp" aria-hidden="true"></i><div id="roundLbl">第 1 關</div><div class="dots" id="roundDots"></div></div>
-          <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
+          <div class="hud-right">
+            <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
+            <div class="combo" id="combo">2 連擊</div>
+          </div>
         </div>
-        <div class="combo" id="combo">2 連擊</div>
         <div class="elem-pop" id="elemPop" aria-hidden="true"></div>
         <div class="hero-wrap" id="heroWrap"><div class="hero-bob" id="heroBob"></div><div class="form-name" id="formName">銀光形態</div></div>
         <div class="mon-wrap" id="monWrap"><div class="mon-bob" id="monBob"></div></div>
@@ -1526,7 +1582,7 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, stageSize:'b'}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
@@ -1675,16 +1731,17 @@ const HOME_ART = {
   dragon: 'assets/home/pet_dragon.png',
   turtle: 'assets/home/pet_turtle.png'
 };
-/* Per-form poses: assets/battle/hero_h{1-5}_pose_{omega|punch|kick|beam|guard|win}.png
-   idle/quiz = omega. disc/whirl share punch. tuck (flip windup) stays omega. */
+/* Idle and 星煌爆 use the standing file assets/battle/hero_h{1-5}.png.
+   Action poses: hero_h{N}_pose_{punch|kick|beam|guard|win}.png.
+   disc/whirl share punch. tuck (flip windup) stays on the standing art. */
 const POSE_FILE = {
-  idle:'omega', omega:'omega',
+  idle:'base', omega:'base', tuck:'base',
   beam:'beam', super:'beam',
   punch:'punch', disc:'punch', whirl:'punch', rainbow:'punch',
-  kick:'kick', flip:'kick', tuck:'omega',
+  kick:'kick', flip:'kick',
   guard:'guard', win:'win'
 };
-function poseFile(p){ return POSE_FILE[p] || 'omega'; }
+function poseFile(p){ return POSE_FILE[p] || 'base'; }
 function heroStageOf(h){
   let st=1; if(!h) return 1;
   for(let i=1;i<=5;i++) if(h.classList.contains('henshin-'+i)) st=i;
@@ -1692,10 +1749,12 @@ function heroStageOf(h){
 }
 function heroSrc(stage, pose){
   const st=Math.max(1, Math.min(5, stage|0||1));
-  return 'assets/battle/hero_h'+st+'_pose_'+poseFile(pose)+'.png';
+  const file=poseFile(pose);
+  if(file==='base') return 'assets/battle/hero_h'+st+'.png';
+  return 'assets/battle/hero_h'+st+'_pose_'+file+'.png';
 }
 function preloadForm(stage){
-  ['omega','punch','kick','beam','guard','win'].forEach(function(p){
+  ['idle','punch','kick','beam','guard','win'].forEach(function(p){
     const im=new Image(); im.src=heroSrc(stage, p);
   });
 }
@@ -1714,7 +1773,7 @@ function heroRasterHTML(stage){
   const st = Math.max(1, Math.min(5, stage|0 || 1));
   /* Anchors sit in the 220×320 box over a bottom-aligned square PNG (box is 2:3).
      mk-beam ≈ painted beam core on the beam pose; chest/hand/slug follow the same map. */
-  return '<div class="hero henshin-'+st+' raster" style="--tc:#5ee7ff">'+
+  return '<div class="hero henshin-'+st+' raster stand" style="--tc:#5ee7ff">'+
     '<div class="hero-art">'+
     '<img class="hero-raster" src="'+heroSrc(st,'idle')+'" alt="" draggable="false" onerror="window.__heroImgError&&window.__heroImgError(this)">'+
     '<svg class="hero-anchors" viewBox="0 0 220 320" aria-hidden="true">'+
@@ -2006,9 +2065,13 @@ function relPos(el){ const s=stageEl.getBoundingClientRect(), r=el.getBoundingCl
 function heroPose(p){
   const h=heroSvgEl(); if(!h) return;
   const keep=[]; h.classList.forEach(c=>{ if(c==='raster'||c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug'||c==='charging'||c.indexOf('combo-')===0||c.indexOf('henshin-')===0) keep.push(c); });
-  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' '));
-  /* pose_beam / pose_omega art (every form) goes under the monster so the beam does not cover it. */
-  if(heroWrap) heroWrap.classList.toggle('under-mon', p==='beam' || p==='omega');
+  const base=poseFile(p||'idle')==='base';
+  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[], base?['stand']:[]).join(' '));
+  /* Beam pose and the omega move cross the monster. Keep the hero behind it, full opacity. */
+  if(heroWrap){
+    heroWrap.classList.remove('soft-beam');
+    heroWrap.classList.toggle('under-mon', p==='beam' || p==='omega');
+  }
   const bob=$('#heroBob');
   if(bob && bob.dataset.svgFallback) return;
   const img=h.querySelector('.hero-raster'); if(!img) return;
@@ -2148,14 +2211,15 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Shorter stage: keep both fighters inside it, under the HUD, and off the question. */
+  /* Grow fighters with the stage until the phone width or the HUD clearance stops them.
+     The question lives in the panel under the stage, so it is never covered by the arena. */
   const frac=HERO_STAND[henshinStage()]||0.54;
-  let heroVis=Math.min(120, Math.max(78, h*0.38));
+  let heroVis=Math.max(78, h*0.40);
   let monVis=heroVis*1.1;
   let heroBox=heroVis/frac;
   const need=heroBox+monVis;
   const room=w*0.96+Math.min(48, w*0.12);
-  const maxH=h*0.68;
+  const maxH=h*0.72;
   let s=1;
   if(need>room) s=Math.min(s, room/need);
   if(heroBox>maxH) s=Math.min(s, maxH/heroBox);
@@ -2671,7 +2735,9 @@ function roundWon(){
   } else {
     medalBlock='<div class="rstat">'+(B.mode==='divide'?'每個除數答夠幾題先攞勳章！':'混合練習要每個乘數表答夠幾題先攞勳章！')+'</div>';
   }
-  const html = '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
+  const winSt=henshinStage();
+  const html = '<img class="rhero" src="'+heroSrc(winSt,'win')+'" alt="">'+
+    '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
     medalBlock+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
@@ -2685,11 +2751,11 @@ function roundWon(){
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else if(B.mode==='mixed') show('mixed'); else openSetup('battle'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
-function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.add('show');
+function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.toggle('has-hero', !!$('#resultCard .rhero')); o.classList.add('show');
   $$('#resultCard .rstars svg.on').forEach((s,i)=>{ s.style.animationDelay=(0.35+i*0.35)+'s'; setTimeout(()=>Sfx.star(i), 350+i*350); });
 }
 function confetti(){ const w=stageEl.clientWidth, h=stageEl.clientHeight; for(let i=0;i<5;i++) setTimeout(()=>FX.burst(rand(w*.15,w*.85), rand(h*.1,h*.5), {n:26,speed:8,shape:'star',colors:['#ffe066','#ff7ad9','#7ff0ff','#9dff6b','#fff'],size:10,life:80,gravity:.1}), i*220); }
-function hideResult(){ $('#result').classList.remove('show'); }
+function hideResult(){ $('#result').classList.remove('show','has-hero'); }
 
 /* timed survival (60s) and combo challenge (90s) */
 function paintTimer(){
@@ -2775,7 +2841,7 @@ function timedEnd(){
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup(againMode); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
-function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg, #stage > .beam').forEach(e=>e.remove()); if(heroWrap) heroWrap.classList.remove('under-mon'); clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
+function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg, #stage > .beam').forEach(e=>e.remove()); if(heroWrap){ heroWrap.classList.remove('under-mon'); heroWrap.classList.remove('soft-beam'); } clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
 
 function initBattle(){
   stageEl=$('#stage'); heroWrap=$('#heroWrap'); monWrap=$('#monWrap'); fxLayer=$('#fxLayer'); FX.attach($('#fxCanvas'));
@@ -2889,10 +2955,30 @@ function closeModal(v){ $('#modal').classList.remove('show'); const cb=modalCb; 
 /* ---------- mute ---------- */
 function syncMute(){ const b=$('#btnMute'); b.innerHTML=icon(DATA.settings.muted?'mute':'sound'); b.setAttribute('aria-label', DATA.settings.muted?'開聲':'靜音'); }
 
+/* Battle stage height: a 緊湊, b 適中 (default), c 大戰鬥. ?stage=a overrides for a direct link. */
+function stageSizeFromURL(){ const m=/[?&]stage=([abc])(?:&|$)/.exec(location.search); return m?m[1]:''; }
+function currentStageSize(){
+  const q=stageSizeFromURL(); if(q) return q;
+  const s=DATA.settings.stageSize; return (s==='a'||s==='b'||s==='c')?s:'b';
+}
+function applyStageSize(size, persist){
+  const s=(size==='a'||size==='b'||size==='c')?size:'b';
+  if(persist){ DATA.settings.stageSize=s; save(); }
+  const battle=$('#battle');
+  if(battle){ battle.classList.remove('stage-a','stage-b','stage-c'); battle.classList.add('stage-'+s); }
+  $$('[data-stage-size]').forEach(b=>{ const on=b.dataset.stageSize===s; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); });
+  if(stageEl && current==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
+}
+function initStageSize(){
+  const q=stageSizeFromURL();
+  applyStageSize(q||currentStageSize(), !!q);
+  $$('[data-stage-size]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); applyStageSize(b.dataset.stageSize, true); }));
+}
+
 /* ---------- init ---------- */
 function init(){
   buildSky($('#bg')); fillIcons(); syncMute();
-  initHome(); initLearn(); initSetup(); initBattle();
+  initHome(); initLearn(); initSetup(); initBattle(); initStageSize();
   Speech.init();
   document.addEventListener('pointerdown', ()=>Sfx.init(), {passive:true});
   document.addEventListener('keydown', ()=>Sfx.init());
@@ -3021,25 +3107,46 @@ function runSelfTest(){
   const pair=dexPairHTML('heidragon');
   if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   ensureHero();
+  for(let st=1;st<=5;st++){
+    if(heroSrc(st,'idle')!=='assets/battle/hero_h'+st+'.png') fails.push('idle src '+st);
+    if(heroSrc(st,'omega')!=='assets/battle/hero_h'+st+'.png') fails.push('omega src '+st);
+    if(heroSrc(st,'win')!=='assets/battle/hero_h'+st+'_pose_win.png') fails.push('win src '+st);
+    if(heroSrc(st,'punch')!=='assets/battle/hero_h'+st+'_pose_punch.png') fails.push('punch src '+st);
+    if(heroSrc(st,'kick')!=='assets/battle/hero_h'+st+'_pose_kick.png') fails.push('kick src '+st);
+    if(heroSrc(st,'beam')!=='assets/battle/hero_h'+st+'_pose_beam.png') fails.push('beam src '+st);
+    if(heroSrc(st,'guard')!=='assets/battle/hero_h'+st+'_pose_guard.png') fails.push('guard src '+st);
+  }
   ['beam','omega'].forEach(function(p){
     heroPose(p);
     const hs=heroSvgEl();
     if(!hs || !hs.classList.contains('pose-'+p)) fails.push('pose '+p);
     if(!heroWrap || !heroWrap.classList.contains('under-mon')) fails.push('under '+p);
+    if(heroWrap && heroWrap.classList.contains('soft-beam')) fails.push('fade '+p);
+    const op=parseFloat(getComputedStyle(heroWrap).opacity);
+    if(!(op>=0.99)) fails.push('op '+p+' '+op);
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
     if(!(hz<mz)) fails.push('z '+p+' '+hz+'/'+mz);
-    for(let st=1;st<=5;st++){
-      if(heroSrc(st,p)!=='assets/battle/hero_h'+st+'_pose_'+p+'.png') fails.push('src '+p+' '+st);
-    }
+    const img=hs && hs.querySelector('.hero-raster');
+    if(!img || img.getAttribute('src')!==heroSrc(1,p)) fails.push('live '+p);
   });
+  heroPose('omega');
+  if(!heroSvgEl() || !heroSvgEl().classList.contains('stand')) fails.push('omega stand');
   heroPose('kick');
-  if(!heroWrap || heroWrap.classList.contains('under-mon')) fails.push('kick under');
+  if(!heroWrap || heroWrap.classList.contains('under-mon') || heroWrap.classList.contains('soft-beam')) fails.push('kick under');
+  if(heroSvgEl() && heroSvgEl().classList.contains('stand')) fails.push('kick stand');
+  if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('kick op');
   if(heroWrap && monWrap){
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
     if(!(hz>mz)) fails.push('kick z '+hz+'/'+mz);
   }
   heroPose('idle');
-  if(heroWrap && heroWrap.classList.contains('under-mon')) fails.push('idle under');
+  if(heroWrap && (heroWrap.classList.contains('under-mon') || heroWrap.classList.contains('soft-beam'))) fails.push('idle under');
+  if(!heroSvgEl() || !heroSvgEl().classList.contains('stand')) fails.push('idle stand');
+  if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('idle op');
+  const stageNow=currentStageSize();
+  if(!$('#battle').classList.contains('stage-'+stageNow)) fails.push('stage '+stageNow);
+  const monHud=$('.monhud'), right=$('.hud-right');
+  if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';

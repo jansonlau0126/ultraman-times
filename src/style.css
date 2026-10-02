@@ -105,6 +105,12 @@ body[data-screen="home"] main{padding-top:0}
 .home-record{flex:0 0 auto;margin:2px 0 4px;min-width:min(92vw,460px);min-height:clamp(56px,8.4vh,72px);padding:8px 28px 10px;border-radius:999px;border:3.5px solid rgba(255,255,255,.95);background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;font-weight:900;font-size:clamp(24px,5.2vw,32px);letter-spacing:3px;text-shadow:0 1px 0 rgba(255,255,255,.5);box-shadow:0 6px 0 #92400e,0 12px 22px rgba(0,0,0,.32),inset 0 3px 0 rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;z-index:3;cursor:pointer}
 .home-record small{display:block;font-size:.4em;font-weight:800;letter-spacing:1px;opacity:.82;margin-top:2px}
 .home-record:active{transform:translateY(4px);box-shadow:0 2px 0 #92400e,inset 0 2px 0 rgba(255,255,255,.5)}
+.stage-chip{display:flex;align-items:center;justify-content:center;gap:4px;flex:0 0 auto;margin:4px 0 0;z-index:4}
+.stage-chip span{font-size:12px;font-weight:900;letter-spacing:1px;color:#e8ecff}
+.stage-chip button{border:2px solid rgba(255,255,255,.55);background:rgba(8,12,40,.62);color:#fff;border-radius:999px;padding:2px 9px;font-weight:900;font-size:12px;line-height:1.2;min-height:28px}
+.stage-chip button.on{background:#ffd84d;color:#3b2300;border-color:#fff}
+.stage-chip.setup-stage{margin:4px 0 8px}
+#home .stage-chip{margin-top:2px}
 @media (max-width:640px){
   .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(48px,.55fr) minmax(0,1fr) minmax(48px,.55fr);gap:2px}
@@ -112,8 +118,10 @@ body[data-screen="home"] main{padding-top:0}
   .home-pill{padding:7px 6px;font-size:clamp(13px,3.4vw,16px);min-height:40px}
   .home-pill.battle{font-size:clamp(14px,3.6vw,17px);min-height:42px}
   .home-pet{width:clamp(64px,18vw,96px)}
-  .home-wrap{padding-bottom:20px}
-  .home-record{min-height:54px;margin:0;font-size:clamp(22px,6vw,28px);padding:6px 18px 8px}
+  .home-wrap{padding-bottom:8px}
+  .home-record{min-height:50px;margin:0;font-size:clamp(20px,5.6vw,28px);padding:4px 18px 6px}
+  #home .stage-chip{margin-top:2px}
+  #home .stage-chip button{min-height:24px;font-size:11px;padding:1px 8px}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
@@ -274,14 +282,22 @@ body[data-screen="home"] main{padding-top:0}
 .litem.on span{color:#9a3412}
 .litem.seen{border-color:rgba(125,255,178,.6)}
 
-/* BATTLE — short stage, tall question. The equation and answer buttons own a phone screen. */
-#battle{padding:2px 8px 6px}
-#battle.active{display:grid;grid-template-rows:minmax(108px,32dvh) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
+/* BATTLE stage height is a playtest choice. Question stays in the panel below the stage.
+   A 緊湊 ~32dvh (most room for the sum), B 適中 ~41dvh (default), C 大戰鬥 ~49dvh. */
+#battle{padding:2px 8px 6px;--stage-row:minmax(128px,41dvh)}
+#battle.stage-a{--stage-row:minmax(108px,32dvh)}
+#battle.stage-b{--stage-row:minmax(128px,41dvh)}
+#battle.stage-c{--stage-row:minmax(148px,49dvh)}
+#battle.active{display:grid;grid-template-rows:var(--stage-row) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
 @media (max-height:700px){
-  #battle.active{grid-template-rows:minmax(96px,28dvh) minmax(0,1fr)}
+  #battle.stage-a{--stage-row:minmax(96px,28dvh)}
+  #battle.stage-b{--stage-row:minmax(108px,34dvh)}
+  #battle.stage-c{--stage-row:minmax(120px,40dvh)}
 }
 @media (max-height:620px){
-  #battle.active{grid-template-rows:minmax(88px,24dvh) minmax(0,1fr)}
+  #battle.stage-a{--stage-row:minmax(88px,24dvh)}
+  #battle.stage-b{--stage-row:minmax(96px,30dvh)}
+  #battle.stage-c{--stage-row:minmax(104px,34dvh)}
 }
 @media (orientation:landscape) and (min-width:700px){
   #battle.active{grid-template-columns:minmax(0,1.05fr) minmax(300px,1fr);grid-template-rows:minmax(0,1fr)}
@@ -292,8 +308,8 @@ body[data-screen="home"] main{padding-top:0}
 .ground::after{content:"";position:absolute;left:0;right:0;top:38%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.55}
 .hero-wrap{position:absolute;left:2%;bottom:12%;z-index:3;overflow:visible}
 .mon-wrap{position:absolute;right:2%;bottom:12%;z-index:2;overflow:visible}
-/* pose_beam and pose_omega (h1–h5) include a light that reaches the monster.
-   Drop that hero under the monster. Other poses stay in front. */
+/* Beam pose art and the omega move reach across the monster. Drop that hero
+   under the monster. Other poses stay in front. Full opacity either way. */
 .hero-wrap.under-mon{z-index:2}
 .hero-wrap.under-mon ~ .mon-wrap{z-index:4}
 .hero.raster{position:relative;width:100%;height:100%;display:block}
@@ -352,6 +368,16 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.pose-win .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-3.pose-win .hero-art{transform:translateY(calc(8% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-5.pose-win .hero-art{transform:translateY(calc(7% * var(--pop, 1))) scale(var(--pop, 1))}
+/* hero_h{N}.png is a tight portrait, not the padded 520 square. Scale it so the
+   standing body stays the same height inside the pose box, feet on the ground. */
+.hero.raster.henshin-1{--body:.50}
+.hero.raster.henshin-2{--body:.56}
+.hero.raster.henshin-3{--body:.54}
+.hero.raster.henshin-4{--body:.55}
+.hero.raster.henshin-5{--body:.56}
+.hero.raster.stand .hero-art,
+.hero.raster.henshin-1.stand .hero-art,
+.hero.raster.henshin-4.stand .hero-art{transform:scale(var(--body,.52));transform-origin:50% 100%}
 .form-name{position:absolute;left:50%;top:100%;margin-top:1px;transform:translateX(-50%);z-index:9;pointer-events:none;white-space:nowrap;font-weight:900;font-size:clamp(13px,3.1vw,18px);line-height:1.15;letter-spacing:1px;color:#fff;background:linear-gradient(180deg,#38bdf8,#0369a1);border:2px solid #fff;border-radius:999px;padding:2px 10px;box-shadow:0 3px 0 #082f49,0 0 10px rgba(56,189,248,.65);text-shadow:0 1px 0 #082f49}
 .form-name.flash{animation:formFlash 1s ease-out}
 @keyframes formFlash{0%{transform:translateX(-50%) scale(.6);filter:brightness(2.4);box-shadow:0 0 18px #fff}40%{transform:translateX(-50%) scale(1.16);filter:brightness(1.6)}100%{transform:translateX(-50%) scale(1);filter:none}}
@@ -370,12 +396,14 @@ body[data-screen="home"] main{padding-top:0}
 #dsArt .mon-raster,#dsArt .mon-img{width:100%;height:100%}
 #fxLayer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 #fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
-.stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 92px 8px 10px;z-index:7;gap:8px;pointer-events:none}
+.stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:6px 6px 6px 8px;z-index:9;gap:6px;pointer-events:none}
 .hudbox{background:rgba(0,0,0,.4);border-radius:14px;padding:5px 10px;font-weight:900;font-size:clamp(13px,3.2vw,17px);border:2px solid rgba(255,255,255,.18)}
-.herohud{position:relative;padding-left:34px}
+.herohud{position:relative;padding-left:34px;flex:0 1 auto;max-width:46%}
+.hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:auto;max-width:min(68%,calc(100% - 112px));min-width:0}
 .chest-lamp{position:absolute;left:8px;top:9px;width:16px;height:16px;border-radius:50%;background:var(--tc,#38d6cf);box-shadow:0 0 8px var(--tc,#38d6cf),inset 0 0 4px rgba(255,255,255,.9);border:2px solid #fff}
 .chest-lamp.blink{animation:tblink .7s steps(2,jump-none) infinite}
-.monhud{min-width:44%;max-width:60%;text-align:right}
+.monhud{width:100%;max-width:100%;text-align:right}
+#monName{line-height:1.15}
 .hpbar{height:14px;border-radius:8px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:4px;border:2px solid rgba(0,0,0,.4)}
 .hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff4d4d,#ffb347);border-radius:6px;transition:width .45s cubic-bezier(.3,1.3,.5,1);float:right}
 .herohud .dots{display:flex;gap:4px;margin-top:4px}
@@ -386,7 +414,7 @@ body[data-screen="home"] main{padding-top:0}
 .timerbox{font-size:clamp(20px,5vw,30px);color:#fff}
 .timerbox.low{color:#ff6b6b;animation:pulse .5s ease-in-out infinite alternate}
 @keyframes pulse{to{transform:scale(1.1)}}
-.combo{position:absolute;right:8px;top:8px;left:auto;bottom:auto;transform:none;z-index:9;font-weight:900;font-size:clamp(13px,3.2vw,18px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:3px 10px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none;max-width:42%}
+.combo{position:static;z-index:1;font-weight:900;font-size:clamp(13px,3.2vw,18px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:3px 10px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none;max-width:100%}
 .combo.omega{background:linear-gradient(180deg,#ffe14d,#ff5bd1,#7ff0ff);color:#1a1040;box-shadow:0 4px 0 #7c3aed,0 0 20px rgba(255,225,77,.8);border-color:#fff}
 .combo.show{display:block}
 .movename{position:absolute;left:50%;top:42%;z-index:8;font-weight:900;font-size:clamp(26px,6.4vw,56px);color:#fff35c;white-space:nowrap;letter-spacing:2px;max-width:78%;text-align:center;text-shadow:3px 3px 0 #d10000,-3px -3px 0 #d10000,3px -3px 0 #d10000,-3px 3px 0 #d10000,0 3px 0 #d10000,0 -3px 0 #d10000,3px 0 0 #d10000,-3px 0 0 #d10000,0 8px 0 #6b0000,0 0 26px rgba(255,255,255,.9);pointer-events:none}
@@ -580,6 +608,17 @@ body[data-screen="home"] main{padding-top:0}
 .choice:active{transform:translateY(4px)}
 .choice.x{opacity:.3;filter:grayscale(1)}
 .choice.right{outline:5px solid #fff;animation:pulse .4s ease-in-out 3 alternate}
+/* Option C gives the arena more height. Answers shrink a little so the sum stays fully on screen. */
+#battle.stage-c .panel{gap:6px;padding:6px 8px 8px}
+#battle.stage-c .qcard{padding:6px 6px 8px}
+#battle.stage-c .qrow,
+#battle.stage-c.mode-mixed .qrow{font-size:clamp(40px,11.2vw,68px)}
+#battle.stage-c .hint{padding:2px 6px;font-size:clamp(13px,3.2vw,18px)}
+#battle.stage-c .keypad{gap:6px;grid-template-rows:repeat(4,minmax(38px,1fr))}
+#battle.stage-c .key{min-height:38px;font-size:clamp(22px,6.2vw,36px)}
+#battle.stage-c .key.ok{font-size:clamp(18px,4.6vw,26px)}
+#battle.stage-c .choices{gap:8px;grid-template-rows:repeat(2,minmax(42px,1fr))}
+#battle.stage-c .choice{min-height:42px;font-size:clamp(26px,7.2vw,44px)}
 @media (orientation:landscape) and (min-width:700px){
   .qrow{font-size:clamp(40px,5.4vw,72px)}
   #battle.mode-mixed .qrow{font-size:clamp(28px,3.8vw,48px)}
@@ -595,6 +634,9 @@ body[data-screen="home"] main{padding-top:0}
 .overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(5,8,30,.62);padding:12px;overflow-y:auto}
 .overlay.show{display:flex;animation:screenIn .35s ease-out}
 .rcard{width:100%;max-width:520px;text-align:center;position:relative;margin:auto}
+.overlay.has-hero{align-items:flex-start;padding-top:8px}
+.overlay.has-hero .rcard{margin:0 auto}
+.rhero{display:block;width:min(200px,52vw);height:min(188px,40vw);margin:0 auto 2px;object-fit:contain;object-position:center bottom;pointer-events:none;filter:drop-shadow(0 10px 16px rgba(0,0,0,.5))}
 .rcard h3{margin:4px 0;font-size:clamp(28px,7vw,44px);font-weight:900;color:#ffe14d;text-shadow:0 4px 0 #b45309}
 .rstars{display:flex;justify-content:center;gap:10px;margin:6px 0}
 .rstars svg{width:clamp(56px,15vw,84px);height:clamp(56px,15vw,84px);fill:#3a4270;stroke:#1b2150;stroke-width:1}

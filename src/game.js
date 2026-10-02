@@ -11,7 +11,7 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, stageSize:'b'}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
@@ -160,16 +160,17 @@ const HOME_ART = {
   dragon: 'assets/home/pet_dragon.png',
   turtle: 'assets/home/pet_turtle.png'
 };
-/* Per-form poses: assets/battle/hero_h{1-5}_pose_{omega|punch|kick|beam|guard|win}.png
-   idle/quiz = omega. disc/whirl share punch. tuck (flip windup) stays omega. */
+/* Idle and 星煌爆 use the standing file assets/battle/hero_h{1-5}.png.
+   Action poses: hero_h{N}_pose_{punch|kick|beam|guard|win}.png.
+   disc/whirl share punch. tuck (flip windup) stays on the standing art. */
 const POSE_FILE = {
-  idle:'omega', omega:'omega',
+  idle:'base', omega:'base', tuck:'base',
   beam:'beam', super:'beam',
   punch:'punch', disc:'punch', whirl:'punch', rainbow:'punch',
-  kick:'kick', flip:'kick', tuck:'omega',
+  kick:'kick', flip:'kick',
   guard:'guard', win:'win'
 };
-function poseFile(p){ return POSE_FILE[p] || 'omega'; }
+function poseFile(p){ return POSE_FILE[p] || 'base'; }
 function heroStageOf(h){
   let st=1; if(!h) return 1;
   for(let i=1;i<=5;i++) if(h.classList.contains('henshin-'+i)) st=i;
@@ -177,10 +178,12 @@ function heroStageOf(h){
 }
 function heroSrc(stage, pose){
   const st=Math.max(1, Math.min(5, stage|0||1));
-  return 'assets/battle/hero_h'+st+'_pose_'+poseFile(pose)+'.png';
+  const file=poseFile(pose);
+  if(file==='base') return 'assets/battle/hero_h'+st+'.png';
+  return 'assets/battle/hero_h'+st+'_pose_'+file+'.png';
 }
 function preloadForm(stage){
-  ['omega','punch','kick','beam','guard','win'].forEach(function(p){
+  ['idle','punch','kick','beam','guard','win'].forEach(function(p){
     const im=new Image(); im.src=heroSrc(stage, p);
   });
 }
@@ -199,7 +202,7 @@ function heroRasterHTML(stage){
   const st = Math.max(1, Math.min(5, stage|0 || 1));
   /* Anchors sit in the 220×320 box over a bottom-aligned square PNG (box is 2:3).
      mk-beam ≈ painted beam core on the beam pose; chest/hand/slug follow the same map. */
-  return '<div class="hero henshin-'+st+' raster" style="--tc:#5ee7ff">'+
+  return '<div class="hero henshin-'+st+' raster stand" style="--tc:#5ee7ff">'+
     '<div class="hero-art">'+
     '<img class="hero-raster" src="'+heroSrc(st,'idle')+'" alt="" draggable="false" onerror="window.__heroImgError&&window.__heroImgError(this)">'+
     '<svg class="hero-anchors" viewBox="0 0 220 320" aria-hidden="true">'+
@@ -491,9 +494,13 @@ function relPos(el){ const s=stageEl.getBoundingClientRect(), r=el.getBoundingCl
 function heroPose(p){
   const h=heroSvgEl(); if(!h) return;
   const keep=[]; h.classList.forEach(c=>{ if(c==='raster'||c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug'||c==='charging'||c.indexOf('combo-')===0||c.indexOf('henshin-')===0) keep.push(c); });
-  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' '));
-  /* pose_beam / pose_omega art (every form) goes under the monster so the beam does not cover it. */
-  if(heroWrap) heroWrap.classList.toggle('under-mon', p==='beam' || p==='omega');
+  const base=poseFile(p||'idle')==='base';
+  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[], base?['stand']:[]).join(' '));
+  /* Beam pose and the omega move cross the monster. Keep the hero behind it, full opacity. */
+  if(heroWrap){
+    heroWrap.classList.remove('soft-beam');
+    heroWrap.classList.toggle('under-mon', p==='beam' || p==='omega');
+  }
   const bob=$('#heroBob');
   if(bob && bob.dataset.svgFallback) return;
   const img=h.querySelector('.hero-raster'); if(!img) return;
@@ -633,14 +640,15 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Shorter stage: keep both fighters inside it, under the HUD, and off the question. */
+  /* Grow fighters with the stage until the phone width or the HUD clearance stops them.
+     The question lives in the panel under the stage, so it is never covered by the arena. */
   const frac=HERO_STAND[henshinStage()]||0.54;
-  let heroVis=Math.min(120, Math.max(78, h*0.38));
+  let heroVis=Math.max(78, h*0.40);
   let monVis=heroVis*1.1;
   let heroBox=heroVis/frac;
   const need=heroBox+monVis;
   const room=w*0.96+Math.min(48, w*0.12);
-  const maxH=h*0.68;
+  const maxH=h*0.72;
   let s=1;
   if(need>room) s=Math.min(s, room/need);
   if(heroBox>maxH) s=Math.min(s, maxH/heroBox);
@@ -1156,7 +1164,9 @@ function roundWon(){
   } else {
     medalBlock='<div class="rstat">'+(B.mode==='divide'?'每個除數答夠幾題先攞勳章！':'混合練習要每個乘數表答夠幾題先攞勳章！')+'</div>';
   }
-  const html = '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
+  const winSt=henshinStage();
+  const html = '<img class="rhero" src="'+heroSrc(winSt,'win')+'" alt="">'+
+    '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
     medalBlock+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
@@ -1170,11 +1180,11 @@ function roundWon(){
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else if(B.mode==='mixed') show('mixed'); else openSetup('battle'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
-function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.add('show');
+function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.toggle('has-hero', !!$('#resultCard .rhero')); o.classList.add('show');
   $$('#resultCard .rstars svg.on').forEach((s,i)=>{ s.style.animationDelay=(0.35+i*0.35)+'s'; setTimeout(()=>Sfx.star(i), 350+i*350); });
 }
 function confetti(){ const w=stageEl.clientWidth, h=stageEl.clientHeight; for(let i=0;i<5;i++) setTimeout(()=>FX.burst(rand(w*.15,w*.85), rand(h*.1,h*.5), {n:26,speed:8,shape:'star',colors:['#ffe066','#ff7ad9','#7ff0ff','#9dff6b','#fff'],size:10,life:80,gravity:.1}), i*220); }
-function hideResult(){ $('#result').classList.remove('show'); }
+function hideResult(){ $('#result').classList.remove('show','has-hero'); }
 
 /* timed survival (60s) and combo challenge (90s) */
 function paintTimer(){
@@ -1260,7 +1270,7 @@ function timedEnd(){
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); openSetup(againMode); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
-function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg, #stage > .beam').forEach(e=>e.remove()); if(heroWrap) heroWrap.classList.remove('under-mon'); clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
+function endBattle(){ B.token++; stopTimer(); B.busy=true; FX.clear(); if(fxLayer) fxLayer.innerHTML=''; $$('#stage .rainbowbg, #stage > .beam').forEach(e=>e.remove()); if(heroWrap){ heroWrap.classList.remove('under-mon'); heroWrap.classList.remove('soft-beam'); } clearDisrupt(); clearCinema(); B._hen=1; B._henLabel=null; const hs=heroSvgEl(); if(hs){ hs.classList.remove('aura','rainbow','no-slug','henshin-up'); for(let i=1;i<=5;i++) hs.classList.remove('henshin-'+i); hs.classList.add('henshin-1'); const img=hs.querySelector('.hero-raster'); if(img) img.setAttribute('src', heroSrc(1,'idle')); } }
 
 function initBattle(){
   stageEl=$('#stage'); heroWrap=$('#heroWrap'); monWrap=$('#monWrap'); fxLayer=$('#fxLayer'); FX.attach($('#fxCanvas'));
@@ -1374,10 +1384,30 @@ function closeModal(v){ $('#modal').classList.remove('show'); const cb=modalCb; 
 /* ---------- mute ---------- */
 function syncMute(){ const b=$('#btnMute'); b.innerHTML=icon(DATA.settings.muted?'mute':'sound'); b.setAttribute('aria-label', DATA.settings.muted?'開聲':'靜音'); }
 
+/* Battle stage height: a 緊湊, b 適中 (default), c 大戰鬥. ?stage=a overrides for a direct link. */
+function stageSizeFromURL(){ const m=/[?&]stage=([abc])(?:&|$)/.exec(location.search); return m?m[1]:''; }
+function currentStageSize(){
+  const q=stageSizeFromURL(); if(q) return q;
+  const s=DATA.settings.stageSize; return (s==='a'||s==='b'||s==='c')?s:'b';
+}
+function applyStageSize(size, persist){
+  const s=(size==='a'||size==='b'||size==='c')?size:'b';
+  if(persist){ DATA.settings.stageSize=s; save(); }
+  const battle=$('#battle');
+  if(battle){ battle.classList.remove('stage-a','stage-b','stage-c'); battle.classList.add('stage-'+s); }
+  $$('[data-stage-size]').forEach(b=>{ const on=b.dataset.stageSize===s; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); });
+  if(stageEl && current==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
+}
+function initStageSize(){
+  const q=stageSizeFromURL();
+  applyStageSize(q||currentStageSize(), !!q);
+  $$('[data-stage-size]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); applyStageSize(b.dataset.stageSize, true); }));
+}
+
 /* ---------- init ---------- */
 function init(){
   buildSky($('#bg')); fillIcons(); syncMute();
-  initHome(); initLearn(); initSetup(); initBattle();
+  initHome(); initLearn(); initSetup(); initBattle(); initStageSize();
   Speech.init();
   document.addEventListener('pointerdown', ()=>Sfx.init(), {passive:true});
   document.addEventListener('keydown', ()=>Sfx.init());
@@ -1506,25 +1536,46 @@ function runSelfTest(){
   const pair=dexPairHTML('heidragon');
   if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   ensureHero();
+  for(let st=1;st<=5;st++){
+    if(heroSrc(st,'idle')!=='assets/battle/hero_h'+st+'.png') fails.push('idle src '+st);
+    if(heroSrc(st,'omega')!=='assets/battle/hero_h'+st+'.png') fails.push('omega src '+st);
+    if(heroSrc(st,'win')!=='assets/battle/hero_h'+st+'_pose_win.png') fails.push('win src '+st);
+    if(heroSrc(st,'punch')!=='assets/battle/hero_h'+st+'_pose_punch.png') fails.push('punch src '+st);
+    if(heroSrc(st,'kick')!=='assets/battle/hero_h'+st+'_pose_kick.png') fails.push('kick src '+st);
+    if(heroSrc(st,'beam')!=='assets/battle/hero_h'+st+'_pose_beam.png') fails.push('beam src '+st);
+    if(heroSrc(st,'guard')!=='assets/battle/hero_h'+st+'_pose_guard.png') fails.push('guard src '+st);
+  }
   ['beam','omega'].forEach(function(p){
     heroPose(p);
     const hs=heroSvgEl();
     if(!hs || !hs.classList.contains('pose-'+p)) fails.push('pose '+p);
     if(!heroWrap || !heroWrap.classList.contains('under-mon')) fails.push('under '+p);
+    if(heroWrap && heroWrap.classList.contains('soft-beam')) fails.push('fade '+p);
+    const op=parseFloat(getComputedStyle(heroWrap).opacity);
+    if(!(op>=0.99)) fails.push('op '+p+' '+op);
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
     if(!(hz<mz)) fails.push('z '+p+' '+hz+'/'+mz);
-    for(let st=1;st<=5;st++){
-      if(heroSrc(st,p)!=='assets/battle/hero_h'+st+'_pose_'+p+'.png') fails.push('src '+p+' '+st);
-    }
+    const img=hs && hs.querySelector('.hero-raster');
+    if(!img || img.getAttribute('src')!==heroSrc(1,p)) fails.push('live '+p);
   });
+  heroPose('omega');
+  if(!heroSvgEl() || !heroSvgEl().classList.contains('stand')) fails.push('omega stand');
   heroPose('kick');
-  if(!heroWrap || heroWrap.classList.contains('under-mon')) fails.push('kick under');
+  if(!heroWrap || heroWrap.classList.contains('under-mon') || heroWrap.classList.contains('soft-beam')) fails.push('kick under');
+  if(heroSvgEl() && heroSvgEl().classList.contains('stand')) fails.push('kick stand');
+  if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('kick op');
   if(heroWrap && monWrap){
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
     if(!(hz>mz)) fails.push('kick z '+hz+'/'+mz);
   }
   heroPose('idle');
-  if(heroWrap && heroWrap.classList.contains('under-mon')) fails.push('idle under');
+  if(heroWrap && (heroWrap.classList.contains('under-mon') || heroWrap.classList.contains('soft-beam'))) fails.push('idle under');
+  if(!heroSvgEl() || !heroSvgEl().classList.contains('stand')) fails.push('idle stand');
+  if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('idle op');
+  const stageNow=currentStageSize();
+  if(!$('#battle').classList.contains('stage-'+stageNow)) fails.push('stage '+stageNow);
+  const monHud=$('.monhud'), right=$('.hud-right');
+  if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
