@@ -114,6 +114,12 @@ body[data-screen="home"] main{padding-top:0}
 .home-record{flex:0 0 auto;margin:2px 0 4px;min-width:min(92vw,460px);min-height:clamp(56px,8.4vh,72px);padding:8px 28px 10px;border-radius:999px;border:3.5px solid rgba(255,255,255,.95);background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;font-weight:900;font-size:clamp(24px,5.2vw,32px);letter-spacing:3px;text-shadow:0 1px 0 rgba(255,255,255,.5);box-shadow:0 6px 0 #92400e,0 12px 22px rgba(0,0,0,.32),inset 0 3px 0 rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;z-index:3;cursor:pointer}
 .home-record small{display:block;font-size:.4em;font-weight:800;letter-spacing:1px;opacity:.82;margin-top:2px}
 .home-record:active{transform:translateY(4px);box-shadow:0 2px 0 #92400e,inset 0 2px 0 rgba(255,255,255,.5)}
+.stage-chip{display:flex;align-items:center;justify-content:center;gap:4px;flex:0 0 auto;margin:4px 0 0;z-index:4}
+.stage-chip span{font-size:12px;font-weight:900;letter-spacing:1px;color:#e8ecff}
+.stage-chip button{border:2px solid rgba(255,255,255,.55);background:rgba(8,12,40,.62);color:#fff;border-radius:999px;padding:2px 9px;font-weight:900;font-size:12px;line-height:1.2;min-height:28px}
+.stage-chip button.on{background:#ffd84d;color:#3b2300;border-color:#fff}
+.stage-chip.setup-stage{margin:4px 0 8px}
+#home .stage-chip{margin-top:2px}
 @media (max-width:640px){
   .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(48px,.55fr) minmax(0,1fr) minmax(48px,.55fr);gap:2px}
@@ -121,8 +127,10 @@ body[data-screen="home"] main{padding-top:0}
   .home-pill{padding:7px 6px;font-size:clamp(13px,3.4vw,16px);min-height:40px}
   .home-pill.battle{font-size:clamp(14px,3.6vw,17px);min-height:42px}
   .home-pet{width:clamp(64px,18vw,96px)}
-  .home-wrap{padding-bottom:20px}
-  .home-record{min-height:54px;margin:0;font-size:clamp(22px,6vw,28px);padding:6px 18px 8px}
+  .home-wrap{padding-bottom:8px}
+  .home-record{min-height:50px;margin:0;font-size:clamp(20px,5.6vw,28px);padding:4px 18px 6px}
+  #home .stage-chip{margin-top:2px}
+  #home .stage-chip button{min-height:24px;font-size:11px;padding:1px 8px}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
@@ -283,14 +291,22 @@ body[data-screen="home"] main{padding-top:0}
 .litem.on span{color:#9a3412}
 .litem.seen{border-color:rgba(125,255,178,.6)}
 
-/* BATTLE — short stage, tall question. The equation and answer buttons own a phone screen. */
-#battle{padding:2px 8px 6px}
-#battle.active{display:grid;grid-template-rows:minmax(108px,32dvh) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
+/* BATTLE stage height is a playtest choice. Question stays in the panel below the stage.
+   A 緊湊 ~32dvh (most room for the sum), B 適中 ~41dvh (default), C 大戰鬥 ~49dvh. */
+#battle{padding:2px 8px 6px;--stage-row:minmax(128px,41dvh)}
+#battle.stage-a{--stage-row:minmax(108px,32dvh)}
+#battle.stage-b{--stage-row:minmax(128px,41dvh)}
+#battle.stage-c{--stage-row:minmax(148px,49dvh)}
+#battle.active{display:grid;grid-template-rows:var(--stage-row) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
 @media (max-height:700px){
-  #battle.active{grid-template-rows:minmax(96px,28dvh) minmax(0,1fr)}
+  #battle.stage-a{--stage-row:minmax(96px,28dvh)}
+  #battle.stage-b{--stage-row:minmax(108px,34dvh)}
+  #battle.stage-c{--stage-row:minmax(120px,40dvh)}
 }
 @media (max-height:620px){
-  #battle.active{grid-template-rows:minmax(88px,24dvh) minmax(0,1fr)}
+  #battle.stage-a{--stage-row:minmax(88px,24dvh)}
+  #battle.stage-b{--stage-row:minmax(96px,30dvh)}
+  #battle.stage-c{--stage-row:minmax(104px,34dvh)}
 }
 @media (orientation:landscape) and (min-width:700px){
   #battle.active{grid-template-columns:minmax(0,1.05fr) minmax(300px,1fr);grid-template-rows:minmax(0,1fr)}
@@ -379,12 +395,14 @@ body[data-screen="home"] main{padding-top:0}
 #dsArt .mon-raster,#dsArt .mon-img{width:100%;height:100%}
 #fxLayer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 #fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
-.stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 92px 8px 10px;z-index:7;gap:8px;pointer-events:none}
+.stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:6px 6px 6px 8px;z-index:9;gap:6px;pointer-events:none}
 .hudbox{background:rgba(0,0,0,.4);border-radius:14px;padding:5px 10px;font-weight:900;font-size:clamp(13px,3.2vw,17px);border:2px solid rgba(255,255,255,.18)}
-.herohud{position:relative;padding-left:34px}
+.herohud{position:relative;padding-left:34px;flex:0 1 auto;max-width:46%}
+.hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:auto;max-width:min(68%,calc(100% - 112px));min-width:0}
 .chest-lamp{position:absolute;left:8px;top:9px;width:16px;height:16px;border-radius:50%;background:var(--tc,#38d6cf);box-shadow:0 0 8px var(--tc,#38d6cf),inset 0 0 4px rgba(255,255,255,.9);border:2px solid #fff}
 .chest-lamp.blink{animation:tblink .7s steps(2,jump-none) infinite}
-.monhud{min-width:44%;max-width:60%;text-align:right}
+.monhud{width:100%;max-width:100%;text-align:right}
+#monName{line-height:1.15}
 .hpbar{height:14px;border-radius:8px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:4px;border:2px solid rgba(0,0,0,.4)}
 .hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff4d4d,#ffb347);border-radius:6px;transition:width .45s cubic-bezier(.3,1.3,.5,1);float:right}
 .herohud .dots{display:flex;gap:4px;margin-top:4px}
@@ -395,7 +413,7 @@ body[data-screen="home"] main{padding-top:0}
 .timerbox{font-size:clamp(20px,5vw,30px);color:#fff}
 .timerbox.low{color:#ff6b6b;animation:pulse .5s ease-in-out infinite alternate}
 @keyframes pulse{to{transform:scale(1.1)}}
-.combo{position:absolute;right:8px;top:8px;left:auto;bottom:auto;transform:none;z-index:9;font-weight:900;font-size:clamp(13px,3.2vw,18px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:3px 10px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none;max-width:42%}
+.combo{position:static;z-index:1;font-weight:900;font-size:clamp(13px,3.2vw,18px);color:#fff;background:linear-gradient(180deg,#ff5bd1,#a21caf);padding:3px 10px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 0 #6b0f6b;display:none;white-space:nowrap;pointer-events:none;max-width:100%}
 .combo.omega{background:linear-gradient(180deg,#ffe14d,#ff5bd1,#7ff0ff);color:#1a1040;box-shadow:0 4px 0 #7c3aed,0 0 20px rgba(255,225,77,.8);border-color:#fff}
 .combo.show{display:block}
 .movename{position:absolute;left:50%;top:42%;z-index:8;font-weight:900;font-size:clamp(26px,6.4vw,56px);color:#fff35c;white-space:nowrap;letter-spacing:2px;max-width:78%;text-align:center;text-shadow:3px 3px 0 #d10000,-3px -3px 0 #d10000,3px -3px 0 #d10000,-3px 3px 0 #d10000,0 3px 0 #d10000,0 -3px 0 #d10000,3px 0 0 #d10000,-3px 0 0 #d10000,0 8px 0 #6b0000,0 0 26px rgba(255,255,255,.9);pointer-events:none}
@@ -589,6 +607,17 @@ body[data-screen="home"] main{padding-top:0}
 .choice:active{transform:translateY(4px)}
 .choice.x{opacity:.3;filter:grayscale(1)}
 .choice.right{outline:5px solid #fff;animation:pulse .4s ease-in-out 3 alternate}
+/* Option C gives the arena more height. Answers shrink a little so the sum stays fully on screen. */
+#battle.stage-c .panel{gap:6px;padding:6px 8px 8px}
+#battle.stage-c .qcard{padding:6px 6px 8px}
+#battle.stage-c .qrow,
+#battle.stage-c.mode-mixed .qrow{font-size:clamp(40px,11.2vw,68px)}
+#battle.stage-c .hint{padding:2px 6px;font-size:clamp(13px,3.2vw,18px)}
+#battle.stage-c .keypad{gap:6px;grid-template-rows:repeat(4,minmax(38px,1fr))}
+#battle.stage-c .key{min-height:38px;font-size:clamp(22px,6.2vw,36px)}
+#battle.stage-c .key.ok{font-size:clamp(18px,4.6vw,26px)}
+#battle.stage-c .choices{gap:8px;grid-template-rows:repeat(2,minmax(42px,1fr))}
+#battle.stage-c .choice{min-height:42px;font-size:clamp(26px,7.2vw,44px)}
 @media (orientation:landscape) and (min-width:700px){
   .qrow{font-size:clamp(40px,5.4vw,72px)}
   #battle.mode-mixed .qrow{font-size:clamp(28px,3.8vw,48px)}
@@ -882,6 +911,12 @@ body[data-screen="home"] main{padding-top:0}
           <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
         <button class="home-record" data-go="progress">戰績<small>勳章 · 圖鑑 · 分數</small></button>
+        <div class="stage-chip" role="group" aria-label="戰鬥畫面大小">
+          <span>畫面</span>
+          <button type="button" data-stage-size="a">A 緊湊</button>
+          <button type="button" data-stage-size="b">B 適中</button>
+          <button type="button" data-stage-size="c">C 大戰鬥</button>
+        </div>
       </div>
     </section>
 
@@ -945,6 +980,12 @@ body[data-screen="home"] main{padding-top:0}
             <button data-speak="0" aria-pressed="false">唔讀</button>
           </div>
         </div>
+        <div class="stage-chip setup-stage" role="group" aria-label="戰鬥畫面大小">
+          <span>畫面</span>
+          <button type="button" data-stage-size="a">A 緊湊</button>
+          <button type="button" data-stage-size="b">B 適中</button>
+          <button type="button" data-stage-size="c">C 大戰鬥</button>
+        </div>
         <div class="besttxt" id="bestTxt"></div>
         <div class="warn" id="setupWarn"></div>
         <button class="btn" id="startBtn"><span data-icon="bolt"></span><span class="lbl">開始打怪獸！</span></button>
@@ -978,15 +1019,17 @@ body[data-screen="home"] main{padding-top:0}
     </section>
 
     <!-- BATTLE -->
-    <section id="battle" class="screen">
+    <section id="battle" class="screen stage-b">
       <div class="stage" id="stage">
         <div class="battle-city" aria-hidden="true"></div>
         <div class="ground"></div>
         <div class="stagehud">
           <div class="hudbox herohud" id="heroHud"><i class="chest-lamp" id="chestLamp" aria-hidden="true"></i><div id="roundLbl">第 1 關</div><div class="dots" id="roundDots"></div></div>
-          <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
+          <div class="hud-right">
+            <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
+            <div class="combo" id="combo">2 連擊</div>
+          </div>
         </div>
-        <div class="combo" id="combo">2 連擊</div>
         <div class="elem-pop" id="elemPop" aria-hidden="true"></div>
         <div class="hero-wrap" id="heroWrap"><div class="hero-bob" id="heroBob"></div><div class="form-name" id="formName">銀光形態</div></div>
         <div class="mon-wrap" id="monWrap"><div class="mon-bob" id="monBob"></div></div>
@@ -1526,7 +1569,7 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, stageSize:'b'}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
@@ -2148,14 +2191,15 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Shorter stage: keep both fighters inside it, under the HUD, and off the question. */
+  /* Grow fighters with the stage until the phone width or the HUD clearance stops them.
+     The question lives in the panel under the stage, so it is never covered by the arena. */
   const frac=HERO_STAND[henshinStage()]||0.54;
-  let heroVis=Math.min(120, Math.max(78, h*0.38));
+  let heroVis=Math.max(78, h*0.40);
   let monVis=heroVis*1.1;
   let heroBox=heroVis/frac;
   const need=heroBox+monVis;
   const room=w*0.96+Math.min(48, w*0.12);
-  const maxH=h*0.68;
+  const maxH=h*0.72;
   let s=1;
   if(need>room) s=Math.min(s, room/need);
   if(heroBox>maxH) s=Math.min(s, maxH/heroBox);
@@ -2889,10 +2933,30 @@ function closeModal(v){ $('#modal').classList.remove('show'); const cb=modalCb; 
 /* ---------- mute ---------- */
 function syncMute(){ const b=$('#btnMute'); b.innerHTML=icon(DATA.settings.muted?'mute':'sound'); b.setAttribute('aria-label', DATA.settings.muted?'開聲':'靜音'); }
 
+/* Battle stage height: a 緊湊, b 適中 (default), c 大戰鬥. ?stage=a overrides for a direct link. */
+function stageSizeFromURL(){ const m=/[?&]stage=([abc])(?:&|$)/.exec(location.search); return m?m[1]:''; }
+function currentStageSize(){
+  const q=stageSizeFromURL(); if(q) return q;
+  const s=DATA.settings.stageSize; return (s==='a'||s==='b'||s==='c')?s:'b';
+}
+function applyStageSize(size, persist){
+  const s=(size==='a'||size==='b'||size==='c')?size:'b';
+  if(persist){ DATA.settings.stageSize=s; save(); }
+  const battle=$('#battle');
+  if(battle){ battle.classList.remove('stage-a','stage-b','stage-c'); battle.classList.add('stage-'+s); }
+  $$('[data-stage-size]').forEach(b=>{ const on=b.dataset.stageSize===s; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); });
+  if(stageEl && current==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
+}
+function initStageSize(){
+  const q=stageSizeFromURL();
+  applyStageSize(q||currentStageSize(), !!q);
+  $$('[data-stage-size]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); applyStageSize(b.dataset.stageSize, true); }));
+}
+
 /* ---------- init ---------- */
 function init(){
   buildSky($('#bg')); fillIcons(); syncMute();
-  initHome(); initLearn(); initSetup(); initBattle();
+  initHome(); initLearn(); initSetup(); initBattle(); initStageSize();
   Speech.init();
   document.addEventListener('pointerdown', ()=>Sfx.init(), {passive:true});
   document.addEventListener('keydown', ()=>Sfx.init());
@@ -3040,6 +3104,10 @@ function runSelfTest(){
   }
   heroPose('idle');
   if(heroWrap && heroWrap.classList.contains('under-mon')) fails.push('idle under');
+  const stageNow=currentStageSize();
+  if(!$('#battle').classList.contains('stage-'+stageNow)) fails.push('stage '+stageNow);
+  const monHud=$('.monhud'), right=$('.hud-right');
+  if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';

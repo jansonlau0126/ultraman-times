@@ -11,7 +11,7 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, stageSize:'b'}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
@@ -633,14 +633,15 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Shorter stage: keep both fighters inside it, under the HUD, and off the question. */
+  /* Grow fighters with the stage until the phone width or the HUD clearance stops them.
+     The question lives in the panel under the stage, so it is never covered by the arena. */
   const frac=HERO_STAND[henshinStage()]||0.54;
-  let heroVis=Math.min(120, Math.max(78, h*0.38));
+  let heroVis=Math.max(78, h*0.40);
   let monVis=heroVis*1.1;
   let heroBox=heroVis/frac;
   const need=heroBox+monVis;
   const room=w*0.96+Math.min(48, w*0.12);
-  const maxH=h*0.68;
+  const maxH=h*0.72;
   let s=1;
   if(need>room) s=Math.min(s, room/need);
   if(heroBox>maxH) s=Math.min(s, maxH/heroBox);
@@ -1374,10 +1375,30 @@ function closeModal(v){ $('#modal').classList.remove('show'); const cb=modalCb; 
 /* ---------- mute ---------- */
 function syncMute(){ const b=$('#btnMute'); b.innerHTML=icon(DATA.settings.muted?'mute':'sound'); b.setAttribute('aria-label', DATA.settings.muted?'開聲':'靜音'); }
 
+/* Battle stage height: a 緊湊, b 適中 (default), c 大戰鬥. ?stage=a overrides for a direct link. */
+function stageSizeFromURL(){ const m=/[?&]stage=([abc])(?:&|$)/.exec(location.search); return m?m[1]:''; }
+function currentStageSize(){
+  const q=stageSizeFromURL(); if(q) return q;
+  const s=DATA.settings.stageSize; return (s==='a'||s==='b'||s==='c')?s:'b';
+}
+function applyStageSize(size, persist){
+  const s=(size==='a'||size==='b'||size==='c')?size:'b';
+  if(persist){ DATA.settings.stageSize=s; save(); }
+  const battle=$('#battle');
+  if(battle){ battle.classList.remove('stage-a','stage-b','stage-c'); battle.classList.add('stage-'+s); }
+  $$('[data-stage-size]').forEach(b=>{ const on=b.dataset.stageSize===s; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on?'true':'false'); });
+  if(stageEl && current==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
+}
+function initStageSize(){
+  const q=stageSizeFromURL();
+  applyStageSize(q||currentStageSize(), !!q);
+  $$('[data-stage-size]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); applyStageSize(b.dataset.stageSize, true); }));
+}
+
 /* ---------- init ---------- */
 function init(){
   buildSky($('#bg')); fillIcons(); syncMute();
-  initHome(); initLearn(); initSetup(); initBattle();
+  initHome(); initLearn(); initSetup(); initBattle(); initStageSize();
   Speech.init();
   document.addEventListener('pointerdown', ()=>Sfx.init(), {passive:true});
   document.addEventListener('keydown', ()=>Sfx.init());
@@ -1525,6 +1546,10 @@ function runSelfTest(){
   }
   heroPose('idle');
   if(heroWrap && heroWrap.classList.contains('under-mon')) fails.push('idle under');
+  const stageNow=currentStageSize();
+  if(!$('#battle').classList.contains('stage-'+stageNow)) fails.push('stage '+stageNow);
+  const monHud=$('.monhud'), right=$('.hud-right');
+  if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
