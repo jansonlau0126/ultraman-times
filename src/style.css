@@ -306,11 +306,12 @@ body[data-screen="home"] main{padding-top:0}
 .battle-city{position:absolute;inset:0;z-index:0;background:#0a0e2e center/cover no-repeat;background-image:url('assets/home/city_bg.jpg');opacity:.92}
 .ground{position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(180deg,rgba(20,24,48,.75),rgba(8,10,24,.9));border-top:3px solid rgba(93,106,160,.55);z-index:1}
 .ground::after{content:"";position:absolute;left:0;right:0;top:38%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.55}
-.hero-wrap{position:absolute;left:2%;bottom:12%;z-index:3;overflow:visible;opacity:1}
+.hero-wrap{position:absolute;left:2%;bottom:12%;z-index:3;overflow:visible}
 .mon-wrap{position:absolute;right:2%;bottom:12%;z-index:2;overflow:visible}
-/* pose_beam and pose_omega paint a light across the monster. Keep the hero in
-   front, but fade it so the monster stays readable through the beam. */
-.hero-wrap.soft-beam{opacity:.62}
+/* Beam pose art and the omega move reach across the monster. Drop that hero
+   under the monster. Other poses stay in front. Full opacity either way. */
+.hero-wrap.under-mon{z-index:2}
+.hero-wrap.under-mon ~ .mon-wrap{z-index:4}
 .hero.raster{position:relative;width:100%;height:100%;display:block}
 .hero-art{position:absolute;inset:0}
 .hero-raster,.mon-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
@@ -367,6 +368,16 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.pose-win .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-3.pose-win .hero-art{transform:translateY(calc(8% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-5.pose-win .hero-art{transform:translateY(calc(7% * var(--pop, 1))) scale(var(--pop, 1))}
+/* hero_h{N}.png is a tight portrait, not the padded 520 square. Scale it so the
+   standing body stays the same height inside the pose box, feet on the ground. */
+.hero.raster.henshin-1{--body:.50}
+.hero.raster.henshin-2{--body:.56}
+.hero.raster.henshin-3{--body:.54}
+.hero.raster.henshin-4{--body:.55}
+.hero.raster.henshin-5{--body:.56}
+.hero.raster.stand .hero-art,
+.hero.raster.henshin-1.stand .hero-art,
+.hero.raster.henshin-4.stand .hero-art{transform:scale(var(--body,.52));transform-origin:50% 100%}
 .form-name{position:absolute;left:50%;top:100%;margin-top:1px;transform:translateX(-50%);z-index:9;pointer-events:none;white-space:nowrap;font-weight:900;font-size:clamp(13px,3.1vw,18px);line-height:1.15;letter-spacing:1px;color:#fff;background:linear-gradient(180deg,#38bdf8,#0369a1);border:2px solid #fff;border-radius:999px;padding:2px 10px;box-shadow:0 3px 0 #082f49,0 0 10px rgba(56,189,248,.65);text-shadow:0 1px 0 #082f49}
 .form-name.flash{animation:formFlash 1s ease-out}
 @keyframes formFlash{0%{transform:translateX(-50%) scale(.6);filter:brightness(2.4);box-shadow:0 0 18px #fff}40%{transform:translateX(-50%) scale(1.16);filter:brightness(1.6)}100%{transform:translateX(-50%) scale(1);filter:none}}
@@ -623,6 +634,9 @@ body[data-screen="home"] main{padding-top:0}
 .overlay{position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(5,8,30,.62);padding:12px;overflow-y:auto}
 .overlay.show{display:flex;animation:screenIn .35s ease-out}
 .rcard{width:100%;max-width:520px;text-align:center;position:relative;margin:auto}
+.overlay.has-hero{align-items:flex-start;padding-top:8px}
+.overlay.has-hero .rcard{margin:0 auto}
+.rhero{display:block;width:min(200px,52vw);height:min(188px,40vw);margin:0 auto 2px;object-fit:contain;object-position:center bottom;pointer-events:none;filter:drop-shadow(0 10px 16px rgba(0,0,0,.5))}
 .rcard h3{margin:4px 0;font-size:clamp(28px,7vw,44px);font-weight:900;color:#ffe14d;text-shadow:0 4px 0 #b45309}
 .rstars{display:flex;justify-content:center;gap:10px;margin:6px 0}
 .rstars svg{width:clamp(56px,15vw,84px);height:clamp(56px,15vw,84px);fill:#3a4270;stroke:#1b2150;stroke-width:1}

@@ -160,16 +160,17 @@ const HOME_ART = {
   dragon: 'assets/home/pet_dragon.png',
   turtle: 'assets/home/pet_turtle.png'
 };
-/* Per-form poses: assets/battle/hero_h{1-5}_pose_{omega|punch|kick|beam|guard|win}.png
-   idle/quiz = omega. disc/whirl share punch. tuck (flip windup) stays omega. */
+/* Idle and 星煌爆 use the standing file assets/battle/hero_h{1-5}.png.
+   Action poses: hero_h{N}_pose_{punch|kick|beam|guard|win}.png.
+   disc/whirl share punch. tuck (flip windup) stays on the standing art. */
 const POSE_FILE = {
-  idle:'omega', omega:'omega',
+  idle:'base', omega:'base', tuck:'base',
   beam:'beam', super:'beam',
   punch:'punch', disc:'punch', whirl:'punch', rainbow:'punch',
-  kick:'kick', flip:'kick', tuck:'omega',
+  kick:'kick', flip:'kick',
   guard:'guard', win:'win'
 };
-function poseFile(p){ return POSE_FILE[p] || 'omega'; }
+function poseFile(p){ return POSE_FILE[p] || 'base'; }
 function heroStageOf(h){
   let st=1; if(!h) return 1;
   for(let i=1;i<=5;i++) if(h.classList.contains('henshin-'+i)) st=i;
@@ -177,10 +178,12 @@ function heroStageOf(h){
 }
 function heroSrc(stage, pose){
   const st=Math.max(1, Math.min(5, stage|0||1));
-  return 'assets/battle/hero_h'+st+'_pose_'+poseFile(pose)+'.png';
+  const file=poseFile(pose);
+  if(file==='base') return 'assets/battle/hero_h'+st+'.png';
+  return 'assets/battle/hero_h'+st+'_pose_'+file+'.png';
 }
 function preloadForm(stage){
-  ['omega','punch','kick','beam','guard','win'].forEach(function(p){
+  ['idle','punch','kick','beam','guard','win'].forEach(function(p){
     const im=new Image(); im.src=heroSrc(stage, p);
   });
 }
@@ -199,7 +202,7 @@ function heroRasterHTML(stage){
   const st = Math.max(1, Math.min(5, stage|0 || 1));
   /* Anchors sit in the 220×320 box over a bottom-aligned square PNG (box is 2:3).
      mk-beam ≈ painted beam core on the beam pose; chest/hand/slug follow the same map. */
-  return '<div class="hero henshin-'+st+' raster" style="--tc:#5ee7ff">'+
+  return '<div class="hero henshin-'+st+' raster stand" style="--tc:#5ee7ff">'+
     '<div class="hero-art">'+
     '<img class="hero-raster" src="'+heroSrc(st,'idle')+'" alt="" draggable="false" onerror="window.__heroImgError&&window.__heroImgError(this)">'+
     '<svg class="hero-anchors" viewBox="0 0 220 320" aria-hidden="true">'+
@@ -491,11 +494,12 @@ function relPos(el){ const s=stageEl.getBoundingClientRect(), r=el.getBoundingCl
 function heroPose(p){
   const h=heroSvgEl(); if(!h) return;
   const keep=[]; h.classList.forEach(c=>{ if(c==='raster'||c.indexOf('t-')===0||c==='aura'||c==='rainbow'||c==='no-slug'||c==='charging'||c.indexOf('combo-')===0||c.indexOf('henshin-')===0) keep.push(c); });
-  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[]).join(' '));
-  /* Beam and omega art cross the monster. Fade the hero so the monster shows through. */
+  const base=poseFile(p||'idle')==='base';
+  h.setAttribute('class', ['hero'].concat(keep, p&&p!=='idle'?['pose-'+p]:[], base?['stand']:[]).join(' '));
+  /* Beam pose and the omega move cross the monster. Keep the hero behind it, full opacity. */
   if(heroWrap){
-    heroWrap.classList.remove('under-mon');
-    heroWrap.classList.toggle('soft-beam', p==='beam' || p==='omega');
+    heroWrap.classList.remove('soft-beam');
+    heroWrap.classList.toggle('under-mon', p==='beam' || p==='omega');
   }
   const bob=$('#heroBob');
   if(bob && bob.dataset.svgFallback) return;
@@ -664,8 +668,7 @@ function impactStar(t, text){ const e=fxEl('impact','<svg viewBox="0 0 100 100">
 function makeBeam(o,t,thick,cls,dur){ const dx=t.x-o.x, dy=t.y-o.y, len=Math.hypot(dx,dy), ang=Math.atan2(dy,dx)*180/Math.PI; const e=document.createElement('div'); e.className='beam '+(cls||''); (stageEl||fxLayer).appendChild(e);
   e.style.left=o.x+'px'; e.style.top=(o.y-thick/2)+'px'; e.style.width=len+'px'; e.style.height=thick+'px'; e.style.transformOrigin='0 50%';
   const R='rotate('+ang+'deg)';
-  const op=.62;
-  play(e,[{transform:R+' scaleX(0)',opacity:op},{transform:R+' scaleX(1)',opacity:op,offset:.22},{transform:R+' scaleX(1) scaleY(1.25)',opacity:op,offset:.5},{transform:R+' scaleX(1) scaleY(.9)',opacity:op,offset:.8},{transform:R+' scaleX(1) scaleY(0)',opacity:0}],{duration:dur*K(),easing:'ease-out'}).then(()=>rm(e)); return e; }
+  play(e,[{transform:R+' scaleX(0)',opacity:1},{transform:R+' scaleX(1)',opacity:1,offset:.22},{transform:R+' scaleX(1) scaleY(1.25)',opacity:1,offset:.5},{transform:R+' scaleX(1) scaleY(.9)',opacity:1,offset:.8},{transform:R+' scaleX(1) scaleY(0)',opacity:0}],{duration:dur*K(),easing:'ease-out'}).then(()=>rm(e)); return e; }
 function speedLines(){ const h=stageEl.clientHeight, w=stageEl.clientWidth; for(let i=0;i<7;i++){ const e=fxEl('speedline'); e.style.top=rand(h*.2,h*.85)+'px'; e.style.left=rand(0,w*.3)+'px'; e.style.width=rand(60,160)+'px';
   play(e,[{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.3},{transform:'translateX('+(w*.5)+'px)',opacity:0}],{duration:380,delay:i*30}).then(()=>rm(e)); } }
 const RAINBOW=['#ff7ad9','#ffe066','#7ff0ff','#b58cff','#9dff6b','#fff'];
@@ -1161,7 +1164,9 @@ function roundWon(){
   } else {
     medalBlock='<div class="rstat">'+(B.mode==='divide'?'每個除數答夠幾題先攞勳章！':'混合練習要每個乘數表答夠幾題先攞勳章！')+'</div>';
   }
-  const html = '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
+  const winSt=henshinStage();
+  const html = '<img class="rhero" src="'+heroSrc(winSt,'win')+'" alt="">'+
+    '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
     medalBlock+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
@@ -1175,11 +1180,11 @@ function roundWon(){
   $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else if(B.mode==='mixed') show('mixed'); else openSetup('battle'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
-function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.add('show');
+function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.toggle('has-hero', !!$('#resultCard .rhero')); o.classList.add('show');
   $$('#resultCard .rstars svg.on').forEach((s,i)=>{ s.style.animationDelay=(0.35+i*0.35)+'s'; setTimeout(()=>Sfx.star(i), 350+i*350); });
 }
 function confetti(){ const w=stageEl.clientWidth, h=stageEl.clientHeight; for(let i=0;i<5;i++) setTimeout(()=>FX.burst(rand(w*.15,w*.85), rand(h*.1,h*.5), {n:26,speed:8,shape:'star',colors:['#ffe066','#ff7ad9','#7ff0ff','#9dff6b','#fff'],size:10,life:80,gravity:.1}), i*220); }
-function hideResult(){ $('#result').classList.remove('show'); }
+function hideResult(){ $('#result').classList.remove('show','has-hero'); }
 
 /* timed survival (60s) and combo challenge (90s) */
 function paintTimer(){
@@ -1531,28 +1536,41 @@ function runSelfTest(){
   const pair=dexPairHTML('heidragon');
   if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   ensureHero();
+  for(let st=1;st<=5;st++){
+    if(heroSrc(st,'idle')!=='assets/battle/hero_h'+st+'.png') fails.push('idle src '+st);
+    if(heroSrc(st,'omega')!=='assets/battle/hero_h'+st+'.png') fails.push('omega src '+st);
+    if(heroSrc(st,'win')!=='assets/battle/hero_h'+st+'_pose_win.png') fails.push('win src '+st);
+    if(heroSrc(st,'punch')!=='assets/battle/hero_h'+st+'_pose_punch.png') fails.push('punch src '+st);
+    if(heroSrc(st,'kick')!=='assets/battle/hero_h'+st+'_pose_kick.png') fails.push('kick src '+st);
+    if(heroSrc(st,'beam')!=='assets/battle/hero_h'+st+'_pose_beam.png') fails.push('beam src '+st);
+    if(heroSrc(st,'guard')!=='assets/battle/hero_h'+st+'_pose_guard.png') fails.push('guard src '+st);
+  }
   ['beam','omega'].forEach(function(p){
     heroPose(p);
     const hs=heroSvgEl();
     if(!hs || !hs.classList.contains('pose-'+p)) fails.push('pose '+p);
-    if(!heroWrap || !heroWrap.classList.contains('soft-beam')) fails.push('soft '+p);
+    if(!heroWrap || !heroWrap.classList.contains('under-mon')) fails.push('under '+p);
+    if(heroWrap && heroWrap.classList.contains('soft-beam')) fails.push('fade '+p);
     const op=parseFloat(getComputedStyle(heroWrap).opacity);
-    if(!(op>=0.55 && op<=0.7)) fails.push('op '+p+' '+op);
+    if(!(op>=0.99)) fails.push('op '+p+' '+op);
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
-    if(!(hz>mz)) fails.push('z '+p+' '+hz+'/'+mz);
-    for(let st=1;st<=5;st++){
-      if(heroSrc(st,p)!=='assets/battle/hero_h'+st+'_pose_'+p+'.png') fails.push('src '+p+' '+st);
-    }
+    if(!(hz<mz)) fails.push('z '+p+' '+hz+'/'+mz);
+    const img=hs && hs.querySelector('.hero-raster');
+    if(!img || img.getAttribute('src')!==heroSrc(1,p)) fails.push('live '+p);
   });
+  heroPose('omega');
+  if(!heroSvgEl() || !heroSvgEl().classList.contains('stand')) fails.push('omega stand');
   heroPose('kick');
-  if(!heroWrap || heroWrap.classList.contains('soft-beam')) fails.push('kick soft');
+  if(!heroWrap || heroWrap.classList.contains('under-mon') || heroWrap.classList.contains('soft-beam')) fails.push('kick under');
+  if(heroSvgEl() && heroSvgEl().classList.contains('stand')) fails.push('kick stand');
   if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('kick op');
   if(heroWrap && monWrap){
     const hz=parseInt(getComputedStyle(heroWrap).zIndex,10), mz=parseInt(getComputedStyle(monWrap).zIndex,10);
     if(!(hz>mz)) fails.push('kick z '+hz+'/'+mz);
   }
   heroPose('idle');
-  if(heroWrap && heroWrap.classList.contains('soft-beam')) fails.push('idle soft');
+  if(heroWrap && (heroWrap.classList.contains('under-mon') || heroWrap.classList.contains('soft-beam'))) fails.push('idle under');
+  if(!heroSvgEl() || !heroSvgEl().classList.contains('stand')) fails.push('idle stand');
   if(heroWrap && parseFloat(getComputedStyle(heroWrap).opacity)<0.99) fails.push('idle op');
   const stageNow=currentStageSize();
   if(!$('#battle').classList.contains('stage-'+stageNow)) fails.push('stage '+stageNow);
