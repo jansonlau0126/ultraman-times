@@ -243,14 +243,47 @@ function crossfadeHero(img, src){
   }
   img.setAttribute('src', src);
 }
+function monIdleSrc(type){ return 'assets/monsters/mon_'+type+'.png'; }
+function monAttackSrc(type){ return 'assets/monsters/mon_'+type+'_attack.png'; }
 function monRasterHTML(type){
-  const src = BATTLE_MON[type];
-  if(!src) return monsterSVG(type, 'fb');
+  const src = monIdleSrc(type);
+  const fb = BATTLE_MON[type] || '';
+  if(!MONS[type] && !fb) return monsterSVG(type, 'fb');
   return '<div class="mon mon-raster mon-'+type+'">'+
-    '<img class="mon-img" src="'+src+'" alt="" draggable="false">'+
+    '<img class="mon-img" src="'+src+'" alt="" draggable="false" data-fb="'+fb+'">'+
     '<svg class="mon-anchors" viewBox="0 0 240 240" aria-hidden="true">'+
     '<circle class="mk-core" cx="120" cy="130" r="1"/><circle class="mk-mouth" cx="120" cy="150" r="1"/>'+
     '</svg></div>';
+}
+function bindMonImg(img){
+  if(!img || img.dataset.bound) return;
+  img.dataset.bound='1';
+  img.addEventListener('error', function(){
+    const fb=img.dataset.fb;
+    if(fb && img.getAttribute('src')!==fb){ img.setAttribute('src', fb); return; }
+    const host=img.closest('.mon');
+    if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
+  });
+}
+function setMonAttack(on){
+  const img=$('#monBob .mon-img'); if(!img) return;
+  bindMonImg(img);
+  const next = on ? monAttackSrc(B.type) : monIdleSrc(B.type);
+  if(img.getAttribute('src')!==next) img.setAttribute('src', next);
+}
+function applyDexPack(pack){
+  if(!pack || !pack.monsters) return;
+  const order=[];
+  pack.monsters.forEach(function(row){
+    const id=row.asset, m=MONS[id]; if(!m) return;
+    m.name=row.name; m.short=row.name; m.nick=row.move; m.kind=row.kind; m.habitat=row.place;
+    m.lore=row.desc_mid; m.kid=row.desc_kid;
+    m.spawn=row.spawn; m.power=row.power; m.rare=row.rare;
+    order.push(id);
+  });
+  if(MONS.deathscorp) MONS.deathscorp.elem='poison';
+  if(MONS.sandwyrm) MONS.sandwyrm.elem='rock';
+  if(order.length) DEX_ORDER.splice(0, DEX_ORDER.length, ...order);
 }
 const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
 function setHomeMon(){ /* pets are static raster art on home */ }
@@ -415,18 +448,34 @@ async function playHenshinFanfare(){
 }
 function disruptKind(type){
   const m=MONS[type]; if(!m) return 'shadow';
-  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',poison:'shadow',shadow:'shadow'};
+  const map={fire:'fire',ice:'ice',thunder:'thunder',rock:'rock',poison:'poison',shadow:'shadow'};
   return map[m.elem]||'shadow';
 }
-function clearDisrupt(){ const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); } }
+function isHardFight(){
+  if(B.mode==='timed' || !B.type || !MONS[B.type]) return false;
+  /* Boss, fight 4+, or streak ≥7. Do not follow the new form index. */
+  return !!(MONS[B.type].boss) || (B.round|0)>=3 || (B.combo||0)>=7;
+}
+function clearDisrupt(){
+  const el=$('#disrupt'); if(el){ el.className='disrupt'; el.setAttribute('aria-hidden','true'); }
+  const panel=$('#panel');
+  if(panel) panel.classList.remove('elem-live','elem-fire','elem-ice','elem-thunder','elem-rock','elem-poison','elem-shadow');
+}
 function applyDisrupt(){
-  const el=$('#disrupt'); if(!el) return;
-  if(B.mode==='timed' || !B.type){ clearDisrupt(); return; }
-  /* Keep the old disrupt gate (boss / round 4+ / streak ≥7). Do not follow the new form index. */
-  const hard = !!(MONS[B.type]&&MONS[B.type].boss) || (B.round|0)>=3 || (B.combo||0)>=7;
-  if(!hard){ clearDisrupt(); return; }
-  el.className='disrupt '+disruptKind(B.type)+' on';
-  el.setAttribute('aria-hidden','false');
+  clearDisrupt();
+  if(!isHardFight()) return;
+  const panel=$('#panel'); if(!panel) return;
+  panel.classList.add('elem-live','elem-'+disruptKind(B.type));
+}
+function burstAnswerFX(){
+  if(!isHardFight()) return;
+  const kind=disruptKind(B.type);
+  const nodes=[$('#qAns')].concat($$('#keypad .key'), $$('#choices .choice'));
+  nodes.forEach(function(el){
+    if(!el) return;
+    el.classList.add('elem-hit','elem-'+kind);
+    setTimeout(function(){ el.classList.remove('elem-hit','elem-'+kind); }, 680);
+  });
 }
 function clearCinema(){
   const cine=$('#cinema'), battle=$('#battle');
@@ -616,40 +665,21 @@ function damageMonster(dmg){ B.hp=Math.max(0,B.hp-dmg); $('#hpFill').style.width
   play(ms,[{transform:'translateX(0) rotate(0)',filter:'brightness(1)'},{transform:'translateX(8%) rotate(7deg)',filter:'brightness(2.6)'},{transform:'translateX(-3%) rotate(-2deg)',filter:'brightness(1)'},{transform:'translateX(4%) rotate(3deg)',filter:'brightness(2)'},{transform:'translateX(0) rotate(0)',filter:'brightness(1)'}],{duration:560});
   const t=relPos(monWrap); floatText('dmg','-'+dmg, t.x, t.t+t.h*.15); }
 async function monsterAttack(){
-  const s=MONS[B.type], elem=s.elem||'shadow', msv=monSvgEl(); Sfx.growl();
-  heroPose('guard');
-  const o=()=>relPos(mk('.mk-mouth',monWrap)||mk('.mk-core',monWrap));
-  const tHero=()=>relPos(mk('.mk-chest',heroWrap));
-  const lunge=()=>play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-14%) rotate(-7deg)',offset:.4},{transform:'translateX(0)'}],{duration:720*K()});
-  const hitHero=(label, colors)=>{
-    const t=tHero(); Sfx.bonk(); FX.burst(t.x,t.y,{n:18,colors:colors||[s.shot,'#fff'],speed:6,size:7}); shake(7);
-    play(heroSvgEl(),[{transform:'rotate(0)',filter:'brightness(1)'},{transform:'rotate(-10deg) translateX(-8px)',filter:'brightness(2.2)'},{transform:'rotate(0)',filter:'brightness(1)'}],{duration:620});
-    const hp=relPos(heroWrap); floatText('ouchtxt', label||pick(['哎呀！','好痛呀！','唔緊要！']), hp.x, hp.t+hp.h*.05);
-  };
-  showMoveName(s.nick+'！','banner',1200);
-  const L=lunge(); await sleep(220*K());
-  const oo=o(), th=tHero();
-  const style = elem==='fire' ? 'radial-gradient(circle,#fff 0 20%,#ff6a00 50%,transparent 72%)'
-    : elem==='ice' ? 'radial-gradient(circle,#fff 0 20%,#7ff0ff 50%,transparent 72%)'
-    : elem==='thunder' ? 'radial-gradient(circle,#fff 0 20%,#fde047 50%,transparent 72%)'
-    : elem==='rock' ? 'radial-gradient(circle,#fff 0 20%,#a8a29e 50%,transparent 72%)'
-    : elem==='poison' ? 'radial-gradient(circle,#fff 0 20%,#a3e635 50%,transparent 72%)'
-    : 'radial-gradient(circle,#fff 0 20%,'+s.shot+' 50%,transparent 72%)';
-  if(elem==='shadow' && s.final){
-    for(let i=0;i<3;i++){ const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px';
-      play(orb,[{transform:'translate(0,0) scale(.4)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.2)'}],{duration:300*K(),easing:'ease-in',fill:'forwards'}).then(()=>rm(orb));
-      await sleep(120*K()); }
-    hitHero(s.nick+'！',[s.shot,'#fff','#ff7ad9']); await L; await sleep(180*K()); heroPose('idle'); return;
+  const s=MONS[B.type]; if(!s) return;
+  Sfx.growl(); heroPose('guard'); setMonAttack(true); burstAnswerFX();
+  showMoveName((s.nick||s.name)+'！','banner',1200);
+  const L=play(monWrap,[{transform:'translateX(0)'},{transform:'translateX(-10%) rotate(-4deg)',offset:.42},{transform:'translateX(0)'}],{duration:780*K()});
+  await sleep(240*K());
+  const chest=mk('.mk-chest', heroWrap);
+  Sfx.bonk(); shake(7);
+  if(chest){
+    const t=relPos(chest);
+    FX.burst(t.x,t.y,{n:16,colors:[s.shot,'#fff'],speed:6,size:7});
+    const hs=heroSvgEl(); if(hs) play(hs,[{transform:'rotate(0)',filter:'brightness(1)'},{transform:'rotate(-8deg) translateX(-6px)',filter:'brightness(2)'},{transform:'rotate(0)',filter:'brightness(1)'}],{duration:520});
   }
-  if(elem==='thunder'){
-    for(let i=0;i<4;i++){ const len=Math.max(monWrap.clientWidth,140); const sl=fxEl('slash'); sl.style.left=(th.x-len/2)+'px'; sl.style.top=(th.y-4)+'px'; sl.style.width=len+'px';
-      play(sl,[{transform:'rotate('+(-35+i*20)+'deg) scaleX(0)',opacity:1},{transform:'rotate('+(-35+i*20)+'deg) scaleX(1)',opacity:0}],{duration:260}).then(()=>rm(sl)); Sfx.shing(); await sleep(45*K()); }
-    hitHero(s.nick+'！',[s.shot,'#fff','#fde047']); await L; await sleep(160*K()); heroPose('idle'); return;
-  }
-  const orb=fxEl('orb'); orb.style.background=style; orb.style.left=oo.x+'px'; orb.style.top=oo.y+'px'; Sfx.whoosh();
-  await play(orb,[{transform:'translate(0,0) scale(.5)'},{transform:'translate('+((th.x-oo.x)/2)+'px,'+((th.y-oo.y)/2-40)+'px) scale(1)'},{transform:'translate('+(th.x-oo.x)+'px,'+(th.y-oo.y)+'px) scale(1.35)'}],{duration:480*K(),easing:'ease-in',fill:'forwards'}); rm(orb);
-  hitHero(s.nick+'！',[s.shot,'#fff',s.light]); await L; await sleep(180*K());
-  heroPose('idle');
+  if(heroWrap){ const hp=relPos(heroWrap); floatText('ouchtxt', pick(['哎呀！','好痛呀！','唔緊要！']), hp.x, hp.t+hp.h*.05); }
+  await L; await sleep(180*K());
+  setMonAttack(false); heroPose('idle');
 }
 
 async function friendRest(){ const ms=monSvgEl(); ms.classList.remove('ouch'); const t=relPos(mk('.mk-core',monWrap)); Sfx.appear();
@@ -719,7 +749,7 @@ async function startRound(type){
   if(B.mode!=='timed'){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; }
   else B.rwrong=0;
   B.combo=0;
-  monCounter++; $('#monBob').innerHTML = monRasterHTML(type);
+  monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img'));
   $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
   B._hen=1; B._henLabel=null; setChestTimer(0); syncHenshin(); heroPose('idle'); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
@@ -848,7 +878,7 @@ function initBattle(){
 /* ---------- PROGRESS ---------- */
 function renderProgress(){
   const s=DATA.stats; const facts=Object.keys(DATA.facts); const mastered=facts.filter(k=>mastery(k)===2).length;
-  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸王',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
+  $('#stats').innerHTML = [['打敗怪獸',s.monsters],['打敗星辰霸主',s.dada||0],['最高連擊',s.maxCombo],['60秒最佳',DATA.best.all||0],['識晒題數',mastered],['金幣',s.coins||0]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
   let g='<tr><th>×</th>'+[1,2,3,4,5,6,7,8,9].map(b=>'<th>'+b+'</th>').join('')+'</tr>';
   [1,2,3,4,5,6,7,8,9,10].forEach(a=>{ g+='<tr><th>'+a+'</th>'; for(let b=1;b<=9;b++){ const m=mastery(a+'x'+b); g+='<td class="m'+m+'" title="'+a+'×'+b+'">'+(a*b)+'</td>'; } g+='</tr>'; });
   $('#mgrid').innerHTML=g;
@@ -869,6 +899,7 @@ function renderDex(){
     const border=elemBorder[m.elem]||'#7c8cff';
     return '<button type="button" class="dcard'+(n?'':' locked')+(sel===t?' on':'')+'" data-dex="'+t+'" style="--db:'+border+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>';
   }).join('');
+  $$('#dex .mon-img').forEach(bindMonImg);
   $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); selectDex(c.dataset.dex); }));
   if(sel && dex[sel]) fillDexPanel(sel);
   else if(got){ const first=DEX_ORDER.find(t=>dex[t]); if(first) selectDex(first, true); else clearDexPanel(); }
@@ -889,19 +920,16 @@ function selectDex(type, quiet){
 function fillDexPanel(type){
   const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0;
   $('#dexPanelEmpty').hidden=true; $('#dexPanelBody').hidden=false;
-  $('#dexPanelArt').innerHTML=monRasterHTML(type);
+  $('#dexPanelArt').innerHTML=monRasterHTML(type); bindMonImg($('#dexPanelArt .mon-img'));
   const tags=[]; if(m.friend) tags.push('<i class="f">夥伴</i>'); if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   tags.push('<i>'+(m.kind||'怪獸')+'</i>');
   $('#dexPanelTags').innerHTML=tags.join('');
   $('#dexPanelName').textContent=m.name;
   $('#dexPanelNick').textContent=m.nick;
-  // soft “stats” from encounter count + elem flavor (concept-like bars)
-  const p1=Math.min(96, 12+n*11), p2=Math.min(88, 8+n*7), p3=Math.min(92, 10+n*9);
-  $('#dexBars').innerHTML=
-    '<div class="dex-bar"><span>出沒</span><i class="g"><b style="--p:'+p1+'%"></b></i><span>'+p1+'%</span></div>'+
-    '<div class="dex-bar"><span>威力</span><i class="r"><b style="--p:'+p2+'%"></b></i><span>'+p2+'%</span></div>'+
-    '<div class="dex-bar"><span>稀有</span><i class="o"><b style="--p:'+p3+'%"></b></i><span>'+p3+'%</span></div>';
-  $('#dexPanelLore').textContent=m.lore||'暫時未有資料。';
+  const bar=(label, cls, val)=>{ const v=val|0; const p=Math.max(8, Math.min(100, Math.round(v/50*100))); return '<div class="dex-bar"><span>'+label+'</span><i class="'+cls+'"><b style="--p:'+p+'%"></b></i><span>'+v+'</span></div>'; };
+  const p1=m.spawn!=null?m.spawn:Math.min(50,12+n*4), p2=m.power!=null?m.power:Math.min(50,10+n*3), p3=m.rare!=null?m.rare:Math.min(50,8+n*3);
+  $('#dexBars').innerHTML=bar('出沒','g',p1)+bar('威力','r',p2)+bar('稀有','o',p3);
+  $('#dexPanelLore').textContent=m.kid||m.lore||'暫時未有資料。';
   const more=$('#dexPanelMore');
   more.onclick=()=>{ Sfx.click(); openDexDetail(type); };
 }
@@ -919,6 +947,7 @@ function openDexDetail(type){
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
   $('#dsArt').innerHTML = '<div class="mon-bob">'+monRasterHTML(type)+'</div>';
+  bindMonImg($('#dsArt .mon-img'));
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
   if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   if(!tags.length) tags.push('<i>圖鑑怪獸</i>');
@@ -926,6 +955,7 @@ function openDexDetail(type){
   $('#dsName').textContent=m.name; $('#dsNick').textContent=m.nick;
   $('#dsKind').textContent=m.kind||'未知怪獸'; $('#dsHabitat').textContent=m.habitat||'？？？';
   $('#dsMove').textContent=m.nick; $('#dsRecord').textContent=(m.friend?'特訓':'打敗')+' ×'+n;
+  const kid=$('#dsKid'); if(kid) kid.textContent=m.kid||'';
   $('#dsLore').textContent=m.lore||'暫時未有資料。';
   sheet.hidden=false; sheet.classList.add('show');
 }
@@ -970,5 +1000,9 @@ function init(){
   });
 }
 function pressKey(k){ const b=$('#keypad .key[data-k="'+k+'"]'); if(!b) return; b.classList.add('press'); setTimeout(()=>b.classList.remove('press'),110); }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, cinematicFinalFinish, heroSrc, poseFile, heroPose, DEX_ORDER };
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, burstAnswerFX, isHardFight, setMonAttack, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS };
+function startApp(){
+  const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
+  fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
+}
+startApp();
