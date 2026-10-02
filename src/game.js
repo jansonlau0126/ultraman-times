@@ -266,11 +266,15 @@ function bindMonImg(img){
     if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
   });
 }
-/* Battle facing: hero stands on the left, so every monster must look LEFT.
-   Mirror a frame only when the source art faces right. Do not mirror art that
-   already faces left (that would turn it away from the hero).
+/* Battle facing: hero stands on the left and looks RIGHT; every monster looks LEFT.
+   Hero poses hero_h1–h5 (omega, punch, kick, beam, guard, win) and assets/home/hero.png
+   already face image-right, so they are not mirrored.
+   Mirror a monster frame only when the source art faces right. One scaleX(-1)
+   in battle only — never in the dex, and never a second flip.
    Attack, faces right: lavaover, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
-   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
+   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab.
+   Idle, faces right: deathscorp, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
+   Idle, already left: heidragon, lavaover, holyturt, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
 const ATTACK_MIRROR = {
   lavaover:1, thundwolf:1, mtngod:1, manflower:1,
   illusdemon:1, seaking:1, sandwyrm:1, starlord:1
@@ -288,11 +292,13 @@ const ATTACK_FOOT = {
 };
 /* How much to enlarge a 360 attack frame so its painted body matches the idle height.
    Wide beams are capped at 1.65 so they still read as the same monster, not a full-screen wipe. */
+/* Cap the attack canvas so the counterattack stays inside the stage with the
+   1.2× battle pop. The painted body still grows from the feet, but not past the frame. */
 const ATTACK_SCALE = {
-  deathscorp:1.45, flamecrab:1.61, galmoth:1.65, heidragon:1.39, holyturt:1.65,
-  icetiran:1.65, illusdemon:1.65, lavaover:1.19, manflower:1.42, mtngod:1.33,
-  nightmare:1.47, ninjacat:1.65, phoenix:1.16, sandwyrm:1.65, seaking:1.65,
-  starlord:1.23, steeltiran:1.44, thundwolf:1.21
+  deathscorp:1.3, flamecrab:1.3, galmoth:1.3, heidragon:1.3, holyturt:1.3,
+  icetiran:1.3, illusdemon:1.3, lavaover:1.19, manflower:1.3, mtngod:1.3,
+  nightmare:1.3, ninjacat:1.3, phoenix:1.16, sandwyrm:1.3, seaking:1.3,
+  starlord:1.23, steeltiran:1.3, thundwolf:1.21
 };
 const ELEM_KIND = {'火':'fire','冰':'ice','雷':'thunder','毒':'poison','岩':'rock','沙':'sand','鋼':'steel','水':'water','暗':'dark','光':'light','星':'star'};
 const ELEM_PRESET = {
@@ -334,8 +340,8 @@ function monAttackHTML(type){
 function dexPairHTML(type){
   const word=(MONS[type]&&MONS[type].elemWord)||'';
   return '<div class="dex-pair">'+
-    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div><figcaption>立繪</figcaption></figure>'+
-    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div><figcaption>出招</figcaption></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div></figure>'+
     '</div>'+(word?'<div class="dex-elem">屬性・'+word+'</div>':'');
 }
 function applyDexPack(pack){
@@ -642,9 +648,8 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Design pack: hero body 140–160px, monster ≈1.15× on the same ground line.
-     The pose canvas is a square with empty space, so the box is taller than the body.
-     A little box overlap is allowed on a phone so the bodies can still hit that range. */
+  /* Boxes match the pre-1.5 layout. CSS --pop 1.2 draws the art a little larger
+     from the feet (about 1.2× that size) without a second width shrink. */
   const frac=HERO_STAND[henshinStage()]||0.54;
   let heroVis=Math.min(160, Math.max(140, h*0.34));
   let monVis=heroVis*1.15;
@@ -1496,6 +1501,8 @@ function runSelfTest(){
   });
   if(ATTACK_MIRROR.heidragon||ATTACK_MIRROR.phoenix||ATTACK_MIRROR.icetiran||ATTACK_MIRROR.steeltiran||ATTACK_MIRROR.deathscorp) fails.push('double flip');
   if(IDLE_MIRROR.heidragon||IDLE_MIRROR.lavaover||IDLE_MIRROR.phoenix) fails.push('double flip idle');
+  const pair=dexPairHTML('heidragon');
+  if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';

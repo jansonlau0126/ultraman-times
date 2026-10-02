@@ -144,12 +144,12 @@ body[data-screen="home"] main{padding-top:0}
 .hero,.mon{width:100%;height:100%;display:block;overflow:visible}
 .hero-bob,.mon-bob{width:100%;height:100%;animation:bob 2.4s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3%)}}
-/* Battle sprites were drawing at the layout-box size and looked small on the tall stage.
-   Grow both ~1.5× from the shared ground line. The monster scales from its inner foot
-   (up and outward). The hero scale is on .hero-art so the foot-drop stays on that line. */
-#battle{--pop:1.5}
-#battle .mon-bob{transform-origin:0% 100%;animation:battlePop 2.4s ease-in-out infinite}
-@keyframes battlePop{0%,100%{transform:translateY(0) scale(var(--pop,1.5))}50%{transform:translateY(-3%) scale(var(--pop,1.5))}}
+/* A 1.5× pop spilled out of the stage and over the question. 1.2× is between
+   the old layout size and that bump. Scale from the foot center so both sides
+   stay inside the stage instead of growing off the outer edge. */
+#battle{--pop:1.2}
+#battle .mon-bob{transform-origin:50% 100%;animation:battlePop 2.4s ease-in-out infinite}
+@keyframes battlePop{0%,100%{transform:translateY(0) scale(var(--pop,1.2))}50%{transform:translateY(-3%) scale(var(--pop,1.2))}}
 .hero{transform-origin:50% 100%}
 .hero .h-armL,.hero .h-armR{transform-box:view-box;transition:transform .16s ease-out}
 .hero .h-armL{transform-origin:70px 130px}
@@ -294,7 +294,7 @@ body[data-screen="home"] main{padding-top:0}
 @media (orientation:landscape) and (min-width:700px){
   #battle.active{grid-template-columns:minmax(0,1.5fr) minmax(260px,.82fr);grid-template-rows:minmax(0,1fr)}
 }
-.stage{position:relative;border-radius:24px;overflow:hidden;min-height:210px;border:3px solid var(--line);background:linear-gradient(180deg,rgba(20,20,80,.05) 0%,rgba(40,20,90,.25) 70%,rgba(0,0,0,0) 100%)}
+.stage{position:relative;border-radius:24px;overflow:hidden;min-height:210px;border:3px solid var(--line);background:linear-gradient(180deg,rgba(20,20,80,.05) 0%,rgba(40,20,90,.25) 70%,rgba(0,0,0,0) 100%);z-index:1}
 .battle-city{position:absolute;inset:0;z-index:0;background:#0a0e2e center/cover no-repeat;background-image:url('assets/home/city_bg.jpg');opacity:.92}
 .ground{position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(180deg,rgba(20,24,48,.75),rgba(8,10,24,.9));border-top:3px solid rgba(93,106,160,.55);z-index:1}
 .ground::after{content:"";position:absolute;left:0;right:0;top:38%;height:4px;background:repeating-linear-gradient(90deg,#ffd84d 0 28px,transparent 28px 60px);opacity:.55}
@@ -322,7 +322,7 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.pose-rainbow{transform:none}
 /* Hero canvas has empty space under the feet. Drop each form/pose so the feet meet the monster on the ground line.
    --pop scales the pose from that same foot line (translate grows with the scale). */
-.hero.raster .hero-art{transform-origin:100% 100%;transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
+.hero.raster .hero-art{transform-origin:50% 100%;transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.henshin-1 .hero-art,.hero.raster.henshin-4 .hero-art{transform:translateY(calc(23% * var(--pop, 1))) scale(var(--pop, 1))}
 .hero.raster.pose-punch .hero-art,
 .hero.raster.pose-disc .hero-art,
@@ -416,11 +416,11 @@ body[data-screen="home"] main{padding-top:0}
 .flash{position:absolute;inset:0;background:#fff;opacity:0}
 .speedline{position:absolute;height:4px;border-radius:4px;background:linear-gradient(90deg,transparent,#fff);opacity:.8}
 
-.panel{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:10px;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0;position:relative;overflow:visible;z-index:2}
+.panel{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:10px;display:flex;flex-direction:column;gap:8px;justify-content:center;min-width:0;position:relative;overflow:hidden;z-index:4}
 .qcard{position:relative;border-radius:18px;padding:4px 6px;overflow:hidden;z-index:1}
 .qcard.eh .qrow{text-shadow:0 2px 0 #0b1033,0 0 8px rgba(0,0,0,.7)}
 .qcard .qrow{position:relative;z-index:3}
-.elem-pop{position:absolute;left:50%;top:18%;z-index:40;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;font-weight:900;font-size:clamp(64px,16vw,104px);line-height:1.15;letter-spacing:2px;padding:.12em .28em .18em;-webkit-text-stroke:6px #1a0a00;paint-order:stroke fill;text-shadow:0 6px 0 rgba(0,0,0,.45),0 0 22px currentColor;white-space:nowrap;color:#fff;overflow:visible}
+.elem-pop{position:absolute;left:50%;top:18%;z-index:8;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;font-weight:900;font-size:clamp(42px,10vw,72px);line-height:1.15;letter-spacing:2px;padding:.08em .2em .12em;-webkit-text-stroke:5px #1a0a00;paint-order:stroke fill;text-shadow:0 4px 0 rgba(0,0,0,.45),0 0 16px currentColor;white-space:nowrap;color:#fff;overflow:visible}
 .elem-pop.pop-fire{color:#ffeb3b}
 .elem-pop.pop-ice{color:#e0f7ff;-webkit-text-stroke-color:#0c4a6e}
 .elem-pop.pop-thunder{color:#fff36a;-webkit-text-stroke-color:#713f12}
@@ -773,7 +773,7 @@ body[data-screen="home"] main{padding-top:0}
 .dcard{position:relative;background:linear-gradient(180deg,rgba(48,56,140,.92),rgba(22,28,78,.94));border:2.5px solid var(--db,rgba(255,255,255,.22));border-radius:16px;padding:6px 4px 8px;text-align:center;color:inherit;font:inherit;cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s;outline:none;width:100%;box-shadow:0 4px 0 rgba(0,0,0,.25)}
 .dcard:not(.locked):hover,.dcard:not(.locked):focus-visible{transform:translateY(-3px);box-shadow:0 7px 0 rgba(0,0,0,.28),0 0 0 2px rgba(255,225,77,.55)}
 .dcard.on{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.28),0 0 0 3px #ffe14d,0 0 18px rgba(255,225,77,.35);border-color:#ffe14d}
-.dcard .dimg{height:84px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.dcard .dimg{height:84px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
 .dcard .dimg svg,.dcard .dimg .mon-raster{width:auto;height:100%;max-width:100%}
 .dcard .dimg .mon-img{width:auto;height:100%;max-width:100%;object-fit:contain;object-position:center bottom}
 .dcard .dimg *{animation:none!important}
@@ -794,14 +794,14 @@ body[data-screen="home"] main{padding-top:0}
 .dex-panel-art{width:100%;display:flex;flex-direction:column;align-items:center;margin:0 auto 4px}
 .dex-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
 .dex-shot{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px;overflow:visible;min-width:0}
-.dex-shot .dimg{width:100%;height:clamp(150px,34vh,220px);display:flex;align-items:flex-end;justify-content:center;overflow:visible}
+.dex-shot .dimg{width:100%;height:clamp(140px,30vh,200px);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
 .dex-shot .mon-raster{width:auto;height:100%;max-width:100%;display:flex;align-items:flex-end;justify-content:center}
 .dex-shot .mon-img{width:auto!important;height:auto!important;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center bottom}
-.dex-shot figcaption{font-size:12px;font-weight:900;opacity:.85}
+.dex-shot figcaption{display:none}
 .dex-elem{margin-top:4px;font-weight:900;font-size:15px;color:#ffe14d;background:rgba(0,0,0,.28);border-radius:999px;padding:2px 12px;border:1px solid rgba(255,255,255,.2)}
 .ds-art .dex-pair{width:min(100%,420px);margin:0 auto}
-.ds-art{overflow:visible}
-.ds-art .dex-shot .dimg{height:clamp(180px,36vh,260px)}
+.ds-art{overflow:hidden}
+.ds-art .dex-shot .dimg{height:clamp(160px,32vh,220px);overflow:hidden}
 /* 虛幻魔 idle is 144×360 and the attack plate is 360×360. width/height auto plus
    object-fit contain keeps both aspects — do not force the narrow plate into a wide box. */
 .star-picks{display:flex;flex-direction:column;gap:12px;width:min(100%,420px);margin-top:8px}
@@ -840,7 +840,7 @@ body[data-screen="home"] main{padding-top:0}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .hero-bob,.mon-bob,#battle .mon-bob{animation:none}
-  #battle .mon-bob{transform:scale(var(--pop,1.5))}
+  #battle .mon-bob{transform:scale(var(--pop,1.2))}
 }
 
 </style>
@@ -983,6 +983,7 @@ body[data-screen="home"] main{padding-top:0}
           <div class="hudbox monhud"><div id="monName">怪獸</div><div class="hpbar"><i id="hpFill"></i></div></div>
         </div>
         <div class="combo" id="combo">2 連擊</div>
+        <div class="elem-pop" id="elemPop" aria-hidden="true"></div>
         <div class="hero-wrap" id="heroWrap"><div class="hero-bob" id="heroBob"></div><div class="form-name" id="formName">銀光形態</div></div>
         <div class="mon-wrap" id="monWrap"><div class="mon-bob" id="monBob"></div></div>
         <div id="fxLayer"></div>
@@ -993,7 +994,6 @@ body[data-screen="home"] main{padding-top:0}
         <div class="qcard" id="qCard">
           <div class="qrow" id="qRow"><span id="qA">2</span><span class="x" id="qOp">×</span><span id="qB">3</span><span class="x q-extra" id="qOp2" hidden>+</span><span class="q-extra" id="qC" hidden>4</span><span class="eq">=</span><span class="ansbox empty" id="qAns">?</span></div>
         </div>
-        <div class="elem-pop" id="elemPop" aria-hidden="true"></div>
         <div class="hint idle" id="hint"><div>答啱就可以出招打怪獸！</div></div>
         <div class="keypad" id="keypad"></div>
         <div class="choices" id="choices"></div>
@@ -1777,11 +1777,15 @@ function bindMonImg(img){
     if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
   });
 }
-/* Battle facing: hero stands on the left, so every monster must look LEFT.
-   Mirror a frame only when the source art faces right. Do not mirror art that
-   already faces left (that would turn it away from the hero).
+/* Battle facing: hero stands on the left and looks RIGHT; every monster looks LEFT.
+   Hero poses hero_h1–h5 (omega, punch, kick, beam, guard, win) and assets/home/hero.png
+   already face image-right, so they are not mirrored.
+   Mirror a monster frame only when the source art faces right. One scaleX(-1)
+   in battle only — never in the dex, and never a second flip.
    Attack, faces right: lavaover, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
-   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
+   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab.
+   Idle, faces right: deathscorp, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
+   Idle, already left: heidragon, lavaover, holyturt, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
 const ATTACK_MIRROR = {
   lavaover:1, thundwolf:1, mtngod:1, manflower:1,
   illusdemon:1, seaking:1, sandwyrm:1, starlord:1
@@ -1799,11 +1803,13 @@ const ATTACK_FOOT = {
 };
 /* How much to enlarge a 360 attack frame so its painted body matches the idle height.
    Wide beams are capped at 1.65 so they still read as the same monster, not a full-screen wipe. */
+/* Cap the attack canvas so the counterattack stays inside the stage with the
+   1.2× battle pop. The painted body still grows from the feet, but not past the frame. */
 const ATTACK_SCALE = {
-  deathscorp:1.45, flamecrab:1.61, galmoth:1.65, heidragon:1.39, holyturt:1.65,
-  icetiran:1.65, illusdemon:1.65, lavaover:1.19, manflower:1.42, mtngod:1.33,
-  nightmare:1.47, ninjacat:1.65, phoenix:1.16, sandwyrm:1.65, seaking:1.65,
-  starlord:1.23, steeltiran:1.44, thundwolf:1.21
+  deathscorp:1.3, flamecrab:1.3, galmoth:1.3, heidragon:1.3, holyturt:1.3,
+  icetiran:1.3, illusdemon:1.3, lavaover:1.19, manflower:1.3, mtngod:1.3,
+  nightmare:1.3, ninjacat:1.3, phoenix:1.16, sandwyrm:1.3, seaking:1.3,
+  starlord:1.23, steeltiran:1.3, thundwolf:1.21
 };
 const ELEM_KIND = {'火':'fire','冰':'ice','雷':'thunder','毒':'poison','岩':'rock','沙':'sand','鋼':'steel','水':'water','暗':'dark','光':'light','星':'star'};
 const ELEM_PRESET = {
@@ -1845,8 +1851,8 @@ function monAttackHTML(type){
 function dexPairHTML(type){
   const word=(MONS[type]&&MONS[type].elemWord)||'';
   return '<div class="dex-pair">'+
-    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div><figcaption>立繪</figcaption></figure>'+
-    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div><figcaption>出招</figcaption></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div></figure>'+
     '</div>'+(word?'<div class="dex-elem">屬性・'+word+'</div>':'');
 }
 function applyDexPack(pack){
@@ -2153,9 +2159,8 @@ async function chargePose(pose, ms){
 /* Standing omega body, as a fraction of the square pose canvas. */
 const HERO_STAND = {1:0.50,2:0.56,3:0.54,4:0.55,5:0.56};
 function layoutStage(){ if(!stageEl) return; const w=stageEl.clientWidth, h=stageEl.clientHeight; if(!w||!h) return;
-  /* Design pack: hero body 140–160px, monster ≈1.15× on the same ground line.
-     The pose canvas is a square with empty space, so the box is taller than the body.
-     A little box overlap is allowed on a phone so the bodies can still hit that range. */
+  /* Boxes match the pre-1.5 layout. CSS --pop 1.2 draws the art a little larger
+     from the feet (about 1.2× that size) without a second width shrink. */
   const frac=HERO_STAND[henshinStage()]||0.54;
   let heroVis=Math.min(160, Math.max(140, h*0.34));
   let monVis=heroVis*1.15;
@@ -3007,6 +3012,8 @@ function runSelfTest(){
   });
   if(ATTACK_MIRROR.heidragon||ATTACK_MIRROR.phoenix||ATTACK_MIRROR.icetiran||ATTACK_MIRROR.steeltiran||ATTACK_MIRROR.deathscorp) fails.push('double flip');
   if(IDLE_MIRROR.heidragon||IDLE_MIRROR.lavaover||IDLE_MIRROR.phoenix) fails.push('double flip idle');
+  const pair=dexPairHTML('heidragon');
+  if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
