@@ -105,12 +105,6 @@ body[data-screen="home"] main{padding-top:0}
 .home-record{flex:0 0 auto;margin:2px 0 4px;min-width:min(92vw,460px);min-height:clamp(56px,8.4vh,72px);padding:8px 28px 10px;border-radius:999px;border:3.5px solid rgba(255,255,255,.95);background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;font-weight:900;font-size:clamp(24px,5.2vw,32px);letter-spacing:3px;text-shadow:0 1px 0 rgba(255,255,255,.5);box-shadow:0 6px 0 #92400e,0 12px 22px rgba(0,0,0,.32),inset 0 3px 0 rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;z-index:3;cursor:pointer}
 .home-record small{display:block;font-size:.4em;font-weight:800;letter-spacing:1px;opacity:.82;margin-top:2px}
 .home-record:active{transform:translateY(4px);box-shadow:0 2px 0 #92400e,inset 0 2px 0 rgba(255,255,255,.5)}
-.stage-chip{display:flex;align-items:center;justify-content:center;gap:4px;flex:0 0 auto;margin:4px 0 0;z-index:4}
-.stage-chip span{font-size:12px;font-weight:900;letter-spacing:1px;color:#e8ecff}
-.stage-chip button{border:2px solid rgba(255,255,255,.55);background:rgba(8,12,40,.62);color:#fff;border-radius:999px;padding:2px 9px;font-weight:900;font-size:12px;line-height:1.2;min-height:28px}
-.stage-chip button.on{background:#ffd84d;color:#3b2300;border-color:#fff}
-.stage-chip.setup-stage{margin:4px 0 8px}
-#home .stage-chip{margin-top:2px}
 @media (max-width:640px){
   .home-hero{height:min(100%,54vh);margin-bottom:-4%}
   .home-dock{grid-template-columns:minmax(48px,.55fr) minmax(0,1fr) minmax(48px,.55fr);gap:2px}
@@ -120,8 +114,6 @@ body[data-screen="home"] main{padding-top:0}
   .home-pet{width:clamp(64px,18vw,96px)}
   .home-wrap{padding-bottom:8px}
   .home-record{min-height:50px;margin:0;font-size:clamp(20px,5.6vw,28px);padding:4px 18px 6px}
-  #home .stage-chip{margin-top:2px}
-  #home .stage-chip button{min-height:24px;font-size:11px;padding:1px 8px}
 }
 @media (orientation:landscape) and (max-height:520px){
   .home-title{font-size:clamp(26px,6.5vw,44px)}
@@ -282,22 +274,14 @@ body[data-screen="home"] main{padding-top:0}
 .litem.on span{color:#9a3412}
 .litem.seen{border-color:rgba(125,255,178,.6)}
 
-/* BATTLE stage height is a playtest choice. Question stays in the panel below the stage.
-   A 緊湊 ~32dvh (most room for the sum), B 適中 ~41dvh (default), C 大戰鬥 ~49dvh. */
-#battle{padding:2px 8px 6px;--stage-row:minmax(128px,41dvh)}
-#battle.stage-a{--stage-row:minmax(108px,32dvh)}
-#battle.stage-b{--stage-row:minmax(128px,41dvh)}
-#battle.stage-c{--stage-row:minmax(148px,49dvh)}
+/* One battle layout: the large stage (~49dvh). The sum stays in the panel below. */
+#battle{padding:2px 8px 6px;--stage-row:minmax(148px,49dvh)}
 #battle.active{display:grid;grid-template-rows:var(--stage-row) minmax(0,1fr);gap:6px;align-items:stretch;height:100%;overflow:hidden}
 @media (max-height:700px){
-  #battle.stage-a{--stage-row:minmax(96px,28dvh)}
-  #battle.stage-b{--stage-row:minmax(108px,34dvh)}
-  #battle.stage-c{--stage-row:minmax(120px,40dvh)}
+  #battle{--stage-row:minmax(120px,40dvh)}
 }
 @media (max-height:620px){
-  #battle.stage-a{--stage-row:minmax(88px,24dvh)}
-  #battle.stage-b{--stage-row:minmax(96px,30dvh)}
-  #battle.stage-c{--stage-row:minmax(104px,34dvh)}
+  #battle{--stage-row:minmax(104px,34dvh)}
 }
 @media (orientation:landscape) and (min-width:700px){
   #battle.active{grid-template-columns:minmax(0,1.05fr) minmax(300px,1fr);grid-template-rows:minmax(0,1fr)}
@@ -332,42 +316,12 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.pose-whirl,
 .hero.raster.pose-super,
 .hero.raster.pose-rainbow{transform:none}
-/* Hero canvas has empty space under the feet. Drop each form/pose so the feet meet the monster on the ground line.
-   --pop scales the pose from that same foot line (translate grows with the scale). */
-.hero.raster .hero-art{transform-origin:50% 100%;transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-1 .hero-art,.hero.raster.henshin-4 .hero-art{transform:translateY(calc(23% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.pose-punch .hero-art,
-.hero.raster.pose-disc .hero-art,
-.hero.raster.pose-whirl .hero-art,
-.hero.raster.pose-rainbow .hero-art{transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-1.pose-punch .hero-art,
-.hero.raster.henshin-1.pose-disc .hero-art,
-.hero.raster.henshin-1.pose-whirl .hero-art,
-.hero.raster.henshin-1.pose-rainbow .hero-art,
-.hero.raster.henshin-2.pose-punch .hero-art,
-.hero.raster.henshin-2.pose-disc .hero-art,
-.hero.raster.henshin-2.pose-whirl .hero-art,
-.hero.raster.henshin-2.pose-rainbow .hero-art{transform:translateY(calc(21% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.pose-kick .hero-art,
-.hero.raster.pose-flip .hero-art{transform:translateY(calc(23% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-1.pose-kick .hero-art,
-.hero.raster.henshin-1.pose-flip .hero-art{transform:translateY(calc(24% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-4.pose-kick .hero-art,
-.hero.raster.henshin-4.pose-flip .hero-art{transform:translateY(calc(15% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.pose-guard .hero-art{transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-3.pose-guard .hero-art{transform:translateY(calc(10% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-5.pose-guard .hero-art{transform:translateY(calc(12% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.pose-beam .hero-art,
-.hero.raster.pose-super .hero-art{transform:translateY(calc(17% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-2.pose-beam .hero-art,
-.hero.raster.henshin-2.pose-super .hero-art{transform:translateY(calc(22% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-3.pose-beam .hero-art,
-.hero.raster.henshin-3.pose-super .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-4.pose-beam .hero-art,
-.hero.raster.henshin-4.pose-super .hero-art{transform:translateY(calc(10% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.pose-win .hero-art{transform:translateY(calc(9% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-3.pose-win .hero-art{transform:translateY(calc(8% * var(--pop, 1))) scale(var(--pop, 1))}
-.hero.raster.henshin-5.pose-win .hero-art{transform:translateY(calc(7% * var(--pop, 1))) scale(var(--pop, 1))}
+/* Pose files are 520 squares with uneven padding, so filling the pose box
+   made them taller than idle and shifted them toward center. pose-fit scales
+   the painted body to the standing height, pins the back to the left, and
+   drops the feet onto the same ground line. --pose-s stays under 1 for the
+   current art, so a pose cannot balloon past the idle body. */
+.hero.raster.pose-fit .hero-art{transform-origin:0% 100%;transform:translate(calc(var(--pose-x) * 1%), calc(var(--pose-y) * 1%)) scale(var(--pose-s, .5))}
 /* hero_h{N}.png is a tight portrait, not the padded 520 square. Scale it so the
    standing body stays the same height inside the pose box, feet on the ground. */
 .hero.raster.henshin-1{--body:.50}
@@ -387,11 +341,10 @@ body[data-screen="home"] main{padding-top:0}
 .hero.raster.henshin-up,
 .hero.raster.charging{filter:brightness(1.55) drop-shadow(0 0 16px rgba(255,255,255,.9))}
 .mon.mon-raster{position:relative;width:100%;height:100%;display:block}
-/* Battle sprites share one on-screen height. --fill only lifts a few idle crops
-   whose painted body does not fill the file, so that body matches the lineup.
-   Attack frames use that same height (they are not scaled past it). --foot-n and
-   --nudge park the feet on the ground and the body on the right edge.
-   Art is not mirrored; the PNG facing is the facing on screen. */
+/* --fill is 1 / painted-height fraction of the frame on screen (idle or attack).
+   Padding in the PNG scales too, then --foot-n and --nudge park the feet on the
+   ground and the body on the right edge, so the painted monster matches the
+   lineup instead of the file box. Art is not mirrored. */
 .mon-wrap .mon-img,
 .mon.atk-drop .mon-img{transform-origin:100% 100%;transform:translate(calc(var(--nudge, 0) * var(--fill, 1) * 1%), calc(var(--foot-n, 0) * var(--fill, 1) * 1%)) scale(var(--fill, 1))}
 .hero.henshin-up .hero-raster{filter:brightness(1.45) drop-shadow(0 0 16px rgba(255,255,255,.9))}
@@ -612,17 +565,17 @@ body[data-screen="home"] main{padding-top:0}
 .choice:active{transform:translateY(4px)}
 .choice.x{opacity:.3;filter:grayscale(1)}
 .choice.right{outline:5px solid #fff;animation:pulse .4s ease-in-out 3 alternate}
-/* Option C gives the arena more height. Answers shrink a little so the sum stays fully on screen. */
-#battle.stage-c .panel{gap:6px;padding:6px 8px 8px}
-#battle.stage-c .qcard{padding:6px 6px 8px}
-#battle.stage-c .qrow,
-#battle.stage-c.mode-mixed .qrow{font-size:clamp(40px,11.2vw,68px)}
-#battle.stage-c .hint{padding:2px 6px;font-size:clamp(13px,3.2vw,18px)}
-#battle.stage-c .keypad{gap:6px;grid-template-rows:repeat(4,minmax(38px,1fr))}
-#battle.stage-c .key{min-height:38px;font-size:clamp(22px,6.2vw,36px)}
-#battle.stage-c .key.ok{font-size:clamp(18px,4.6vw,26px)}
-#battle.stage-c .choices{gap:8px;grid-template-rows:repeat(2,minmax(42px,1fr))}
-#battle.stage-c .choice{min-height:42px;font-size:clamp(26px,7.2vw,44px)}
+/* The large stage leaves a shorter panel. Answers shrink a little so the sum stays fully on screen. */
+#battle .panel{gap:6px;padding:6px 8px 8px}
+#battle .qcard{padding:6px 6px 8px}
+#battle .qrow,
+#battle.mode-mixed .qrow{font-size:clamp(40px,11.2vw,68px)}
+#battle .hint{padding:2px 6px;font-size:clamp(13px,3.2vw,18px)}
+#battle .keypad{gap:6px;grid-template-rows:repeat(4,minmax(38px,1fr))}
+#battle .key{min-height:38px;font-size:clamp(22px,6.2vw,36px)}
+#battle .key.ok{font-size:clamp(18px,4.6vw,26px)}
+#battle .choices{gap:8px;grid-template-rows:repeat(2,minmax(42px,1fr))}
+#battle .choice{min-height:42px;font-size:clamp(26px,7.2vw,44px)}
 @media (orientation:landscape) and (min-width:700px){
   .qrow{font-size:clamp(40px,5.4vw,72px)}
   #battle.mode-mixed .qrow{font-size:clamp(28px,3.8vw,48px)}
@@ -883,3 +836,15 @@ body[data-screen="home"] main{padding-top:0}
   .hero-bob,.mon-bob,#battle .mon-bob{animation:none}
   #battle .mon-bob{transform:scale(var(--pop,1.05))}
 }
+/* Phones held sideways: cover the game and ask to turn upright.
+   Desktops and tall tablets (fine pointer, or a landscape taller than a phone) stay playable. */
+#rotateLock{display:none}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){
+  #rotateLock{display:flex;position:fixed;inset:0;z-index:120;align-items:center;justify-content:center;padding:24px;background:#0b1033;color:#fff;text-align:center}
+}
+.rotate-card{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:320px}
+.rotate-phone{width:46px;height:78px;border:4px solid #fff;border-radius:10px;margin-bottom:6px;position:relative;animation:rotateHint 1.6s ease-in-out infinite}
+.rotate-phone::after{content:"";position:absolute;left:50%;bottom:6px;width:14px;height:3px;border-radius:2px;background:#fff;transform:translateX(-50%)}
+@keyframes rotateHint{0%,100%{transform:rotate(90deg)}45%,55%{transform:rotate(0deg)}}
+.rotate-card p{margin:0;font-weight:900;font-size:clamp(26px,6vw,36px);letter-spacing:1px;text-shadow:0 3px 0 #1b2a7a}
+.rotate-card .rotate-sub{font-size:clamp(16px,3.6vw,20px);color:#bfe9ff;font-weight:800}

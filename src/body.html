@@ -30,12 +30,6 @@
           <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
         <button class="home-record" data-go="progress">戰績<small>勳章 · 圖鑑 · 分數</small></button>
-        <div class="stage-chip" role="group" aria-label="戰鬥畫面大小">
-          <span>畫面</span>
-          <button type="button" data-stage-size="a">A 緊湊</button>
-          <button type="button" data-stage-size="b">B 適中</button>
-          <button type="button" data-stage-size="c">C 大戰鬥</button>
-        </div>
       </div>
     </section>
 
@@ -99,12 +93,6 @@
             <button data-speak="0" aria-pressed="false">唔讀</button>
           </div>
         </div>
-        <div class="stage-chip setup-stage" role="group" aria-label="戰鬥畫面大小">
-          <span>畫面</span>
-          <button type="button" data-stage-size="a">A 緊湊</button>
-          <button type="button" data-stage-size="b">B 適中</button>
-          <button type="button" data-stage-size="c">C 大戰鬥</button>
-        </div>
         <div class="besttxt" id="bestTxt"></div>
         <div class="warn" id="setupWarn"></div>
         <button class="btn" id="startBtn"><span data-icon="bolt"></span><span class="lbl">開始打怪獸！</span></button>
@@ -138,7 +126,7 @@
     </section>
 
     <!-- BATTLE -->
-    <section id="battle" class="screen stage-b">
+    <section id="battle" class="screen">
       <div class="stage" id="stage">
         <div class="battle-city" aria-hidden="true"></div>
         <div class="ground"></div>
@@ -232,5 +220,13 @@
       <p class="ds-kid" id="dsKid"></p>
       <p class="ds-lore" id="dsLore"></p>
     </div>
+  </div>
+</div>
+
+<div id="rotateLock" role="dialog" aria-modal="true" aria-label="請轉直個手機">
+  <div class="rotate-card">
+    <div class="rotate-phone" aria-hidden="true"></div>
+    <p>請轉直個手機</p>
+    <p class="rotate-sub">直向先好玩到打怪獸</p>
   </div>
 </div>
