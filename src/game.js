@@ -266,11 +266,15 @@ function bindMonImg(img){
     if(host && !host.dataset.svg){ host.dataset.svg='1'; const type=(host.className.match(/mon-([a-z]+)/)||[])[1]; if(type && typeof monsterSVG==='function'){ const wrap=host.parentElement; if(wrap) wrap.innerHTML=monsterSVG(type,'fb'); } }
   });
 }
-/* Battle facing: hero stands on the left, so every monster must look LEFT.
-   Mirror a frame only when the source art faces right. Do not mirror art that
-   already faces left (that would turn it away from the hero).
+/* Battle facing: hero stands on the left and looks RIGHT; every monster looks LEFT.
+   Hero poses hero_h1–h5 (omega, punch, kick, beam, guard, win) and assets/home/hero.png
+   already face image-right, so they are not mirrored.
+   Mirror a monster frame only when the source art faces right. One scaleX(-1)
+   in battle only — never in the dex, and never a second flip.
    Attack, faces right: lavaover, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
-   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
+   Attack, already left: heidragon, holyturt, deathscorp, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab.
+   Idle, faces right: deathscorp, thundwolf, mtngod, manflower, illusdemon, seaking, sandwyrm, starlord.
+   Idle, already left: heidragon, lavaover, holyturt, ninjacat, steeltiran, icetiran, phoenix, nightmare, galmoth, flamecrab. */
 const ATTACK_MIRROR = {
   lavaover:1, thundwolf:1, mtngod:1, manflower:1,
   illusdemon:1, seaking:1, sandwyrm:1, starlord:1
@@ -336,8 +340,8 @@ function monAttackHTML(type){
 function dexPairHTML(type){
   const word=(MONS[type]&&MONS[type].elemWord)||'';
   return '<div class="dex-pair">'+
-    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div><figcaption>立繪</figcaption></figure>'+
-    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div><figcaption>出招</figcaption></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div></figure>'+
     '</div>'+(word?'<div class="dex-elem">屬性・'+word+'</div>':'');
 }
 function applyDexPack(pack){
@@ -1497,6 +1501,8 @@ function runSelfTest(){
   });
   if(ATTACK_MIRROR.heidragon||ATTACK_MIRROR.phoenix||ATTACK_MIRROR.icetiran||ATTACK_MIRROR.steeltiran||ATTACK_MIRROR.deathscorp) fails.push('double flip');
   if(IDLE_MIRROR.heidragon||IDLE_MIRROR.lavaover||IDLE_MIRROR.phoenix) fails.push('double flip idle');
+  const pair=dexPairHTML('heidragon');
+  if(/立繪|出招|<figcaption/.test(pair)) fails.push('dex caption');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
