@@ -276,8 +276,32 @@ body[data-screen="home"] main{padding-top:0}
 .hero-wrap{position:absolute;left:5%;bottom:7%;z-index:3}
 .mon-wrap{position:absolute;right:4%;bottom:7%;z-index:2}
 .hero.raster{position:relative;width:100%;height:100%;display:block}
+.hero-art{position:absolute;inset:0}
 .hero-raster,.mon-img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;pointer-events:none;user-select:none}
+.hero-art .hero-raster{position:absolute;inset:0}
+.hero-raster.hero-fade{z-index:2;opacity:1;transition:opacity .48s ease}
+.hero-raster.hero-fade.out{opacity:0}
 .hero-anchors,.mon-anchors{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+/* Painted poses already show the action. Don't rotate the PNG on top. Lunge stays on .hero-wrap. */
+.hero.raster.pose-beam,
+.hero.raster.pose-kick,
+.hero.raster.pose-disc,
+.hero.raster.pose-punch,
+.hero.raster.pose-win,
+.hero.raster.pose-tuck,
+.hero.raster.pose-guard,
+.hero.raster.pose-omega,
+.hero.raster.pose-flip,
+.hero.raster.pose-whirl,
+.hero.raster.pose-super,
+.hero.raster.pose-rainbow{transform:none}
+/* Feet: win sits much lower in the 520 canvas than omega; nudge so the swap doesn't hop. */
+.hero.raster.pose-win .hero-art{transform:translateY(-10%)}
+.hero.raster.pose-beam .hero-art{transform:translateY(-4%)}
+.hero.raster.henshin-4:not(.henshin-up):not(.charging),
+.hero.raster.henshin-5:not(.henshin-up):not(.charging){filter:none}
+.hero.raster.henshin-up,
+.hero.raster.charging{filter:brightness(1.55) drop-shadow(0 0 16px rgba(255,255,255,.9))}
 .mon.mon-raster{position:relative;width:100%;height:100%;display:block}
 .hero.henshin-up .hero-raster{filter:brightness(1.45) drop-shadow(0 0 16px rgba(255,255,255,.9))}
 .mon.ouch .mon-img{filter:brightness(1.6) saturate(1.3) hue-rotate(-10deg)}
@@ -287,6 +311,9 @@ body[data-screen="home"] main{padding-top:0}
 #fxCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
 .stagehud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px;z-index:7;gap:8px;pointer-events:none}
 .hudbox{background:rgba(0,0,0,.4);border-radius:14px;padding:5px 10px;font-weight:900;font-size:clamp(13px,3.2vw,17px);border:2px solid rgba(255,255,255,.18)}
+.herohud{position:relative;padding-left:34px}
+.chest-lamp{position:absolute;left:8px;top:9px;width:16px;height:16px;border-radius:50%;background:var(--tc,#38d6cf);box-shadow:0 0 8px var(--tc,#38d6cf),inset 0 0 4px rgba(255,255,255,.9);border:2px solid #fff}
+.chest-lamp.blink{animation:tblink .7s steps(2,jump-none) infinite}
 .monhud{min-width:44%;max-width:60%;text-align:right}
 .hpbar{height:14px;border-radius:8px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:4px;border:2px solid rgba(0,0,0,.4)}
 .hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff4d4d,#ffb347);border-radius:6px;transition:width .45s cubic-bezier(.3,1.3,.5,1);float:right}
@@ -304,6 +331,8 @@ body[data-screen="home"] main{padding-top:0}
 .movename{position:absolute;left:50%;top:34%;z-index:9;font-weight:900;font-size:clamp(30px,7.5vw,64px);color:#fff35c;white-space:nowrap;letter-spacing:2px;text-shadow:3px 3px 0 #d10000,-3px -3px 0 #d10000,3px -3px 0 #d10000,-3px 3px 0 #d10000,0 3px 0 #d10000,0 -3px 0 #d10000,3px 0 0 #d10000,-3px 0 0 #d10000,0 8px 0 #6b0000,0 0 26px rgba(255,255,255,.9);pointer-events:none}
 .movename.super{color:#fff;text-shadow:3px 3px 0 #7c3aed,-3px -3px 0 #7c3aed,3px -3px 0 #7c3aed,-3px 3px 0 #7c3aed,0 3px 0 #7c3aed,0 -3px 0 #7c3aed,3px 0 0 #7c3aed,-3px 0 0 #7c3aed,0 8px 0 #2e1065,0 0 30px #ff7ad9}
 .movename.banner{color:#fff;font-size:clamp(24px,6vw,46px);text-shadow:3px 3px 0 #1d4ed8,-3px -3px 0 #1d4ed8,3px -3px 0 #1d4ed8,-3px 3px 0 #1d4ed8,0 7px 0 #1e1b4b}
+.movename.henshin{font-size:clamp(34px,8vw,68px);color:#fff;text-shadow:3px 3px 0 #0369a1,-3px -3px 0 #0369a1,3px -3px 0 #0369a1,-3px 3px 0 #0369a1,0 8px 0 #082f49,0 0 28px #7ff0ff}
+.movename.break{font-size:clamp(28px,6.5vw,52px);color:#fff;text-shadow:3px 3px 0 #c2410c,-3px -3px 0 #c2410c,3px -3px 0 #c2410c,-3px 3px 0 #c2410c,0 8px 0 #7c2d12}
 .beam{position:absolute;border-radius:999px;background:linear-gradient(180deg,rgba(120,220,255,0) 0%,#7fe3ff 20%,#fff 42%,#fff 58%,#7fe3ff 80%,rgba(120,220,255,0) 100%);box-shadow:0 0 18px 6px rgba(120,220,255,.85),0 0 44px 14px rgba(80,160,255,.5)}
 .beam.super{background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#ff7ad9 14%,#ffe066 30%,#fff 45%,#fff 55%,#7ff0ff 70%,#b58cff 86%,rgba(255,255,255,0) 100%);box-shadow:0 0 26px 10px rgba(255,230,120,.9),0 0 70px 24px rgba(255,120,220,.55)}
 .disc{position:absolute}
