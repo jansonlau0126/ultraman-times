@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1033">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>超人乘數表・光之巨人打怪獸</title>
+<title>運算超人</title>
 <style>
 :root{
   --font:"Noto Sans HK","PingFang HK","PingFang TC","Microsoft JhengHei","Heiti TC","Noto Sans CJK HK","Noto Sans CJK TC","Source Han Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -109,8 +109,7 @@ body[data-screen="home"] main{padding-top:0}
 .home-pill.divide{background:linear-gradient(180deg,#d8b4fe 0%,#7c3aed 48%,#5b21b6 100%)}
 .home-pill.mixmd{background:linear-gradient(180deg,#fda4af 0%,#e11d48 48%,#9f1239 100%)}
 .home-pill.allops{background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.home-pill.dex{background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;text-shadow:0 1px 0 rgba(255,255,255,.45)}
-.home-pill.form{background:linear-gradient(180deg,#e8f4ff 0%,#7dd3fc 40%,#6366f1 100%);color:#1e1b4b;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.home-pill.dex,.home-pill.record{background:linear-gradient(180deg,#ffe98a 0%,#f5b942 46%,#d97706 100%);color:#3b1d00;text-shadow:0 1px 0 rgba(255,255,255,.45)}
 .home-pill.soon{filter:saturate(.86) brightness(.96)}
 .home-pill.soon small{display:inline-block;margin-top:1px;padding:0 7px;border-radius:999px;background:rgba(0,0,0,.32);color:#ffe98a;text-shadow:none}
 .soon-card{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(6,8,28,.68)}
@@ -119,13 +118,6 @@ body[data-screen="home"] main{padding-top:0}
 .soon-kicker{margin:0;font-size:44px;font-weight:900;line-height:1;color:#ffe14d;text-shadow:0 3px 0 #7a4b00}
 .soon-panel p{margin:8px 0 14px;font-size:18px;font-weight:800;line-height:1.4}
 .soon-panel .btn{width:100%}
-.form-card{width:min(100%,380px);margin:6px 0 8px;border-radius:26px;border:3px solid rgba(255,255,255,.7);background:linear-gradient(180deg,rgba(40,50,120,.94),rgba(16,18,48,.96));padding:12px 16px 16px;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 0 rgba(0,0,0,.28)}
-.form-card img{width:min(42vw,168px);height:auto;object-fit:contain;filter:drop-shadow(0 0 16px rgba(80,230,255,.55))}
-.form-kicker{margin-top:4px;font-size:16px;font-weight:800;color:#bfe9ff}
-.form-now{font-size:clamp(28px,7vw,40px);font-weight:900;color:#ffe14d;text-shadow:0 3px 0 #6b4a00;line-height:1.15}
-.form-streak{font-size:20px;font-weight:900}
-.form-streak b{color:#7dffb2;font-size:1.35em}
-.form-note{margin:0 0 12px;text-align:center;font-weight:800;color:#d6e4ff;font-size:16px}
 @media (max-width:420px){
   .home-wrap{padding-left:10px;padding-right:10px}
   .home-board{padding:7px 7px 8px;gap:6px}
@@ -883,7 +875,7 @@ body[data-screen="home"] main{padding-top:0}
 <div id="app">
   <header id="topbar">
     <button id="btnHome" class="iconbtn" aria-label="返主頁" data-icon="home"></button>
-    <div class="brand">超人乘數表</div>
+    <div class="brand">運算超人</div>
     <button id="btnMute" class="iconbtn" aria-label="聲音開關" data-icon="sound"></button>
   </header>
   <main>
@@ -893,7 +885,7 @@ body[data-screen="home"] main{padding-top:0}
       <div class="home-glow" aria-hidden="true"></div>
       <div class="home-wrap">
         <div class="home-head">
-          <h1 class="home-title">超人乘數表</h1>
+          <h1 class="home-title">運算超人</h1>
           <p class="home-sub">學九因歌，一齊打怪獸</p>
         </div>
         <div class="home-stage" id="homeStage">
@@ -921,7 +913,7 @@ body[data-screen="home"] main{padding-top:0}
           </section>
           <div class="home-extra">
             <button class="home-pill dex" data-go="dex">圖鑑收藏</button>
-            <button class="home-pill form" data-go="form">變身進度</button>
+            <button class="home-pill record" data-go="progress">戰績</button>
           </div>
         </div>
       </div>
@@ -931,22 +923,6 @@ body[data-screen="home"] main{padding-top:0}
           <p id="soonText">呢個打怪模式就快可以玩！</p>
           <button type="button" class="btn small" id="soonOk">知道喇</button>
         </div>
-      </div>
-    </section>
-
-    <!-- FORM PLACEHOLDER -->
-    <section id="formView" class="screen">
-      <div class="wrap">
-        <h2 class="h">變身進度</h2>
-        <p class="sub">連擊越高，形態越勁</p>
-        <div class="form-card">
-          <img id="formArt" alt="" draggable="false">
-          <div class="form-kicker">而家形態</div>
-          <div class="form-now" id="formNow">銀光形態</div>
-          <div class="form-streak">最高連擊 <b id="formStreak">0</b></div>
-        </div>
-        <p class="form-note">打怪獸答啱多啲，連擊就會變身。</p>
-        <button class="btn gray" id="formHome">返主頁</button>
       </div>
     </section>
 
@@ -1092,6 +1068,13 @@ body[data-screen="home"] main{padding-top:0}
         <div class="badges" id="badges"></div>
         </div>
         </div>
+        <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
+      </div>
+    </section>
+
+    <!-- DEX (own entry; not part of 戰績) -->
+    <section id="dexView" class="screen">
+      <div class="wrap">
         <div class="dex-stage">
           <h2 class="dex-title">怪獸圖鑑 <span id="dexCount"></span><span id="dexStamp" class="dex-stamp" hidden>翼光奧米加</span></h2>
           <div class="dex-layout">
@@ -1110,7 +1093,6 @@ body[data-screen="home"] main{padding-top:0}
             </aside>
           </div>
         </div>
-        <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
       </div>
     </section>
   </main>
@@ -1977,7 +1959,6 @@ function initHome(){
   });
   const soonOk=$('#soonOk'); if(soonOk) soonOk.addEventListener('click', ()=>{ Sfx.click(); hideSoon(); });
   const soonCard=$('#soonCard'); if(soonCard) soonCard.addEventListener('click', e=>{ if(e.target===soonCard) hideSoon(); });
-  const formHome=$('#formHome'); if(formHome) formHome.addEventListener('click', ()=>{ Sfx.click(); goHome(); });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='soon'){ showSoon(b.dataset.soon||''); return; }
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
@@ -1987,8 +1968,7 @@ function initHome(){
     else if(g==='divide') show('divide');
     else if(g==='mixed') show('mixed');
     else if(g==='dex') openDexHome();
-    else if(g==='form'){ renderFormView(); show('formView'); }
-    else if(g==='progress'){ renderProgress(); show('progress'); } }));
+    else if(g==='progress') openRecords(); }));
 }
 function hideSoon(){ const c=$('#soonCard'); if(c) c.hidden=true; }
 function showSoon(name){
@@ -1997,21 +1977,13 @@ function showSoon(name){
   if(t) t.textContent=(name?name+' ':'')+'就快可以玩！';
   c.hidden=false;
 }
-function streakFormStage(n){ n=n|0; if(n>=6) return 5; if(n>=5) return 4; if(n>=3) return 3; if(n>=1) return 2; return 1; }
-function renderFormView(){
-  const streak=(DATA.stats&&DATA.stats.maxCombo)|0;
-  const st=streakFormStage(streak);
-  const img=$('#formArt'); if(img){ img.src=heroSrc(st,'idle'); img.alt=HEN_LABEL[st]||'銀光形態'; }
-  const name=$('#formNow'); if(name) name.textContent=HEN_LABEL[st]||'銀光形態';
-  const s=$('#formStreak'); if(s) s.textContent=String(streak);
+function openRecords(){
+  renderProgress(); show('progress');
+  const sc=$('#progress'); if(sc) sc.scrollTop=0;
 }
 function openDexHome(){
-  renderProgress(); show('progress');
-  requestAnimationFrame(function(){
-    const el=$('.dex-stage')||$('#dex');
-    const sc=$('#progress');
-    if(el && sc) sc.scrollTop=Math.max(0, el.offsetTop-8);
-  });
+  renderProgress(); show('dexView');
+  const sc=$('#dexView'); if(sc) sc.scrollTop=0;
 }
 
 const TILE_COLORS = {1:['#94a3b8','#475569'],2:['#ff6b6b','#c92a2a'],3:['#ffa94d','#d9480f'],4:['#ffd43b','#e67700'],5:['#69db7c','#2b8a3e'],6:['#38d9a9','#087f5b'],7:['#4dabf7','#1864ab'],8:['#9775fa','#5f3dc4'],9:['#f783ac','#c2255c'],10:['#94a3b8','#475569']};
@@ -3256,9 +3228,15 @@ function runSelfTest(){
   const monHud=$('.monhud'), right=$('.hud-right');
   if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const home=$('#home');
-  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','變身進度'].forEach(function(w){
+  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','戰績','運算超人'].forEach(function(w){
     if(!home || home.textContent.indexOf(w)<0) fails.push('home missing '+w);
   });
+  if(home && home.textContent.indexOf('變身進度')>=0) fails.push('form entry');
+  if(document.title.indexOf('運算超人')<0) fails.push('title');
+  const prog=$('#progress');
+  if(!prog || prog.textContent.indexOf('戰績')<0) fails.push('records title');
+  if(prog && (prog.querySelector('.dex-stage,#dex') || prog.textContent.indexOf('怪獸圖鑑')>=0 || prog.textContent.indexOf('變身進度')>=0)) fails.push('records dex');
+  if(!$('#dexView') || !$('#dexView #dex')) fails.push('dex view');
   if(home && home.querySelector('[data-go="setup-survive"],[data-go="setup-combo"],[data-go="setup-timed"],[data-go="mixed"],[data-stage-size]')) fails.push('home old entry');
   const soonN=home?home.querySelectorAll('[data-go="soon"]').length:0;
   if(soonN!==5) fails.push('soon '+soonN);

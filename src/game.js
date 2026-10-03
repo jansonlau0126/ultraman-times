@@ -387,7 +387,6 @@ function initHome(){
   });
   const soonOk=$('#soonOk'); if(soonOk) soonOk.addEventListener('click', ()=>{ Sfx.click(); hideSoon(); });
   const soonCard=$('#soonCard'); if(soonCard) soonCard.addEventListener('click', e=>{ if(e.target===soonCard) hideSoon(); });
-  const formHome=$('#formHome'); if(formHome) formHome.addEventListener('click', ()=>{ Sfx.click(); goHome(); });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='soon'){ showSoon(b.dataset.soon||''); return; }
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
@@ -397,8 +396,7 @@ function initHome(){
     else if(g==='divide') show('divide');
     else if(g==='mixed') show('mixed');
     else if(g==='dex') openDexHome();
-    else if(g==='form'){ renderFormView(); show('formView'); }
-    else if(g==='progress'){ renderProgress(); show('progress'); } }));
+    else if(g==='progress') openRecords(); }));
 }
 function hideSoon(){ const c=$('#soonCard'); if(c) c.hidden=true; }
 function showSoon(name){
@@ -407,21 +405,13 @@ function showSoon(name){
   if(t) t.textContent=(name?name+' ':'')+'就快可以玩！';
   c.hidden=false;
 }
-function streakFormStage(n){ n=n|0; if(n>=6) return 5; if(n>=5) return 4; if(n>=3) return 3; if(n>=1) return 2; return 1; }
-function renderFormView(){
-  const streak=(DATA.stats&&DATA.stats.maxCombo)|0;
-  const st=streakFormStage(streak);
-  const img=$('#formArt'); if(img){ img.src=heroSrc(st,'idle'); img.alt=HEN_LABEL[st]||'銀光形態'; }
-  const name=$('#formNow'); if(name) name.textContent=HEN_LABEL[st]||'銀光形態';
-  const s=$('#formStreak'); if(s) s.textContent=String(streak);
+function openRecords(){
+  renderProgress(); show('progress');
+  const sc=$('#progress'); if(sc) sc.scrollTop=0;
 }
 function openDexHome(){
-  renderProgress(); show('progress');
-  requestAnimationFrame(function(){
-    const el=$('.dex-stage')||$('#dex');
-    const sc=$('#progress');
-    if(el && sc) sc.scrollTop=Math.max(0, el.offsetTop-8);
-  });
+  renderProgress(); show('dexView');
+  const sc=$('#dexView'); if(sc) sc.scrollTop=0;
 }
 
 const TILE_COLORS = {1:['#94a3b8','#475569'],2:['#ff6b6b','#c92a2a'],3:['#ffa94d','#d9480f'],4:['#ffd43b','#e67700'],5:['#69db7c','#2b8a3e'],6:['#38d9a9','#087f5b'],7:['#4dabf7','#1864ab'],8:['#9775fa','#5f3dc4'],9:['#f783ac','#c2255c'],10:['#94a3b8','#475569']};
@@ -1666,9 +1656,15 @@ function runSelfTest(){
   const monHud=$('.monhud'), right=$('.hud-right');
   if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const home=$('#home');
-  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','變身進度'].forEach(function(w){
+  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','戰績','運算超人'].forEach(function(w){
     if(!home || home.textContent.indexOf(w)<0) fails.push('home missing '+w);
   });
+  if(home && home.textContent.indexOf('變身進度')>=0) fails.push('form entry');
+  if(document.title.indexOf('運算超人')<0) fails.push('title');
+  const prog=$('#progress');
+  if(!prog || prog.textContent.indexOf('戰績')<0) fails.push('records title');
+  if(prog && (prog.querySelector('.dex-stage,#dex') || prog.textContent.indexOf('怪獸圖鑑')>=0 || prog.textContent.indexOf('變身進度')>=0)) fails.push('records dex');
+  if(!$('#dexView') || !$('#dexView #dex')) fails.push('dex view');
   if(home && home.querySelector('[data-go="setup-survive"],[data-go="setup-combo"],[data-go="setup-timed"],[data-go="mixed"],[data-stage-size]')) fails.push('home old entry');
   const soonN=home?home.querySelectorAll('[data-go="soon"]').length:0;
   if(soonN!==5) fails.push('soon '+soonN);
