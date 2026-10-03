@@ -1666,7 +1666,7 @@ function runSelfTest(){
   const monHud=$('.monhud'), right=$('.hud-right');
   if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const home=$('#home');
-  ['【學習】','乘數表','九因歌','【打怪】','加數 Only','減數 Only','加減混合','乘數 Only','除數 Only','乘除混合','四式運算','圖鑑收藏','變身進度'].forEach(function(w){
+  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','變身進度'].forEach(function(w){
     if(!home || home.textContent.indexOf(w)<0) fails.push('home missing '+w);
   });
   if(home && home.querySelector('[data-go="setup-survive"],[data-go="setup-combo"],[data-go="setup-timed"],[data-go="mixed"],[data-stage-size]')) fails.push('home old entry');
