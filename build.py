@@ -13,6 +13,9 @@ html = f'''<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1033">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="assets/icon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/icon-180.png" sizes="180x180">
+<link rel="manifest" href="manifest.webmanifest">
 <title>運算超人</title>
 <style>
 {css}

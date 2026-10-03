@@ -130,6 +130,7 @@ let current = 'home';
 function show(id){
   $$('.screen').forEach(s=>s.classList.toggle('active', s.id===id));
   current = id; document.body.dataset.screen = id;
+  if(typeof pinViewport==='function') pinViewport();
   if(id!=='learn'){ stopAuto(); $$('body > .movename').forEach(rm); }
   if(id==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
   const sc=$('#'+id); if(sc) sc.scrollTop=0;
@@ -534,6 +535,20 @@ const FORM_TITLE = {1:'銀光戰士', 2:'紅銀戰士', 3:'流星戰士', 4:'金
 const CLEAR_BONUS = 8;
 const WRONG_PENALTY = 5;
 const HEN_LABEL = ['','銀光形態','紅銀覺醒','藍披流星','金焰超能','奧米加翼光'];
+/* HUD uses the streak name, wrapped 超人•…型態. 銀光形態 drops the old 形態 suffix. */
+function formHudName(st){
+  const raw = HEN_LABEL[st] || HEN_LABEL[1] || '';
+  const core = String(raw).replace(/(形態|型態)$/, '');
+  return '超人•'+core+'型態';
+}
+function paintFormHud(flash){
+  const el = $('#formHud'); if(!el) return;
+  const name = formHudName(henshinStage());
+  if(el.textContent!==name){
+    el.textContent = name;
+    if(flash){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+  }
+}
 function heroSvgEl(){ return $('#heroBob .hero'); }
 function monSvgEl(){ return $('#monBob .mon'); }
 function mk(sel, root){ return (root||stageEl).querySelector(sel); }
@@ -584,6 +599,7 @@ function syncHenshin(){
       FX.burst(hp.x,hp.y,{n:22,speed:7,shape:'star',colors:['#fff','#bff3ff','#ffe066','#ff7ad9'],size:8,life:50,gravity:.05}); }catch(e){}
   }
   if(st!==prev) layoutStage();
+  paintFormHud(st>prev);
   B._hen=st;
 }
 async function playHenshinFanfare(){
@@ -965,9 +981,8 @@ async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); S
 function renderRoundHud(){
   if(isOpsMode()){
     const title=OPS_NAME[B.mode]||'打怪獸';
-    const boss=!!(B.bossRun || (MONS[B.type]&&MONS[B.type].boss));
-    $('#roundLbl').innerHTML='<div class="heroname">'+title+'</div>'+(boss?'頭目戰':'一場打完');
-    $('#roundDots').innerHTML='<span>答啱 <b id="scoreLbl">'+(B.solved||0)+'</b> / '+(B.goal||15)+'</span>';
+    $('#roundLbl').innerHTML='<div class="heroname">'+title+'</div>';
+    $('#roundDots').innerHTML='<span class="form-hud" id="formHud">'+formHudName(henshinStage())+'</span>';
     return;
   }
   if(isClockMode()){
@@ -1529,7 +1544,52 @@ function initBattle(){
   const keys=['7','8','9','4','5','6','1','2','3','del','0','ok'];
   $('#keypad').innerHTML = keys.map(k=> k==='del' ? '<button class="key del" data-k="del" aria-label="刪除">'+icon('del')+'</button>' : k==='ok' ? '<button class="key ok" data-k="ok">出招！</button>' : '<button class="key" data-k="'+k+'">'+k+'</button>').join('');
   $$('#keypad .key').forEach(b=>b.addEventListener('click',()=>keyIn(b.dataset.k)));
-  window.addEventListener('resize',()=>{ layoutStage(); FX.resize(); if(current==='learn') renderLearn(false); });
+  window.addEventListener('resize',()=>{ pinViewport(); layoutStage(); FX.resize(); if(current==='learn') renderLearn(false); });
+  window.addEventListener('orientationchange', pinViewportSoon);
+  window.addEventListener('scroll', ()=>{ if(window.scrollX||window.scrollY) window.scrollTo(0,0); }, {passive:true});
+  if(window.visualViewport){
+    visualViewport.addEventListener('resize', pinViewport);
+    visualViewport.addEventListener('scroll', pinViewport);
+  }
+  pinViewport();
+}
+/* iOS keeps a layout-viewport scroll after portrait → landscape → portrait,
+   which clips the in-flow top bar. Pin the app to the visual viewport and
+   force the home / sound buttons back on whenever the game is playable. */
+function pinViewport(){
+  const root=document.documentElement, body=document.body;
+  root.scrollTop=0; body.scrollTop=0;
+  if(window.scrollX||window.scrollY) window.scrollTo(0,0);
+  const vv=window.visualViewport;
+  const app=document.getElementById('app');
+  if(app){
+    const h=Math.max(1, Math.round(vv?vv.height:window.innerHeight));
+    app.style.height=h+'px';
+    app.style.maxHeight=h+'px';
+  }
+  const screen=body.dataset.screen||'';
+  const bar=document.getElementById('topbar');
+  const homeBtn=document.getElementById('btnHome');
+  const muteBtn=document.getElementById('btnMute');
+  if(screen==='battle'){
+    if(bar){ bar.hidden=false; bar.style.visibility='visible'; bar.style.opacity='1'; bar.style.display='flex'; }
+    if(homeBtn){ homeBtn.hidden=false; homeBtn.style.visibility='visible'; homeBtn.style.display='grid'; }
+    if(muteBtn){ muteBtn.hidden=false; muteBtn.style.visibility='visible'; muteBtn.style.display='grid'; }
+  } else {
+    if(bar){ bar.style.visibility=''; bar.style.opacity=''; bar.style.display=''; }
+    if(homeBtn){ homeBtn.style.visibility=''; homeBtn.style.display=''; }
+    if(muteBtn){ muteBtn.style.visibility=''; muteBtn.style.display=''; }
+  }
+  const lock=document.getElementById('rotateLock');
+  if(lock){
+    const h=vv?vv.height:window.innerHeight, w=vv?vv.width:window.innerWidth;
+    if(h>=w || h>520) lock.classList.add('off');
+    else lock.classList.remove('off');
+  }
+}
+function pinViewportSoon(){
+  pinViewport();
+  [60,180,420,800].forEach(ms=>setTimeout(()=>{ pinViewport(); if(current==='battle') layoutStage(); }, ms));
 }
 
 /* ---------- PROGRESS ---------- */
@@ -1833,6 +1893,42 @@ function runSelfTest(){
     if(!home || !home.querySelector('[data-go="'+g+'"]')) fails.push('home '+g);
   });
   if(!home || !home.querySelector('[data-go="learnPick"]')) fails.push('home live');
+  const marks={'ops-add':'＋','ops-sub':'－','ops-mixas':'±','ops-mul':'×','ops-div':'÷','ops-mixmd':'×÷','ops-all':'＋－×÷'};
+  Object.keys(marks).forEach(function(g){
+    const btn=home&&home.querySelector('[data-go="'+g+'"]');
+    const name={'ops-add':'加法大進擊','ops-sub':'減法暗影戰','ops-mixas':'加減雙刃斬','ops-mul':'乘法火焰爆','ops-div':'除法冰封關','ops-mixmd':'乘除雷電擊','ops-all':'四則終極戰'}[g];
+    if(!btn || btn.textContent.indexOf(name)<0 || btn.textContent.indexOf(marks[g])<0) fails.push('sym '+g);
+  });
+  [[1,'超人•銀光型態'],[2,'超人•紅銀覺醒型態'],[3,'超人•藍披流星型態'],[4,'超人•金焰超能型態'],[5,'超人•奧米加翼光型態']].forEach(function(pair){
+    if(formHudName(pair[0])!==pair[1]) fails.push('form '+pair[0]+' '+formHudName(pair[0]));
+  });
+  const dex=home&&home.querySelector('.home-pill.dex');
+  const rec=home&&home.querySelector('.home-pill.record');
+  if(!dex || getComputedStyle(dex).textAlign!=='center') fails.push('dex align');
+  if(dex && rec){
+    const dl=dex.querySelector('.pill-label'), rl=rec.querySelector('.pill-label');
+    if(!dl || !rl) fails.push('pill label');
+    else {
+      const a=dl.getBoundingClientRect(), b=rl.getBoundingClientRect();
+      const db=dex.getBoundingClientRect(), rb=rec.getBoundingClientRect();
+      const dc=(a.left+a.width/2)-(db.left+db.width/2);
+      const rc=(b.left+b.width/2)-(rb.left+rb.width/2);
+      if(Math.abs(dc)>3) fails.push('dex center '+dc.toFixed(1));
+      if(Math.abs(rc)>3) fails.push('rec center '+rc.toFixed(1));
+    }
+  }
+  const ico=document.querySelector('link[rel="icon"]');
+  const apple=document.querySelector('link[rel="apple-touch-icon"]');
+  if(!ico || (ico.getAttribute('href')||'').indexOf('icon-32')<0) fails.push('icon');
+  if(!apple || (apple.getAttribute('href')||'').indexOf('icon-180')<0) fails.push('apple');
+  B.mode='add'; B.bossRun=false; B.combo=0; B._hen=1;
+  renderRoundHud();
+  const heroHud=document.getElementById('heroHud');
+  if(!heroHud || heroHud.textContent.indexOf('一場打完')>=0 || heroHud.textContent.indexOf('答啱')>=0) fails.push('progress copy');
+  if(!heroHud || heroHud.textContent.indexOf('超人•銀光型態')<0) fails.push('form hud');
+  B.combo=3; paintFormHud(false);
+  if(heroHud.textContent.indexOf('超人•藍披流星型態')<0) fails.push('form live');
+  B.combo=0; B.mode='add';
   if(opsGoal(false)!==15) fails.push('goal normal');
   if(opsGoal(true,5)!==20 || opsGoal(true,8)!==23) fails.push('goal boss');
   if(BOSS_CAST.length!==4 || BOSS_CAST.some(function(id){ return !MONS[id]; })) fails.push('boss cast');
