@@ -13,7 +13,7 @@ html = f'''<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1033">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>超人乘數表・光之巨人打怪獸</title>
+<title>運算超人</title>
 <style>
 {css}
 </style>

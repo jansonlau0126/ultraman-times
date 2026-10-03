@@ -2,7 +2,7 @@
 <div id="app">
   <header id="topbar">
     <button id="btnHome" class="iconbtn" aria-label="返主頁" data-icon="home"></button>
-    <div class="brand">超人乘數表</div>
+    <div class="brand">運算超人</div>
     <button id="btnMute" class="iconbtn" aria-label="聲音開關" data-icon="sound"></button>
   </header>
   <main>
@@ -11,25 +11,38 @@
       <div class="home-city" aria-hidden="true"></div>
       <div class="home-glow" aria-hidden="true"></div>
       <div class="home-wrap">
-        <h1 class="home-title">超人乘數表</h1>
+        <div class="home-head">
+          <h1 class="home-title">運算超人</h1>
+          <p class="home-sub">學九因歌，一齊打怪獸</p>
+        </div>
         <div class="home-stage" id="homeStage">
           <div class="home-sparkles" aria-hidden="true"></div>
-          <div class="home-hero" id="homeHero" title="撳我！"></div>
-        </div>
-        <div class="home-dock">
           <div class="home-pet home-pet-l" id="homePetL"></div>
-          <div class="home-menu">
-            <button class="home-pill learn" data-go="learnPick">學乘數表</button>
-            <button class="home-pill battle" data-go="setup-battle">打怪獸</button>
-            <button class="home-pill divide" data-go="divide">除法戰鬥</button>
-            <button class="home-pill mixed" data-go="mixed">兩步混合</button>
-            <button class="home-pill timed" data-go="setup-survive">限時挑戰</button>
-            <button class="home-pill combo" data-go="setup-combo">連擊挑戰</button>
-          </div>
+          <div class="home-hero" id="homeHero" title="撳我！"></div>
           <div class="home-pet home-pet-r" id="homePetR"></div>
-          <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
-        <button class="home-record" data-go="progress">戰績<small>勳章 · 圖鑑 · 分數</small></button>
+        <div class="home-board">
+          <section class="home-block" aria-labelledby="homeLearnLabel">
+            <h2 class="home-label" id="homeLearnLabel">【學習】</h2>
+            <button class="home-pill learn" data-go="learnPick">乘數表<small>九因歌</small></button>
+          </section>
+          <section class="home-block" aria-labelledby="homeBattleLabel">
+            <h2 class="home-label" id="homeBattleLabel">【打怪】</h2>
+            <div class="home-modes">
+              <button class="home-pill add" data-go="ops-add">加法大進擊</button>
+              <button class="home-pill sub" data-go="ops-sub">減法暗影戰</button>
+              <button class="home-pill mixas" data-go="ops-mixas">加減雙刃斬</button>
+              <button class="home-pill battle" data-go="ops-mul">乘法火焰爆</button>
+              <button class="home-pill divide" data-go="ops-div">除法冰封關</button>
+              <button class="home-pill mixmd" data-go="ops-mixmd">乘除雷電擊</button>
+              <button class="home-pill allops wide" data-go="ops-all">四則終極戰</button>
+            </div>
+          </section>
+          <div class="home-extra">
+            <button class="home-pill dex" data-go="dex">圖鑑收藏</button>
+            <button class="home-pill record" data-go="progress">戰績</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -175,6 +188,13 @@
         <div class="badges" id="badges"></div>
         </div>
         </div>
+        <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
+      </div>
+    </section>
+
+    <!-- DEX (own entry; not part of 戰績) -->
+    <section id="dexView" class="screen">
+      <div class="wrap">
         <div class="dex-stage">
           <h2 class="dex-title">怪獸圖鑑 <span id="dexCount"></span><span id="dexStamp" class="dex-stamp" hidden>翼光奧米加</span></h2>
           <div class="dex-layout">
@@ -193,7 +213,6 @@
             </aside>
           </div>
         </div>
-        <button class="btn gray small" id="resetBtn"><span data-icon="trash"></span>清除所有進度</button>
       </div>
     </section>
   </main>

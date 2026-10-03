@@ -134,7 +134,7 @@ function show(id){
   if(id==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
   const sc=$('#'+id); if(sc) sc.scrollTop=0;
 }
-function goHome(){ endBattle(); Speech.stop(); setHomeMon(); setHomeHeroPose(); show('home'); }
+function goHome(){ endBattle(); Speech.stop(); hideSoon(); setHomeMon(); setHomeHeroPose(); show('home'); }
 
 /* ---------- facts / spaced repetition ---------- */
 function mastery(k){ const f=DATA.facts[k]; if(!f||(f.c+f.w)===0) return 0; return f.s>=3?2:1; }
@@ -385,14 +385,34 @@ function initHome(){
     Sfx.whoosh();
     play(bob,[{transform:'translateY(0) scale(1)'},{transform:'translateY(-6%) scale(1.06)',offset:.4},{transform:'translateY(0) scale(1)'}],{duration:500,easing:'ease-out'});
   });
+  const soonOk=$('#soonOk'); if(soonOk) soonOk.addEventListener('click', ()=>{ Sfx.click(); hideSoon(); });
+  const soonCard=$('#soonCard'); if(soonCard) soonCard.addEventListener('click', e=>{ if(e.target===soonCard) hideSoon(); });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
+    if(g==='soon'){ showSoon(b.dataset.soon||''); return; }
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
+    else if(g && g.indexOf('ops-')===0) startOps(g.slice(4));
     else if(g==='setup-battle') openSetup('battle');
     else if(g==='setup-survive' || g==='setup-timed') openSetup('survive');
     else if(g==='setup-combo') openSetup('combo');
     else if(g==='divide') show('divide');
     else if(g==='mixed') show('mixed');
-    else if(g==='progress'){ renderProgress(); show('progress'); } }));
+    else if(g==='dex') openDexHome();
+    else if(g==='progress') openRecords(); }));
+}
+function hideSoon(){ const c=$('#soonCard'); if(c) c.hidden=true; }
+function showSoon(name){
+  const c=$('#soonCard'); if(!c) return;
+  const t=$('#soonText');
+  if(t) t.textContent=(name?name+' ':'')+'就快可以玩！';
+  c.hidden=false;
+}
+function openRecords(){
+  renderProgress(); show('progress');
+  const sc=$('#progress'); if(sc) sc.scrollTop=0;
+}
+function openDexHome(){
+  renderProgress(); show('dexView');
+  const sc=$('#dexView'); if(sc) sc.scrollTop=0;
 }
 
 const TILE_COLORS = {1:['#94a3b8','#475569'],2:['#ff6b6b','#c92a2a'],3:['#ffa94d','#d9480f'],4:['#ffd43b','#e67700'],5:['#69db7c','#2b8a3e'],6:['#38d9a9','#087f5b'],7:['#4dabf7','#1864ab'],8:['#9775fa','#5f3dc4'],9:['#f783ac','#c2255c'],10:['#94a3b8','#475569']};
@@ -446,7 +466,7 @@ function initLearn(){
   $('#lNext').addEventListener('click',()=>{ stopAuto(); learnNext(); });
   $('#lSpeak').addEventListener('click',()=>{ if(DATA.settings.muted){ play($('#btnMute'),[{transform:'scale(1)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:280}); return; } Speech.speak(chant(L.t,L.i)); play($('#lChant'),[{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:400}); });
   $('#lAuto').addEventListener('click',()=>{ Sfx.click(); toggleAuto(); });
-  $('#lGo').addEventListener('click',()=>{ Sfx.click(); DATA.settings.tables=[L.t]; save(); startSession('battle',[L.t]); });
+  $('#lGo').addEventListener('click',()=>{ Sfx.click(); DATA.settings.tables=[L.t]; save(); startOps('mul', {tables:[L.t]}); });
 }
 
 /* ---------- SETUP ---------- */
@@ -935,11 +955,21 @@ async function monsterExplode(){
 }
 
 async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); Sfx.appear();
-  const m=MONS[B.type]; showMoveName(m.final?'最終大頭目・'+m.name+'出現！':m.boss?(m.short||m.name)+'出現！':(m.name+'出現！'),'banner',1500);
+  const m=MONS[B.type];
+  const boss=!!(B.bossRun || m.boss);
+  const label=(m.final && boss)?'最終大頭目・'+m.name+'出現！':boss?'頭目・'+(m.short||m.name)+'出現！':(m.name+'出現！');
+  showMoveName(label,'banner',1500);
   await play(monWrap,[{transform:'translateX(130%)',opacity:0},{transform:'translateX(-6%)',opacity:1,offset:.7},{transform:'translateX(0)',opacity:1}],{duration:950*K(),easing:'ease-out'});
   shake(5); Sfx.hit(); }
 
 function renderRoundHud(){
+  if(isOpsMode()){
+    const title=OPS_NAME[B.mode]||'打怪獸';
+    const boss=!!(B.bossRun || (MONS[B.type]&&MONS[B.type].boss));
+    $('#roundLbl').innerHTML='<div class="heroname">'+title+'</div>'+(boss?'頭目戰':'一場打完');
+    $('#roundDots').innerHTML='<span>答啱 <b id="scoreLbl">'+(B.solved||0)+'</b> / '+(B.goal||15)+'</span>';
+    return;
+  }
   if(isClockMode()){
     const label=B.mode==='combo'?'連擊挑戰':'限時生存';
     const sec=Math.max(0, Math.ceil(B.timeLeft||0));
@@ -988,19 +1018,33 @@ function makeDivChoices(quot){
   while(set.length<4 && guard++<40){ const v=randi(1, Math.max(12, quot+3)); if(v>=1 && set.indexOf(v)<0) set.push(v); }
   return shuffle(set);
 }
-function qOpText(){ return B.mode==='divide' ? '÷' : '×'; }
+function qOpText(){ return (B.mode==='divide' || B.mode==='div') ? '÷' : '×'; }
+const OP_WORD={'+':'加','−':'減','-':'減','×':'乘','÷':'除以'};
+/* 加法減法用日常讀法（十四），九因歌先用「一十四」。 */
+function cnSpeak(n){
+  n=n|0; if(n<0) n=0;
+  if(n<10) return DIG[n]; if(n===100) return '一百';
+  if(n>100) return cnNum(n);
+  const ten=Math.floor(n/10), u=n%10;
+  if(ten===1) return '十'+(u?DIG[u]:'');
+  return DIG[ten]+'十'+(u?DIG[u]:'');
+}
 function factLine(q){
-  if(B.mode==='mixed') return q.a+' × '+q.b+' '+q.op2+' '+q.c+' = '+q.ans;
-  if(B.mode==='divide') return q.a+' ÷ '+q.b+' = '+q.ans+'　'+chant(q.b, q.ans);
-  return q.a+' × '+q.b+' = '+q.ans+'　'+chant(q.a, q.b);
+  if(q.op2!=null && q.c!=null) return q.a+' '+(q.op||'×')+' '+q.b+' '+q.op2+' '+q.c+' = '+q.ans;
+  const op=q.op || qOpText();
+  if(op==='×') return q.a+' × '+q.b+' = '+q.ans+(q.a<=10 && q.b<=9 ? '　'+chant(q.a, q.b) : '');
+  if(op==='÷') return q.a+' ÷ '+q.b+' = '+q.ans+(q.b<=10 && q.ans<=9 ? '　'+chant(q.b, q.ans) : '');
+  return q.a+' '+op+' '+q.b+' = '+q.ans;
 }
 function factSpeak(q){
-  if(B.mode==='mixed'){
-    const opWord={'+':'加','−':'減','×':'乘','÷':'除以'};
-    return cnNum(q.a)+'乘'+cnNum(q.b)+(opWord[q.op2]||'')+cnNum(q.c)+'等於'+cnNum(q.ans);
+  if(q.op2!=null && q.c!=null){
+    return cnSpeak(q.a)+(OP_WORD[q.op]||'乘')+cnSpeak(q.b)+(OP_WORD[q.op2]||'')+cnSpeak(q.c)+'等於'+cnSpeak(q.ans);
   }
-  if(B.mode==='divide') return cnNum(q.a)+'除以'+cnNum(q.b)+'等於'+cnNum(q.ans);
-  return chant(q.a, q.b);
+  const op=q.op || qOpText();
+  if(op==='×' && q.a<=9 && q.b<=9) return chant(q.a, q.b);
+  if(op==='×') return cnSpeak(q.a)+'乘'+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
+  if(op==='÷') return cnSpeak(q.a)+'除以'+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
+  return cnSpeak(q.a)+(OP_WORD[op]||'')+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
 }
 function factorPair(prod){
   const pairs=[];
@@ -1087,11 +1131,134 @@ function showExpr(q){
     if(c) c.hidden=true;
   }
 }
+const OPS_NAME={add:'加法大進擊',sub:'減法暗影戰',mixas:'加減雙刃斬',mul:'乘法火焰爆',div:'除法冰封關',mixmd:'乘除雷電擊',all:'四則終極戰'};
+const OPS_MODES=['add','sub','mixas','mul','div','mixmd','all'];
+/* Existing rarer monsters only. No new art. */
+const BOSS_CAST=['steeltiran','illusdemon','heidragon','starlord'];
+function isOpsMode(mode){ return OPS_MODES.indexOf(mode||B.mode)>=0; }
+function opsGoal(isBoss, extra){ return isBoss ? 15+(extra==null?randi(5,8):extra) : 15; }
+function rollOpsEncounter(){
+  const boss=Math.random()<0.10;
+  if(!boss) return {type:pickFresh(NORMALS), boss:false};
+  return {type:pick(BOSS_CAST), boss:true};
+}
+function pickAdd(recent){
+  recent=recent||[];
+  for(let i=0;i<50;i++){
+    let a,b;
+    if(Math.random()<0.22){
+      a=randi(8,30); b=randi(4,24);
+      if(a+b>50) b=50-a;
+      if(a+b<21 && a<28) b=Math.min(24, b+6);
+    } else {
+      a=randi(1,12);
+      b=randi(1, Math.max(1, Math.min(12, 18-a)));
+    }
+    if(a<0||b<0) continue;
+    const ans=a+b;
+    if(ans<1||ans>50) continue;
+    const key='add:'+a+'+'+b;
+    if(recent.indexOf(key)>=0) continue;
+    return {a:a,b:b,ans:ans,op:'+',key:key};
+  }
+  return {a:3,b:4,ans:7,op:'+',key:'add:3+4'};
+}
+function pickSub(recent){
+  recent=recent||[];
+  for(let i=0;i<50;i++){
+    let a,b;
+    if(Math.random()<0.22){ a=randi(16,50); b=randi(1, a-1); }
+    else { a=randi(3,20); b=randi(1, a-1); }
+    const ans=a-b;
+    if(ans<0) continue;
+    const key='sub:'+a+'-'+b;
+    if(recent.indexOf(key)>=0) continue;
+    return {a:a,b:b,ans:ans,op:'−',key:key};
+  }
+  return {a:8,b:3,ans:5,op:'−',key:'sub:8-3'};
+}
+function pickMulQ(recent){
+  const tables=(B.tables&&B.tables.length)?B.tables:[2,3,4,5];
+  const keys=(recent||[]).filter(function(k){ return /^\d+x\d+$/.test(k); });
+  const p=pickFact(tables, keys);
+  return {a:p.a,b:p.b,ans:p.a*p.b,op:'×',key:p.a+'x'+p.b};
+}
+function pickDivQ(recent){
+  const divs=(B.divisors&&B.divisors.length)?B.divisors:[2,3,4,5,10];
+  const keys=(recent||[]).filter(function(k){ return k.indexOf('div:')===0; });
+  const d=pickDivision(divs, B.qMax||9, keys);
+  return {a:d.dividend,b:d.d,ans:d.q,op:'÷',key:d.key,divisor:d.d};
+}
+function pickTwoStep(){
+  const m=pickMixed(Math.random()<0.7?1:2);
+  return {a:m.a,b:m.b,c:m.c,op:'×',op2:m.op2,ans:m.ans,key:'mix:'+m.a+'x'+m.b+m.op2+m.c};
+}
+function pickOpsQuestion(mode, recent){
+  if(mode==='add') return pickAdd(recent);
+  if(mode==='sub') return pickSub(recent);
+  if(mode==='mixas') return Math.random()<0.5 ? pickAdd(recent) : pickSub(recent);
+  if(mode==='mul') return pickMulQ(recent);
+  if(mode==='div') return pickDivQ(recent);
+  if(mode==='mixmd') return Math.random()<0.5 ? pickMulQ(recent) : pickDivQ(recent);
+  const r=Math.random();
+  if(r<0.28) return pickAdd(recent);
+  if(r<0.50) return pickSub(recent);
+  if(r<0.70) return pickMulQ(recent);
+  if(r<0.86) return pickDivQ(recent);
+  return pickTwoStep();
+}
+function makeSumChoices(ans){
+  const set=[ans];
+  shuffle([ans+1,ans-1,ans+2,ans-2,ans+3,ans-3,ans+10,ans-10,ans+5,ans-5]).forEach(function(v){
+    if(set.length>=4) return;
+    if(v>=0 && v===(v|0) && set.indexOf(v)<0) set.push(v);
+  });
+  let guard=0;
+  while(set.length<4 && guard++<40){
+    const v=Math.max(0, ans+randi(-8,8));
+    if(set.indexOf(v)<0) set.push(v);
+  }
+  return shuffle(set);
+}
+function choicesFor(q){
+  if(q.op2!=null && q.c!=null) return makeMixedChoices(q);
+  if(q.op==='÷') return makeDivChoices(q.ans);
+  if(q.op==='×') return makeChoices(q.a, q.b);
+  return makeSumChoices(q.ans);
+}
+function startOps(kind, opt){
+  if(OPS_MODES.indexOf(kind)<0) return;
+  opt=opt||{};
+  endBattle(); B.token++;
+  const enc=rollOpsEncounter();
+  B.mode=kind; B.star=0; B.qMax=9;
+  B.tables = opt.tables ? opt.tables.slice() : (kind==='mul' ? [2,3,4,5,6,7,8,9] : (kind==='mixmd'||kind==='all' ? [2,3,4,5] : []));
+  B.divisors = kind==='div' ? [2,3,4,5,10] : (kind==='mixmd' ? [2,3,4,5,10] : (kind==='all' ? [2,3,4,5] : []));
+  if(kind==='div'||kind==='mixmd'||kind==='all') B.qMax=9;
+  B.choice=true;
+  B.bossRun=enc.boss;
+  B.goal=opsGoal(enc.boss);
+  B.solved=0;
+  B.combo=0; B.maxCombo=0; B.maxHen=1; B.recent=[]; B.lastMove=null; B.busy=true; B.input=''; B._timeUp=false; B._ended=false; B._hen=1; B._henLabel=null;
+  const battle=$('#battle');
+  if(battle){
+    battle.classList.toggle('mode-choice', true);
+    battle.classList.toggle('mode-divide', kind==='div'||kind==='mixmd');
+    battle.classList.toggle('mode-mixed', kind==='all');
+  }
+  hideResult(); FX.clear(); if(fxLayer) fxLayer.innerHTML='';
+  ensureHero(); preloadForm(1); preloadForm(2);
+  if(heroWrap) heroWrap.getAnimations().forEach(a=>a.cancel());
+  show('battle');
+  B.order=[enc.type]; B.round=0;
+  startRound(enc.type);
+}
 function startSession(mode, tables, opt){
   endBattle(); B.token++;
   opt=opt||{};
   if(mode==='timed') mode='survive';
   B.mode=mode; B.star=opt.star||0; B.qMax = B.star>=3 ? 12 : 9;
+  B.bossRun=false; B.goal=0; B.solved=0;
   B.tables=(tables||[]).slice().sort((a,b)=>a-b);
   B.choice = (mode==='divide' || mode==='mixed' || isClockMode()) ? true : !!DATA.settings.choice;
   B.combo=0; B.maxCombo=0; B.maxHen=1; B.recent=[]; B.lastMove=null; B.busy=true; B.input=''; B._timeUp=false; B._ended=false;
@@ -1114,7 +1281,7 @@ function startSession(mode, tables, opt){
 }
 async function startRound(type){
   const tk=B.token; B.type=type; const m=MONS[type];
-  B.maxHp = isClockMode() ? 40 : (m.final?150:m.boss?120:100); B.hp=B.maxHp; B.gotCoins=0;
+  B.maxHp = isOpsMode() ? (B.goal||15) : (isClockMode() ? 40 : (m.final?150:m.boss?120:100)); B.hp=B.maxHp; B.gotCoins=0;
   if(!isClockMode()){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; B._hen=1; B._henLabel=null; }
   else B.rwrong=0;
   monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img')); setMonAttack(false);
@@ -1126,30 +1293,32 @@ async function startRound(type){
 function renderQuestionBlank(){
   showExpr({a:'?',b:'?'});
   const a=$('#qAns'); a.textContent='?'; a.className='ansbox empty';
-  const idle = isClockMode()?'準備…':B.mode==='divide'?'除得盡先出招！':B.mode==='mixed'?'由左到右計！':'怪獸嚟緊！準備出招！';
+  const idle = isClockMode()?'準備…':isOpsMode()?(OPS_NAME[B.mode]+'！'):B.mode==='divide'?'除得盡先出招！':B.mode==='mixed'?'由左到右計！':'怪獸嚟緊！準備出招！';
   setHint('idle', idle); $('#choices').innerHTML='';
 }
 function nextQuestion(){
   let f;
-  if(B.mode==='divide'){
+  if(isOpsMode()){
+    f=pickOpsQuestion(B.mode, B.recent);
+  } else if(B.mode==='divide'){
     const divs=B.tables.length?B.tables:divisionDivisors(B.star||1);
     const d=pickDivision(divs, B.qMax||9, B.recent);
-    f={a:d.dividend,b:d.d,ans:d.q,key:d.key,divisor:d.d};
+    f={a:d.dividend,b:d.d,ans:d.q,op:'÷',key:d.key,divisor:d.d};
   } else if(B.mode==='mixed'){
     const m=pickMixed(B.star||1);
-    f={a:m.a,b:m.b,c:m.c,op2:m.op2,ans:m.ans,key:'mix:'+m.a+'x'+m.b+m.op2+m.c,divisor:m.a};
+    f={a:m.a,b:m.b,c:m.c,op:'×',op2:m.op2,ans:m.ans,key:'mix:'+m.a+'x'+m.b+m.op2+m.c,divisor:m.a};
   } else {
     const p=pickFact(B.tables, B.recent);
-    f={a:p.a,b:p.b,ans:p.a*p.b,key:p.a+'x'+p.b,divisor:p.a};
+    f={a:p.a,b:p.b,ans:p.a*p.b,op:'×',key:p.a+'x'+p.b,divisor:p.a};
   }
-  B.q={a:f.a,b:f.b,c:f.c,op2:f.op2,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
+  B.q={a:f.a,b:f.b,c:f.c,op:f.op,op2:f.op2,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
   B.recent.push(B.q.key); if(B.recent.length>6) B.recent.shift();
   B.input=''; showExpr(B.q); renderAns();
   if(B.choice){
-    const opts=B.mode==='divide'?makeDivChoices(f.ans):B.mode==='mixed'?makeMixedChoices(B.q):makeChoices(f.a,f.b);
+    const opts=(B.mode==='divide')?makeDivChoices(f.ans):(B.mode==='mixed')?makeMixedChoices(B.q):choicesFor(B.q);
     $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'"><span class="chnum">'+v+'</span></button>').join('');
     $$('#choices .choice').forEach(b=>b.addEventListener('click',()=>{ if(B.busy||b.classList.contains('x')) return; B.input=b.dataset.v; B.lastChoiceBtn=b; renderAns(); submit(); })); }
-  const hint = B.mode==='divide' ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
+  const hint = (B.q&&B.q.op2!=null) ? '由左邊計到右邊！' : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
   setHint('idle', hint);
   play($('.qrow'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)'}],{duration:320,easing:'ease-out'}); }
 function renderAns(state){ const a=$('#qAns'); a.textContent = B.input || '?'; a.className='ansbox'+(B.input?'':' empty')+(state?' '+state:''); }
@@ -1163,7 +1332,8 @@ async function submit(){
   B.busy=true;
   if(first && !isClockMode()){
     B.rq++;
-    if(B.mode!=='mixed'){ const tableKey=(B.mode==='divide'?(q.divisor||q.b):q.a); B.rtables[tableKey]=(B.rtables[tableKey]||0)+1; }
+    if(B.mode==='battle'||B.mode==='mul'){ B.rtables[q.a]=(B.rtables[q.a]||0)+1; }
+    else if(B.mode==='divide'||B.mode==='div'){ const tableKey=(q.divisor||q.b); B.rtables[tableKey]=(B.rtables[tableKey]||0)+1; }
   }
   if(n===q.ans){
     Sfx.correct(); renderAns('good');
@@ -1174,13 +1344,14 @@ async function submit(){
       B.maxCombo=Math.max(B.maxCombo,B.combo);
       if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); }
     }
+    if(isOpsMode()){ B.solved=(B.solved||0)+1; renderRoundHud(); }
     if(isClockMode() && B.mode!=='combo') B.score++;
     const scoreEl=$('#scoreLbl');
     if(scoreEl) scoreEl.textContent = B.mode==='combo' ? B.combo : (B.score||0);
     setHint('good', pick(['答啱喇！','好叻呀！','勁呀！','冇錯！','正！']), factLine(q));
     if(B.choice && B.lastChoiceBtn) B.lastChoiceBtn.classList.add('right');
     renderCombo();
-    let dmg = first ? (B.combo>=6?28:B.combo>=5?20:B.combo>=3?15:10) : 6; if(isClockMode()) dmg=10;
+    let dmg = first ? (B.combo>=6?28:B.combo>=5?20:B.combo>=3?15:10) : 6; if(isClockMode()) dmg=10; if(isOpsMode()) dmg=1;
     const kind=chooseMove(first);
     await performMove(kind, ()=>damageMonster(dmg)); if(tk!==B.token) return;
     if(B.hp<=0){
@@ -1211,22 +1382,30 @@ async function submit(){
       if(B._timeUp || B.timeLeft<=0){ timedEnd(); return; }
       B.busy=false; nextQuestion(); return;
     }
+    if(isOpsMode()){
+      /* Wrong answer does not end the stage. Counter-attack already played. */
+      await sleep(900); if(tk!==B.token) return;
+      B.busy=false; nextQuestion(); return;
+    }
     B.input=''; renderAns(); B.busy=false;
   }
 }
 function roundWon(){
-  const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const boss=!!MONS[B.type].final; const m=MONS[B.type];
-  DATA.stats.monsters++; const newDex=dexAdd(B.type); if(m.boss) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
+  const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const m=MONS[B.type];
+  const boss=!!(m.final && (B.bossRun || !isOpsMode()));
+  DATA.stats.monsters++; const newDex=dexAdd(B.type); if(m.boss || B.bossRun) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
   const asked=Object.keys(B.rtables).map(Number); const upgraded=[];
   asked.forEach(t=>{ const n=B.rtables[t]||0; if(n<3) return; let tier=stars; if(n<5) tier=Math.min(tier,1); else if(n<8) tier=Math.min(tier,2);
     const prev=DATA.badges[t]||0; if(tier>prev){ DATA.badges[t]=tier; upgraded.push(t); } });
   save();
   heroPose('win'); Sfx.victory(); $('#combo').classList.remove('show'); confetti();
-  const msg = stars===3 ? '超勁！你係乘數表英雄！' : stars===2 ? '好叻呀！繼續加油！' : '做得好！多啲練習會更叻！';
+  const msg = stars===3 ? (isOpsMode()?'超勁！'+OPS_NAME[B.mode]+'打贏咗！':'超勁！你係乘數表英雄！') : stars===2 ? '好叻呀！繼續加油！' : '做得好！多啲練習會更叻！';
   const next = B.round < B.order.length-1 ? B.order[B.round+1] : null;
   let medalBlock='';
-  const practiceWord = B.mode==='divide' ? '除法' : '乘數表';
-  if(B.mode==='mixed'){
+  const practiceWord = (B.mode==='divide'||B.mode==='div') ? '除法' : '乘數表';
+  if(B.mode==='add'||B.mode==='sub'||B.mode==='mixas'||B.mode==='mixmd'||B.mode==='all'){
+    medalBlock='<div class="rstat">'+(B.bossRun?'頭目加長戰，':'')+'答啱 <b>'+(B.goal||B.rfirst)+'</b> 題就打低咗！</div>';
+  } else if(B.mode==='mixed'){
     medalBlock='<div class="rstat">兩步算式，由左到右計，暫時冇括號。</div>';
   } else if(B.tables.length===1){
     const t=B.tables[0], n=B.rtables[t]||0, tier=DATA.badges[t]||0;
@@ -1246,11 +1425,11 @@ function roundWon(){
     '<div class="rstat">最高連擊：<b>'+B.rMaxCombo+'</b></div>'+(B.gotCoins?'<div class="rstat">食錢怪吐出：<b style="color:#ffe14d">'+B.gotCoins+' 個金幣！</b></div>':'')+
     '<div class="rmsg">'+(boss?'超人奧米加大勝利！你係乘數表英雄！':msg)+'</div>'+
     '<div class="rbtns">'+(next?'<button class="btn" id="rNext">'+icon('bolt')+(MONS[next].final?'最終關：挑戰'+MONS[next].name+'！':MONS[next].boss?'下一關：'+(MONS[next].short||MONS[next].name)+'出現！':'下一關')+'</button>':'<button class="btn" id="rAgain">'+icon('bolt')+'再玩一次</button>')+
-    '<button class="btn blue small" id="rPick">'+(B.mode==='divide'||B.mode==='mixed'?'揀過星級':'揀過乘數表')+'</button><button class="btn gray small" id="rHome">返主頁</button></div>';
+    (isOpsMode()?'':'<button class="btn blue small" id="rPick">'+(B.mode==='divide'||B.mode==='mixed'?'揀過星級':'揀過乘數表')+'</button>')+'<button class="btn gray small" id="rHome">返主頁</button></div>';
   showResult(html, stars);
   const rn=$('#rNext'); if(rn) rn.addEventListener('click',()=>{ Sfx.click(); hideResult(); B.round++; startRound(B.order[B.round]); });
-  const ra=$('#rAgain'); if(ra) ra.addEventListener('click',()=>{ Sfx.click(); if(B.mode==='divide') startSession('divide', B.tables, {star:B.star}); else if(B.mode==='mixed') startSession('mixed', [], {star:B.star}); else startSession('battle', B.tables); });
-  $('#rPick').addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else if(B.mode==='mixed') show('mixed'); else openSetup('battle'); });
+  const ra=$('#rAgain'); if(ra) ra.addEventListener('click',()=>{ Sfx.click(); if(isOpsMode()) startOps(B.mode, B.mode==='mul'?{tables:B.tables}:undefined); else if(B.mode==='divide') startSession('divide', B.tables, {star:B.star}); else if(B.mode==='mixed') startSession('mixed', [], {star:B.star}); else startSession('battle', B.tables); });
+  const rp=$('#rPick'); if(rp) rp.addEventListener('click',()=>{ Sfx.click(); endBattle(); if(B.mode==='divide') show('divide'); else if(B.mode==='mixed') show('mixed'); else openSetup('battle'); });
   $('#rHome').addEventListener('click',()=>{ Sfx.click(); goHome(); });
 }
 function showResult(html, stars){ const o=$('#result'); $('#resultCard').innerHTML=html; o.classList.toggle('has-hero', !!$('#resultCard .rhero')); o.classList.add('show');
@@ -1636,12 +1815,85 @@ function runSelfTest(){
   if(document.querySelector('[data-stage-size]')) fails.push('stage chip');
   const monHud=$('.monhud'), right=$('.hud-right');
   if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
+  const home=$('#home');
+  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','戰績','運算超人'].forEach(function(w){
+    if(!home || home.textContent.indexOf(w)<0) fails.push('home missing '+w);
+  });
+  if(home && home.textContent.indexOf('變身進度')>=0) fails.push('form entry');
+  if(document.title.indexOf('運算超人')<0) fails.push('title');
+  const prog=$('#progress');
+  if(!prog || prog.textContent.indexOf('戰績')<0) fails.push('records title');
+  if(prog && (prog.querySelector('.dex-stage,#dex') || prog.textContent.indexOf('怪獸圖鑑')>=0 || prog.textContent.indexOf('變身進度')>=0)) fails.push('records dex');
+  if(!$('#dexView') || !$('#dexView #dex')) fails.push('dex view');
+  if(home && home.querySelector('[data-go="setup-survive"],[data-go="setup-combo"],[data-go="setup-timed"],[data-go="mixed"],[data-stage-size]')) fails.push('home old entry');
+  const soonN=home?home.querySelectorAll('[data-go="soon"]').length:0;
+  if(soonN!==0) fails.push('soon '+soonN);
+  if(home && home.textContent.indexOf('就快')>=0) fails.push('soon text');
+  ['ops-add','ops-sub','ops-mixas','ops-mul','ops-div','ops-mixmd','ops-all'].forEach(function(g){
+    if(!home || !home.querySelector('[data-go="'+g+'"]')) fails.push('home '+g);
+  });
+  if(!home || !home.querySelector('[data-go="learnPick"]')) fails.push('home live');
+  if(opsGoal(false)!==15) fails.push('goal normal');
+  if(opsGoal(true,5)!==20 || opsGoal(true,8)!==23) fails.push('goal boss');
+  if(BOSS_CAST.length!==4 || BOSS_CAST.some(function(id){ return !MONS[id]; })) fails.push('boss cast');
+  B.tables=[2,3,4,5,6,7,8,9]; B.divisors=[2,3,4,5,10]; B.qMax=9; B.recent=[];
+  let addUnder=0;
+  for(let n=0;n<80;n++){
+    const q=pickAdd([]);
+    if(q.ans!==q.a+q.b || q.ans<1 || q.ans>50 || q.op!=='+') fails.push('add '+q.a+'+'+q.b);
+    if(q.ans<=20) addUnder++;
+    const ch=makeSumChoices(q.ans);
+    if(ch.length!==4 || ch.indexOf(q.ans)<0 || ch.some(function(v){ return v<0; })) fails.push('add ch');
+    const s=pickSub([]);
+    if(s.ans!==s.a-s.b || s.ans<0 || s.b>s.a || s.op!=='−') fails.push('sub');
+    const m=pickMulQ([]);
+    if(m.ans!==m.a*m.b || m.op!=='×' || B.tables.indexOf(m.a)<0) fails.push('mul');
+    const d=pickDivQ([]);
+    if(d.a!==d.b*d.ans || d.op!=='÷' || B.divisors.indexOf(d.b)<0) fails.push('divq');
+  }
+  if(addUnder<48) fails.push('add mostly '+addUnder);
+  let sawAdd=false,sawSub=false,sawMul=false,sawDiv=false,sawTwo=false;
+  B.tables=[2,3,4,5]; B.divisors=[2,3,4,5];
+  for(let n=0;n<80;n++){
+    const q=pickOpsQuestion('all', []);
+    let ans;
+    if(q.op2){
+      const prod=q.a*q.b;
+      ans=q.op2==='+'?prod+q.c:q.op2==='−'?prod-q.c:q.op2==='×'?prod*q.c:prod/q.c;
+      sawTwo=true;
+      if(q.ans>30) fails.push('two cap');
+    } else if(q.op==='+'){ ans=q.a+q.b; sawAdd=true; }
+    else if(q.op==='−'){ ans=q.a-q.b; sawSub=true; if(ans<0) fails.push('neg'); }
+    else if(q.op==='×'){ ans=q.a*q.b; sawMul=true; }
+    else if(q.op==='÷'){ ans=q.a/q.b; sawDiv=true; if(q.a!==q.b*q.ans) fails.push('exact'); }
+    if(ans!==q.ans) fails.push('all eval');
+  }
+  if(!sawAdd||!sawSub||!sawMul||!sawDiv||!sawTwo) fails.push('all kinds');
+  let sawMixM=false,sawMixD=false;
+  for(let n=0;n<40;n++){
+    const q=pickOpsQuestion('mixmd', []);
+    if(q.op==='×'){ sawMixM=true; if(q.ans!==q.a*q.b) fails.push('md mul'); }
+    if(q.op==='÷'){ sawMixD=true; if(q.a!==q.b*q.ans) fails.push('md div'); }
+  }
+  if(!sawMixM||!sawMixD) fails.push('mixmd');
+  const cast={};
+  for(let n=0;n<24;n++){
+    startOps(['add','sub','mixas','mul','div','mixmd','all'][n%7]);
+    if(!isOpsMode() || !B.order || B.order.length!==1) fails.push('stage '+n);
+    if(DEX_ORDER.indexOf(B.type)<0) fails.push('new mon '+B.type);
+    if(B.bossRun){ if(B.goal<20 || B.goal>23) fails.push('boss goal '+B.goal); if(BOSS_CAST.indexOf(B.type)<0) fails.push('boss type'); }
+    else if(B.goal!==15) fails.push('norm goal');
+    if(B.maxHp!==B.goal) fails.push('hp '+B.maxHp+'/'+B.goal);
+    cast[B.mode]=1;
+  }
+  if(Object.keys(cast).length!==7) fails.push('modes '+Object.keys(cast).join(','));
+  endBattle(); show('home');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
