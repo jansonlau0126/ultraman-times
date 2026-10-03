@@ -11,25 +11,61 @@
       <div class="home-city" aria-hidden="true"></div>
       <div class="home-glow" aria-hidden="true"></div>
       <div class="home-wrap">
-        <h1 class="home-title">超人乘數表</h1>
+        <div class="home-head">
+          <h1 class="home-title">超人乘數表</h1>
+          <p class="home-sub">學九因歌，一齊打怪獸</p>
+        </div>
         <div class="home-stage" id="homeStage">
           <div class="home-sparkles" aria-hidden="true"></div>
-          <div class="home-hero" id="homeHero" title="撳我！"></div>
-        </div>
-        <div class="home-dock">
           <div class="home-pet home-pet-l" id="homePetL"></div>
-          <div class="home-menu">
-            <button class="home-pill learn" data-go="learnPick">學乘數表</button>
-            <button class="home-pill battle" data-go="setup-battle">打怪獸</button>
-            <button class="home-pill divide" data-go="divide">除法戰鬥</button>
-            <button class="home-pill mixed" data-go="mixed">兩步混合</button>
-            <button class="home-pill timed" data-go="setup-survive">限時挑戰</button>
-            <button class="home-pill combo" data-go="setup-combo">連擊挑戰</button>
-          </div>
+          <div class="home-hero" id="homeHero" title="撳我！"></div>
           <div class="home-pet home-pet-r" id="homePetR"></div>
-          <div class="home-floor-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
-        <button class="home-record" data-go="progress">戰績<small>勳章 · 圖鑑 · 分數</small></button>
+        <div class="home-board">
+          <section class="home-block" aria-labelledby="homeLearnLabel">
+            <h2 class="home-label" id="homeLearnLabel">【學習】</h2>
+            <button class="home-pill learn" data-go="learnPick">乘數表<small>九因歌</small></button>
+          </section>
+          <section class="home-block" aria-labelledby="homeBattleLabel">
+            <h2 class="home-label" id="homeBattleLabel">【打怪】</h2>
+            <div class="home-modes">
+              <button class="home-pill add soon" data-go="soon" data-soon="加數 Only">加數 Only<small>就快</small></button>
+              <button class="home-pill sub soon" data-go="soon" data-soon="減數 Only">減數 Only<small>就快</small></button>
+              <button class="home-pill mixas soon" data-go="soon" data-soon="加減混合">加減混合<small>就快</small></button>
+              <button class="home-pill battle" data-go="setup-battle">乘數 Only</button>
+              <button class="home-pill divide" data-go="divide">除數 Only</button>
+              <button class="home-pill mixmd soon" data-go="soon" data-soon="乘除混合">乘除混合<small>就快</small></button>
+              <button class="home-pill allops soon wide" data-go="soon" data-soon="四式運算">四式運算<small>就快</small></button>
+            </div>
+          </section>
+          <div class="home-extra">
+            <button class="home-pill dex" data-go="dex">圖鑑收藏</button>
+            <button class="home-pill form" data-go="form">變身進度</button>
+          </div>
+        </div>
+      </div>
+      <div id="soonCard" class="soon-card" hidden>
+        <div class="soon-panel" role="dialog" aria-modal="true" aria-labelledby="soonKicker">
+          <p class="soon-kicker" id="soonKicker">就快</p>
+          <p id="soonText">呢個打怪模式就快可以玩！</p>
+          <button type="button" class="btn small" id="soonOk">知道喇</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM PLACEHOLDER -->
+    <section id="formView" class="screen">
+      <div class="wrap">
+        <h2 class="h">變身進度</h2>
+        <p class="sub">連擊越高，形態越勁</p>
+        <div class="form-card">
+          <img id="formArt" alt="" draggable="false">
+          <div class="form-kicker">而家形態</div>
+          <div class="form-now" id="formNow">銀光形態</div>
+          <div class="form-streak">最高連擊 <b id="formStreak">0</b></div>
+        </div>
+        <p class="form-note">打怪獸答啱多啲，連擊就會變身。</p>
+        <button class="btn gray" id="formHome">返主頁</button>
       </div>
     </section>
 

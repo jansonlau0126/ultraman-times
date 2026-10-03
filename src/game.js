@@ -134,7 +134,7 @@ function show(id){
   if(id==='battle') requestAnimationFrame(()=>{ layoutStage(); FX.resize(); });
   const sc=$('#'+id); if(sc) sc.scrollTop=0;
 }
-function goHome(){ endBattle(); Speech.stop(); setHomeMon(); setHomeHeroPose(); show('home'); }
+function goHome(){ endBattle(); Speech.stop(); hideSoon(); setHomeMon(); setHomeHeroPose(); show('home'); }
 
 /* ---------- facts / spaced repetition ---------- */
 function mastery(k){ const f=DATA.facts[k]; if(!f||(f.c+f.w)===0) return 0; return f.s>=3?2:1; }
@@ -385,14 +385,43 @@ function initHome(){
     Sfx.whoosh();
     play(bob,[{transform:'translateY(0) scale(1)'},{transform:'translateY(-6%) scale(1.06)',offset:.4},{transform:'translateY(0) scale(1)'}],{duration:500,easing:'ease-out'});
   });
+  const soonOk=$('#soonOk'); if(soonOk) soonOk.addEventListener('click', ()=>{ Sfx.click(); hideSoon(); });
+  const soonCard=$('#soonCard'); if(soonCard) soonCard.addEventListener('click', e=>{ if(e.target===soonCard) hideSoon(); });
+  const formHome=$('#formHome'); if(formHome) formHome.addEventListener('click', ()=>{ Sfx.click(); goHome(); });
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
+    if(g==='soon'){ showSoon(b.dataset.soon||''); return; }
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
     else if(g==='setup-battle') openSetup('battle');
     else if(g==='setup-survive' || g==='setup-timed') openSetup('survive');
     else if(g==='setup-combo') openSetup('combo');
     else if(g==='divide') show('divide');
     else if(g==='mixed') show('mixed');
+    else if(g==='dex') openDexHome();
+    else if(g==='form'){ renderFormView(); show('formView'); }
     else if(g==='progress'){ renderProgress(); show('progress'); } }));
+}
+function hideSoon(){ const c=$('#soonCard'); if(c) c.hidden=true; }
+function showSoon(name){
+  const c=$('#soonCard'); if(!c) return;
+  const t=$('#soonText');
+  if(t) t.textContent=(name?name+' ':'')+'就快可以玩！';
+  c.hidden=false;
+}
+function streakFormStage(n){ n=n|0; if(n>=6) return 5; if(n>=5) return 4; if(n>=3) return 3; if(n>=1) return 2; return 1; }
+function renderFormView(){
+  const streak=(DATA.stats&&DATA.stats.maxCombo)|0;
+  const st=streakFormStage(streak);
+  const img=$('#formArt'); if(img){ img.src=heroSrc(st,'idle'); img.alt=HEN_LABEL[st]||'銀光形態'; }
+  const name=$('#formNow'); if(name) name.textContent=HEN_LABEL[st]||'銀光形態';
+  const s=$('#formStreak'); if(s) s.textContent=String(streak);
+}
+function openDexHome(){
+  renderProgress(); show('progress');
+  requestAnimationFrame(function(){
+    const el=$('.dex-stage')||$('#dex');
+    const sc=$('#progress');
+    if(el && sc) sc.scrollTop=Math.max(0, el.offsetTop-8);
+  });
 }
 
 const TILE_COLORS = {1:['#94a3b8','#475569'],2:['#ff6b6b','#c92a2a'],3:['#ffa94d','#d9480f'],4:['#ffd43b','#e67700'],5:['#69db7c','#2b8a3e'],6:['#38d9a9','#087f5b'],7:['#4dabf7','#1864ab'],8:['#9775fa','#5f3dc4'],9:['#f783ac','#c2255c'],10:['#94a3b8','#475569']};
@@ -1636,6 +1665,14 @@ function runSelfTest(){
   if(document.querySelector('[data-stage-size]')) fails.push('stage chip');
   const monHud=$('.monhud'), right=$('.hud-right');
   if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
+  const home=$('#home');
+  ['【學習】','乘數表','九因歌','【打怪】','加數 Only','減數 Only','加減混合','乘數 Only','除數 Only','乘除混合','四式運算','圖鑑收藏','變身進度'].forEach(function(w){
+    if(!home || home.textContent.indexOf(w)<0) fails.push('home missing '+w);
+  });
+  if(home && home.querySelector('[data-go="setup-survive"],[data-go="setup-combo"],[data-go="setup-timed"],[data-go="mixed"],[data-stage-size]')) fails.push('home old entry');
+  const soonN=home?home.querySelectorAll('[data-go="soon"]').length:0;
+  if(soonN!==5) fails.push('soon '+soonN);
+  if(!home || !home.querySelector('[data-go="setup-battle"]') || !home.querySelector('[data-go="divide"]') || !home.querySelector('[data-go="learnPick"]')) fails.push('home live');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
