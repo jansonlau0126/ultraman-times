@@ -2820,23 +2820,42 @@ function pickDivQ(recent){
   const d=pickDivision(divs, B.qMax||9, keys);
   return {a:d.dividend,b:d.d,ans:d.q,op:'÷',key:d.key,divisor:d.d};
 }
-function evalLTR(nums, ops){
-  let v=nums[0];
+function evalPrec(nums, ops){
+  /* ×÷ before +−. × and ÷ share precedence (left to right); + and − share precedence (left to right). No brackets. Not strict left-to-right. */
+  if(!nums || !ops || nums.length!==ops.length+1 || !nums.length) return null;
+  const terms=[nums[0]];
+  const termOps=[];
   for(let i=0;i<ops.length;i++){
     const op=ops[i], n=nums[i+1];
-    if(op==='+') v=v+n;
-    else if(op==='−') v=v-n;
-    else if(op==='×') v=v*n;
-    else if(op==='÷'){
-      if(!n || v%n!==0) return null;
-      v=v/n;
+    if(n==null || n<0 || n!==(n|0)) return null;
+    if(op==='×' || op==='÷'){
+      let left=terms[terms.length-1];
+      if(left<0 || left!==(left|0)) return null;
+      if(op==='×') left=left*n;
+      else {
+        if(!n || left%n!==0) return null;
+        left=left/n;
+      }
+      if(left<0 || left!==(left|0)) return null;
+      terms[terms.length-1]=left;
+    } else if(op==='+' || op==='−'){
+      termOps.push(op);
+      if(n<0 || n!==(n|0)) return null;
+      terms.push(n);
     } else return null;
+  }
+  if(terms[0]<0 || terms[0]!==(terms[0]|0)) return null;
+  let v=terms[0];
+  for(let i=0;i<termOps.length;i++){
+    const t=terms[i+1];
+    if(termOps[i]==='+') v=v+t;
+    else v=v-t;
     if(v<0 || v!==(v|0)) return null;
   }
   return v;
 }
 function packExpr(nums, ops, prefix){
-  const ans=evalLTR(nums, ops);
+  const ans=evalPrec(nums, ops);
   if(ans==null) return null;
   const key=(prefix||'ex')+':'+nums.join(',')+ops.join('');
   const q={a:nums[0],b:nums[1],op:ops[0],ans:ans,key:key};
@@ -2935,88 +2954,119 @@ function uniqOps(ops){
 function pickAllOps(recent){
   recent=recent||[];
   const factors=[2,3,4,5,6,7,8,9];
-  for(let i=0;i<140;i++){
+  function factorSplit(prod){
+    const as=[];
+    for(let a0=2;a0<=9;a0++){
+      if(prod%a0===0){
+        const b0=prod/a0;
+        if(b0>=2 && b0<=9 && b0===(b0|0)) as.push(a0);
+      }
+    }
+    return as;
+  }
+  for(let i=0;i<180;i++){
     const four=Math.random()<0.42;
     let nums, ops;
     if(!four){
-      const kind=pick(['−+','×+','÷×','+−','×−','÷+','+×','−×','×÷','+÷']);
-      if(kind==='−+'){
-        const a=randi(8,20), b=randi(1, Math.min(8, a-1)), c=randi(2,12);
-        nums=[a,b,c]; ops=['−','+'];
+      const kind=pick(['+×','+×','+×','−×','+÷','−÷','×+','×−','÷+','÷×','×÷','+−','−+','÷−']);
+      if(kind==='+×'){
+        const b=randi(2,9), c=randi(2,9), a=randi(1,16);
+        nums=[a,b,c]; ops=['+','×'];
+      } else if(kind==='−×'){
+        const b=randi(2,8), c=randi(2,6), prod=b*c;
+        if(prod>48) continue;
+        const a=randi(prod, Math.min(50, prod+15));
+        nums=[a,b,c]; ops=['−','×'];
+      } else if(kind==='+÷'){
+        const c=pick(factors), q=randi(2,9), b=c*q, a=randi(1,20);
+        nums=[a,b,c]; ops=['+','÷'];
+      } else if(kind==='−÷'){
+        const c=pick(factors), q=randi(2,9), b=c*q;
+        const a=randi(q, Math.min(36, q+14));
+        nums=[a,b,c]; ops=['−','÷'];
       } else if(kind==='×+'){
-        const a=randi(2,9), b=randi(2,9), c=randi(2,12);
+        const a=randi(2,9), b=randi(2,9), c=randi(1,12);
         nums=[a,b,c]; ops=['×','+'];
-      } else if(kind==='÷×'){
-        const b=pick(factors), q0=randi(2,9), a=b*q0, c=randi(2,6);
-        nums=[a,b,c]; ops=['÷','×'];
-      } else if(kind==='+−'){
-        const a=randi(4,16), b=randi(2,12), sum=a+b, c=randi(1, Math.min(12, sum));
-        nums=[a,b,c]; ops=['+','−'];
       } else if(kind==='×−'){
         const a=randi(2,9), b=randi(2,9), prod=a*b;
-        if(prod<3) continue;
-        const c=randi(1, Math.min(12, prod-1));
+        const c=randi(1, Math.min(12, prod));
         nums=[a,b,c]; ops=['×','−'];
       } else if(kind==='÷+'){
         const b=pick(factors), q0=randi(2,9), a=b*q0, c=randi(1,12);
         nums=[a,b,c]; ops=['÷','+'];
-      } else if(kind==='+×'){
-        const a=randi(1,9), b=randi(1,9), c=randi(2,6);
-        nums=[a,b,c]; ops=['+','×'];
-      } else if(kind==='−×'){
-        const a=randi(6,18), b=randi(1, Math.min(8, a-2)), c=randi(2,5);
-        nums=[a,b,c]; ops=['−','×'];
+      } else if(kind==='÷×'){
+        const b=pick(factors), q0=randi(2,9), c=randi(2,6), a=b*q0;
+        nums=[a,b,c]; ops=['÷','×'];
       } else if(kind==='×÷'){
-        const a=pick(factors), b=randi(2,9), prod=a*b;
-        const divs=[];
-        for(let d=2;d<=9;d++) if(prod%d===0) divs.push(d);
-        if(!divs.length) continue;
-        const c=pick(divs);
-        nums=[a,b,c]; ops=['×','÷'];
+        const c=pick(factors), q0=randi(2,9), as=factorSplit(c*q0);
+        if(!as.length) continue;
+        const a=pick(as);
+        nums=[a, (c*q0)/a, c]; ops=['×','÷'];
+      } else if(kind==='+−'){
+        const a=randi(2,16), b=randi(1,12), c=randi(1, a+b);
+        nums=[a,b,c]; ops=['+','−'];
+      } else if(kind==='−+'){
+        const a=randi(6,24), b=randi(1, a-1), c=randi(1,12);
+        nums=[a,b,c]; ops=['−','+'];
       } else {
-        const a=randi(4,18), b=randi(2,10), sum=a+b;
-        const divs=[];
-        for(let d=2;d<=9;d++) if(sum%d===0 && sum/d<=20) divs.push(d);
-        if(!divs.length) continue;
-        const c=pick(divs);
-        nums=[a,b,c]; ops=['+','÷'];
+        const b=pick(factors), q0=randi(2,9), a=b*q0, c=randi(1, q0);
+        nums=[a,b,c]; ops=['÷','−'];
       }
     } else {
-      const kind=pick(['+−+','×+−','÷×−','+−×','×÷+','−+−','+×−']);
-      if(kind==='+−+'){
-        const a=randi(2,12), b=randi(2,10), c=randi(1,8), d=randi(1,8);
-        nums=[a,b,c,d]; ops=['+','−','+'];
+      const kind=pick(['+×−','+−×','×+−','÷×−','×÷+','+÷×','−+−','+−+','−×+','×−+']);
+      if(kind==='+×−'){
+        const b=randi(2,8), c=randi(2,6), prod=b*c, a=randi(1,10);
+        const sum=a+prod, d=randi(1, Math.min(10, sum));
+        nums=[a,b,c,d]; ops=['+','×','−'];
+      } else if(kind==='+−×'){
+        const c=randi(2,6), d=randi(2,5), prod=c*d, a=randi(1,12);
+        const minB=Math.max(1, prod-a);
+        if(minB>12) continue;
+        const b=randi(minB, 12);
+        nums=[a,b,c,d]; ops=['+','−','×'];
       } else if(kind==='×+−'){
-        const a=randi(2,8), b=randi(2,8), c=randi(2,10), d=randi(1,8);
+        const a=randi(2,6), b=randi(2,6), c=randi(1,10), sum=a*b+c;
+        const d=randi(1, Math.min(9, sum));
         nums=[a,b,c,d]; ops=['×','+','−'];
       } else if(kind==='÷×−'){
-        const b=pick([2,3,4,5,6]), q0=randi(3,9), a=b*q0, c=randi(2,5), d=randi(1,8);
+        const b=pick([2,3,4,5,6]), q0=randi(2,8), c=randi(2,5), mid=q0*c, a=b*q0;
+        if(a>81 || mid<1) continue;
+        const d=randi(1, Math.min(9, mid));
         nums=[a,b,c,d]; ops=['÷','×','−'];
-      } else if(kind==='+−×'){
-        const a=randi(2,10), b=randi(2,10), c=randi(1,6), d=randi(2,5);
-        nums=[a,b,c,d]; ops=['+','−','×'];
       } else if(kind==='×÷+'){
-        const a=pick(factors), b=randi(2,9), prod=a*b;
-        const divs=[];
-        for(let d0=2;d0<=9;d0++) if(prod%d0===0) divs.push(d0);
-        if(!divs.length) continue;
-        const c=pick(divs), d=randi(1,12);
-        nums=[a,b,c,d]; ops=['×','÷','+'];
+        const c=pick(factors), q0=randi(2,8), as=factorSplit(c*q0);
+        if(!as.length) continue;
+        const a=pick(as), d=randi(1,12);
+        nums=[a, (c*q0)/a, c, d]; ops=['×','÷','+'];
+      } else if(kind==='+÷×'){
+        const c=pick(factors), q=randi(2,6), b=c*q, d=randi(2,5), a=randi(1,12);
+        nums=[a,b,c,d]; ops=['+','÷','×'];
       } else if(kind==='−+−'){
-        const a=randi(10,24), b=randi(1,8), c=randi(2,10), d=randi(1,8);
+        const a=randi(8,20), b=randi(1, a-1), left=a-b, c=randi(1,10);
+        const d=randi(1, left+c);
         nums=[a,b,c,d]; ops=['−','+','−'];
+      } else if(kind==='+−+'){
+        const a=randi(2,12), b=randi(1,10), c=randi(1, a+b), d=randi(1,8);
+        nums=[a,b,c,d]; ops=['+','−','+'];
+      } else if(kind==='−×+'){
+        const b=randi(2,6), c=randi(2,5), prod=b*c;
+        const a=randi(prod, Math.min(40, prod+12)), d=randi(1,10);
+        nums=[a,b,c,d]; ops=['−','×','+'];
       } else {
-        const a=randi(1,8), b=randi(1,8), c=randi(2,5), d=randi(1,8);
-        nums=[a,b,c,d]; ops=['+','×','−'];
+        const a=randi(2,6), b=randi(2,5), prod=a*b;
+        const c=randi(1, prod), d=randi(1,8);
+        nums=[a,b,c,d]; ops=['×','−','+'];
       }
     }
     if(uniqOps(ops)<2) continue;
+    if(!nums || nums.length<3 || nums.length>4 || ops.length!==nums.length-1) continue;
+    if(nums.some(function(n){ return n<1 || n>81 || n!==(n|0); })) continue;
     const q=packExpr(nums, ops, 'all');
-    if(!q || q.ans<0 || q.ans>60) continue;
+    if(!q || q.ans<0 || q.ans>60 || q.ans!==(q.ans|0)) continue;
     if(recent.indexOf(q.key)>=0) continue;
     return q;
   }
-  return packExpr([12,4,9], ['−','+'], 'all');
+  return packExpr([7,4,4], ['+','×'], 'all');
 }
 function pickOpsQuestion(mode, recent){
   if(mode==='add') return pickAdd(recent);
@@ -3139,7 +3189,7 @@ function nextQuestion(){
     const opts=(B.mode==='divide')?makeDivChoices(f.ans):(B.mode==='mixed')?makeMixedChoices(B.q):choicesFor(B.q);
     $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'"><span class="chnum">'+v+'</span></button>').join('');
     $$('#choices .choice').forEach(b=>b.addEventListener('click',()=>{ if(B.busy||b.classList.contains('x')) return; B.input=b.dataset.v; B.lastChoiceBtn=b; renderAns(); submit(); })); }
-  const hint = (B.q&&(B.q.op2!=null||B.mode==='all'||B.mode==='mixas'||B.mode==='mixmd')) ? '由左邊計到右邊！' : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
+  const hint = (B.mode==='all') ? '先乘除，後加減！' : (B.q&&(B.q.op2!=null||B.mode==='mixas'||B.mode==='mixmd')) ? '由左邊計到右邊！' : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
   setHint('idle', hint);
   play($('.qrow'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)'}],{duration:320,easing:'ease-out'}); }
 function renderAns(state){ const a=$('#qAns'); a.textContent = B.input || '?'; a.className='ansbox'+(B.input?'':' empty')+(state?' '+state:''); }
@@ -3755,34 +3805,74 @@ function runSelfTest(){
     if(d.a!==d.b*d.ans || d.op!=='÷' || B.divisors.indexOf(d.b)<0) fails.push('divq');
   }
   if(addUnder<48) fails.push('add mostly '+addUnder);
-  function ltrCheck(q){
+  if(typeof evalPrec!=='function') fails.push('no prec');
+  if(evalPrec([7,4,4],['+','×'])!==23) fails.push('prec 7+4×4');
+  if(evalPrec([16,5,3],['+','÷'])!=null) fails.push('prec 16+5÷3');
+  if(evalPrec([16,6,3],['+','÷'])!==18) fails.push('prec 16+6÷3');
+  if(evalPrec([10,2,3,6],['÷','×','−'])!==9) fails.push('prec 10÷2×3−6');
+  if(evalPrec([20,1,12],['−','+'])!==31) fails.push('prec 20−1+12');
+  if(evalPrec([63,9,4],['÷','×'])!==28) fails.push('prec 63÷9×4');
+  if(evalPrec([5,4,3],['−','×'])!=null) fails.push('prec neg 5−4×3');
+  if(evalPrec([8,3,2],['−','×'])!==2) fails.push('prec 8−3×2');
+  function foldLeft(nums, ops){
+    let v=nums[0];
+    for(let i=0;i<ops.length;i++){
+      const op=ops[i], n=nums[i+1];
+      if(op==='+') v=v+n;
+      else if(op==='−') v=v-n;
+      else if(op==='×') v=v*n;
+      else if(op==='÷'){ if(!n || v%n!==0) return null; v=v/n; }
+      else return null;
+      if(v<0 || v!==(v|0)) return null;
+    }
+    return v;
+  }
+  if(foldLeft([7,4,4],['+','×'])===23) fails.push('fold still 23');
+  if(evalPrec([7,4,4],['+','×'])===foldLeft([7,4,4],['+','×'])) fails.push('7+4×4 tied');
+  function precCheck(q){
     const nums=[q.a,q.b]; const ops=[q.op];
     if(q.op2!=null && q.c!=null){ nums.push(q.c); ops.push(q.op2); }
     if(q.op3!=null && q.d!=null){ nums.push(q.d); ops.push(q.op3); }
-    return evalLTR(nums, ops);
+    return evalPrec(nums, ops);
   }
-  let sawAll3=false,sawAll4=false,sawAllOps={};
+  let sawAll3=false,sawAll4=false,sawAllOps={},sawPlusTimes=false;
   B.tables=[2,3,4,5]; B.divisors=[2,3,4,5];
   for(let n=0;n<80;n++){
     const q=pickOpsQuestion('all', []);
-    const ans=ltrCheck(q);
-    if(ans!==q.ans || q.ans<0 || q.ans!==(q.ans|0)) fails.push('all eval');
-    const nCount=1+(q.b!=null)+(q.c!=null)+(q.d!=null);
-    const oCount=1+(q.op2!=null)+(q.op3!=null);
+    const nums=[q.a,q.b]; const ops=[q.op];
+    if(q.op2!=null && q.c!=null){ nums.push(q.c); ops.push(q.op2); }
+    if(q.op3!=null && q.d!=null){ nums.push(q.d); ops.push(q.op3); }
+    const ans=evalPrec(nums, ops);
+    if(ans!==q.ans || q.ans<0 || q.ans!==(q.ans|0) || q.ans>60) fails.push('all eval');
+    if(nums.some(function(v){ return v<1 || v>81 || v!==(v|0); })) fails.push('all num');
+    const nCount=nums.length;
+    const oCount=ops.length;
     if(nCount<3 || nCount>4 || oCount!==nCount-1) fails.push('all arity');
     if(nCount===3) sawAll3=true; if(nCount===4) sawAll4=true;
-    [q.op,q.op2,q.op3].forEach(function(o){ if(o) sawAllOps[o]=1; });
-    const set={}; [q.op,q.op2,q.op3].forEach(function(o){ if(o) set[o]=1; });
+    ops.forEach(function(o){ if(o) sawAllOps[o]=1; });
+    const set={}; ops.forEach(function(o){ if(o) set[o]=1; });
     if(Object.keys(set).length<2) fails.push('all distinct');
+    if(ops.length===2 && ops[0]==='+' && ops[1]==='×'){
+      sawPlusTimes=true;
+      if(q.ans!==nums[0]+nums[1]*nums[2]) fails.push('all +× prec');
+      if(q.ans===(nums[0]+nums[1])*nums[2]) fails.push('all +× ltr');
+    }
+    if(ops.length===2 && ops[0]==='+' && ops[1]==='÷'){
+      if(nums[1]%nums[2]!==0 || q.ans!==nums[0]+(nums[1]/nums[2])) fails.push('all +÷ prec');
+    }
+    if(ops.length===2 && ops[0]==='−' && ops[1]==='×'){
+      if(nums[1]*nums[2]>nums[0] || q.ans!==nums[0]-nums[1]*nums[2]) fails.push('all −× prec');
+    }
     const ch=choicesFor(q);
     if(ch.length!==4 || ch.indexOf(q.ans)<0) fails.push('all ch');
   }
   if(!sawAll3||!sawAll4) fails.push('all len');
   if(!sawAllOps['+']||!sawAllOps['−']||!sawAllOps['×']||!sawAllOps['÷']) fails.push('all kinds');
+  if(!sawPlusTimes) fails.push('all +× sample');
   let sawAS2=false,sawAS3=false,sawASp=false,sawASm=false;
   for(let n=0;n<60;n++){
     const q=pickOpsQuestion('mixas', []);
-    const ans=ltrCheck(q);
+    const ans=precCheck(q);
     if(ans!==q.ans || q.ans<0) fails.push('as eval');
     const nCount=1+(q.b!=null)+(q.c!=null)+(q.d!=null);
     if(nCount<2 || nCount>3) fails.push('as arity');
@@ -3795,7 +3885,7 @@ function runSelfTest(){
   let sawMD2=false,sawMD3=false,sawMDm=false,sawMDd=false;
   for(let n=0;n<60;n++){
     const q=pickOpsQuestion('mixmd', []);
-    const ans=ltrCheck(q);
+    const ans=precCheck(q);
     if(ans!==q.ans || q.ans<1 || q.ans!==(q.ans|0)) fails.push('md eval');
     const nCount=1+(q.b!=null)+(q.c!=null)+(q.d!=null);
     if(nCount<2 || nCount>3) fails.push('md arity');
@@ -3821,7 +3911,7 @@ function runSelfTest(){
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, evalLTR, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
