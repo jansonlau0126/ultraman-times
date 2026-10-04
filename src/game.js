@@ -1044,18 +1044,32 @@ function cnSpeak(n){
   if(ten===1) return '十'+(u?DIG[u]:'');
   return DIG[ten]+'十'+(u?DIG[u]:'');
 }
+function exprParts(q){
+  const nums=[q.a,q.b]; const ops=[q.op||qOpText()];
+  if(q.op2!=null && q.c!=null){ ops.push(q.op2); nums.push(q.c); }
+  if(q.op3!=null && q.d!=null){ ops.push(q.op3); nums.push(q.d); }
+  return {nums:nums, ops:ops};
+}
 function factLine(q){
-  if(q.op2!=null && q.c!=null) return q.a+' '+(q.op||'×')+' '+q.b+' '+q.op2+' '+q.c+' = '+q.ans;
-  const op=q.op || qOpText();
+  const p=exprParts(q);
+  if(p.ops.length>=2){
+    let s=String(p.nums[0]);
+    for(let i=0;i<p.ops.length;i++) s+=' '+p.ops[i]+' '+p.nums[i+1];
+    return s+' = '+q.ans;
+  }
+  const op=p.ops[0];
   if(op==='×') return q.a+' × '+q.b+' = '+q.ans+(q.a<=10 && q.b<=9 ? '　'+chant(q.a, q.b) : '');
   if(op==='÷') return q.a+' ÷ '+q.b+' = '+q.ans+(q.b<=10 && q.ans<=9 ? '　'+chant(q.b, q.ans) : '');
   return q.a+' '+op+' '+q.b+' = '+q.ans;
 }
 function factSpeak(q){
-  if(q.op2!=null && q.c!=null){
-    return cnSpeak(q.a)+(OP_WORD[q.op]||'乘')+cnSpeak(q.b)+(OP_WORD[q.op2]||'')+cnSpeak(q.c)+'等於'+cnSpeak(q.ans);
+  const p=exprParts(q);
+  if(p.ops.length>=2){
+    let s=cnSpeak(p.nums[0]);
+    for(let i=0;i<p.ops.length;i++) s+=(OP_WORD[p.ops[i]]||'')+cnSpeak(p.nums[i+1]);
+    return s+'等於'+cnSpeak(q.ans);
   }
-  const op=q.op || qOpText();
+  const op=p.ops[0];
   if(op==='×' && q.a<=9 && q.b<=9) return chant(q.a, q.b);
   if(op==='×') return cnSpeak(q.a)+'乘'+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
   if(op==='÷') return cnSpeak(q.a)+'除以'+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
@@ -1117,11 +1131,14 @@ function pickMixed(star){
 function makeMixedChoices(q){
   const ans=q.ans, prod=q.a*q.b;
   const set=[ans];
-  const cands=[ans+1,ans-1,ans+2,ans-2,prod,ans+3,ans-3,q.a+q.b+q.c];
-  if(q.op2==='+') cands.push(prod-q.c, q.a*q.b*q.c);
-  if(q.op2==='−') cands.push(prod+q.c);
-  if(q.op2==='×') cands.push(prod+q.c, prod*q.c+1);
-  if(q.op2==='÷') cands.push(prod, ans+q.c, q.a+q.b);
+  const cands=[ans+1,ans-1,ans+2,ans-2,prod,ans+3,ans-3,q.a+q.b+(q.c||0)];
+  if(q.op2==='+') cands.push(prod-(q.c||0), q.a*q.b*(q.c||1));
+  if(q.op2==='−') cands.push(prod+(q.c||0));
+  if(q.op2==='×') cands.push(prod+(q.c||0), prod*(q.c||1)+1);
+  if(q.op2==='÷') cands.push(prod, ans+(q.c||0), q.a+q.b);
+  if(q.op3!=null && q.d!=null){
+    cands.push(ans+1,ans-1,ans+q.d,ans-q.d,q.a+q.b+q.c+q.d);
+  }
   shuffle(cands).forEach(function(v){
     if(set.length>=4) return;
     if(v>=0 && v===(v|0) && set.indexOf(v)<0) set.push(v);
@@ -1134,7 +1151,7 @@ function makeMixedChoices(q){
   return shuffle(set);
 }
 function showExpr(q){
-  const op2=$('#qOp2'), c=$('#qC');
+  const op2=$('#qOp2'), c=$('#qC'), op3=$('#qOp3'), d=$('#qD');
   $('#qA').textContent=q.a;
   const op=$('#qOp'); if(op) op.textContent=q.op||qOpText();
   $('#qB').textContent=q.b;
@@ -1145,13 +1162,25 @@ function showExpr(q){
     if(op2) op2.hidden=true;
     if(c) c.hidden=true;
   }
+  if(q.op3!=null && q.d!=null){
+    if(op3){ op3.hidden=false; op3.textContent=q.op3; }
+    if(d){ d.hidden=false; d.textContent=q.d; }
+  } else {
+    if(op3) op3.hidden=true;
+    if(d) d.hidden=true;
+  }
+  const battle=$('#battle');
+  if(battle && isOpsMode()){
+    const multi=(q.op2!=null && q.c!=null) || B.mode==='all' || B.mode==='mixas' || B.mode==='mixmd';
+    battle.classList.toggle('mode-mixed', !!multi);
+  }
 }
 const OPS_NAME={add:'加法大進擊',sub:'減法暗影戰',mixas:'加減雙刃斬',mul:'乘法火焰爆',div:'除法冰封關',mixmd:'乘除雷電擊',all:'四則終極戰'};
 const OPS_MODES=['add','sub','mixas','mul','div','mixmd','all'];
 /* Existing rarer monsters only. No new art. */
 const BOSS_CAST=['steeltiran','illusdemon','heidragon','starlord'];
 function isOpsMode(mode){ return OPS_MODES.indexOf(mode||B.mode)>=0; }
-function opsGoal(isBoss, extra){ return isBoss ? 15+(extra==null?randi(5,8):extra) : 15; }
+function opsGoal(isBoss, extra){ return 15; }
 function rollOpsEncounter(){
   const boss=Math.random()<0.10;
   if(!boss) return {type:pickFresh(NORMALS), boss:false};
@@ -1204,23 +1233,263 @@ function pickDivQ(recent){
   const d=pickDivision(divs, B.qMax||9, keys);
   return {a:d.dividend,b:d.d,ans:d.q,op:'÷',key:d.key,divisor:d.d};
 }
-function pickTwoStep(){
-  const m=pickMixed(Math.random()<0.7?1:2);
-  return {a:m.a,b:m.b,c:m.c,op:'×',op2:m.op2,ans:m.ans,key:'mix:'+m.a+'x'+m.b+m.op2+m.c};
+function evalPrec(nums, ops){
+  /* ×÷ before +−. × and ÷ share precedence (left to right); + and − share precedence (left to right). No brackets. Not strict left-to-right. */
+  if(!nums || !ops || nums.length!==ops.length+1 || !nums.length) return null;
+  const terms=[nums[0]];
+  const termOps=[];
+  for(let i=0;i<ops.length;i++){
+    const op=ops[i], n=nums[i+1];
+    if(n==null || n<0 || n!==(n|0)) return null;
+    if(op==='×' || op==='÷'){
+      let left=terms[terms.length-1];
+      if(left<0 || left!==(left|0)) return null;
+      if(op==='×') left=left*n;
+      else {
+        if(!n || left%n!==0) return null;
+        left=left/n;
+      }
+      if(left<0 || left!==(left|0)) return null;
+      terms[terms.length-1]=left;
+    } else if(op==='+' || op==='−'){
+      termOps.push(op);
+      if(n<0 || n!==(n|0)) return null;
+      terms.push(n);
+    } else return null;
+  }
+  if(terms[0]<0 || terms[0]!==(terms[0]|0)) return null;
+  let v=terms[0];
+  for(let i=0;i<termOps.length;i++){
+    const t=terms[i+1];
+    if(termOps[i]==='+') v=v+t;
+    else v=v-t;
+    if(v<0 || v!==(v|0)) return null;
+  }
+  return v;
+}
+function packExpr(nums, ops, prefix){
+  const ans=evalPrec(nums, ops);
+  if(ans==null) return null;
+  const key=(prefix||'ex')+':'+nums.join(',')+ops.join('');
+  const q={a:nums[0],b:nums[1],op:ops[0],ans:ans,key:key};
+  if(nums.length>=3){ q.c=nums[2]; q.op2=ops[1]; }
+  if(nums.length>=4){ q.d=nums[3]; q.op3=ops[2]; }
+  return q;
+}
+function pickMixAS(recent){
+  recent=recent||[];
+  for(let i=0;i<90;i++){
+    const three=Math.random()<0.55;
+    let nums, ops;
+    if(!three){
+      if(Math.random()<0.55){
+        const a=randi(1,12), b=randi(1, Math.max(1, Math.min(12, 18-a)));
+        nums=[a,b]; ops=['+'];
+      } else {
+        const a=randi(3,20), b=randi(1, a-1);
+        nums=[a,b]; ops=['−'];
+      }
+    } else {
+      const kind=pick(['++','−−','+-','-+','++','+-']);
+      if(kind==='++'){
+        const a=randi(1,9), b=randi(1,9), c=randi(1,9);
+        if(a+b+c>24) continue;
+        nums=[a,b,c]; ops=['+','+'];
+      } else if(kind==='−−'){
+        const b=randi(1,8), c=randi(1,8), a=randi(b+c, Math.min(20, b+c+8));
+        nums=[a,b,c]; ops=['−','−'];
+      } else if(kind==='+-'){
+        const a=randi(2,12), b=randi(1,10), sum=a+b;
+        if(sum<2) continue;
+        const c=randi(1, Math.min(9, sum));
+        nums=[a,b,c]; ops=['+','−'];
+      } else {
+        const a=randi(4,18), b=randi(1, Math.min(9, a-1)), c=randi(1,9);
+        nums=[a,b,c]; ops=['−','+'];
+      }
+    }
+    const q=packExpr(nums, ops, 'as');
+    if(!q || q.ans<0 || q.ans>24) continue;
+    if(recent.indexOf(q.key)>=0) continue;
+    return q;
+  }
+  return packExpr([8,7], ['+'], 'as');
+}
+function pickMixMD(recent){
+  recent=recent||[];
+  const factors=[2,3,4,5,6,7,8,9];
+  for(let i=0;i<100;i++){
+    const three=Math.random()<0.55;
+    let nums, ops;
+    if(!three){
+      if(Math.random()<0.55){
+        const a=pick(factors), b=randi(2,9);
+        nums=[a,b]; ops=['×'];
+      } else {
+        const b=pick(factors), ans=randi(2,9), a=b*ans;
+        nums=[a,b]; ops=['÷'];
+      }
+    } else {
+      const kind=pick(['××','÷÷','×÷','÷×','××','×÷']);
+      if(kind==='××'){
+        const a=randi(2,5), b=randi(2,5), c=randi(2,4);
+        if(a*b*c>72) continue;
+        nums=[a,b,c]; ops=['×','×'];
+      } else if(kind==='÷÷'){
+        const b=pick(factors), c=pick([2,3,4,5]), ans=randi(1,6);
+        const mid=ans*c, a=mid*b;
+        if(a>81 || mid>9*9) continue;
+        nums=[a,b,c]; ops=['÷','÷'];
+      } else if(kind==='×÷'){
+        const a=pick(factors), b=randi(2,9), prod=a*b;
+        const divs=[];
+        for(let d=2;d<=9;d++) if(prod%d===0 && prod/d<=20) divs.push(d);
+        if(!divs.length) continue;
+        const c=pick(divs);
+        nums=[a,b,c]; ops=['×','÷'];
+      } else {
+        const b=pick(factors), q0=randi(2,9), a=b*q0, c=randi(2,9);
+        if(q0*c>81) continue;
+        nums=[a,b,c]; ops=['÷','×'];
+      }
+    }
+    const q=packExpr(nums, ops, 'md');
+    if(!q || q.ans<1 || q.ans>81) continue;
+    if(recent.indexOf(q.key)>=0) continue;
+    return q;
+  }
+  return packExpr([6,7], ['×'], 'md');
+}
+function uniqOps(ops){
+  const s={}; ops.forEach(function(o){ s[o]=1; });
+  return Object.keys(s).length;
+}
+function pickAllOps(recent){
+  recent=recent||[];
+  const factors=[2,3,4,5,6,7,8,9];
+  function factorSplit(prod){
+    const as=[];
+    for(let a0=2;a0<=9;a0++){
+      if(prod%a0===0){
+        const b0=prod/a0;
+        if(b0>=2 && b0<=9 && b0===(b0|0)) as.push(a0);
+      }
+    }
+    return as;
+  }
+  for(let i=0;i<180;i++){
+    const four=Math.random()<0.42;
+    let nums, ops;
+    if(!four){
+      const kind=pick(['+×','+×','+×','−×','+÷','−÷','×+','×−','÷+','÷×','×÷','+−','−+','÷−']);
+      if(kind==='+×'){
+        const b=randi(2,9), c=randi(2,9), a=randi(1,16);
+        nums=[a,b,c]; ops=['+','×'];
+      } else if(kind==='−×'){
+        const b=randi(2,8), c=randi(2,6), prod=b*c;
+        if(prod>48) continue;
+        const a=randi(prod, Math.min(50, prod+15));
+        nums=[a,b,c]; ops=['−','×'];
+      } else if(kind==='+÷'){
+        const c=pick(factors), q=randi(2,9), b=c*q, a=randi(1,20);
+        nums=[a,b,c]; ops=['+','÷'];
+      } else if(kind==='−÷'){
+        const c=pick(factors), q=randi(2,9), b=c*q;
+        const a=randi(q, Math.min(36, q+14));
+        nums=[a,b,c]; ops=['−','÷'];
+      } else if(kind==='×+'){
+        const a=randi(2,9), b=randi(2,9), c=randi(1,12);
+        nums=[a,b,c]; ops=['×','+'];
+      } else if(kind==='×−'){
+        const a=randi(2,9), b=randi(2,9), prod=a*b;
+        const c=randi(1, Math.min(12, prod));
+        nums=[a,b,c]; ops=['×','−'];
+      } else if(kind==='÷+'){
+        const b=pick(factors), q0=randi(2,9), a=b*q0, c=randi(1,12);
+        nums=[a,b,c]; ops=['÷','+'];
+      } else if(kind==='÷×'){
+        const b=pick(factors), q0=randi(2,9), c=randi(2,6), a=b*q0;
+        nums=[a,b,c]; ops=['÷','×'];
+      } else if(kind==='×÷'){
+        const c=pick(factors), q0=randi(2,9), as=factorSplit(c*q0);
+        if(!as.length) continue;
+        const a=pick(as);
+        nums=[a, (c*q0)/a, c]; ops=['×','÷'];
+      } else if(kind==='+−'){
+        const a=randi(2,16), b=randi(1,12), c=randi(1, a+b);
+        nums=[a,b,c]; ops=['+','−'];
+      } else if(kind==='−+'){
+        const a=randi(6,24), b=randi(1, a-1), c=randi(1,12);
+        nums=[a,b,c]; ops=['−','+'];
+      } else {
+        const b=pick(factors), q0=randi(2,9), a=b*q0, c=randi(1, q0);
+        nums=[a,b,c]; ops=['÷','−'];
+      }
+    } else {
+      const kind=pick(['+×−','+−×','×+−','÷×−','×÷+','+÷×','−+−','+−+','−×+','×−+']);
+      if(kind==='+×−'){
+        const b=randi(2,8), c=randi(2,6), prod=b*c, a=randi(1,10);
+        const sum=a+prod, d=randi(1, Math.min(10, sum));
+        nums=[a,b,c,d]; ops=['+','×','−'];
+      } else if(kind==='+−×'){
+        const c=randi(2,6), d=randi(2,5), prod=c*d, a=randi(1,12);
+        const minB=Math.max(1, prod-a);
+        if(minB>12) continue;
+        const b=randi(minB, 12);
+        nums=[a,b,c,d]; ops=['+','−','×'];
+      } else if(kind==='×+−'){
+        const a=randi(2,6), b=randi(2,6), c=randi(1,10), sum=a*b+c;
+        const d=randi(1, Math.min(9, sum));
+        nums=[a,b,c,d]; ops=['×','+','−'];
+      } else if(kind==='÷×−'){
+        const b=pick([2,3,4,5,6]), q0=randi(2,8), c=randi(2,5), mid=q0*c, a=b*q0;
+        if(a>81 || mid<1) continue;
+        const d=randi(1, Math.min(9, mid));
+        nums=[a,b,c,d]; ops=['÷','×','−'];
+      } else if(kind==='×÷+'){
+        const c=pick(factors), q0=randi(2,8), as=factorSplit(c*q0);
+        if(!as.length) continue;
+        const a=pick(as), d=randi(1,12);
+        nums=[a, (c*q0)/a, c, d]; ops=['×','÷','+'];
+      } else if(kind==='+÷×'){
+        const c=pick(factors), q=randi(2,6), b=c*q, d=randi(2,5), a=randi(1,12);
+        nums=[a,b,c,d]; ops=['+','÷','×'];
+      } else if(kind==='−+−'){
+        const a=randi(8,20), b=randi(1, a-1), left=a-b, c=randi(1,10);
+        const d=randi(1, left+c);
+        nums=[a,b,c,d]; ops=['−','+','−'];
+      } else if(kind==='+−+'){
+        const a=randi(2,12), b=randi(1,10), c=randi(1, a+b), d=randi(1,8);
+        nums=[a,b,c,d]; ops=['+','−','+'];
+      } else if(kind==='−×+'){
+        const b=randi(2,6), c=randi(2,5), prod=b*c;
+        const a=randi(prod, Math.min(40, prod+12)), d=randi(1,10);
+        nums=[a,b,c,d]; ops=['−','×','+'];
+      } else {
+        const a=randi(2,6), b=randi(2,5), prod=a*b;
+        const c=randi(1, prod), d=randi(1,8);
+        nums=[a,b,c,d]; ops=['×','−','+'];
+      }
+    }
+    if(uniqOps(ops)<2) continue;
+    if(!nums || nums.length<3 || nums.length>4 || ops.length!==nums.length-1) continue;
+    if(nums.some(function(n){ return n<1 || n>81 || n!==(n|0); })) continue;
+    const q=packExpr(nums, ops, 'all');
+    if(!q || q.ans<0 || q.ans>60 || q.ans!==(q.ans|0)) continue;
+    if(recent.indexOf(q.key)>=0) continue;
+    return q;
+  }
+  return packExpr([7,4,4], ['+','×'], 'all');
 }
 function pickOpsQuestion(mode, recent){
   if(mode==='add') return pickAdd(recent);
   if(mode==='sub') return pickSub(recent);
-  if(mode==='mixas') return Math.random()<0.5 ? pickAdd(recent) : pickSub(recent);
+  if(mode==='mixas') return pickMixAS(recent);
   if(mode==='mul') return pickMulQ(recent);
   if(mode==='div') return pickDivQ(recent);
-  if(mode==='mixmd') return Math.random()<0.5 ? pickMulQ(recent) : pickDivQ(recent);
-  const r=Math.random();
-  if(r<0.28) return pickAdd(recent);
-  if(r<0.50) return pickSub(recent);
-  if(r<0.70) return pickMulQ(recent);
-  if(r<0.86) return pickDivQ(recent);
-  return pickTwoStep();
+  if(mode==='mixmd') return pickMixMD(recent);
+  if(mode==='all') return pickAllOps(recent);
+  return pickAdd(recent);
 }
 function makeSumChoices(ans){
   const set=[ans];
@@ -1259,7 +1528,7 @@ function startOps(kind, opt){
   if(battle){
     battle.classList.toggle('mode-choice', true);
     battle.classList.toggle('mode-divide', kind==='div'||kind==='mixmd');
-    battle.classList.toggle('mode-mixed', kind==='all');
+    battle.classList.toggle('mode-mixed', kind==='all'||kind==='mixas'||kind==='mixmd');
   }
   hideResult(); FX.clear(); if(fxLayer) fxLayer.innerHTML='';
   ensureHero(); preloadForm(1); preloadForm(2);
@@ -1326,14 +1595,14 @@ function nextQuestion(){
     const p=pickFact(B.tables, B.recent);
     f={a:p.a,b:p.b,ans:p.a*p.b,op:'×',key:p.a+'x'+p.b,divisor:p.a};
   }
-  B.q={a:f.a,b:f.b,c:f.c,op:f.op,op2:f.op2,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
+  B.q={a:f.a,b:f.b,c:f.c,d:f.d,op:f.op,op2:f.op2,op3:f.op3,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
   B.recent.push(B.q.key); if(B.recent.length>6) B.recent.shift();
   B.input=''; showExpr(B.q); renderAns();
   if(B.choice){
     const opts=(B.mode==='divide')?makeDivChoices(f.ans):(B.mode==='mixed')?makeMixedChoices(B.q):choicesFor(B.q);
     $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'"><span class="chnum">'+v+'</span></button>').join('');
     $$('#choices .choice').forEach(b=>b.addEventListener('click',()=>{ if(B.busy||b.classList.contains('x')) return; B.input=b.dataset.v; B.lastChoiceBtn=b; renderAns(); submit(); })); }
-  const hint = (B.q&&B.q.op2!=null) ? '由左邊計到右邊！' : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
+  const hint = (B.mode==='all') ? '先乘除，後加減！' : (B.q&&(B.q.op2!=null||B.mode==='mixas'||B.mode==='mixmd')) ? '由左邊計到右邊！' : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
   setHint('idle', hint);
   play($('.qrow'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)'}],{duration:320,easing:'ease-out'}); }
 function renderAns(state){ const a=$('#qAns'); a.textContent = B.input || '?'; a.className='ansbox'+(B.input?'':' empty')+(state?' '+state:''); }
@@ -1354,11 +1623,12 @@ async function submit(){
     Sfx.correct(); renderAns('good');
     if(first){
       if(B.mode!=='mixed') recordFact(q.key,true);
-      B.combo++;
-      if(!isClockMode()){ B.rfirst++; B.rMaxCombo=Math.max(B.rMaxCombo,B.combo); }
-      B.maxCombo=Math.max(B.maxCombo,B.combo);
-      if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); }
+      if(!isClockMode()) B.rfirst++;
     }
+    B.combo++;
+    if(!isClockMode()) B.rMaxCombo=Math.max(B.rMaxCombo,B.combo);
+    B.maxCombo=Math.max(B.maxCombo,B.combo);
+    if(B.combo>DATA.stats.maxCombo){ DATA.stats.maxCombo=B.combo; save(); }
     if(isOpsMode()){ B.solved=(B.solved||0)+1; renderRoundHud(); }
     if(isClockMode() && B.mode!=='combo') B.score++;
     const scoreEl=$('#scoreLbl');
@@ -1398,9 +1668,9 @@ async function submit(){
       B.busy=false; nextQuestion(); return;
     }
     if(isOpsMode()){
-      /* Wrong answer does not end the stage. Counter-attack already played. */
+      /* Wrong tap: same question until correct. Combo already dropped; monster already hit. */
       await sleep(900); if(tk!==B.token) return;
-      B.busy=false; nextQuestion(); return;
+      B.input=''; renderAns(); B.busy=false; return;
     }
     B.input=''; renderAns(); B.busy=false;
   }
@@ -1419,7 +1689,7 @@ function roundWon(){
   let medalBlock='';
   const practiceWord = (B.mode==='divide'||B.mode==='div') ? '除法' : '乘數表';
   if(B.mode==='add'||B.mode==='sub'||B.mode==='mixas'||B.mode==='mixmd'||B.mode==='all'){
-    medalBlock='<div class="rstat">'+(B.bossRun?'頭目加長戰，':'')+'答啱 <b>'+(B.goal||B.rfirst)+'</b> 題就打低咗！</div>';
+    medalBlock='<div class="rstat">答啱 <b>'+(B.goal||B.rfirst)+'</b> 題就打低咗！</div>';
   } else if(B.mode==='mixed'){
     medalBlock='<div class="rstat">兩步算式，由左到右計，暫時冇括號。</div>';
   } else if(B.tables.length===1){
@@ -1930,7 +2200,7 @@ function runSelfTest(){
   if(heroHud.textContent.indexOf('超人•藍披流星型態')<0) fails.push('form live');
   B.combo=0; B.mode='add';
   if(opsGoal(false)!==15) fails.push('goal normal');
-  if(opsGoal(true,5)!==20 || opsGoal(true,8)!==23) fails.push('goal boss');
+  if(opsGoal(true)!==15 || opsGoal(true,8)!==15) fails.push('goal boss');
   if(BOSS_CAST.length!==4 || BOSS_CAST.some(function(id){ return !MONS[id]; })) fails.push('boss cast');
   B.tables=[2,3,4,5,6,7,8,9]; B.divisors=[2,3,4,5,10]; B.qMax=9; B.recent=[];
   let addUnder=0;
@@ -1948,36 +2218,101 @@ function runSelfTest(){
     if(d.a!==d.b*d.ans || d.op!=='÷' || B.divisors.indexOf(d.b)<0) fails.push('divq');
   }
   if(addUnder<48) fails.push('add mostly '+addUnder);
-  let sawAdd=false,sawSub=false,sawMul=false,sawDiv=false,sawTwo=false;
+  if(typeof evalPrec!=='function') fails.push('no prec');
+  if(evalPrec([7,4,4],['+','×'])!==23) fails.push('prec 7+4×4');
+  if(evalPrec([16,5,3],['+','÷'])!=null) fails.push('prec 16+5÷3');
+  if(evalPrec([16,6,3],['+','÷'])!==18) fails.push('prec 16+6÷3');
+  if(evalPrec([10,2,3,6],['÷','×','−'])!==9) fails.push('prec 10÷2×3−6');
+  if(evalPrec([20,1,12],['−','+'])!==31) fails.push('prec 20−1+12');
+  if(evalPrec([63,9,4],['÷','×'])!==28) fails.push('prec 63÷9×4');
+  if(evalPrec([5,4,3],['−','×'])!=null) fails.push('prec neg 5−4×3');
+  if(evalPrec([8,3,2],['−','×'])!==2) fails.push('prec 8−3×2');
+  function foldLeft(nums, ops){
+    let v=nums[0];
+    for(let i=0;i<ops.length;i++){
+      const op=ops[i], n=nums[i+1];
+      if(op==='+') v=v+n;
+      else if(op==='−') v=v-n;
+      else if(op==='×') v=v*n;
+      else if(op==='÷'){ if(!n || v%n!==0) return null; v=v/n; }
+      else return null;
+      if(v<0 || v!==(v|0)) return null;
+    }
+    return v;
+  }
+  if(foldLeft([7,4,4],['+','×'])===23) fails.push('fold still 23');
+  if(evalPrec([7,4,4],['+','×'])===foldLeft([7,4,4],['+','×'])) fails.push('7+4×4 tied');
+  function precCheck(q){
+    const nums=[q.a,q.b]; const ops=[q.op];
+    if(q.op2!=null && q.c!=null){ nums.push(q.c); ops.push(q.op2); }
+    if(q.op3!=null && q.d!=null){ nums.push(q.d); ops.push(q.op3); }
+    return evalPrec(nums, ops);
+  }
+  let sawAll3=false,sawAll4=false,sawAllOps={},sawPlusTimes=false;
   B.tables=[2,3,4,5]; B.divisors=[2,3,4,5];
   for(let n=0;n<80;n++){
     const q=pickOpsQuestion('all', []);
-    let ans;
-    if(q.op2){
-      const prod=q.a*q.b;
-      ans=q.op2==='+'?prod+q.c:q.op2==='−'?prod-q.c:q.op2==='×'?prod*q.c:prod/q.c;
-      sawTwo=true;
-      if(q.ans>30) fails.push('two cap');
-    } else if(q.op==='+'){ ans=q.a+q.b; sawAdd=true; }
-    else if(q.op==='−'){ ans=q.a-q.b; sawSub=true; if(ans<0) fails.push('neg'); }
-    else if(q.op==='×'){ ans=q.a*q.b; sawMul=true; }
-    else if(q.op==='÷'){ ans=q.a/q.b; sawDiv=true; if(q.a!==q.b*q.ans) fails.push('exact'); }
-    if(ans!==q.ans) fails.push('all eval');
+    const nums=[q.a,q.b]; const ops=[q.op];
+    if(q.op2!=null && q.c!=null){ nums.push(q.c); ops.push(q.op2); }
+    if(q.op3!=null && q.d!=null){ nums.push(q.d); ops.push(q.op3); }
+    const ans=evalPrec(nums, ops);
+    if(ans!==q.ans || q.ans<0 || q.ans!==(q.ans|0) || q.ans>60) fails.push('all eval');
+    if(nums.some(function(v){ return v<1 || v>81 || v!==(v|0); })) fails.push('all num');
+    const nCount=nums.length;
+    const oCount=ops.length;
+    if(nCount<3 || nCount>4 || oCount!==nCount-1) fails.push('all arity');
+    if(nCount===3) sawAll3=true; if(nCount===4) sawAll4=true;
+    ops.forEach(function(o){ if(o) sawAllOps[o]=1; });
+    const set={}; ops.forEach(function(o){ if(o) set[o]=1; });
+    if(Object.keys(set).length<2) fails.push('all distinct');
+    if(ops.length===2 && ops[0]==='+' && ops[1]==='×'){
+      sawPlusTimes=true;
+      if(q.ans!==nums[0]+nums[1]*nums[2]) fails.push('all +× prec');
+      if(q.ans===(nums[0]+nums[1])*nums[2]) fails.push('all +× ltr');
+    }
+    if(ops.length===2 && ops[0]==='+' && ops[1]==='÷'){
+      if(nums[1]%nums[2]!==0 || q.ans!==nums[0]+(nums[1]/nums[2])) fails.push('all +÷ prec');
+    }
+    if(ops.length===2 && ops[0]==='−' && ops[1]==='×'){
+      if(nums[1]*nums[2]>nums[0] || q.ans!==nums[0]-nums[1]*nums[2]) fails.push('all −× prec');
+    }
+    const ch=choicesFor(q);
+    if(ch.length!==4 || ch.indexOf(q.ans)<0) fails.push('all ch');
   }
-  if(!sawAdd||!sawSub||!sawMul||!sawDiv||!sawTwo) fails.push('all kinds');
-  let sawMixM=false,sawMixD=false;
-  for(let n=0;n<40;n++){
+  if(!sawAll3||!sawAll4) fails.push('all len');
+  if(!sawAllOps['+']||!sawAllOps['−']||!sawAllOps['×']||!sawAllOps['÷']) fails.push('all kinds');
+  if(!sawPlusTimes) fails.push('all +× sample');
+  let sawAS2=false,sawAS3=false,sawASp=false,sawASm=false;
+  for(let n=0;n<60;n++){
+    const q=pickOpsQuestion('mixas', []);
+    const ans=precCheck(q);
+    if(ans!==q.ans || q.ans<0) fails.push('as eval');
+    const nCount=1+(q.b!=null)+(q.c!=null)+(q.d!=null);
+    if(nCount<2 || nCount>3) fails.push('as arity');
+    if(nCount===2) sawAS2=true; if(nCount===3) sawAS3=true;
+    [q.op,q.op2].forEach(function(o){ if(o==='+') sawASp=true; if(o==='−') sawASm=true; if(o && o!=='+' && o!=='−') fails.push('as op'); });
+    if(q.d!=null) fails.push('as four');
+    const ch=choicesFor(q); if(ch.length!==4 || ch.indexOf(q.ans)<0) fails.push('as ch');
+  }
+  if(!sawAS2||!sawAS3||!sawASp||!sawASm) fails.push('as kinds');
+  let sawMD2=false,sawMD3=false,sawMDm=false,sawMDd=false;
+  for(let n=0;n<60;n++){
     const q=pickOpsQuestion('mixmd', []);
-    if(q.op==='×'){ sawMixM=true; if(q.ans!==q.a*q.b) fails.push('md mul'); }
-    if(q.op==='÷'){ sawMixD=true; if(q.a!==q.b*q.ans) fails.push('md div'); }
+    const ans=precCheck(q);
+    if(ans!==q.ans || q.ans<1 || q.ans!==(q.ans|0)) fails.push('md eval');
+    const nCount=1+(q.b!=null)+(q.c!=null)+(q.d!=null);
+    if(nCount<2 || nCount>3) fails.push('md arity');
+    if(nCount===2) sawMD2=true; if(nCount===3) sawMD3=true;
+    [q.op,q.op2].forEach(function(o){ if(o==='×') sawMDm=true; if(o==='÷') sawMDd=true; if(o && o!=='×' && o!=='÷') fails.push('md op'); });
+    const ch=choicesFor(q); if(ch.length!==4 || ch.indexOf(q.ans)<0) fails.push('md ch');
   }
-  if(!sawMixM||!sawMixD) fails.push('mixmd');
+  if(!sawMD2||!sawMD3||!sawMDm||!sawMDd) fails.push('mixmd');
   const cast={};
   for(let n=0;n<24;n++){
     startOps(['add','sub','mixas','mul','div','mixmd','all'][n%7]);
     if(!isOpsMode() || !B.order || B.order.length!==1) fails.push('stage '+n);
     if(DEX_ORDER.indexOf(B.type)<0) fails.push('new mon '+B.type);
-    if(B.bossRun){ if(B.goal<20 || B.goal>23) fails.push('boss goal '+B.goal); if(BOSS_CAST.indexOf(B.type)<0) fails.push('boss type'); }
+    if(B.bossRun){ if(B.goal!==15) fails.push('boss goal '+B.goal); if(BOSS_CAST.indexOf(B.type)<0) fails.push('boss type'); }
     else if(B.goal!==15) fails.push('norm goal');
     if(B.maxHp!==B.goal) fails.push('hp '+B.maxHp+'/'+B.goal);
     cast[B.mode]=1;
@@ -1989,7 +2324,7 @@ function runSelfTest(){
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
