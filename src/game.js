@@ -1152,6 +1152,12 @@ function makeMixedChoices(q){
 }
 function showExpr(q){
   const op2=$('#qOp2'), c=$('#qC'), op3=$('#qOp3'), d=$('#qD');
+  const qrow=$('#qRow');
+  const termCount=2+(q.op2!=null && q.c!=null?1:0)+(q.op3!=null && q.d!=null?1:0);
+  if(qrow){
+    qrow.classList.remove('qlen-2','qlen-3','qlen-4');
+    qrow.classList.add('qlen-'+Math.min(termCount,4));
+  }
   $('#qA').textContent=q.a;
   const op=$('#qOp'); if(op) op.textContent=q.op||qOpText();
   $('#qB').textContent=q.b;
