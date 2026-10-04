@@ -2169,7 +2169,7 @@ function runSelfTest(){
     if(!home || !home.querySelector('[data-go="'+g+'"]')) fails.push('home '+g);
   });
   if(!home || !home.querySelector('[data-go="learnPick"]')) fails.push('home live');
-  const marks={'ops-add':'＋','ops-sub':'－','ops-mixas':'±','ops-mul':'×','ops-div':'÷','ops-mixmd':'×÷','ops-all':'＋－×÷'};
+  const marks={'ops-add':'＋','ops-sub':'－','ops-mixas':'＋－','ops-mul':'×','ops-div':'÷','ops-mixmd':'×÷','ops-all':'＋－×÷'};
   Object.keys(marks).forEach(function(g){
     const btn=home&&home.querySelector('[data-go="'+g+'"]');
     const name={'ops-add':'加法大進擊','ops-sub':'減法暗影戰','ops-mixas':'加減雙刃斬','ops-mul':'乘法火焰爆','ops-div':'除法冰封關','ops-mixmd':'乘除雷電擊','ops-all':'四則終極戰'}[g];
