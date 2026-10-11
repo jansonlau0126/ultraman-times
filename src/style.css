@@ -806,6 +806,11 @@ body[data-screen="home"] main{padding-top:0}
 .dcard .dname{font-weight:900;font-size:14px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dcard .dn{font-size:11px;opacity:.8}
 .dcard.locked .dimg svg,.dcard.locked .dimg .mon-img{filter:brightness(0) opacity(.38)}
+.dcard.met .dimg svg,.dcard.met .dimg .mon-img,.dimg.sil .mon-img,.dimg.sil svg{filter:brightness(0) opacity(.55)}
+.dcard.met{border-style:solid;border-color:rgba(255,255,255,.35);cursor:pointer}
+.dcard.met .dname{opacity:.92}
+.dcard.met .dn{opacity:.75;color:#fde68a}
+
 .dcard.locked{border-style:dashed;border-color:rgba(255,255,255,.22);background:rgba(14,18,56,.9);cursor:default;box-shadow:none}
 .dcard.locked .dname{opacity:.6}
 .dtag{position:absolute;top:4px;right:4px;font-style:normal;font-size:10px;font-weight:900;padding:1px 6px;border-radius:8px;background:#ef4444;z-index:1}
