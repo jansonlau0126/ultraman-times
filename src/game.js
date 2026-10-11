@@ -11,11 +11,11 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, met:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
-    return {facts:d.facts||{}, badges:d.badges||{}, best:d.best||{}, dex:d.dex||{}, stats:Object.assign(def.stats, d.stats||{}), settings:Object.assign(def.settings, d.settings||{})}; } }catch(e){}
+    return {facts:d.facts||{}, badges:d.badges||{}, best:d.best||{}, dex:d.dex||{}, met:d.met||{}, stats:Object.assign(def.stats, d.stats||{}), settings:Object.assign(def.settings, d.settings||{})}; } }catch(e){}
   return def;
 }
 let DATA = loadData();
@@ -197,7 +197,16 @@ const BATTLE_MON = {
   manflower:'assets/battle/mon_manflower.png', illusdemon:'assets/battle/mon_illusdemon.png',
   seaking:'assets/battle/mon_seaking.png', deathscorp:'assets/battle/mon_deathscorp.png',
   nightmare:'assets/battle/mon_nightmare.png', galmoth:'assets/battle/mon_galmoth.png',
-  flamecrab:'assets/battle/mon_flamecrab.png', starlord:'assets/battle/mon_starlord.png'
+  flamecrab:'assets/battle/mon_flamecrab.png', starlord:'assets/battle/mon_starlord.png',
+  flamegoat:'assets/battle/mon_flamegoat.png', corelizard:'assets/battle/mon_corelizard.png',
+  bombshroom:'assets/battle/mon_bombshroom.png', icefox:'assets/battle/mon_icefox.png',
+  icewhale:'assets/battle/mon_icewhale.png', frostsnow:'assets/battle/mon_frostsnow.png',
+  thundergriff:'assets/battle/mon_thundergriff.png', windbird:'assets/battle/mon_windbird.png',
+  sparkhog:'assets/battle/mon_sparkhog.png', batking:'assets/battle/mon_batking.png',
+  poisonfrog:'assets/battle/mon_poisonfrog.png', voidghost:'assets/battle/mon_voidghost.png',
+  rockape:'assets/battle/mon_rockape.png', steelcent:'assets/battle/mon_steelcent.png',
+  crystalspider:'assets/battle/mon_crystalspider.png', lightunicorn:'assets/battle/mon_lightunicorn.png',
+  nebulajelly:'assets/battle/mon_nebulajelly.png', doomlord:'assets/battle/mon_doomlord.png'
 };
 function heroRasterHTML(stage){
   const st = Math.max(1, Math.min(5, stage|0 || 1));
@@ -279,7 +288,11 @@ const ATTACK_SCALE = {
   deathscorp:1.3, flamecrab:1.3, galmoth:1.3, heidragon:1.3, holyturt:1.3,
   icetiran:1.3, illusdemon:1.3, lavaover:1.19, manflower:1.3, mtngod:1.3,
   nightmare:1.3, ninjacat:1.3, phoenix:1.16, sandwyrm:1.3, seaking:1.3,
-  starlord:1.23, steeltiran:1.3, thundwolf:1.21
+  starlord:1.23, steeltiran:1.3, thundwolf:1.21,
+  flamegoat:1.25, corelizard:1.25, bombshroom:1.25, icefox:1.25, icewhale:1.25,
+  frostsnow:1.25, thundergriff:1.25, windbird:1.25, sparkhog:1.25, batking:1.25,
+  poisonfrog:1.25, voidghost:1.25, rockape:1.25, steelcent:1.25, crystalspider:1.25,
+  lightunicorn:1.25, nebulajelly:1.25, doomlord:1.28
 };
 const ELEM_KIND = {'火':'fire','冰':'ice','雷':'thunder','毒':'poison','岩':'rock','沙':'sand','鋼':'steel','水':'water','暗':'dark','光':'light','星':'star'};
 const ELEM_PRESET = {
@@ -287,7 +300,13 @@ const ELEM_PRESET = {
   holyturt:['冰','light'], icetiran:['冰','heavy'], thundwolf:['雷','zap'],
   deathscorp:['毒','bubble'], manflower:['毒','vine'], mtngod:['岩','grit'], sandwyrm:['沙','dust'],
   steeltiran:['鋼','spark'], seaking:['水','wave'], ninjacat:['暗','shadow'], nightmare:['暗','mist'],
-  illusdemon:['光','flash'], galmoth:['星','dust'], starlord:['星','meteor']
+  illusdemon:['光','flash'], galmoth:['星','dust'], starlord:['星','meteor'],
+  flamegoat:['火','lava'], corelizard:['火','lava'], bombshroom:['火','ball'],
+  icefox:['冰','light'], icewhale:['冰','heavy'], frostsnow:['冰','light'],
+  thundergriff:['雷','zap'], windbird:['雷','zap'], sparkhog:['雷','zap'],
+  batking:['暗','shadow'], poisonfrog:['毒','bubble'], voidghost:['暗','mist'],
+  rockape:['岩','grit'], steelcent:['鋼','spark'], crystalspider:['冰','light'],
+  lightunicorn:['光','flash'], nebulajelly:['星','dust'], doomlord:['暗','shadow']
 };
 function applyMonsterElement(id, word, shade){
   const m=MONS[id]; if(!m||!word) return;
@@ -299,24 +318,42 @@ Object.keys(ELEM_PRESET).forEach(function(id){ applyMonsterElement(id, ELEM_PRES
    ah/ab/ar = the same for the attack frame. a = idle width/height.
    fill = 1/h so the painted body matches the lineup, not the padded file box. */
 const MON_CROP = {
+batking:{h:0.764,b:0.053,r:0.053,ah:0.506,ab:0.053,ar:0.053,a:1.0},
+  bombshroom:{h:0.894,b:0.053,r:0.092,ah:0.85,ab:0.053,ar:0.053,a:1.0},
+  corelizard:{h:0.653,b:0.053,r:0.053,ah:0.4,ab:0.053,ar:0.053,a:1.0},
+  crystalspider:{h:0.808,b:0.053,r:0.053,ah:0.503,ab:0.053,ar:0.053,a:1.0},
   deathscorp:{h:0.994,b:0.003,r:0.003,ah:0.686,ab:0.158,ar:0.064,a:0.992},
+  doomlord:{h:0.897,b:0.05,r:0.053,ah:0.483,ab:0.053,ar:0.053,a:1.0},
   flamecrab:{h:0.994,b:0.003,r:0.003,ah:0.617,ab:0.192,ar:0.064,a:0.992},
-  galmoth:{h:0.756,b:0.106,r:0.033,ah:0.544,ab:0.228,ar:0.064,a:1},
+  flamegoat:{h:0.889,b:0.056,r:0.114,ah:0.644,ab:0.053,ar:0.053,a:1.0},
+  frostsnow:{h:0.894,b:0.053,r:0.131,ah:0.742,ab:0.053,ar:0.053,a:1.0},
+  galmoth:{h:0.756,b:0.106,r:0.033,ah:0.544,ab:0.228,ar:0.064,a:1.0},
   heidragon:{h:0.994,b:0.003,r:0.003,ah:0.714,ab:0.156,ar:0.064,a:0.825},
   holyturt:{h:0.994,b:0.003,r:0.003,ah:0.456,ab:0.272,ar:0.064,a:1.108},
+  icefox:{h:0.886,b:0.056,r:0.053,ah:0.642,ab:0.053,ar:0.053,a:1.0},
   icetiran:{h:0.994,b:0.003,r:0.003,ah:0.586,ab:0.208,ar:0.064,a:0.922},
-  illusdemon:{h:0.853,b:0.103,r:0.308,ah:0.522,ab:0.239,ar:0.067,a:1},
+  icewhale:{h:0.753,b:0.053,r:0.056,ah:0.514,ab:0.053,ar:0.053,a:1.0},
+  illusdemon:{h:0.853,b:0.103,r:0.308,ah:0.522,ab:0.239,ar:0.067,a:1.0},
   lavaover:{h:0.989,b:0.006,r:0.006,ah:0.828,ab:0.092,ar:0.158,a:0.986},
-  manflower:{h:0.994,b:0.003,r:0.004,ah:0.700,ab:0.150,ar:0.064,a:0.781},
-  mtngod:{h:0.994,b:0.003,r:0.003,ah:0.733,ab:0.133,ar:0.064,a:1.020},
+  lightunicorn:{h:0.869,b:0.053,r:0.053,ah:0.558,ab:0.053,ar:0.053,a:1.0},
+  manflower:{h:0.994,b:0.003,r:0.004,ah:0.7,ab:0.15,ar:0.064,a:0.781},
+  mtngod:{h:0.994,b:0.003,r:0.003,ah:0.733,ab:0.133,ar:0.064,a:1.02},
+  nebulajelly:{h:0.814,b:0.053,r:0.056,ah:0.569,ab:0.053,ar:0.053,a:1.0},
   nightmare:{h:0.994,b:0.003,r:0.003,ah:0.675,ab:0.164,ar:0.064,a:0.956},
-  ninjacat:{h:0.844,b:0.106,r:0.033,ah:0.550,ab:0.225,ar:0.064,a:1},
+  ninjacat:{h:0.844,b:0.106,r:0.033,ah:0.55,ab:0.225,ar:0.064,a:1.0},
   phoenix:{h:0.994,b:0.003,r:0.003,ah:0.858,ab:0.078,ar:0.144,a:0.928},
+  poisonfrog:{h:0.856,b:0.053,r:0.053,ah:0.494,ab:0.053,ar:0.053,a:1.0},
+  rockape:{h:0.761,b:0.053,r:0.053,ah:0.517,ab:0.053,ar:0.053,a:1.0},
   sandwyrm:{h:0.994,b:0.003,r:0.003,ah:0.536,ab:0.233,ar:0.064,a:0.939},
-  seaking:{h:0.903,b:0.025,r:0.017,ah:0.503,ab:0.250,ar:0.064,a:1},
-  starlord:{h:0.994,b:0.003,r:0.004,ah:0.811,ab:0.097,ar:0.100,a:0.719},
-  steeltiran:{h:0.994,b:0.003,r:0.003,ah:0.689,ab:0.125,ar:0.075,a:0.900},
-  thundwolf:{h:0.994,b:0.003,r:0.003,ah:0.775,ab:0.111,ar:0.089,a:1.059}
+  seaking:{h:0.903,b:0.025,r:0.017,ah:0.503,ab:0.25,ar:0.064,a:1.0},
+  sparkhog:{h:0.842,b:0.053,r:0.053,ah:0.547,ab:0.053,ar:0.053,a:1.0},
+  starlord:{h:0.994,b:0.003,r:0.004,ah:0.811,ab:0.097,ar:0.1,a:0.719},
+  steelcent:{h:0.892,b:0.053,r:0.072,ah:0.761,ab:0.053,ar:0.053,a:1.0},
+  steeltiran:{h:0.994,b:0.003,r:0.003,ah:0.689,ab:0.125,ar:0.075,a:0.9},
+  thundergriff:{h:0.817,b:0.053,r:0.053,ah:0.519,ab:0.053,ar:0.053,a:1.0},
+  thundwolf:{h:0.994,b:0.003,r:0.003,ah:0.775,ab:0.111,ar:0.089,a:1.059},
+  voidghost:{h:0.889,b:0.053,r:0.183,ah:0.625,ab:0.053,ar:0.053,a:1.0},
+  windbird:{h:0.864,b:0.053,r:0.053,ah:0.528,ab:0.053,ar:0.061,a:1.0},
 };
 function monCropOf(type){ return MON_CROP[type]||{h:1,b:0,r:0,ah:1,ab:0,ar:0,a:1}; }
 function monFrame(type, on){
@@ -369,7 +406,11 @@ function applyDexPack(pack){
     if(row.elem) applyMonsterElement(id, row.elem, row.shade);
     order.push(id);
   });
-  if(order.length) DEX_ORDER.splice(0, DEX_ORDER.length, ...order);
+  if(order.length){
+    const extra = DEX_ORDER.filter(function(id){ return order.indexOf(id)<0; });
+    Object.keys(MONS).forEach(function(id){ if(order.indexOf(id)<0 && extra.indexOf(id)<0) extra.push(id); });
+    DEX_ORDER.splice(0, DEX_ORDER.length, ...order, ...extra);
+  }
 }
 const HOME_PETS=[['dragon','homePetL'],['turtle','homePetR']];
 function setHomeMon(){ /* pets are static raster art on home */ }
@@ -515,11 +556,13 @@ function initSetup(){
 }
 
 /* ---------- BATTLE ---------- */
-const NORMALS = ['lavaover','holyturt','sandwyrm','thundwolf','ninjacat','icetiran','phoenix','mtngod','manflower','seaking','deathscorp','nightmare','galmoth','flamecrab'];
+const NORMALS = ['lavaover','holyturt','sandwyrm','thundwolf','ninjacat','icetiran','phoenix','mtngod','manflower','seaking','deathscorp','nightmare','galmoth','flamecrab','flamegoat','corelizard','bombshroom','icefox','icewhale','frostsnow','thundergriff','windbird','sparkhog','batking','poisonfrog','voidghost','rockape','steelcent','crystalspider'];
 const MID_BOSSES = ['steeltiran','illusdemon','heidragon'];
 const OMEGA_NORMALS = NORMALS.slice();
 function pickFresh(list, avoid){ const c=list.filter(t=>(avoid||[]).indexOf(t)<0); const fresh=c.filter(t=>!(DATA.dex&&DATA.dex[t])); return pick(fresh.length?fresh:c); }
-function dexAdd(t){ if(!DATA.dex) DATA.dex={}; const first=!DATA.dex[t]; DATA.dex[t]=(DATA.dex[t]||0)+1; save(); return first; }
+function dexAdd(t){ if(!DATA.dex) DATA.dex={}; const first=!DATA.dex[t]; DATA.dex[t]=(DATA.dex[t]||0)+1; if(!DATA.met) DATA.met={}; DATA.met[t]=true; save(); return first; }
+function metAdd(t){ if(!t) return; if(!DATA.met) DATA.met={}; if(!DATA.met[t]){ DATA.met[t]=true; save(); } }
+function dexTier(t){ const wins=(DATA.dex&&DATA.dex[t])||0; if(wins>0) return 'won'; if(DATA.met&&DATA.met[t]) return 'met'; return 'unseen'; }
 const MOVES = {
   beam:'十字死光！', kick:'光速飛踢！', disc:'光輪斬！', punch:'爆裂光拳！', whirl:'螺旋旋風拳！',
   flip:'彗星迴旋踢！', super:'超級十字死光！', rainbow:'彩虹旋風斬！', omega:'奧米加星煌爆！'
@@ -1184,7 +1227,7 @@ function showExpr(q){
 const OPS_NAME={add:'加法大進擊',sub:'減法暗影戰',mixas:'加減雙刃斬',mul:'乘法火焰爆',div:'除法冰封關',mixmd:'乘除雷電擊',all:'四則終極戰'};
 const OPS_MODES=['add','sub','mixas','mul','div','mixmd','all'];
 /* Existing rarer monsters only. No new art. */
-const BOSS_CAST=['steeltiran','illusdemon','heidragon','starlord'];
+const BOSS_CAST=['steeltiran','illusdemon','heidragon','starlord','doomlord','lightunicorn','nebulajelly'];
 function isOpsMode(mode){ return OPS_MODES.indexOf(mode||B.mode)>=0; }
 function opsGoal(isBoss, extra){ return 15; }
 function rollOpsEncounter(){
@@ -1571,6 +1614,7 @@ function startSession(mode, tables, opt){
 }
 async function startRound(type){
   const tk=B.token; B.type=type; const m=MONS[type];
+  metAdd(type);
   B.maxHp = isOpsMode() ? (B.goal||15) : (isClockMode() ? 40 : (m.final?150:m.boss?120:100)); B.hp=B.maxHp; B.gotCoins=0;
   if(!isClockMode()){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; B._hen=1; B._henLabel=null; }
   else B.rwrong=0;
@@ -1885,26 +1929,35 @@ function renderProgress(){
 }
 
 function renderDex(){
-  const dex=DATA.dex||{}; const got=DEX_ORDER.filter(t=>dex[t]).length;
-  $('#dexCount').textContent=got+' / '+DEX_ORDER.length;
+  const dex=DATA.dex||{}; const met=DATA.met||{};
+  const got=DEX_ORDER.filter(t=>dex[t]).length;
+  const metN=DEX_ORDER.filter(t=>met[t]||dex[t]).length;
+  $('#dexCount').textContent='收錄 '+got+' / '+DEX_ORDER.length+(metN>got?' · 見過 '+metN:'');
   const stamp=$('#dexStamp');
   if(stamp){
     const on=!!(DATA.stamps&&DATA.stamps.wing);
     stamp.hidden=!on;
     stamp.textContent=on?'翼光奧米加':'';
   }
-  const elemBorder={fire:'#ff7a3d',ice:'#7dd3fc',thunder:'#fde047',rock:'#a8a29e',poison:'#c084fc',sand:'#eab308',steel:'#e5e7eb',water:'#38bdf8',dark:'#6b21a8',light:'#fff',star:'#fde68a'};
+  const elemBorder={fire:'#ff7a3d',ice:'#7dd3fc',thunder:'#fde047',rock:'#a8a29e',poison:'#c084fc',sand:'#eab308',steel:'#e5e7eb',water:'#38bdf8',dark:'#6b21a8',light:'#fff',star:'#fde68a',shadow:'#6b21a8'};
   const sel=window.__dexSel;
   $('#dex').innerHTML=DEX_ORDER.map((t)=>{
-    const m=MONS[t], n=dex[t]||0;
+    const m=MONS[t], n=dex[t]||0, tier=dexTier(t);
     const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':'';
     const border=elemBorder[m.elem]||'#7c8cff';
-    return '<button type="button" class="dcard'+(n?'':' locked')+(sel===t?' on':'')+'" data-dex="'+t+'" style="--db:'+border+'" '+(n?'':'disabled aria-disabled="true"')+' aria-label="'+(n?m.name:'未遇到嘅怪獸')+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+(n?m.name:'？？？')+'</div>'+(n?'<div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>':'<div class="dn">未遇到</div>')+tag+'</button>';
+    if(tier==='won'){
+      return '<button type="button" class="dcard'+(sel===t?' on':'')+'" data-dex="'+t+'" data-tier="won" style="--db:'+border+'" aria-label="'+m.name+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+m.name+'</div><div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>'+tag+'</button>';
+    }
+    if(tier==='met'){
+      return '<button type="button" class="dcard met'+(sel===t?' on':'')+'" data-dex="'+t+'" data-tier="met" style="--db:'+border+'" aria-label="'+m.name+'（未打敗）"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+m.name+'</div><div class="dn">未打敗</div>'+tag+'</button>';
+    }
+    return '<button type="button" class="dcard locked" data-dex="'+t+'" data-tier="unseen" style="--db:'+border+'" disabled aria-disabled="true" aria-label="未遇到嘅怪獸"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">？？？</div><div class="dn">未遇到</div>'+tag+'</button>';
   }).join('');
   $$('#dex .mon-img').forEach(bindMonImg);
   $$('#dex .dcard:not(.locked)').forEach(c=>c.addEventListener('click',()=>{ Sfx.click(); selectDex(c.dataset.dex); }));
-  if(sel && dex[sel]) fillDexPanel(sel);
+  if(sel && (dex[sel]||met[sel])) fillDexPanel(sel);
   else if(got){ const first=DEX_ORDER.find(t=>dex[t]); if(first) selectDex(first, true); else clearDexPanel(); }
+  else if(metN){ const first=DEX_ORDER.find(t=>met[t]); if(first) selectDex(first, true); else clearDexPanel(); }
   else clearDexPanel();
 }
 function clearDexPanel(){
@@ -1913,15 +1966,28 @@ function clearDexPanel(){
   if(empty) empty.hidden=false; if(body) body.hidden=true;
 }
 function selectDex(type, quiet){
-  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
+  const m=MONS[type]; if(!m) return;
+  const tier=dexTier(type); if(tier==='unseen') return;
   window.__dexSel=type;
   $$('#dex .dcard').forEach(c=>c.classList.toggle('on', c.dataset.dex===type));
   fillDexPanel(type);
-  if(!quiet){ /* keep panel in view on mobile */ const p=$('#dexPanel'); if(p && window.matchMedia('(max-width:859px)').matches) p.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  if(!quiet){ const p=$('#dexPanel'); if(p && window.matchMedia('(max-width:859px)').matches) p.scrollIntoView({behavior:'smooth',block:'nearest'}); }
 }
 function fillDexPanel(type){
-  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0;
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0, tier=dexTier(type);
+  if(!m||tier==='unseen') return;
   $('#dexPanelEmpty').hidden=true; $('#dexPanelBody').hidden=false;
+  if(tier==='met'){
+    $('#dexPanelArt').innerHTML='<div class="dex-pair"><figure class="dex-shot"><div class="dimg sil">'+monRasterHTML(type)+'</div></figure></div>';
+    $$('#dexPanelArt .mon-img').forEach(bindMonImg);
+    $('#dexPanelTags').innerHTML='<i>未打敗</i>'+(m.elemWord?'<i>'+m.elemWord+'</i>':'');
+    $('#dexPanelName').textContent=m.name;
+    $('#dexPanelNick').textContent='？？？';
+    $('#dexBars').innerHTML='';
+    $('#dexPanelLore').textContent='見過呢隻怪獸，但未打敗佢。再挑戰一次先睇到全部資料！';
+    const more=$('#dexPanelMore'); more.onclick=()=>{ Sfx.click(); openDexDetail(type); };
+    return;
+  }
   $('#dexPanelArt').innerHTML=dexPairHTML(type); $$('#dexPanelArt .mon-img').forEach(bindMonImg);
   const tags=[]; if(m.friend) tags.push('<i class="f">夥伴</i>'); if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
   tags.push('<i>'+(m.kind||'怪獸')+'</i>'); if(m.elemWord) tags.push('<i>'+m.elemWord+'</i>');
@@ -1941,13 +2007,32 @@ const DEX_BG = {
   steeltiran:['#1f2937','#0a0c10'], icetiran:['#1e3a8a','#061028'], phoenix:['#7c2d12','#2a0a00'],
   mtngod:['#292524','#120e0c'], manflower:['#14532d','#0a1a08'], illusdemon:['#0f172a','#061018'],
   seaking:['#1e3a8a','#061028'], deathscorp:['#6b4e1e','#2a1808'], nightmare:['#1e0a3c','#0a0418'],
-  galmoth:['#374151','#12141a'], flamecrab:['#7f1d1d','#2a0808'], starlord:['#18181b','#050508']
+  galmoth:['#374151','#12141a'], flamecrab:['#7f1d1d','#2a0808'], starlord:['#18181b','#050508'],
+  flamegoat:['#7c2d12','#2a0a00'], corelizard:['#7c2d12','#1a0600'], bombshroom:['#7f1d1d','#2a0808'],
+  icefox:['#0c4a6e','#061828'], icewhale:['#075985','#061028'], frostsnow:['#64748b','#1e293b'],
+  thundergriff:['#92400e','#2a1400'], windbird:['#0f766e','#042f2e'], sparkhog:['#404040','#1a1a1a'],
+  batking:['#1e1b4b','#0a0418'], poisonfrog:['#3f6212','#1a2e05'], voidghost:['#312e81','#0a0820'],
+  rockape:['#292524','#120e0c'], steelcent:['#374151','#111827'], crystalspider:['#1e40af','#061028'],
+  lightunicorn:['#b45309','#2a1800'], nebulajelly:['#581c87','#1a0530'], doomlord:['#4c0519','#1a0208']
 };
 function openDexDetail(type){
-  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0; if(!m||!n) return;
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0, tier=dexTier(type); if(!m||tier==='unseen') return;
   selectDex(type, true);
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
+  if(tier==='met'){
+    $('#dsArt').innerHTML = '<div class="dex-pair"><figure class="dex-shot"><div class="dimg sil">'+monRasterHTML(type)+'</div></figure></div>';
+    $$('#dsArt .mon-img').forEach(bindMonImg);
+    $('#dsTags').innerHTML='<i>未打敗</i>';
+    $('#dsName').textContent=m.name; $('#dsNick').textContent='？？？';
+    $('#dsKind').textContent='？？？'; $('#dsHabitat').textContent='？？？';
+    $('#dsMove').textContent='？？？'; $('#dsRecord').textContent='未打敗';
+    const dsElem=$('#dsElem'); if(dsElem) dsElem.textContent=m.elemWord||'？';
+    const kid=$('#dsKid'); if(kid) kid.textContent='';
+    $('#dsLore').textContent='見過呢隻怪獸，但未打敗佢。打敗之後先解鎖完整資料！';
+    sheet.hidden=false; sheet.classList.add('show');
+    return;
+  }
   $('#dsArt').innerHTML = dexPairHTML(type);
   $$('#dsArt .mon-img').forEach(bindMonImg);
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
@@ -2207,7 +2292,7 @@ function runSelfTest(){
   B.combo=0; B.mode='add';
   if(opsGoal(false)!==15) fails.push('goal normal');
   if(opsGoal(true)!==15 || opsGoal(true,8)!==15) fails.push('goal boss');
-  if(BOSS_CAST.length!==4 || BOSS_CAST.some(function(id){ return !MONS[id]; })) fails.push('boss cast');
+  if(BOSS_CAST.length<4 || BOSS_CAST.some(function(id){ return !MONS[id]; })) fails.push('boss cast');
   B.tables=[2,3,4,5,6,7,8,9]; B.divisors=[2,3,4,5,10]; B.qMax=9; B.recent=[];
   let addUnder=0;
   for(let n=0;n<80;n++){
@@ -2330,7 +2415,7 @@ function runSelfTest(){
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; list.forEach(t=>DATA.dex[t]=1+(t.length%3)); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; DATA.met={}; list.forEach(t=>{ DATA.dex[t]=1+(t.length%3); DATA.met[t]=true; }); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);

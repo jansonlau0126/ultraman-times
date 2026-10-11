@@ -171,10 +171,28 @@ const MONS = {
   nightmare:{name:'夢魔', nick:'永眠幻視', kind:'夢魔', habitat:'噩夢迷宮', lore:'小小夢魔張開催眠之眼。永眠幻視會令你答錯題！', body:'#4c1d95', light:'#c4b5fd', dark:'#1e0a3c', belly:'#2e1065', shot:'#c084fc', elem:'shadow'},
   galmoth:{name:'銀河飛蛾', nick:'星塵暴', kind:'銀河飛蛾', habitat:'星塵軌道', lore:'銀河飛蛾拍翼散出星塵暴，閃到你睇唔清題目！', body:'#9ca3af', light:'#f3f4f6', dark:'#374151', belly:'#fde68a', shot:'#ffe066', elem:'thunder'},
   flamecrab:{name:'爆炎蟹', nick:'地獄爆炎彈', kind:'爆炎蟹', habitat:'岩漿海岸', lore:'滾燙爆炎蟹會發射地獄爆炎彈——答啱先避得開！', body:'#dc2626', light:'#fca5a5', dark:'#7f1d1d', belly:'#fb923c', shot:'#ff6a00', elem:'fire'},
-  starlord:{name:'星辰霸主', short:'星辰霸主', nick:'流星天墜', kind:'隕星魔', habitat:'星辰墜落點', lore:'最罕見嘅終極星辰霸主！流星天墜一落，錯誤答案直接被隕石砸成粉塵！', body:'#3f3f46', light:'#a1a1aa', dark:'#18181b', belly:'#fb923c', shot:'#ff7ad9', elem:'shadow', boss:true, final:true}
+  starlord:{name:'星辰霸主', short:'星辰霸主', nick:'流星天墜', kind:'隕星魔', habitat:'星辰墜落點', lore:'最罕見嘅終極星辰霸主！流星天墜一落，錯誤答案直接被隕石砸成粉塵！', body:'#3f3f46', light:'#a1a1aa', dark:'#18181b', belly:'#fb923c', shot:'#ff7ad9', elem:'shadow', boss:true, final:true},
+  flamegoat:{name:'烈焰魔羊', nick:'熔岩衝撞', kind:'炎羊', habitat:'火山牧場', lore:'全身火焰絨毛嘅烈焰魔羊。熔岩衝撞一頂，連答案都燒到跳！', body:'#c2410c', light:'#fb923c', dark:'#7c2d12', belly:'#fed7aa', shot:'#ff6a00', elem:'fire'},
+  corelizard:{name:'熔核炎蜥', nick:'核心噴焰', kind:'熔核蜥', habitat:'地心裂縫', lore:'肚裏藏住岩浆核心嘅炎蜥。核心噴焰一吐，錯誤答案即刻溶掉！', body:'#ea580c', light:'#fdba74', dark:'#7c2d12', belly:'#fef3c7', shot:'#ff6a00', elem:'fire'},
+  bombshroom:{name:'爆彈火菇', nick:'爆發孢子彈', kind:'爆菇', habitat:'炭火森林', lore:'頭上頂住計時火菇！爆發孢子彈一響，答錯就會被炸到灰飛煙滅！', body:'#dc2626', light:'#fca5a5', dark:'#7f1d1d', belly:'#fecaca', shot:'#ff6a00', elem:'fire'},
+  icefox:{name:'極地冰狐', nick:'霜牙急襲', kind:'冰狐', habitat:'極光雪原', lore:'雪白蓬鬆嘅極地冰狐。霜牙急襲快到連計數都趕唔切！', body:'#7dd3fc', light:'#e0f2fe', dark:'#0c4a6e', belly:'#ffffff', shot:'#bae6fd', elem:'ice'},
+  icewhale:{name:'深海冰鯨', nick:'冰川巨浪', kind:'冰鯨', habitat:'凍結深海', lore:'背脊結滿冰山嘅深海冰鯨。冰川巨浪一掀，錯誤答案即刻沉底！', body:'#38bdf8', light:'#bae6fd', dark:'#075985', belly:'#e0f2fe', shot:'#7dd3fc', elem:'ice'},
+  frostsnow:{name:'霜晶雪人', nick:'冰雹連投', kind:'霜晶雪人', habitat:'永冬山谷', lore:'由霜晶堆成嘅笑面雪人。冰雹連投會砸到你答錯！', body:'#e2e8f0', light:'#ffffff', dark:'#64748b', belly:'#f1f5f9', shot:'#bae6fd', elem:'ice'},
+  thundergriff:{name:'雷鳴獅鷲', nick:'雷翼俯衝', kind:'雷獅鷲', habitat:'雷雲峭壁', lore:'獅頭鷹翼嘅雷鳴獅鷲。雷翼俯衝帶住閃電，答錯即中雷！', body:'#fbbf24', light:'#fef3c7', dark:'#92400e', belly:'#fff7ed', shot:'#fde047', elem:'thunder'},
+  windbird:{name:'疾風鳥人', nick:'疾風利刃', kind:'風鳥人', habitat:'高空氣流帶', lore:'雙翼割風嘅疾風鳥人。疾風利刃一揮，錯誤答案被吹走！', body:'#5eead4', light:'#ccfbf1', dark:'#0f766e', belly:'#f0fdfa', shot:'#fde047', elem:'thunder'},
+  sparkhog:{name:'電磁刺蝟', nick:'電刺散射', kind:'電磁刺蝟', habitat:'發電荒原', lore:'全身帶電刺嘅電磁刺蝟。電刺散射會電到你手震！', body:'#a3a3a3', light:'#fef08a', dark:'#404040', belly:'#e5e5e5', shot:'#fde047', elem:'thunder'},
+  batking:{name:'暗影蝙蝠王', nick:'黑夜超音波', kind:'暗影蝠王', habitat:'暗月洞窟', lore:'展開暗翼嘅蝙蝠王。黑夜超音波會擾亂你嘅答案！', body:'#4c1d95', light:'#a78bfa', dark:'#1e1b4b', belly:'#2e1065', shot:'#c084fc', elem:'shadow'},
+  poisonfrog:{name:'毒沼蛙神', nick:'毒泡連發', kind:'毒沼蛙神', habitat:'腐蝕毒澤', lore:'頭頂毒冠嘅蛙神。毒泡連發一噴，錯誤答案即溶！', body:'#65a30d', light:'#bef264', dark:'#3f6212', belly:'#ecfccb', shot:'#a3e635', elem:'poison'},
+  voidghost:{name:'虛空幽靈', nick:'虛無吞噬', kind:'虛空幽靈', habitat:'次元裂縫', lore:'半透明嘅虛空幽靈。虛無吞噬會令答錯嘅題目消失無踪！', body:'#6366f1', light:'#c7d2fe', dark:'#312e81', belly:'#e0e7ff', shot:'#c084fc', elem:'shadow'},
+  rockape:{name:'岩石巨猿', nick:'崩山重拳', kind:'岩石巨猿', habitat:'崩石峽谷', lore:'渾身岩石肌肉嘅巨猿。崩山重拳一砸，答錯就粉身碎骨！', body:'#78716c', light:'#d6d3d1', dark:'#292524', belly:'#a8a29e', shot:'#a8a29e', elem:'rock'},
+  steelcent:{name:'鋼鐵蜈蚣', nick:'鋼鐵絞殺', kind:'鋼鐵蜈蚣', habitat:'廢鐵礦道', lore:'一節節鋼鐵組成嘅蜈蚣。鋼鐵絞殺會捲走錯答案！', body:'#9ca3af', light:'#e5e7eb', dark:'#374151', belly:'#d1d5db', shot:'#ef4444', elem:'rock'},
+  crystalspider:{name:'水晶蜘蛛', nick:'晶網冰封', kind:'水晶蜘蛛', habitat:'晶洞迷宮', lore:'晶瑩剔透嘅水晶蜘蛛。晶網冰封會困住你嘅答案！', body:'#93c5fd', light:'#dbeafe', dark:'#1e40af', belly:'#eff6ff', shot:'#bae6fd', elem:'ice'},
+  lightunicorn:{name:'聖光獨角獸', nick:'聖輝穿刺', kind:'聖光獨角獸', habitat:'晨曦聖林', lore:'角尖閃住聖光嘅獨角獸。聖輝穿刺會淨化錯誤答案！', body:'#fef3c7', light:'#fffbeb', dark:'#b45309', belly:'#ffffff', shot:'#fde68a', elem:'light'},
+  nebulajelly:{name:'星雲水母', nick:'星塵漂流', kind:'星雲水母', habitat:'星雲洋流', lore:'身軀如星雲飄浮嘅水母。星塵漂流會閃花你嘅眼！', body:'#c084fc', light:'#e9d5ff', dark:'#581c87', belly:'#faf5ff', shot:'#ffe066', elem:'star'},
+  doomlord:{name:'終焉魔神', short:'終焉魔神', nick:'終焉虛空裂', kind:'終焉魔神', habitat:'末日祭壇', lore:'胸口開住虛空嘅終焉魔神！終焉虛空裂一放，錯誤答案永遠消失！', body:'#9f1239', light:'#fb7185', dark:'#4c0519', belly:'#881337', shot:'#ff7ad9', elem:'shadow', boss:true}
 };
 
-const DEX_ORDER=['heidragon','lavaover','holyturt','deathscorp','thundwolf','ninjacat','steeltiran','icetiran','phoenix','mtngod','manflower','illusdemon','seaking','sandwyrm','nightmare','galmoth','flamecrab','starlord'];
+const DEX_ORDER=['heidragon','lavaover','holyturt','deathscorp','thundwolf','ninjacat','steeltiran','icetiran','phoenix','mtngod','manflower','illusdemon','seaking','sandwyrm','nightmare','galmoth','flamecrab','starlord','flamegoat','corelizard','bombshroom','icefox','icewhale','frostsnow','thundergriff','windbird','sparkhog','batking','poisonfrog','voidghost','rockape','steelcent','crystalspider','lightunicorn','nebulajelly','doomlord'];
 
 function omEye(x,y,r,dk,iris){ return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="${dk}" stroke-width="2.4"/><circle cx="${x-r*.2}" cy="${y+r*.08}" r="${r*.55}" fill="${iris}"/><circle cx="${x-r*.25}" cy="${y+r*.1}" r="${r*.28}" fill="#111"/><circle cx="${x-r*.45}" cy="${y-r*.2}" r="${r*.2}" fill="#fff"/>`; }
 function omOuch(pts){ return '<g class="m-ouch" stroke="#1f2937" stroke-width="4" stroke-linecap="round" fill="none">'+pts.map((q,i)=>{ const [x,y,s]=q, d=i%2?-1:1; return `<path d="M${x-d*s} ${y-s*.7} L${x+d*s*.6} ${y} L${x-d*s} ${y+s*.7}"/>`; }).join('')+'</g>'; }
