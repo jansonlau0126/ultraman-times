@@ -11,7 +11,7 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, met:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, met:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, lastStar:1}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
@@ -432,6 +432,7 @@ function initHome(){
   $$('[data-go]').forEach(b=>b.addEventListener('click', ()=>{ Sfx.click(); const g=b.dataset.go;
     if(g==='soon'){ showSoon(b.dataset.soon||''); return; }
     if(g==='learnPick'){ buildLearnTiles(); show('learnPick'); }
+    else if(g==='starGate'){ openStarGate(); }
     else if(g && g.indexOf('ops-')===0) startOps(g.slice(4));
     else if(g==='setup-battle') openSetup('battle');
     else if(g==='setup-survive' || g==='setup-timed') openSetup('survive');
@@ -440,6 +441,43 @@ function initHome(){
     else if(g==='mixed') show('mixed');
     else if(g==='dex') openDexHome();
     else if(g==='progress') openRecords(); }));
+  initStarGate();
+}
+function openStarGate(){
+  const last=DATA.settings.lastStar||1;
+  $$('#starGatePicks .star-pick').forEach(function(b){
+    b.classList.toggle('last', +b.dataset.star===last);
+  });
+  show('starGate');
+}
+function openOpsPick(star){
+  star=+star||1;
+  if(star<1||star>4) star=1;
+  DATA.settings.lastStar=star; save();
+  const modes=STAR_MODES[star]||STAR_MODES[1];
+  const title=$('#opsPickTitle'), sub=$('#opsPickSub'), box=$('#opsPickModes');
+  if(title) title.textContent='★'+star+' 關卡';
+  if(sub) sub.textContent=(STAR_BLURB[star]||'')+'　揀一種玩法開打';
+  if(box){
+    box.innerHTML=modes.map(function(m){
+      const cls=OPS_PILL_CLASS[m]||'battle';
+      const mark=OPS_MARK[m]||'';
+      const name=OPS_NAME[m]||m;
+      const marks=Array.from(String(mark)).filter(function(ch){ return ch.trim(); }).map(function(ch){ return '<i>'+ch+'</i>'; }).join('');
+      return '<button type="button" class="home-pill '+cls+'" data-ops="'+m+'"><span class="opmark" aria-hidden="true">'+marks+'</span><span class="pill-label">'+name+'</span></button>';
+    }).join('');
+    $$('#opsPickModes [data-ops]').forEach(function(b){
+      b.addEventListener('click', function(){ Sfx.click(); startOps(b.dataset.ops); });
+    });
+  }
+  show('opsPick');
+}
+function initStarGate(){
+  $$('#starGatePicks .star-pick').forEach(function(b){
+    b.addEventListener('click', function(){ Sfx.click(); openOpsPick(b.dataset.star); });
+  });
+  const back=$('#opsPickBack');
+  if(back) back.addEventListener('click', function(){ Sfx.click(); openStarGate(); });
 }
 function hideSoon(){ const c=$('#soonCard'); if(c) c.hidden=true; }
 function showSoon(name){
@@ -1094,29 +1132,47 @@ function exprParts(q){
   return {nums:nums, ops:ops};
 }
 function factLine(q){
+  if(q.expr) return q.expr+' → '+q.ans;
   const p=exprParts(q);
+  if(q.paren==='ab' && p.ops.length>=2){
+    return '('+p.nums[0]+' '+p.ops[0]+' '+p.nums[1]+') '+p.ops[1]+' '+p.nums[2]+' = '+q.ans;
+  }
+  if(q.paren==='bc' && p.ops.length>=2){
+    return p.nums[0]+' '+p.ops[0]+' ('+p.nums[1]+' '+p.ops[1]+' '+p.nums[2]+') = '+q.ans;
+  }
   if(p.ops.length>=2){
     let s=String(p.nums[0]);
     for(let i=0;i<p.ops.length;i++) s+=' '+p.ops[i]+' '+p.nums[i+1];
     return s+' = '+q.ans;
   }
   const op=p.ops[0];
-  if(op==='×') return q.a+' × '+q.b+' = '+q.ans+(q.a<=10 && q.b<=9 ? '　'+chant(q.a, q.b) : '');
-  if(op==='÷') return q.a+' ÷ '+q.b+' = '+q.ans+(q.b<=10 && q.ans<=9 ? '　'+chant(q.b, q.ans) : '');
+  if(op==='×' && typeof q.a==='number' && typeof q.b==='number') return q.a+' × '+q.b+' = '+q.ans+(q.a<=10 && q.b<=9 ? '　'+chant(q.a, q.b) : '');
+  if(op==='÷' && typeof q.b==='number') return q.a+' ÷ '+q.b+' = '+q.ans+(q.b<=10 && q.ans<=9 ? '　'+chant(q.b, q.ans) : '');
   return q.a+' '+op+' '+q.b+' = '+q.ans;
 }
+function speakVal(v){
+  if(typeof v==='number' && v===(v|0)) return cnSpeak(v);
+  return String(v);
+}
 function factSpeak(q){
+  if(q.expr) return String(q.expr).replace(/？/g,'幾多')+'等於'+speakVal(q.ans);
   const p=exprParts(q);
+  if(q.paren==='ab' && p.ops.length>=2){
+    return '括號'+speakVal(p.nums[0])+(OP_WORD[p.ops[0]]||'')+speakVal(p.nums[1])+'再'+(OP_WORD[p.ops[1]]||'')+speakVal(p.nums[2])+'等於'+speakVal(q.ans);
+  }
+  if(q.paren==='bc' && p.ops.length>=2){
+    return speakVal(p.nums[0])+(OP_WORD[p.ops[0]]||'')+'括號'+speakVal(p.nums[1])+(OP_WORD[p.ops[1]]||'')+speakVal(p.nums[2])+'等於'+speakVal(q.ans);
+  }
   if(p.ops.length>=2){
-    let s=cnSpeak(p.nums[0]);
-    for(let i=0;i<p.ops.length;i++) s+=(OP_WORD[p.ops[i]]||'')+cnSpeak(p.nums[i+1]);
-    return s+'等於'+cnSpeak(q.ans);
+    let s=speakVal(p.nums[0]);
+    for(let i=0;i<p.ops.length;i++) s+=(OP_WORD[p.ops[i]]||'')+speakVal(p.nums[i+1]);
+    return s+'等於'+speakVal(q.ans);
   }
   const op=p.ops[0];
-  if(op==='×' && q.a<=9 && q.b<=9) return chant(q.a, q.b);
-  if(op==='×') return cnSpeak(q.a)+'乘'+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
-  if(op==='÷') return cnSpeak(q.a)+'除以'+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
-  return cnSpeak(q.a)+(OP_WORD[op]||'')+cnSpeak(q.b)+'等於'+cnSpeak(q.ans);
+  if(op==='×' && typeof q.a==='number' && typeof q.b==='number' && q.a<=9 && q.b<=9) return chant(q.a, q.b);
+  if(op==='×') return speakVal(q.a)+'乘'+speakVal(q.b)+'等於'+speakVal(q.ans);
+  if(op==='÷') return speakVal(q.a)+'除以'+speakVal(q.b)+'等於'+speakVal(q.ans);
+  return speakVal(q.a)+(OP_WORD[op]||'')+speakVal(q.b)+'等於'+speakVal(q.ans);
 }
 function factorPair(prod){
   const pairs=[];
@@ -1196,36 +1252,67 @@ function makeMixedChoices(q){
 function showExpr(q){
   const op2=$('#qOp2'), c=$('#qC'), op3=$('#qOp3'), d=$('#qD');
   const qrow=$('#qRow');
+  const qExpr=$('#qExpr');
   const termCount=2+(q.op2!=null && q.c!=null?1:0)+(q.op3!=null && q.d!=null?1:0);
   if(qrow){
-    qrow.classList.remove('qlen-2','qlen-3','qlen-4');
+    qrow.classList.remove('qlen-2','qlen-3','qlen-4','has-expr');
     qrow.classList.add('qlen-'+Math.min(termCount,4));
   }
-  $('#qA').textContent=q.a;
-  const op=$('#qOp'); if(op) op.textContent=q.op||qOpText();
-  $('#qB').textContent=q.b;
+  if(q.expr){
+    if(qrow) qrow.classList.add('has-expr');
+    if(qExpr){ qExpr.hidden=false; qExpr.textContent=q.expr; }
+    if(op2) op2.hidden=true; if(c) c.hidden=true; if(op3) op3.hidden=true; if(d) d.hidden=true;
+    const battle=$('#battle');
+    if(battle && isOpsMode()) battle.classList.toggle('mode-mixed', true);
+    return;
+  }
+  if(qExpr){ qExpr.hidden=true; qExpr.textContent=''; }
+  let aShow=q.a, bShow=q.b, cShow=q.c, dShow=q.d;
+  if(q.paren==='ab'){ aShow='('+q.a; bShow=String(q.b)+')'; }
+  else if(q.paren==='bc'){ bShow='('+q.b; cShow=String(q.c)+')'; }
+  $('#qA').textContent=aShow;
+  const op=$('#qOp'); if(op){ op.hidden=false; op.textContent=q.op||qOpText(); }
+  $('#qB').textContent=bShow;
   if(q.op2!=null && q.c!=null){
     if(op2){ op2.hidden=false; op2.textContent=q.op2; }
-    if(c){ c.hidden=false; c.textContent=q.c; }
+    if(c){ c.hidden=false; c.textContent=cShow; }
   } else {
     if(op2) op2.hidden=true;
     if(c) c.hidden=true;
   }
   if(q.op3!=null && q.d!=null){
     if(op3){ op3.hidden=false; op3.textContent=q.op3; }
-    if(d){ d.hidden=false; d.textContent=q.d; }
+    if(d){ d.hidden=false; d.textContent=dShow; }
   } else {
     if(op3) op3.hidden=true;
     if(d) d.hidden=true;
   }
   const battle=$('#battle');
   if(battle && isOpsMode()){
-    const multi=(q.op2!=null && q.c!=null) || B.mode==='all' || B.mode==='mixas' || B.mode==='mixmd';
+    const multi=(q.op2!=null && q.c!=null) || B.mode==='all' || B.mode==='mixas' || B.mode==='mixmd' || B.mode==='paren';
     battle.classList.toggle('mode-mixed', !!multi);
   }
 }
-const OPS_NAME={add:'加法大進擊',sub:'減法暗影戰',mixas:'加減雙刃斬',mul:'乘法火焰爆',div:'除法冰封關',mixmd:'乘除雷電擊',all:'四則終極戰'};
-const OPS_MODES=['add','sub','mixas','mul','div','mixmd','all'];
+const OPS_NAME={
+  add:'加法大進擊',sub:'減法暗影戰',mixas:'加減雙刃斬',mul:'乘法火焰爆',div:'除法冰封關',mixmd:'乘除雷電擊',all:'四則終極戰',
+  carry2:'兩位進退戰',carry3:'三位進退戰',frac:'分數初戰',decimal:'小數初戰',paren:'括號四則戰',units:'單位應用戰'
+};
+const OPS_MODES=['add','sub','mixas','mul','div','mixmd','all','carry2','carry3','frac','decimal','paren','units'];
+const STAR_MODES={
+  1:['add','sub','mixas'],
+  2:['carry2','mul','div'],
+  3:['carry3','mixmd','frac','decimal'],
+  4:['all','paren','units']
+};
+const STAR_BLURB={1:'加減起步',2:'兩位進退・乘除',3:'三位・分數・小數',4:'四則・括號・單位'};
+const OPS_PILL_CLASS={
+  add:'add',sub:'sub',mixas:'mixas',mul:'battle',div:'divide',mixmd:'mixmd',all:'allops',
+  carry2:'carry2',carry3:'carry3',frac:'frac',decimal:'decimal',paren:'paren',units:'units'
+};
+const OPS_MARK={
+  add:'＋',sub:'－',mixas:'＋－',mul:'×',div:'÷',mixmd:'×÷',all:'＋－×÷',
+  carry2:'⇄',carry3:'⇄',frac:'¾',decimal:'．',paren:'()',units:'＄'
+};
 /* Existing rarer monsters only. No new art. */
 const BOSS_CAST=['steeltiran','illusdemon','heidragon','starlord','doomlord','lightunicorn','nebulajelly'];
 function isOpsMode(mode){ return OPS_MODES.indexOf(mode||B.mode)>=0; }
@@ -1530,6 +1617,201 @@ function pickAllOps(recent){
   }
   return packExpr([7,4,4], ['+','×'], 'all');
 }
+function onesDigit(n){ return ((n%10)+10)%10; }
+function hasCarry2Add(a,b){ return onesDigit(a)+onesDigit(b)>=10; }
+function hasBorrow2Sub(a,b){ return onesDigit(a)<onesDigit(b); }
+function hasCarry3Add(a,b){
+  return onesDigit(a)+onesDigit(b)>=10 || ((Math.floor(a/10)%10)+(Math.floor(b/10)%10)+(onesDigit(a)+onesDigit(b)>=10?1:0))>=10;
+}
+function hasBorrow3Sub(a,b){
+  if(onesDigit(a)<onesDigit(b)) return true;
+  const aT=Math.floor(a/10)%10, bT=Math.floor(b/10)%10;
+  const aH=Math.floor(a/100), bH=Math.floor(b/100);
+  if(aT<bT) return true;
+  if(aT===bT && onesDigit(a)<onesDigit(b)) return true;
+  return aH<bH;
+}
+function pickCarry2(recent){
+  recent=recent||[];
+  for(let i=0;i<100;i++){
+    let a,b,op,ans;
+    if(Math.random()<0.55){
+      const a0=randi(1,9), b0=randi(10-a0,9);
+      const a1=randi(1,8), b1=randi(0,9-a1);
+      a=a1*10+a0; b=b1*10+b0; op='+'; ans=a+b;
+      if(ans>99 || !hasCarry2Add(a,b)) continue;
+    } else {
+      a=randi(20,99); b=randi(10,a-1);
+      if(!hasBorrow2Sub(a,b)) continue;
+      op='−'; ans=a-b;
+      if(ans<0 || ans>99) continue;
+    }
+    const key='c2:'+a+op+b;
+    if(recent.indexOf(key)>=0) continue;
+    return {a:a,b:b,ans:ans,op:op,key:key};
+  }
+  return {a:28,b:17,ans:45,op:'+',key:'c2:28+17'};
+}
+function pickCarry3(recent){
+  recent=recent||[];
+  for(let i=0;i<120;i++){
+    let a,b,op,ans;
+    if(Math.random()<0.55){
+      const a0=randi(1,9), b0=randi(10-a0,9);
+      const a1=randi(0,9), b1=randi(0,9);
+      const a2=randi(1,8), b2=randi(0,9-a2);
+      a=a2*100+a1*10+a0; b=b2*100+b1*10+b0;
+      op='+'; ans=a+b;
+      if(ans>999 || a<100 || !hasCarry3Add(a,b)) continue;
+    } else {
+      const a0=randi(0,8), b0=randi(a0+1,9);
+      const a1=randi(0,9), b1=randi(0,9);
+      const a2=randi(1,9), b2=randi(0,a2);
+      a=a2*100+a1*10+a0; b=b2*100+b1*10+b0;
+      if(b>=a || b<10) continue;
+      op='−'; ans=a-b;
+      if(ans<0 || ans>999 || !hasBorrow3Sub(a,b)) continue;
+    }
+    const key='c3:'+a+op+b;
+    if(recent.indexOf(key)>=0) continue;
+    return {a:a,b:b,ans:ans,op:op,key:key};
+  }
+  return {a:256,b:178,ans:434,op:'+',key:'c3:256+178'};
+}
+function fracLabel(n,d){
+  if(d<=0) return String(n);
+  if(n===0) return '0';
+  if(n%d===0) return String(n/d);
+  return n+'/'+d;
+}
+function pickFrac(recent){
+  recent=recent||[];
+  for(let i=0;i<80;i++){
+    const den=randi(2,10);
+    const add=Math.random()<0.55;
+    let na,nb,ansN;
+    if(add){
+      na=randi(1,den); nb=randi(1,den);
+      ansN=na+nb;
+      const ans=fracLabel(ansN,den);
+      const key='frac:'+na+'/'+den+'+'+nb+'/'+den;
+      if(recent.indexOf(key)>=0) continue;
+      return {a:na+'/'+den,b:nb+'/'+den,op:'+',ans:ans,key:key,ansKind:'str'};
+    } else {
+      na=randi(1,den); nb=randi(1,na);
+      ansN=na-nb;
+      const ans=fracLabel(ansN,den);
+      const key='frac:'+na+'/'+den+'-'+nb+'/'+den;
+      if(recent.indexOf(key)>=0) continue;
+      return {a:na+'/'+den,b:nb+'/'+den,op:'−',ans:ans,key:key,ansKind:'str'};
+    }
+  }
+  return {a:'3/4',b:'1/4',op:'+',ans:'1',key:'frac:3/4+1/4',ansKind:'str'};
+}
+function d1(n){ return (Math.round(n*10)/10).toFixed(1); }
+function pickDecimal(recent){
+  recent=recent||[];
+  for(let i=0;i<80;i++){
+    const add=Math.random()<0.55;
+    let a=randi(1,50), b=randi(1,50);
+    let ansN, op;
+    if(add){
+      if(a+b>99) continue;
+      ansN=a+b; op='+';
+    } else {
+      if(a<=b){ const t=a; a=b; b=t; }
+      if(a===b) a+=1;
+      ansN=a-b; op='−';
+      if(ansN<0) continue;
+    }
+    const as=d1(a/10), bs=d1(b/10), ans=d1(ansN/10);
+    const key='dec:'+as+op+bs;
+    if(recent.indexOf(key)>=0) continue;
+    return {a:as,b:bs,op:op,ans:ans,key:key,ansKind:'str'};
+  }
+  return {a:'1.2',b:'0.8',op:'+',ans:'2.0',key:'dec:1.2+0.8',ansKind:'str'};
+}
+function pickParen(recent){
+  recent=recent||[];
+  for(let i=0;i<120;i++){
+    const kind=pick(['ab+×','ab−×','ab+÷','ab−÷','bc×+','bc×−','ab×+','ab÷+']);
+    let a,b,c,op,op2,paren,ans;
+    if(kind==='ab+×'){
+      a=randi(1,9); b=randi(1,9); c=randi(2,9); op='+'; op2='×'; paren='ab'; ans=(a+b)*c;
+    } else if(kind==='ab−×'){
+      a=randi(4,12); b=randi(1,a-1); c=randi(2,8); op='−'; op2='×'; paren='ab'; ans=(a-b)*c;
+    } else if(kind==='ab+÷'){
+      a=randi(1,9); b=randi(1,9); const inner=a+b;
+      const divs=[]; for(let d=2;d<=9;d++) if(inner%d===0) divs.push(d);
+      if(!divs.length) continue;
+      c=pick(divs); op='+'; op2='÷'; paren='ab'; ans=inner/c;
+    } else if(kind==='ab−÷'){
+      a=randi(6,18); b=randi(1,a-1); const inner=a-b;
+      const divs=[]; for(let d=2;d<=9;d++) if(inner%d===0 && inner/d>=1) divs.push(d);
+      if(!divs.length) continue;
+      c=pick(divs); op='−'; op2='÷'; paren='ab'; ans=inner/c;
+    } else if(kind==='bc×+'){
+      b=randi(1,8); c=randi(1,8); a=randi(2,9); op='×'; op2='+'; paren='bc'; ans=a*(b+c);
+    } else if(kind==='bc×−'){
+      b=randi(3,12); c=randi(1,b-1); a=randi(2,8); op='×'; op2='−'; paren='bc'; ans=a*(b-c);
+      if(ans<0) continue;
+    } else if(kind==='ab×+'){
+      a=randi(2,9); b=randi(2,9); c=randi(1,12); op='×'; op2='+'; paren='ab'; ans=a*b+c;
+    } else {
+      b=randi(2,9); const q=randi(2,9); a=b*q; c=randi(1,12); op='÷'; op2='+'; paren='ab'; ans=q+c;
+    }
+    if(ans==null || ans<0 || ans!==(ans|0) || ans>120) continue;
+    const key='paren:'+paren+':'+a+op+b+op2+c;
+    if(recent.indexOf(key)>=0) continue;
+    return {a:a,b:b,c:c,op:op,op2:op2,paren:paren,ans:ans,key:key};
+  }
+  return {a:8,b:4,c:3,op:'+',op2:'×',paren:'ab',ans:36,key:'paren:ab:8+4×3'};
+}
+function pickUnits(recent){
+  recent=recent||[];
+  for(let i=0;i<60;i++){
+    const kind=pick(['cm2m','m2cm','h2min','min2h','money']);
+    let expr, ans, distractors, key;
+    if(kind==='cm2m'){
+      const m=randi(1,9); const cm=m*100;
+      expr=cm+'cm = ？m'; ans=String(m);
+      distractors=[String(m*10),String(cm),String(Math.max(1,m-1)),'10'];
+      key='u:cm2m:'+cm;
+    } else if(kind==='m2cm'){
+      const m=randi(1,9); const cm=m*100;
+      expr=m+'m = ？cm'; ans=String(cm);
+      distractors=[String(m*10),String(m),String(cm+100),String(m*1000)];
+      key='u:m2cm:'+m;
+    } else if(kind==='h2min'){
+      const h=randi(1,5); const min=h*60;
+      expr=h+'小時 = ？分鐘'; ans=String(min);
+      distractors=[String(h*10),String(h*100),String(min+30),String(h*60+60)];
+      key='u:h2min:'+h;
+    } else if(kind==='min2h'){
+      const h=randi(1,4); const min=h*60;
+      expr=min+'分鐘 = ？小時'; ans=String(h);
+      distractors=[String(min),String(h*10),'30',String(h+1)];
+      key='u:min2h:'+min;
+    } else {
+      const price=randi(3,18); const pay=pick([10,20,50,100].filter(function(p){ return p>price; }));
+      const change=pay-price;
+      expr='買嘢 $'+price+'，畀 $'+pay+'，找？'; ans='$'+change;
+      distractors=['$'+(change+1),'$'+price,'$'+(pay-1),'$'+(change+5)];
+      key='u:money:'+price+':'+pay;
+    }
+    if(recent.indexOf(key)>=0) continue;
+    const pool=[ans].concat(distractors.filter(function(d){ return d!==ans; }));
+    const choices=[];
+    pool.forEach(function(d){ if(choices.length<4 && choices.indexOf(d)<0) choices.push(d); });
+    let guard=0;
+    while(choices.length<4 && guard++<30){
+      const pad = ans.charAt(0)==='$' ? ('$'+randi(1,40)) : String(randi(1,200));
+      if(choices.indexOf(pad)<0) choices.push(pad);
+    }
+    return {expr:expr,ans:ans,key:key,ansKind:'str',choices:shuffle(choices.slice(0,4)),a:'?',b:'?',op:'+'};
+  }
+  return {expr:'100cm = ？m',ans:'1',key:'u:cm2m:100',ansKind:'str',choices:shuffle(['1','10','100','0.1']),a:'?',b:'?',op:'+'};
+}
 function pickOpsQuestion(mode, recent){
   if(mode==='add') return pickAdd(recent);
   if(mode==='sub') return pickSub(recent);
@@ -1538,6 +1820,12 @@ function pickOpsQuestion(mode, recent){
   if(mode==='div') return pickDivQ(recent);
   if(mode==='mixmd') return pickMixMD(recent);
   if(mode==='all') return pickAllOps(recent);
+  if(mode==='carry2') return pickCarry2(recent);
+  if(mode==='carry3') return pickCarry3(recent);
+  if(mode==='frac') return pickFrac(recent);
+  if(mode==='decimal') return pickDecimal(recent);
+  if(mode==='paren') return pickParen(recent);
+  if(mode==='units') return pickUnits(recent);
   return pickAdd(recent);
 }
 function makeSumChoices(ans){
@@ -1553,11 +1841,53 @@ function makeSumChoices(ans){
   }
   return shuffle(set);
 }
+function makeStrChoices(ans, extra){
+  const set=[String(ans)];
+  (extra||[]).forEach(function(v){
+    if(set.length>=4) return;
+    const s=String(v);
+    if(s!=='' && set.indexOf(s)<0) set.push(s);
+  });
+  let guard=0;
+  while(set.length<4 && guard++<40){
+    if(String(ans).indexOf('/')>=0){
+      const parts=String(ans).split('/');
+      const n=+parts[0]||1, d=+parts[1]||2;
+      const cand=pick([fracLabel(Math.max(0,n+randi(-2,2)),d), fracLabel(n, Math.max(2,d+randi(-1,1))), String(n), '1']);
+      if(set.indexOf(cand)<0) set.push(cand);
+    } else if(String(ans).indexOf('.')>=0){
+      const n=parseFloat(ans)||0;
+      const cand=d1(Math.max(0, n+randi(-5,5)/10));
+      if(set.indexOf(cand)<0) set.push(cand);
+    } else if(String(ans).charAt(0)==='$'){
+      const n=parseInt(String(ans).slice(1),10)||1;
+      const cand='$'+Math.max(1, n+randi(-5,5));
+      if(set.indexOf(cand)<0) set.push(cand);
+    } else {
+      const n=parseInt(ans,10);
+      const base=isNaN(n)?randi(1,20):n;
+      const cand=String(Math.max(0, base+randi(-8,8)));
+      if(set.indexOf(cand)<0) set.push(cand);
+    }
+  }
+  return shuffle(set);
+}
 function choicesFor(q){
+  if(q.choices && q.choices.length) return q.choices.slice(0,4);
+  if(q.ansKind==='str' || typeof q.ans==='string') return makeStrChoices(q.ans, q.distractors);
   if(q.op2!=null && q.c!=null) return makeMixedChoices(q);
   if(q.op==='÷') return makeDivChoices(q.ans);
-  if(q.op==='×') return makeChoices(q.a, q.b);
+  if(q.op==='×' && typeof q.a==='number' && typeof q.b==='number') return makeChoices(q.a, q.b);
   return makeSumChoices(q.ans);
+}
+function answersEqual(input, q){
+  const want=q.ans;
+  if(q.ansKind==='str' || typeof want==='string') return String(input)===String(want);
+  if(typeof want==='number' && want!==(want|0)){
+    const n=parseFloat(input);
+    return !isNaN(n) && Math.abs(n-want)<0.051;
+  }
+  return parseInt(input,10)===want;
 }
 function startOps(kind, opt){
   if(OPS_MODES.indexOf(kind)<0) return;
@@ -1565,9 +1895,9 @@ function startOps(kind, opt){
   endBattle(); B.token++;
   const enc=rollOpsEncounter();
   B.mode=kind; B.star=0; B.qMax=9;
-  B.tables = opt.tables ? opt.tables.slice() : (kind==='mul' ? [2,3,4,5,6,7,8,9] : (kind==='mixmd'||kind==='all' ? [2,3,4,5] : []));
-  B.divisors = kind==='div' ? [2,3,4,5,10] : (kind==='mixmd' ? [2,3,4,5,10] : (kind==='all' ? [2,3,4,5] : []));
-  if(kind==='div'||kind==='mixmd'||kind==='all') B.qMax=9;
+  B.tables = opt.tables ? opt.tables.slice() : (kind==='mul' ? [2,3,4,5,6,7,8,9] : (kind==='mixmd'||kind==='all'||kind==='paren' ? [2,3,4,5] : []));
+  B.divisors = kind==='div' ? [2,3,4,5,10] : (kind==='mixmd' ? [2,3,4,5,10] : (kind==='all'||kind==='paren' ? [2,3,4,5] : []));
+  if(kind==='div'||kind==='mixmd'||kind==='all'||kind==='paren') B.qMax=9;
   B.choice=true;
   B.bossRun=enc.boss;
   B.goal=opsGoal(enc.boss);
@@ -1577,7 +1907,7 @@ function startOps(kind, opt){
   if(battle){
     battle.classList.toggle('mode-choice', true);
     battle.classList.toggle('mode-divide', kind==='div'||kind==='mixmd');
-    battle.classList.toggle('mode-mixed', kind==='all'||kind==='mixas'||kind==='mixmd');
+    battle.classList.toggle('mode-mixed', kind==='all'||kind==='mixas'||kind==='mixmd'||kind==='paren'||kind==='units'||kind==='frac');
   }
   hideResult(); FX.clear(); if(fxLayer) fxLayer.innerHTML='';
   ensureHero(); preloadForm(1); preloadForm(2);
@@ -1645,14 +1975,26 @@ function nextQuestion(){
     const p=pickFact(B.tables, B.recent);
     f={a:p.a,b:p.b,ans:p.a*p.b,op:'×',key:p.a+'x'+p.b,divisor:p.a};
   }
-  B.q={a:f.a,b:f.b,c:f.c,d:f.d,op:f.op,op2:f.op2,op3:f.op3,ans:f.ans,key:f.key,tries:0,divisor:f.divisor};
+  B.q={a:f.a,b:f.b,c:f.c,d:f.d,op:f.op,op2:f.op2,op3:f.op3,ans:f.ans,key:f.key,tries:0,divisor:f.divisor,expr:f.expr,paren:f.paren,ansKind:f.ansKind,choices:f.choices,distractors:f.distractors};
   B.recent.push(B.q.key); if(B.recent.length>6) B.recent.shift();
   B.input=''; showExpr(B.q); renderAns();
   if(B.choice){
     const opts=(B.mode==='divide')?makeDivChoices(f.ans):(B.mode==='mixed')?makeMixedChoices(B.q):choicesFor(B.q);
-    $('#choices').innerHTML = opts.map(v=>'<button class="choice" data-v="'+v+'"><span class="chnum">'+v+'</span></button>').join('');
+    $('#choices').innerHTML = opts.map(function(v){
+      const s=String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      return '<button class="choice" data-v="'+s+'"><span class="chnum">'+s+'</span></button>';
+    }).join('');
     $$('#choices .choice').forEach(b=>b.addEventListener('click',()=>{ if(B.busy||b.classList.contains('x')) return; B.input=b.dataset.v; B.lastChoiceBtn=b; renderAns(); submit(); })); }
-  const hint = (B.mode==='all') ? '先乘除，後加減！' : (B.q&&(B.q.op2!=null||B.mode==='mixas'||B.mode==='mixmd')) ? '由左邊計到右邊！' : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！' : B.mode==='mixed' ? '由左邊計到右邊！' : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
+  const hint = (B.mode==='all') ? '先乘除，後加減！'
+    : (B.mode==='paren') ? '先計括號入面！'
+    : (B.mode==='carry2'||B.mode==='carry3') ? '小心進位同借位！'
+    : (B.mode==='frac') ? '分母一樣先加減分子！'
+    : (B.mode==='decimal') ? '對齊小數點嚟計！'
+    : (B.mode==='units') ? '睇清楚單位再答！'
+    : (B.q&&(B.q.op2!=null||B.mode==='mixas'||B.mode==='mixmd')) ? '由左邊計到右邊！'
+    : (B.mode==='divide'||B.mode==='div') ? '揀啱個商就出招！'
+    : B.mode==='mixed' ? '由左邊計到右邊！'
+    : B.choice ? '揀啱個答案就出招！' : '打答案，再撳「出招」！';
   setHint('idle', hint);
   play($('.qrow'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)'}],{duration:320,easing:'ease-out'}); }
 function renderAns(state){ const a=$('#qAns'); a.textContent = B.input || '?'; a.className='ansbox'+(B.input?'':' empty')+(state?' '+state:''); }
@@ -1669,7 +2011,7 @@ async function submit(){
     if(B.mode==='battle'||B.mode==='mul'){ B.rtables[q.a]=(B.rtables[q.a]||0)+1; }
     else if(B.mode==='divide'||B.mode==='div'){ const tableKey=(q.divisor||q.b); B.rtables[tableKey]=(B.rtables[tableKey]||0)+1; }
   }
-  if(n===q.ans){
+  if(answersEqual(B.input, q)){
     Sfx.correct(); renderAns('good');
     if(first){
       if(B.mode!=='mixed') recordFact(q.key,true);
@@ -1738,7 +2080,7 @@ function roundWon(){
   const next = B.round < B.order.length-1 ? B.order[B.round+1] : null;
   let medalBlock='';
   const practiceWord = (B.mode==='divide'||B.mode==='div') ? '除法' : '乘數表';
-  if(B.mode==='add'||B.mode==='sub'||B.mode==='mixas'||B.mode==='mixmd'||B.mode==='all'){
+  if(isOpsMode() && B.mode!=='mul' && B.mode!=='div'){
     medalBlock='<div class="rstat">答啱 <b>'+(B.goal||B.rfirst)+'</b> 題就打低咗！</div>';
   } else if(B.mode==='mixed'){
     medalBlock='<div class="rstat">兩步算式，由左到右計，暫時冇括號。</div>';
@@ -2237,9 +2579,10 @@ function runSelfTest(){
   const monHud=$('.monhud'), right=$('.hud-right');
   if(!monHud || !right || !right.contains(monHud) || !right.contains($('#combo'))) fails.push('hud right');
   const home=$('#home');
-  ['【學習】','乘數表','九因歌','【打怪】','加法大進擊','減法暗影戰','加減雙刃斬','乘法火焰爆','除法冰封關','乘除雷電擊','四則終極戰','圖鑑收藏','戰績','運算超人'].forEach(function(w){
+  ['【學習】','乘數表','九因歌','【打怪】','打怪獸','圖鑑收藏','戰績','運算超人'].forEach(function(w){
     if(!home || home.textContent.indexOf(w)<0) fails.push('home missing '+w);
   });
+  if(home && (home.textContent.indexOf('小一')>=0 || home.textContent.indexOf('一年級')>=0)) fails.push('grade wording');
   if(home && home.textContent.indexOf('變身進度')>=0) fails.push('form entry');
   if(document.title.indexOf('運算超人')<0) fails.push('title');
   const prog=$('#progress');
@@ -2250,16 +2593,18 @@ function runSelfTest(){
   const soonN=home?home.querySelectorAll('[data-go="soon"]').length:0;
   if(soonN!==0) fails.push('soon '+soonN);
   if(home && home.textContent.indexOf('就快')>=0) fails.push('soon text');
-  ['ops-add','ops-sub','ops-mixas','ops-mul','ops-div','ops-mixmd','ops-all'].forEach(function(g){
-    if(!home || !home.querySelector('[data-go="'+g+'"]')) fails.push('home '+g);
-  });
+  if(home && home.querySelector('[data-go^="ops-"]')) fails.push('home flat ops');
+  if(!home || !home.querySelector('[data-go="starGate"]')) fails.push('home starGate');
   if(!home || !home.querySelector('[data-go="learnPick"]')) fails.push('home live');
-  const marks={'ops-add':'＋','ops-sub':'－','ops-mixas':'＋－','ops-mul':'×','ops-div':'÷','ops-mixmd':'×÷','ops-all':'＋－×÷'};
-  Object.keys(marks).forEach(function(g){
-    const btn=home&&home.querySelector('[data-go="'+g+'"]');
-    const name={'ops-add':'加法大進擊','ops-sub':'減法暗影戰','ops-mixas':'加減雙刃斬','ops-mul':'乘法火焰爆','ops-div':'除法冰封關','ops-mixmd':'乘除雷電擊','ops-all':'四則終極戰'}[g];
-    if(!btn || btn.textContent.indexOf(name)<0 || btn.textContent.indexOf(marks[g])<0) fails.push('sym '+g);
+  if(!$('#starGate') || !$('#opsPick')) fails.push('star screens');
+  [1,2,3,4].forEach(function(s){
+    if(!STAR_MODES[s] || !STAR_MODES[s].length) fails.push('star modes '+s);
+    STAR_MODES[s].forEach(function(m){ if(OPS_MODES.indexOf(m)<0 || !OPS_NAME[m]) fails.push('mode map '+m); });
   });
+  if(STAR_MODES[1].join(',')!=='add,sub,mixas') fails.push('star1');
+  if(STAR_MODES[2].join(',')!=='carry2,mul,div') fails.push('star2');
+  if(STAR_MODES[3].join(',')!=='carry3,mixmd,frac,decimal') fails.push('star3');
+  if(STAR_MODES[4].join(',')!=='all,paren,units') fails.push('star4');
   [[1,'超人•銀光型態'],[2,'超人•紅銀覺醒型態'],[3,'超人•藍披流星型態'],[4,'超人•金焰超能型態'],[5,'超人•奧米加翼光型態']].forEach(function(pair){
     if(formHudName(pair[0])!==pair[1]) fails.push('form '+pair[0]+' '+formHudName(pair[0]));
   });
@@ -2399,8 +2744,8 @@ function runSelfTest(){
   }
   if(!sawMD2||!sawMD3||!sawMDm||!sawMDd) fails.push('mixmd');
   const cast={};
-  for(let n=0;n<24;n++){
-    startOps(['add','sub','mixas','mul','div','mixmd','all'][n%7]);
+  for(let n=0;n<OPS_MODES.length*2;n++){
+    startOps(OPS_MODES[n%OPS_MODES.length]);
     if(!isOpsMode() || !B.order || B.order.length!==1) fails.push('stage '+n);
     if(DEX_ORDER.indexOf(B.type)<0) fails.push('new mon '+B.type);
     if(B.bossRun){ if(B.goal!==15) fails.push('boss goal '+B.goal); if(BOSS_CAST.indexOf(B.type)<0) fails.push('boss type'); }
@@ -2408,14 +2753,44 @@ function runSelfTest(){
     if(B.maxHp!==B.goal) fails.push('hp '+B.maxHp+'/'+B.goal);
     cast[B.mode]=1;
   }
-  if(Object.keys(cast).length!==7) fails.push('modes '+Object.keys(cast).join(','));
+  if(Object.keys(cast).length!==OPS_MODES.length) fails.push('modes '+Object.keys(cast).join(','));
+  /* new generators */
+  let c2ok=0,c3ok=0;
+  for(let n=0;n<40;n++){
+    const q=pickCarry2([]);
+    if(q.op==='+' && hasCarry2Add(q.a,q.b) && q.ans===q.a+q.b && q.ans<=99) c2ok++;
+    else if(q.op==='−' && hasBorrow2Sub(q.a,q.b) && q.ans===q.a-q.b && q.ans>=0) c2ok++;
+    else fails.push('carry2');
+    const ch=choicesFor(q); if(ch.length!==4 || ch.indexOf(q.ans)<0) fails.push('carry2 ch');
+    const q3=pickCarry3([]);
+    if(q3.op==='+' && q3.ans===q3.a+q3.b && q3.ans<=999 && hasCarry3Add(q3.a,q3.b)) c3ok++;
+    else if(q3.op==='−' && q3.ans===q3.a-q3.b && q3.ans>=0 && hasBorrow3Sub(q3.a,q3.b)) c3ok++;
+    else fails.push('carry3');
+  }
+  if(c2ok<35) fails.push('carry2 rate');
+  if(c3ok<35) fails.push('carry3 rate');
+  for(let n=0;n<30;n++){
+    const f=pickFrac([]);
+    if(typeof f.ans!=='string' || String(f.a).indexOf('/')<0) fails.push('frac shape');
+    const ch=choicesFor(f); if(ch.length!==4 || ch.indexOf(f.ans)<0) fails.push('frac ch');
+    if(!answersEqual(f.ans,f)) fails.push('frac eq');
+    const d=pickDecimal([]);
+    if(String(d.a).indexOf('.')<0 || typeof d.ans!=='string') fails.push('dec shape');
+    const dch=choicesFor(d); if(dch.length!==4 || dch.indexOf(d.ans)<0) fails.push('dec ch');
+    const pr=pickParen([]);
+    if(!pr.paren || pr.op2==null || pr.ans!==(pr.ans|0)) fails.push('paren shape');
+    const pch=choicesFor(pr); if(pch.length!==4 || pch.indexOf(pr.ans)<0) fails.push('paren ch');
+    const u=pickUnits([]);
+    if(!u.expr || typeof u.ans!=='string' || !u.choices || u.choices.indexOf(u.ans)<0) fails.push('units');
+  }
+  if(DATA.settings.lastStar==null) fails.push('lastStar');
   endBattle(); show('home');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; DATA.met={}; list.forEach(t=>{ DATA.dex[t]=1+(t.length%3); DATA.met[t]=true; }); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, addTime, FORM_TITLE, isClockMode, isOpsMode, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; DATA.met={}; list.forEach(t=>{ DATA.dex[t]=1+(t.length%3); DATA.met[t]=true; }); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, pickCarry2, pickCarry3, pickFrac, pickDecimal, pickParen, pickUnits, answersEqual, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, STAR_MODES, OPS_MODES, OPS_NAME, addTime, FORM_TITLE, isClockMode, isOpsMode, openStarGate, openOpsPick, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
   fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);

@@ -28,15 +28,7 @@
           </section>
           <section class="home-block" aria-labelledby="homeBattleLabel">
             <h2 class="home-label" id="homeBattleLabel">【打怪】</h2>
-            <div class="home-modes">
-              <button class="home-pill add" data-go="ops-add"><span class="opmark" aria-hidden="true"><i>＋</i></span><span class="pill-label">加法大進擊</span></button>
-              <button class="home-pill sub" data-go="ops-sub"><span class="opmark" aria-hidden="true"><i>－</i></span><span class="pill-label">減法暗影戰</span></button>
-              <button class="home-pill mixas" data-go="ops-mixas"><span class="opmark" aria-hidden="true"><i>＋</i><i>－</i></span><span class="pill-label">加減雙刃斬</span></button>
-              <button class="home-pill battle" data-go="ops-mul"><span class="opmark" aria-hidden="true"><i>×</i></span><span class="pill-label">乘法火焰爆</span></button>
-              <button class="home-pill divide" data-go="ops-div"><span class="opmark" aria-hidden="true"><i>÷</i></span><span class="pill-label">除法冰封關</span></button>
-              <button class="home-pill mixmd" data-go="ops-mixmd"><span class="opmark" aria-hidden="true"><i>×</i><i>÷</i></span><span class="pill-label">乘除雷電擊</span></button>
-              <button class="home-pill allops wide" data-go="ops-all"><span class="opmark" aria-hidden="true"><i>＋</i><i>－</i><i>×</i><i>÷</i></span><span class="pill-label">四則終極戰</span></button>
-            </div>
+            <button class="home-pill battle-gate" data-go="starGate"><span class="pill-label">打怪獸</span><small>★ 揀星級開打</small></button>
           </section>
           <div class="home-extra">
             <button class="home-pill dex" data-go="dex"><span class="pill-label">圖鑑收藏</span></button>
@@ -52,6 +44,30 @@
         <h2 class="h">揀乘數表</h2>
         <p class="sub">你想學邊個乘數表呀？</p>
         <div class="tiles" id="learnTiles"></div>
+      </div>
+    </section>
+
+    <!-- STAR GATE -->
+    <section id="starGate" class="screen">
+      <div class="wrap">
+        <h2 class="h">揀星級打怪</h2>
+        <p class="sub">星級愈高，題目愈進階</p>
+        <div class="star-picks star-gate-picks" id="starGatePicks">
+          <button type="button" class="star-pick" data-star="1"><b>★1</b><span>加減起步</span></button>
+          <button type="button" class="star-pick" data-star="2"><b>★2</b><span>兩位進退・乘除</span></button>
+          <button type="button" class="star-pick" data-star="3"><b>★3</b><span>三位・分數・小數</span></button>
+          <button type="button" class="star-pick" data-star="4"><b>★4</b><span>四則・括號・單位</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPS PICK (modes for one star) -->
+    <section id="opsPick" class="screen">
+      <div class="wrap">
+        <h2 class="h" id="opsPickTitle">★1 關卡</h2>
+        <p class="sub" id="opsPickSub">揀一種玩法開打</p>
+        <div class="home-modes ops-pick-modes" id="opsPickModes"></div>
+        <button type="button" class="btn gray small" id="opsPickBack">返去揀星</button>
       </div>
     </section>
 
@@ -159,7 +175,7 @@
       <div class="panel" id="panel">
         <div id="disrupt" class="disrupt" aria-hidden="true"></div>
         <div class="qcard" id="qCard">
-          <div class="qrow" id="qRow"><span id="qA">2</span><span class="x" id="qOp">×</span><span id="qB">3</span><span class="x q-extra" id="qOp2" hidden>+</span><span class="q-extra" id="qC" hidden>4</span><span class="x q-extra" id="qOp3" hidden>+</span><span class="q-extra" id="qD" hidden>5</span><span class="eq">=</span><span class="ansbox empty" id="qAns">?</span></div>
+          <div class="qrow" id="qRow"><span class="q-expr-text" id="qExpr" hidden></span><span id="qA">2</span><span class="x" id="qOp">×</span><span id="qB">3</span><span class="x q-extra" id="qOp2" hidden>+</span><span class="q-extra" id="qC" hidden>4</span><span class="x q-extra" id="qOp3" hidden>+</span><span class="q-extra" id="qD" hidden>5</span><span class="eq">=</span><span class="ansbox empty" id="qAns">?</span></div>
         </div>
         <div class="hint idle" id="hint"><div>答啱就可以出招打怪獸！</div></div>
         <div class="keypad" id="keypad"></div>
