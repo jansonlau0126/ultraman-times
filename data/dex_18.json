@@ -289,10 +289,11 @@
       "shade": "meteor"
     }
   ],
-  "game_note": "Current live game still uses Ultraman Omega kaiju ids (graim/dada/…). These 18 are the chibi roster for dex/attack frames.",
+  "game_note": "Current live game still uses Ultraman Omega kaiju ids (graim/dada/…). These 18 are the chibi roster for dex/attack frames. Superseded by dex_36.json for the full 36 roster.",
   "mapping_confirmed": {
     "deathscorp": "死神蠍",
     "sandwyrm": "黃泉魔龍",
     "confirmed_at": "2026-10-02"
-  }
+  },
+  "superseded_by": "dex_36.json"
 }

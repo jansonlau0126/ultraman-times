@@ -920,6 +920,46 @@ body[data-screen="home"] main{padding-top:0}
 .rotate-card p{margin:0;font-weight:900;font-size:clamp(26px,6vw,36px);letter-spacing:1px;text-shadow:0 3px 0 #1b2a7a}
 .rotate-card .rotate-sub{font-size:clamp(16px,3.6vw,20px);color:#bfe9ff;font-weight:800}
 
+/* ===== Monster forms: 普通 / 閃 / 超閃 (CSS filter, no new art) ===== */
+.mon.form-shiny .mon-img{
+  filter:hue-rotate(48deg) saturate(1.45) brightness(1.1)
+    drop-shadow(0 0 5px #ffe066) drop-shadow(0 0 12px rgba(255,200,40,.9));
+}
+.mon.form-ultra .mon-img{
+  filter:hue-rotate(0deg) saturate(1.55) brightness(1.14)
+    drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px rgba(255,107,214,.95));
+  animation:ultraHue 2.2s linear infinite;
+}
+@keyframes ultraHue{
+  0%{filter:hue-rotate(0deg) saturate(1.55) brightness(1.14) drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px rgba(255,107,214,.95))}
+  33%{filter:hue-rotate(120deg) saturate(1.55) brightness(1.14) drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px rgba(127,240,255,.95))}
+  66%{filter:hue-rotate(240deg) saturate(1.55) brightness(1.14) drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px rgba(255,224,77,.95))}
+  100%{filter:hue-rotate(360deg) saturate(1.55) brightness(1.14) drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px rgba(255,107,214,.95))}
+}
+#monBob .mon.form-shiny{filter:drop-shadow(0 0 14px rgba(255,215,0,.8))}
+#monBob .mon.form-ultra{filter:drop-shadow(0 0 18px rgba(255,107,214,.85))}
+/* Silhouette / locked still wins over form color */
+.dcard.locked .dimg .mon-img,
+.dcard.met .dimg .mon-img,
+.dimg.sil .mon-img{filter:brightness(0) opacity(.55)!important;animation:none!important}
+.form-badge{display:inline-block;font-size:11px;font-weight:900;padding:1px 8px;border-radius:999px;vertical-align:middle;margin-right:4px;letter-spacing:.5px;line-height:1.4}
+.form-badge-shiny{background:linear-gradient(90deg,#ffe066,#f59e0b);color:#3b1d00;box-shadow:0 0 8px rgba(251,191,36,.75);border:1px solid rgba(255,255,255,.45)}
+.form-badge-ultra{background:linear-gradient(90deg,#ff6bd6,#7ff0ff,#ffe066,#ff6bd6);background-size:220% 100%;color:#1a0530;animation:rbmove 1.8s linear infinite;border:1px solid rgba(255,255,255,.55);box-shadow:0 0 10px rgba(255,107,214,.7)}
+.dex-form-tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;width:100%;margin:0 0 8px}
+.dex-ftab{appearance:none;border:2px solid rgba(255,255,255,.28);background:rgba(10,14,48,.72);color:#e8ecff;font:inherit;font-weight:900;font-size:13px;padding:4px 12px;border-radius:999px;cursor:pointer;letter-spacing:1px}
+.dex-ftab.on{border-color:#ffe14d;background:rgba(255,225,77,.22);color:#ffe14d;box-shadow:0 0 0 2px rgba(255,225,77,.25)}
+.dex-ftab.locked,.dex-ftab[disabled]{opacity:.42;cursor:default;filter:grayscale(.4)}
+.dform{position:absolute;top:4px;right:4px;font-style:normal;font-size:10px;font-weight:900;padding:1px 6px;border-radius:999px;line-height:1.3;z-index:2}
+.dform.shiny{background:linear-gradient(90deg,#ffe066,#f59e0b);color:#3b1d00}
+.dform.ultra{background:linear-gradient(90deg,#ff6bd6,#7ff0ff);color:#1a0530}
+.dcard .dform.shiny ~ .dform.ultra{top:22px}
+.dex-panel-tags .formtag,.ds-tags .formtag{font-style:normal}
+.formtag.shiny{background:rgba(251,191,36,.28)!important;color:#fde68a!important;border-color:rgba(251,191,36,.5)!important}
+.formtag.ultra{background:rgba(255,107,214,.28)!important;color:#fbcfe8!important;border-color:rgba(255,107,214,.5)!important}
+@media (prefers-reduced-motion:reduce){
+  .mon.form-ultra .mon-img,.form-badge-ultra{animation:none!important}
+}
+
 </style>
 </head>
 <body data-screen="home">
@@ -1662,11 +1702,11 @@ function rm(el){ try{ if(el && el.remove) el.remove(); }catch(e){} }
 
 /* ---------- storage ---------- */
 const STORE_KEY = 'ultraTimesHK_v1';
-function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, met:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, lastStar:1}}; }
+function defaultData(){ return {facts:{}, badges:{}, best:{}, dex:{}, met:{}, dexForms:{}, shinyPity:{sinceShiny:0,sinceUltra:0}, stamps:{}, titles:{}, stats:{monsters:0,bosses:0,maxCombo:0,answered:0}, settings:{muted:false, choice:false, tables:[2,3,4,5], autoSpeak:true, lastStar:1}}; }
 function loadData(){
   const def = defaultData();
   try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const d = JSON.parse(raw);
-    return {facts:d.facts||{}, badges:d.badges||{}, best:d.best||{}, dex:d.dex||{}, met:d.met||{}, stats:Object.assign(def.stats, d.stats||{}), settings:Object.assign(def.settings, d.settings||{})}; } }catch(e){}
+    return {facts:d.facts||{}, badges:d.badges||{}, best:d.best||{}, dex:d.dex||{}, met:d.met||{}, dexForms:d.dexForms||{}, shinyPity:Object.assign({sinceShiny:0,sinceUltra:0}, d.shinyPity||{}), stamps:d.stamps||{}, titles:d.titles||{}, stats:Object.assign(def.stats, d.stats||{}), settings:Object.assign(def.settings, d.settings||{})}; } }catch(e){}
   return def;
 }
 let DATA = loadData();
@@ -1910,11 +1950,16 @@ function crossfadeHero(img, src){
 }
 function monIdleSrc(type){ return 'assets/monsters/mon_'+type+'.png'; }
 function monAttackSrc(type){ return 'assets/monsters/mon_'+type+'_attack.png'; }
-function monRasterHTML(type){
+function monFormClass(form){
+  if(form==='shiny') return ' form-shiny';
+  if(form==='ultra') return ' form-ultra';
+  return '';
+}
+function monRasterHTML(type, form){
   const src = monIdleSrc(type);
   const fb = BATTLE_MON[type] || '';
   if(!MONS[type] && !fb) return monsterSVG(type, 'fb');
-  return '<div class="mon mon-raster mon-'+type+'">'+
+  return '<div class="mon mon-raster mon-'+type+monFormClass(form)+'">'+
     '<img class="mon-img" src="'+src+'" alt="" draggable="false" data-fb="'+fb+'">'+
     '<svg class="mon-anchors" viewBox="0 0 240 240" aria-hidden="true">'+
     '<circle class="mk-core" cx="120" cy="130" r="1"/><circle class="mk-mouth" cx="120" cy="150" r="1"/>'+
@@ -2034,16 +2079,16 @@ function setMonAttack(on){
   const next = on ? monAttackSrc(B.type) : monIdleSrc(B.type);
   if(img.getAttribute('src')!==next) img.setAttribute('src', next);
 }
-function monAttackHTML(type){
-  return '<div class="mon mon-raster dex-atk mon-'+type+'">'+
+function monAttackHTML(type, form){
+  return '<div class="mon mon-raster dex-atk mon-'+type+monFormClass(form)+'">'+
     '<img class="mon-img" src="'+monAttackSrc(type)+'" alt="" draggable="false" data-fb="'+monIdleSrc(type)+'">'+
     '</div>';
 }
-function dexPairHTML(type){
+function dexPairHTML(type, form){
   const word=(MONS[type]&&MONS[type].elemWord)||'';
   return '<div class="dex-pair">'+
-    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type)+'</div></figure>'+
-    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type)+'</div></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monRasterHTML(type, form)+'</div></figure>'+
+    '<figure class="dex-shot"><div class="dimg">'+monAttackHTML(type, form)+'</div></figure>'+
     '</div>'+(word?'<div class="dex-elem">屬性・'+word+'</div>':'');
 }
 function applyDexPack(pack){
@@ -2053,7 +2098,7 @@ function applyDexPack(pack){
     const id=row.asset, m=MONS[id]; if(!m) return;
     m.name=row.name; m.short=row.name; m.nick=row.move; m.kind=row.kind; m.habitat=row.place;
     m.lore=row.desc_mid; m.kid=row.desc_kid;
-    m.spawn=row.spawn; m.power=row.power; m.rare=row.rare;
+    m.spawn=row.spawn; m.power=row.power; m.rare=row.rare; /* rare: dex 稀有 display bar only */
     if(row.elem) applyMonsterElement(id, row.elem, row.shade);
     order.push(id);
   });
@@ -2252,6 +2297,120 @@ function pickFresh(list, avoid){ const c=list.filter(t=>(avoid||[]).indexOf(t)<0
 function dexAdd(t){ if(!DATA.dex) DATA.dex={}; const first=!DATA.dex[t]; DATA.dex[t]=(DATA.dex[t]||0)+1; if(!DATA.met) DATA.met={}; DATA.met[t]=true; save(); return first; }
 function metAdd(t){ if(!t) return; if(!DATA.met) DATA.met={}; if(!DATA.met[t]){ DATA.met[t]=true; save(); } }
 function dexTier(t){ const wins=(DATA.dex&&DATA.dex[t])||0; if(wins>0) return 'won'; if(DATA.met&&DATA.met[t]) return 'met'; return 'unseen'; }
+/* Monster form (普通／閃／超閃). Display bar field `rare` in dex pack stays 圖鑑稀有條. */
+const FORM_IDS=['common','shiny','ultra'];
+const FORM_LABEL={common:'普通', shiny:'閃', ultra:'超閃'};
+const FORM_BANNER={common:'', shiny:'閃光・', ultra:'超閃・'};
+const SHINY_RATE=0.07, ULTRA_RATE=0.01, SHINY_PITY=14, ULTRA_PITY=90;
+function ensureFormSlot(type, form){
+  if(!DATA.dexForms) DATA.dexForms={};
+  if(!DATA.dexForms[type]) DATA.dexForms[type]={};
+  if(!DATA.dexForms[type][form]) DATA.dexForms[type][form]={met:false, wins:0};
+  return DATA.dexForms[type][form];
+}
+function formTier(type, form){
+  form=form||'common';
+  if(form==='common'){
+    const wins=(DATA.dex&&DATA.dex[type])||0;
+    if(wins>0) return 'won';
+    const slot=DATA.dexForms&&DATA.dexForms[type]&&DATA.dexForms[type].common;
+    if(slot&&slot.met) return 'met';
+    /* Legacy saves (no dexForms): species met counts as common met. */
+    if(!DATA.dexForms || !DATA.dexForms[type]){
+      if(DATA.met&&DATA.met[type]) return 'met';
+    }
+    return 'unseen';
+  }
+  const slot=DATA.dexForms&&DATA.dexForms[type]&&DATA.dexForms[type][form];
+  if(!slot) return 'unseen';
+  if((slot.wins|0)>0) return 'won';
+  if(slot.met) return 'met';
+  return 'unseen';
+}
+function formWins(type, form){
+  form=form||'common';
+  if(form==='common') return (DATA.dex&&DATA.dex[type])||0;
+  const slot=DATA.dexForms&&DATA.dexForms[type]&&DATA.dexForms[type][form];
+  return (slot&&slot.wins)|0;
+}
+function formMetAdd(type, form){
+  if(!type) return;
+  form=form||'common';
+  metAdd(type); /* unlock species card */
+  const slot=ensureFormSlot(type, form);
+  if(!slot.met){ slot.met=true; save(); }
+}
+function formDexAdd(type, form){
+  form=form||'common';
+  if(form==='common'){
+    const first=dexAdd(type);
+    const slot=ensureFormSlot(type, 'common');
+    slot.met=true;
+    slot.wins=(DATA.dex&&DATA.dex[type])||0;
+    save();
+    return first;
+  }
+  const slot=ensureFormSlot(type, form);
+  const first=!slot.wins;
+  slot.wins=(slot.wins|0)+1;
+  slot.met=true;
+  if(!DATA.dex) DATA.dex={};
+  DATA.dex[type]=(DATA.dex[type]|0)+1; /* species win count */
+  if(!DATA.met) DATA.met={}; DATA.met[type]=true;
+  save();
+  return first;
+}
+function bestUnlockedForm(type){
+  if(formTier(type,'ultra')!=='unseen') return 'ultra';
+  if(formTier(type,'shiny')!=='unseen') return 'shiny';
+  return 'common';
+}
+function rollMonsterForm(){
+  if(!DATA.shinyPity) DATA.shinyPity={sinceShiny:0, sinceUltra:0};
+  const p=DATA.shinyPity;
+  let form='common';
+  if((p.sinceUltra|0)>=ULTRA_PITY) form='ultra';
+  else if((p.sinceShiny|0)>=SHINY_PITY) form='shiny';
+  else {
+    const r=Math.random();
+    if(r<ULTRA_RATE) form='ultra';
+    else if(r<ULTRA_RATE+SHINY_RATE) form='shiny';
+  }
+  if(form==='ultra'){ p.sinceUltra=0; p.sinceShiny=0; }
+  else if(form==='shiny'){ p.sinceShiny=0; p.sinceUltra=(p.sinceUltra|0)+1; }
+  else { p.sinceShiny=(p.sinceShiny|0)+1; p.sinceUltra=(p.sinceUltra|0)+1; }
+  save();
+  return form;
+}
+function setMonNameHud(m, form){
+  const el=$('#monName'); if(!el||!m) return;
+  form=form||'common';
+  const badge=form==='ultra'?'超閃':form==='shiny'?'閃':'';
+  if(badge) el.innerHTML='<span class="form-badge form-badge-'+form+'">'+badge+'</span> '+m.name+'・'+m.nick;
+  else el.textContent=m.name+'・'+m.nick;
+}
+function dexFormTabsHTML(type, selected){
+  selected=selected||'common';
+  return '<div class="dex-form-tabs" role="tablist">'+FORM_IDS.map(function(f){
+    const tier=formTier(type,f);
+    const locked=tier==='unseen';
+    const on=f===selected?' on':'';
+    const dis=locked?' disabled aria-disabled="true"':'';
+    const title=locked?FORM_LABEL[f]+'（未遇到）':FORM_LABEL[f]+'・'+(tier==='won'?'已打敗':'見過');
+    return '<button type="button" class="dex-ftab'+on+(locked?' locked':'')+'" data-form="'+f+'" role="tab" aria-selected="'+(f===selected?'true':'false')+'"'+dis+' title="'+title+'">'+FORM_LABEL[f]+'</button>';
+  }).join('')+'</div>';
+}
+function bindDexFormTabs(root, type, onPick){
+  if(!root) return;
+  $$('.dex-ftab:not(.locked)', root).forEach(function(btn){
+    btn.addEventListener('click', function(){
+      Sfx.click();
+      const f=btn.dataset.form||'common';
+      window.__dexForm=f;
+      onPick(f);
+    });
+  });
+}
 const MOVES = {
   beam:'十字死光！', kick:'光速飛踢！', disc:'光輪斬！', punch:'爆裂光拳！', whirl:'螺旋旋風拳！',
   flip:'彗星迴旋踢！', super:'超級十字死光！', rainbow:'彩虹旋風斬！', omega:'奧米加星煌爆！'
@@ -2705,7 +2864,9 @@ async function monsterExplode(){
 async function monsterEnter(){ monWrap.getAnimations().forEach(a=>a.cancel()); Sfx.appear();
   const m=MONS[B.type];
   const boss=!!(B.bossRun || m.boss);
-  const label=(m.final && boss)?'最終大頭目・'+m.name+'出現！':boss?'頭目・'+(m.short||m.name)+'出現！':(m.name+'出現！');
+  const form=B.form||'common';
+  const formPrefix=FORM_BANNER[form]||'';
+  const label=(m.final && boss)?'最終大頭目・'+formPrefix+m.name+'出現！':boss?'頭目・'+formPrefix+(m.short||m.name)+'出現！':(formPrefix+m.name+'出現！');
   showMoveName(label,'banner',1500);
   await play(monWrap,[{transform:'translateX(130%)',opacity:0},{transform:'translateX(-6%)',opacity:1,offset:.7},{transform:'translateX(0)',opacity:1}],{duration:950*K(),easing:'ease-out'});
   shake(5); Sfx.hit(); }
@@ -2964,7 +3125,7 @@ const OPS_MARK={
   add:'＋',sub:'－',mixas:'＋－',mul:'×',div:'÷',mixmd:'×÷',all:'＋－×÷',
   carry2:'⇄',carry3:'⇄',frac:'¾',decimal:'．',paren:'()',units:'＄'
 };
-/* Existing rarer monsters only. No new art. */
+/* Boss pool for ops encounters (~10%). Display bars live in data/dex_36.json (rare = 圖鑑稀有條 only). */
 const BOSS_CAST=['steeltiran','illusdemon','heidragon','starlord','doomlord','lightunicorn','nebulajelly'];
 function isOpsMode(mode){ return OPS_MODES.indexOf(mode||B.mode)>=0; }
 function opsGoal(isBoss, extra){ return 15; }
@@ -3551,6 +3712,7 @@ function startOps(kind, opt){
   if(kind==='div'||kind==='mixmd'||kind==='all'||kind==='paren') B.qMax=9;
   B.choice=true;
   B.bossRun=enc.boss;
+  B.form = opt.form || rollMonsterForm();
   B.goal=opsGoal(enc.boss);
   B.solved=0;
   B.combo=0; B.maxCombo=0; B.maxHen=1; B.recent=[]; B.lastMove=null; B.busy=true; B.input=''; B._timeUp=false; B._ended=false; B._hen=1; B._henLabel=null;
@@ -3572,7 +3734,7 @@ function startSession(mode, tables, opt){
   opt=opt||{};
   if(mode==='timed') mode='survive';
   B.mode=mode; B.star=opt.star||0; B.qMax = B.star>=3 ? 12 : 9;
-  B.bossRun=false; B.goal=0; B.solved=0;
+  B.bossRun=false; B.goal=0; B.solved=0; B.form='common';
   B.tables=(tables||[]).slice().sort((a,b)=>a-b);
   B.choice = (mode==='divide' || mode==='mixed' || isClockMode()) ? true : !!DATA.settings.choice;
   B.combo=0; B.maxCombo=0; B.maxHen=1; B.recent=[]; B.lastMove=null; B.busy=true; B.input=''; B._timeUp=false; B._ended=false;
@@ -3595,12 +3757,14 @@ function startSession(mode, tables, opt){
 }
 async function startRound(type){
   const tk=B.token; B.type=type; const m=MONS[type];
-  metAdd(type);
+  if(!isOpsMode()) B.form='common';
+  const form=B.form||'common';
+  formMetAdd(type, form);
   B.maxHp = isOpsMode() ? (B.goal||15) : (isClockMode() ? 40 : (m.final?150:m.boss?120:100)); B.hp=B.maxHp; B.gotCoins=0;
   if(!isClockMode()){ B.rq=0; B.rfirst=0; B.rwrong=0; B.rtables={}; B.rMaxCombo=0; B.combo=0; B._hen=1; B._henLabel=null; }
   else B.rwrong=0;
-  monCounter++; $('#monBob').innerHTML = monRasterHTML(type); bindMonImg($('#monBob .mon-img')); setMonAttack(false);
-  $('#monName').textContent = m.name+'・'+m.nick; $('#hpFill').style.width='100%';
+  monCounter++; $('#monBob').innerHTML = monRasterHTML(type, form); bindMonImg($('#monBob .mon-img')); setMonAttack(false);
+  setMonNameHud(m, form); $('#hpFill').style.width='100%';
   setChestTimer(0); syncHenshin(); heroPose('idle'); applyDisrupt(); renderRoundHud(); renderCombo(); layoutStage();
   B.busy=true; B.q=null; renderQuestionBlank();
   await monsterEnter(); if(tk!==B.token) return;
@@ -3721,7 +3885,8 @@ async function submit(){
 function roundWon(){
   const acc = B.rq ? B.rfirst/B.rq : 1; const stars = acc>=.9?3:acc>=.7?2:1; const m=MONS[B.type];
   const boss=!!(m.final && (B.bossRun || !isOpsMode()));
-  DATA.stats.monsters++; const newDex=dexAdd(B.type); if(m.boss || B.bossRun) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
+  const form=B.form||'common';
+  DATA.stats.monsters++; const newDex=formDexAdd(B.type, form); if(m.boss || B.bossRun) DATA.stats.bosses++; if(boss) DATA.stats.dada=(DATA.stats.dada||0)+1;
   const asked=Object.keys(B.rtables).map(Number); const upgraded=[];
   asked.forEach(t=>{ const n=B.rtables[t]||0; if(n<3) return; let tier=stars; if(n<5) tier=Math.min(tier,1); else if(n<8) tier=Math.min(tier,2);
     const prev=DATA.badges[t]||0; if(tier>prev){ DATA.badges[t]=tier; upgraded.push(t); } });
@@ -3745,8 +3910,13 @@ function roundWon(){
     medalBlock='<div class="rstat">'+(B.mode==='divide'?'每個除數答夠幾題先攞勳章！':'混合練習要每個乘數表答夠幾題先攞勳章！')+'</div>';
   }
   const winSt=henshinStage();
+  const formTag=form!=='common'?(FORM_LABEL[form]+'・'):'';
+  let rdex='';
+  if(newDex && form==='common') rdex='<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>';
+  else if(newDex) rdex='<div class="rdex">稀有形態收錄：'+m.name+'・'+FORM_LABEL[form]+'！</div>';
+  else if(form!=='common') rdex='<div class="rdex">遇到'+FORM_LABEL[form]+'形態！</div>';
   const html = '<img class="rhero" src="'+heroSrc(winSt,'win')+'" alt="">'+
-    '<h3>'+(boss?'打敗咗'+m.name+'！':'打敗咗'+m.name+'！')+'</h3>'+(newDex?'<div class="rdex">怪獸圖鑑新收錄：'+m.name+'！</div>':'')+
+    '<h3>打敗咗'+formTag+m.name+'！</h3>'+rdex+
     '<div class="rstars">'+[0,1,2].map(i=>starSVG(i<stars)).join('')+'</div>'+
     medalBlock+
     '<div class="rstat">第一次就答啱：<b>'+B.rfirst+' / '+B.rq+'</b> 題</div>'+
@@ -3925,7 +4095,12 @@ function renderDex(){
   const dex=DATA.dex||{}; const met=DATA.met||{};
   const got=DEX_ORDER.filter(t=>dex[t]).length;
   const metN=DEX_ORDER.filter(t=>met[t]||dex[t]).length;
-  $('#dexCount').textContent='收錄 '+got+' / '+DEX_ORDER.length+(metN>got?' · 見過 '+metN:'');
+  let shinyN=0, ultraN=0;
+  DEX_ORDER.forEach(function(t){
+    if(formTier(t,'shiny')!=='unseen') shinyN++;
+    if(formTier(t,'ultra')!=='unseen') ultraN++;
+  });
+  $('#dexCount').textContent='收錄 '+got+' / '+DEX_ORDER.length+(metN>got?' · 見過 '+metN:'')+(shinyN?' · 閃 '+shinyN:'')+(ultraN?' · 超閃 '+ultraN:'');
   const stamp=$('#dexStamp');
   if(stamp){
     const on=!!(DATA.stamps&&DATA.stamps.wing);
@@ -3937,12 +4112,14 @@ function renderDex(){
   $('#dex').innerHTML=DEX_ORDER.map((t)=>{
     const m=MONS[t], n=dex[t]||0, tier=dexTier(t);
     const tag=m.friend?'<i class="dtag f">夥伴</i>':m.final?'<i class="dtag b">大頭目</i>':m.boss?'<i class="dtag b">頭目</i>':'';
+    const formMarks=(formTier(t,'shiny')!=='unseen'?'<i class="dform shiny">閃</i>':'')+(formTier(t,'ultra')!=='unseen'?'<i class="dform ultra">超</i>':'');
+    const preview=tier==='unseen'?'common':bestUnlockedForm(t);
     const border=elemBorder[m.elem]||'#7c8cff';
     if(tier==='won'){
-      return '<button type="button" class="dcard'+(sel===t?' on':'')+'" data-dex="'+t+'" data-tier="won" style="--db:'+border+'" aria-label="'+m.name+'"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+m.name+'</div><div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>'+tag+'</button>';
+      return '<button type="button" class="dcard'+(sel===t?' on':'')+'" data-dex="'+t+'" data-tier="won" style="--db:'+border+'" aria-label="'+m.name+'"><div class="dimg">'+monRasterHTML(t, preview)+'</div><div class="dname">'+m.name+'</div><div class="dn">'+(m.friend?'特訓':'打敗')+' ×'+n+'</div>'+tag+formMarks+'</button>';
     }
     if(tier==='met'){
-      return '<button type="button" class="dcard met'+(sel===t?' on':'')+'" data-dex="'+t+'" data-tier="met" style="--db:'+border+'" aria-label="'+m.name+'（未打敗）"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">'+m.name+'</div><div class="dn">未打敗</div>'+tag+'</button>';
+      return '<button type="button" class="dcard met'+(sel===t?' on':'')+'" data-dex="'+t+'" data-tier="met" style="--db:'+border+'" aria-label="'+m.name+'（未打敗）"><div class="dimg">'+monRasterHTML(t, preview)+'</div><div class="dname">'+m.name+'</div><div class="dn">未打敗</div>'+tag+formMarks+'</button>';
     }
     return '<button type="button" class="dcard locked" data-dex="'+t+'" data-tier="unseen" style="--db:'+border+'" disabled aria-disabled="true" aria-label="未遇到嘅怪獸"><div class="dimg">'+monRasterHTML(t)+'</div><div class="dname">？？？</div><div class="dn">未遇到</div>'+tag+'</button>';
   }).join('');
@@ -3958,41 +4135,57 @@ function clearDexPanel(){
   const empty=$('#dexPanelEmpty'), body=$('#dexPanelBody');
   if(empty) empty.hidden=false; if(body) body.hidden=true;
 }
-function selectDex(type, quiet){
+function selectDex(type, quiet, form){
   const m=MONS[type]; if(!m) return;
   const tier=dexTier(type); if(tier==='unseen') return;
+  if(window.__dexSel!==type) window.__dexForm=bestUnlockedForm(type);
+  if(form) window.__dexForm=form;
   window.__dexSel=type;
   $$('#dex .dcard').forEach(c=>c.classList.toggle('on', c.dataset.dex===type));
-  fillDexPanel(type);
+  fillDexPanel(type, window.__dexForm);
   if(!quiet){ const p=$('#dexPanel'); if(p && window.matchMedia('(max-width:859px)').matches) p.scrollIntoView({behavior:'smooth',block:'nearest'}); }
 }
-function fillDexPanel(type){
-  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0, tier=dexTier(type);
-  if(!m||tier==='unseen') return;
+function fillDexPanel(type, form){
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0, speciesTier=dexTier(type);
+  if(!m||speciesTier==='unseen') return;
+  if(form==null){
+    const pref=window.__dexForm;
+    form=(pref && formTier(type, pref)!=='unseen')?pref:bestUnlockedForm(type);
+  }
+  if(formTier(type, form)==='unseen') form=bestUnlockedForm(type);
+  window.__dexForm=form;
+  const tier=formTier(type, form);
+  const fw=formWins(type, form);
   $('#dexPanelEmpty').hidden=true; $('#dexPanelBody').hidden=false;
+  const tabs=dexFormTabsHTML(type, form);
   if(tier==='met'){
-    $('#dexPanelArt').innerHTML='<div class="dex-pair"><figure class="dex-shot"><div class="dimg sil">'+monRasterHTML(type)+'</div></figure></div>';
+    $('#dexPanelArt').innerHTML=tabs+'<div class="dex-pair"><figure class="dex-shot"><div class="dimg sil">'+monRasterHTML(type, form)+'</div></figure></div>';
     $$('#dexPanelArt .mon-img').forEach(bindMonImg);
-    $('#dexPanelTags').innerHTML='<i>未打敗</i>'+(m.elemWord?'<i>'+m.elemWord+'</i>':'');
-    $('#dexPanelName').textContent=m.name;
+    bindDexFormTabs($('#dexPanelArt'), type, function(f){ fillDexPanel(type, f); });
+    $('#dexPanelTags').innerHTML='<i>未打敗</i>'+(form!=='common'?'<i class="formtag '+form+'">'+FORM_LABEL[form]+'</i>':'')+(m.elemWord?'<i>'+m.elemWord+'</i>':'');
+    $('#dexPanelName').textContent=m.name+(form!=='common'?'・'+FORM_LABEL[form]:'');
     $('#dexPanelNick').textContent='？？？';
     $('#dexBars').innerHTML='';
-    $('#dexPanelLore').textContent='見過呢隻怪獸，但未打敗佢。再挑戰一次先睇到全部資料！';
-    const more=$('#dexPanelMore'); more.onclick=()=>{ Sfx.click(); openDexDetail(type); };
+    $('#dexPanelLore').textContent='見過呢個'+(form==='common'?'怪獸':FORM_LABEL[form]+'形態')+'，但未打敗。再挑戰一次先睇到全部資料！';
+    const more=$('#dexPanelMore'); more.onclick=()=>{ Sfx.click(); openDexDetail(type, form); };
     return;
   }
-  $('#dexPanelArt').innerHTML=dexPairHTML(type); $$('#dexPanelArt .mon-img').forEach(bindMonImg);
+  $('#dexPanelArt').innerHTML=tabs+dexPairHTML(type, form); $$('#dexPanelArt .mon-img').forEach(bindMonImg);
+  bindDexFormTabs($('#dexPanelArt'), type, function(f){ fillDexPanel(type, f); });
   const tags=[]; if(m.friend) tags.push('<i class="f">夥伴</i>'); if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
+  if(form!=='common') tags.push('<i class="formtag '+form+'">'+FORM_LABEL[form]+'</i>');
   tags.push('<i>'+(m.kind||'怪獸')+'</i>'); if(m.elemWord) tags.push('<i>'+m.elemWord+'</i>');
   $('#dexPanelTags').innerHTML=tags.join('');
-  $('#dexPanelName').textContent=m.name;
+  $('#dexPanelName').textContent=m.name+(form!=='common'?'・'+FORM_LABEL[form]:'');
   $('#dexPanelNick').textContent=m.nick;
   const bar=(label, cls, val)=>{ const v=val|0; const p=Math.max(8, Math.min(100, Math.round(v/50*100))); return '<div class="dex-bar"><span>'+label+'</span><i class="'+cls+'"><b style="--p:'+p+'%"></b></i><span>'+v+'</span></div>'; };
+  /* Bars from dex pack; win-count fallback only if pack missing a mon. `rare` = 圖鑑稀有條 only. */
   const p1=m.spawn!=null?m.spawn:Math.min(50,12+n*4), p2=m.power!=null?m.power:Math.min(50,10+n*3), p3=m.rare!=null?m.rare:Math.min(50,8+n*3);
   $('#dexBars').innerHTML=bar('出沒','g',p1)+bar('威力','r',p2)+bar('稀有','o',p3);
-  $('#dexPanelLore').textContent=m.kid||m.lore||'暫時未有資料。';
+  const formNote=form==='common'?'':('呢個係'+FORM_LABEL[form]+'形態（打敗 ×'+fw+'）。');
+  $('#dexPanelLore').textContent=(formNote?formNote+' ':'')+(m.kid||m.lore||'暫時未有資料。');
   const more=$('#dexPanelMore');
-  more.onclick=()=>{ Sfx.click(); openDexDetail(type); };
+  more.onclick=()=>{ Sfx.click(); openDexDetail(type, form); };
 }
 const DEX_BG = {
   heidragon:['#101014','#2a0a00'], lavaover:['#4a1508','#1a0600'], holyturt:['#14532d','#062418'],
@@ -4008,35 +4201,47 @@ const DEX_BG = {
   rockape:['#292524','#120e0c'], steelcent:['#374151','#111827'], crystalspider:['#1e40af','#061028'],
   lightunicorn:['#b45309','#2a1800'], nebulajelly:['#581c87','#1a0530'], doomlord:['#4c0519','#1a0208']
 };
-function openDexDetail(type){
-  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0, tier=dexTier(type); if(!m||tier==='unseen') return;
-  selectDex(type, true);
+function openDexDetail(type, form){
+  const m=MONS[type], n=(DATA.dex&&DATA.dex[type])||0, speciesTier=dexTier(type); if(!m||speciesTier==='unseen') return;
+  if(form==null){
+    const pref=window.__dexForm;
+    form=(pref && formTier(type, pref)!=='unseen')?pref:bestUnlockedForm(type);
+  }
+  if(formTier(type, form)==='unseen') form=bestUnlockedForm(type);
+  window.__dexForm=form;
+  selectDex(type, true, form);
+  const tier=formTier(type, form);
+  const fw=formWins(type, form);
   const bg=DEX_BG[type]||[m.dark, '#060918'];
   const sheet=$('#dexSheet'); sheet.style.setProperty('--ds1', bg[0]); sheet.style.setProperty('--ds2', bg[1]);
+  const tabs=dexFormTabsHTML(type, form);
   if(tier==='met'){
-    $('#dsArt').innerHTML = '<div class="dex-pair"><figure class="dex-shot"><div class="dimg sil">'+monRasterHTML(type)+'</div></figure></div>';
+    $('#dsArt').innerHTML = tabs+'<div class="dex-pair"><figure class="dex-shot"><div class="dimg sil">'+monRasterHTML(type, form)+'</div></figure></div>';
     $$('#dsArt .mon-img').forEach(bindMonImg);
-    $('#dsTags').innerHTML='<i>未打敗</i>';
-    $('#dsName').textContent=m.name; $('#dsNick').textContent='？？？';
+    bindDexFormTabs($('#dsArt'), type, function(f){ openDexDetail(type, f); });
+    $('#dsTags').innerHTML='<i>未打敗</i>'+(form!=='common'?'<i class="formtag '+form+'">'+FORM_LABEL[form]+'</i>':'');
+    $('#dsName').textContent=m.name+(form!=='common'?'・'+FORM_LABEL[form]:''); $('#dsNick').textContent='？？？';
     $('#dsKind').textContent='？？？'; $('#dsHabitat').textContent='？？？';
     $('#dsMove').textContent='？？？'; $('#dsRecord').textContent='未打敗';
     const dsElem=$('#dsElem'); if(dsElem) dsElem.textContent=m.elemWord||'？';
     const kid=$('#dsKid'); if(kid) kid.textContent='';
-    $('#dsLore').textContent='見過呢隻怪獸，但未打敗佢。打敗之後先解鎖完整資料！';
+    $('#dsLore').textContent='見過呢個'+(form==='common'?'怪獸':FORM_LABEL[form]+'形態')+'，但未打敗。打敗之後先解鎖完整資料！';
     sheet.hidden=false; sheet.classList.add('show');
     return;
   }
-  $('#dsArt').innerHTML = dexPairHTML(type);
+  $('#dsArt').innerHTML = tabs+dexPairHTML(type, form);
   $$('#dsArt .mon-img').forEach(bindMonImg);
+  bindDexFormTabs($('#dsArt'), type, function(f){ openDexDetail(type, f); });
   const tags=[]; if(m.omega) tags.push('<i class="o">奧米加</i>'); if(m.friend) tags.push('<i class="f">夥伴</i>');
   if(m.final) tags.push('<i class="b">大頭目</i>'); else if(m.boss) tags.push('<i class="b">頭目</i>');
+  if(form!=='common') tags.push('<i class="formtag '+form+'">'+FORM_LABEL[form]+'</i>');
   if(!tags.length) tags.push('<i>圖鑑怪獸</i>');
   $('#dsTags').innerHTML=tags.join('');
-  $('#dsName').textContent=m.name; $('#dsNick').textContent=m.nick;
+  $('#dsName').textContent=m.name+(form!=='common'?'・'+FORM_LABEL[form]:''); $('#dsNick').textContent=m.nick;
   $('#dsKind').textContent=m.kind||'未知怪獸'; $('#dsHabitat').textContent=m.habitat||'？？？';
-  $('#dsMove').textContent=m.nick; $('#dsRecord').textContent=(m.friend?'特訓':'打敗')+' ×'+n;
+  $('#dsMove').textContent=m.nick; $('#dsRecord').textContent=(m.friend?'特訓':'打敗')+' ×'+(form==='common'?n:fw)+(form!=='common'?'（'+FORM_LABEL[form]+'）':'');
   const dsElem=$('#dsElem'); if(dsElem) dsElem.textContent=m.elemWord||'？';
-  const kid=$('#dsKid'); if(kid) kid.textContent=m.kid||'';
+  const kid=$('#dsKid'); if(kid) kid.textContent=(form!=='common'?('【'+FORM_LABEL[form]+'形態】 '):'')+(m.kid||'');
   $('#dsLore').textContent=m.lore||'暫時未有資料。';
   sheet.hidden=false; sheet.classList.add('show');
 }
@@ -4435,16 +4640,51 @@ function runSelfTest(){
     if(!u.expr || typeof u.ans!=='string' || !u.choices || u.choices.indexOf(u.ans)<0) fails.push('units');
   }
   if(DATA.settings.lastStar==null) fails.push('lastStar');
+  /* shiny / ultra form rolls */
+  if(typeof rollMonsterForm!=='function') fails.push('no form roll');
+  if(SHINY_RATE!==0.07 || ULTRA_RATE!==0.01) fails.push('form rates');
+  if(SHINY_PITY!==14 || ULTRA_PITY!==90) fails.push('form pity');
+  let fc=0,fs=0,fu=0;
+  for(let i=0;i<4000;i++){
+    DATA.shinyPity={sinceShiny:0,sinceUltra:0};
+    const f=rollMonsterForm();
+    if(f==='common') fc++; else if(f==='shiny') fs++; else if(f==='ultra') fu++; else fails.push('bad form');
+  }
+  if(fc<3500 || fc>3850) fails.push('common rate '+fc);
+  if(fs<180 || fs>400) fails.push('shiny rate '+fs);
+  if(fu<10 || fu>80) fails.push('ultra rate '+fu);
+  DATA.shinyPity={sinceShiny:SHINY_PITY, sinceUltra:0};
+  if(rollMonsterForm()!=='shiny') fails.push('shiny pity');
+  DATA.shinyPity={sinceShiny:0, sinceUltra:ULTRA_PITY};
+  if(rollMonsterForm()!=='ultra') fails.push('ultra pity');
+  const prevPity=DATA.shinyPity;
+  DATA.dexForms={}; DATA.shinyPity={sinceShiny:0,sinceUltra:0};
+  DATA.dex={}; DATA.met={}; DATA.dexForms={};
+  formMetAdd('lavaover','shiny');
+  if(formTier('lavaover','shiny')!=='met') fails.push('shiny met');
+  if(!(DATA.met&&DATA.met.lavaover)) fails.push('species met');
+  if(formTier('lavaover','common')!=='unseen') fails.push('common locked');
+  const firstShiny=formDexAdd('lavaover','shiny');
+  if(!firstShiny || formTier('lavaover','shiny')!=='won') fails.push('shiny won');
+  if(formWins('lavaover','shiny')!==1) fails.push('shiny wins');
+  if(dexTier('lavaover')!=='won') fails.push('species won via shiny');
+  if(!document.querySelector('style') && false) fails.push('style');
+  const sample=monRasterHTML('lavaover','shiny');
+  if(sample.indexOf('form-shiny')<0) fails.push('shiny class');
+  const sampleU=monRasterHTML('lavaover','ultra');
+  if(sampleU.indexOf('form-ultra')<0) fails.push('ultra class');
+  if(FORM_LABEL.shiny!=='閃' || FORM_LABEL.ultra!=='超閃' || FORM_LABEL.common!=='普通') fails.push('form labels');
+  DATA.shinyPity=prevPity||{sinceShiny:0,sinceUltra:0};
   endBattle(); show('home');
   const pre=document.createElement('pre');
   pre.id='selftest';
   pre.textContent=fails.length?fails.join('\n'):'OK';
   document.body.appendChild(pre);
 }
-if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; DATA.met={}; list.forEach(t=>{ DATA.dex[t]=1+(t.length%3); DATA.met[t]=true; }); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, pickCarry2, pickCarry3, pickFrac, pickDecimal, pickParen, pickUnits, answersEqual, evalPrec, opsGoal, rollOpsEncounter, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, STAR_MODES, OPS_MODES, OPS_NAME, addTime, FORM_TITLE, isClockMode, isOpsMode, openStarGate, openOpsPick, data:()=>DATA };
+if(/[?&]test=1/.test(location.search)) window.__ut = { B:B, force:k=>{ B.forceMove=k; }, gotoRound:i=>{ B.token++; B.round=i; hideResult(); startRound(B.order[i]); }, startRound:t=>{ B.token++; hideResult(); startRound(t); }, show:id=>show(id), dex:list=>{ DATA.dex={}; DATA.met={}; list.forEach(t=>{ DATA.dex[t]=1+(t.length%3); DATA.met[t]=true; }); save(); renderProgress(); }, order:o=>{ B.order=o; }, henshinStage, syncHenshin, syncChestLight, chooseMove, applyDisrupt, playElementHit, clearElementHit, isHardFight, setMonAttack, ATTACK_SCALE, divisionDivisors, divisionOrder, pickDivision, makeDivChoices, pickMixed, makeMixedChoices, startSession, startOps, pickOpsQuestion, pickMixAS, pickMixMD, pickAllOps, pickCarry2, pickCarry3, pickFrac, pickDecimal, pickParen, pickUnits, answersEqual, evalPrec, opsGoal, rollOpsEncounter, rollMonsterForm, formTier, formWins, formMetAdd, formDexAdd, bestUnlockedForm, FORM_LABEL, FORM_IDS, SHINY_RATE, ULTRA_RATE, SHINY_PITY, ULTRA_PITY, renderCombo, layoutStage, monRasterHTML, bindMonImg, openDexDetail, renderProgress, cinematicFinalFinish, heroSrc, poseFile, heroPose, ensureHero, DEX_ORDER, MONS, STAR_MODES, OPS_MODES, OPS_NAME, addTime, FORM_TITLE, isClockMode, isOpsMode, openStarGate, openOpsPick, data:()=>DATA };
 function startApp(){
   const run=()=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init(); };
-  fetch('data/dex_18.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
+  fetch('data/dex_36.json').then(function(r){ if(!r.ok) throw new Error('dex'); return r.json(); }).then(function(pack){ applyDexPack(pack); run(); }).catch(run);
 }
 startApp();
 
